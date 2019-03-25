@@ -23,13 +23,8 @@ public class UserController {
 			method = RequestMethod.POST,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<User> editUserProfile(
+	public ResponseEntity<Boolean> editUserProfile(
 			@RequestBody User user) throws Exception {
-		User editedUser = userService.editProfile(user);
-		if (editedUser == null) {
-			return new ResponseEntity<User>(
-					HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		return new ResponseEntity<User>(editedUser, HttpStatus.OK);
+		return new ResponseEntity<Boolean>(userService.editProfile(user), HttpStatus.OK);
 	}
 }
