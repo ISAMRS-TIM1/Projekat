@@ -1,24 +1,43 @@
 package isamrs.tim1.model;
 
-import static javax.persistence.GenerationType.IDENTITY;
-
 import java.io.Serializable;
 import java.util.Set;
 
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-/*@Entity
+@Entity
 @Table(name = "RentACars")
-public class RentACar extends Service implements Serializable{
-	// do mapping
-	private Set<BranchOffice> branchOffices;
-	
-	// add vehicles
-	
+public class RentACar extends Service implements Serializable {
 
-	private static final long serialVersionUID = -7086320997392327254L;
-}*/
+	@OneToMany(mappedBy = "rentACar", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<BranchOffice> branchOffices;
+
+	@OneToMany(mappedBy = "rentACar", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<Vehicle> vehicles;
+
+	private static final long serialVersionUID = 8960219458856435612L;
+
+	public Set<BranchOffice> getBranchOffices() {
+		return branchOffices;
+	}
+
+	public void setBranchOffices(Set<BranchOffice> branchOffices) {
+		this.branchOffices = branchOffices;
+	}
+
+	public Set<Vehicle> getVehicles() {
+		return vehicles;
+	}
+
+	public void setVehicles(Set<Vehicle> vehicles) {
+		this.vehicles = vehicles;
+	}
+
+	public RentACar() {
+		super();
+	}
+}

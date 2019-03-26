@@ -4,10 +4,13 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -23,6 +26,9 @@ public class Location implements Serializable {
 
 	@Column(name = "lng", unique = false, nullable = false)
 	private double longitude;
+
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Service service;
 
 	public Location() {
 		super();
@@ -48,4 +54,20 @@ public class Location implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -5137148013892279846L;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public Service getService() {
+		return service;
+	}
+
+	public void setService(Service service) {
+		this.service = service;
+	}
 }
