@@ -11,7 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
 
-@MappedSuperclass
+/*@MappedSuperclass
 public abstract class Service implements Serializable {
 
 	@Id
@@ -35,8 +35,6 @@ public abstract class Service implements Serializable {
 	@JoinColumn(name = "location_id")
 	private Location location;
 
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -4269295838625755485L;
-}
+}*/

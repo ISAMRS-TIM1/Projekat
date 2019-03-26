@@ -3,8 +3,17 @@ package isamrs.tim1.model;
 import java.util.HashSet;
 import java.util.Set;
 
-public class RegisteredUser extends User {
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "RegisteredUsers")
+public class RegisteredUser extends User {
+	
+	@OneToMany(mappedBy = "friends", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<RegisteredUser> friends;
 
 	public RegisteredUser() {

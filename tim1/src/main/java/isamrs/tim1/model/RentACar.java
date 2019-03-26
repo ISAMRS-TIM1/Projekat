@@ -11,7 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Entity
+/*@Entity
 @Table(name = "RentACars")
 public class RentACar extends Service implements Serializable{
 	// do mapping
@@ -19,8 +19,6 @@ public class RentACar extends Service implements Serializable{
 	
 	// add vehicles
 	
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -7086320997392327254L;
-}
+}*/
