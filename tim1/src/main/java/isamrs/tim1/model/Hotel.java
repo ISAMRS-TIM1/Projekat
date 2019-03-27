@@ -1,5 +1,6 @@
 package isamrs.tim1.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -13,7 +14,9 @@ import javax.persistence.Table;
 public class Hotel extends Service {
 
 	public Hotel() {
-		super();
+		additionalServices = new HashSet<HotelAdditionalService>();
+		rooms = new HashSet<HotelRoom>();
+		admins = new HashSet<HotelAdmin>();
 	}
 
 	@OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -22,6 +25,10 @@ public class Hotel extends Service {
 	@OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<HotelRoom> rooms;
 
+	@OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<HotelAdmin> admins;
+
+	
 	public Set<HotelAdditionalService> getAdditionalServices() {
 		return additionalServices;
 	}
@@ -36,6 +43,14 @@ public class Hotel extends Service {
 
 	public void setRooms(Set<HotelRoom> rooms) {
 		this.rooms = rooms;
+	}
+
+	public Set<HotelAdmin> getAdmins() {
+		return admins;
+	}
+
+	public void setAdmins(Set<HotelAdmin> admins) {
+		this.admins = admins;
 	}
 
 	private static final long serialVersionUID = -3964984592975561537L;

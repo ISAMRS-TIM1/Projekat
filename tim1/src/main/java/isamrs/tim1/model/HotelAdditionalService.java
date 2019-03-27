@@ -28,4 +28,43 @@ public class HotelAdditionalService {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "hotel")
 	private Hotel hotel;
+
+	
+	public HotelAdditionalService() {
+		super();
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	public Hotel getHotel() {
+		return hotel;
+	}
+
+	public void setHotel(Hotel hotel) {
+		this.hotel = hotel;
+	}
+	
+	
 }

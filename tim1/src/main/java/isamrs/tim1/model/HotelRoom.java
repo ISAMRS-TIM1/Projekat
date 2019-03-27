@@ -22,4 +22,26 @@ public class HotelRoom {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "hotel")
 	private Hotel hotel;
+
+	public HotelRoom() {
+		super();
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public Hotel getHotel() {
+		return hotel;
+	}
+
+	public void setHotel(Hotel hotel) {
+		this.hotel = hotel;
+	}
+	
+	
 }
