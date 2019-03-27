@@ -11,7 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -19,6 +18,11 @@ import javax.persistence.Table;
 @Table(name = "services")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class Service implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1401956470554926899L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -38,10 +42,7 @@ public abstract class Service implements Serializable {
 	private double averagePrice;
 
 	@OneToOne(mappedBy = "service", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "location_id")
 	private Location location;
-
-	private static final long serialVersionUID = -4269295838625755485L;
 
 	public Service() {
 		super();

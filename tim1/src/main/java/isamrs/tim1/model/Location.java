@@ -1,23 +1,27 @@
 package isamrs.tim1.model;
 
-import static javax.persistence.GenerationType.IDENTITY;
-
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "locations")
 public class Location implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2189094128716388349L;
+
 	@Id
-	@GeneratedValue(strategy = IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "location_id", unique = true, nullable = false)
 	private Integer id;
 
@@ -27,7 +31,8 @@ public class Location implements Serializable {
 	@Column(name = "lng", unique = false, nullable = false)
 	private double longitude;
 
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "service")
 	private Service service;
 
 	public Location() {
@@ -49,11 +54,6 @@ public class Location implements Serializable {
 	public void setLongitude(double longitude) {
 		this.longitude = longitude;
 	}
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5137148013892279846L;
 
 	public Integer getId() {
 		return id;

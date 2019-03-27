@@ -2,7 +2,6 @@ package isamrs.tim1.model;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,10 +16,11 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "branchOffices")
 public class BranchOffice implements Serializable {
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 6195780141040379106L;
+	private static final long serialVersionUID = 8729860394188669019L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -30,11 +30,12 @@ public class BranchOffice implements Serializable {
 	@Column(name = "name", unique = true, nullable = false)
 	private String name;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "location_id")
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "location")
 	private Location location;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "rentACar")
 	private RentACar rentACar;
 
 	public Long getId() {
