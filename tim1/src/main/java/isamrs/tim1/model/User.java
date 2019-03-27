@@ -1,40 +1,47 @@
 package isamrs.tim1.model;
 
-import static javax.persistence.GenerationType.IDENTITY;
-
 import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import javax.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "Users")
+@Inheritance(strategy=InheritanceType.JOINED)
 public class User implements Serializable {
 
 	@Id
-	@GeneratedValue(strategy = IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "user_id", unique = true, nullable = false)
-	private Integer id;
-
+	private Long id;
+	
 	@Column(name = "email", unique = true, nullable = false)
+	@Pattern(regexp="^(.+)@(.+)$")
 	private String email;
 
 	@Column(name = "password", unique = false, nullable = false)
 	private String password;
-
+	
 	@Column(name = "firstName", unique = false, nullable = false)
+	@Pattern(regexp="[A-Z][a-z]*")
 	private String firstName;
-
+	
 	@Column(name = "lastName", unique = false, nullable = false)
+	@Pattern(regexp="[A-Z][a-z]*")
 	private String lastName;
 
 	@Column(name = "address", unique = false, nullable = false)
 	private String address;
 
 	@Column(name = "phoneNumber", unique = false, nullable = false)
+	@Pattern(regexp="\\+[0-9]{12}")
 	private String phoneNumber;
 
 	@Column(name = "userType", unique = false, nullable = false)
@@ -44,11 +51,11 @@ public class User implements Serializable {
 		super();
 	}
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
