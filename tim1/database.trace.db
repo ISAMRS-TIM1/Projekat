@@ -1742,4 +1742,6 @@ select * from vehicles v where v.rentACar = ? and v.MODEL like ? and v.PRODUCER 
 	at java.lang.Thread.run(Unknown Source)
 2019-03-26 23:51:59 jdbc[13]: exception
 org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "SELECT * VEHICLES[*]"; SQL statement:
-SELECT * VEHICLES [42000-197]
+SELECT * VEHICLES [42000-197]2019-03-27 13:20:05 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLException: Table "RENATCARS" not found; SQL statement:
+SELECT * FROM RENATCARS [42102-197]

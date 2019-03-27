@@ -43,8 +43,8 @@ public class RentACarService {
 		return true;
 	}
 
-	public RentACar getRentACarInfo(RentACar rentACar) {
-		RentACar rentACarToReturn = rentACarRepository.findOneByName(rentACar.getName());
+	public RentACar getRentACarInfo(String rentACarName) {
+		RentACar rentACarToReturn = rentACarRepository.findOneByName(rentACarName);
 	
 		if(rentACarToReturn != null){
 			rentACarToReturn.getLocation().setService(null);

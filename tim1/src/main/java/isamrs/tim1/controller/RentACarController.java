@@ -25,7 +25,7 @@ public class RentACarController {
 	}
 
 	@RequestMapping(value = "/api/getRentACarInfo", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<RentACar> getRentACarInfo(@RequestBody RentACar rentACar) {
-		return new ResponseEntity<RentACar>(rentACarService.getRentACarInfo(rentACar), HttpStatus.OK);
+	public ResponseEntity<RentACar> getRentACarInfo(@RequestParam String rentACarName) {
+		return new ResponseEntity<RentACar>(rentACarService.getRentACarInfo(rentACarName), HttpStatus.OK);
 	}
 }
