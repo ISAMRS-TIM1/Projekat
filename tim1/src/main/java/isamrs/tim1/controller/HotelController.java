@@ -24,9 +24,9 @@ public class HotelController {
 			method = RequestMethod.POST,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> addHotel(
+	public ResponseEntity<String> addHotel(
 			@RequestBody Hotel hotel) {
-		return new ResponseEntity<Boolean>(hotelService.addHotel(hotel), HttpStatus.OK);
+		return new ResponseEntity<String>(hotelService.addHotel(hotel), HttpStatus.OK);
 	}
 	
 	@RequestMapping(
