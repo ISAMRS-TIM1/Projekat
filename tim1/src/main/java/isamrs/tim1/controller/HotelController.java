@@ -34,8 +34,8 @@ public class HotelController {
 			method = RequestMethod.PUT,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> editHotel(
+	public ResponseEntity<String> editHotel(
 			@RequestBody Hotel hotel, @RequestParam(required = true) String oldName) {
-		return new ResponseEntity<Boolean>(hotelService.editHotel(hotel, oldName), HttpStatus.OK);
+		return new ResponseEntity<String>(hotelService.editHotel(hotel, oldName), HttpStatus.OK);
 	}
 }
