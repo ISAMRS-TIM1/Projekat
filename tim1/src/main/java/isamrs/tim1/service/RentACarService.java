@@ -39,7 +39,17 @@ public class RentACarService {
 		} catch (Exception e) {
 			return false;
 		}
-		
+
 		return true;
+	}
+
+	public RentACar getRentACarInfo(String rentACarName) {
+		RentACar rentACarToReturn = rentACarRepository.findOneByName(rentACarName);
+	
+		if(rentACarToReturn != null){
+			rentACarToReturn.getLocation().setService(null);
+		}
+		
+		return rentACarToReturn;
 	}
 }
