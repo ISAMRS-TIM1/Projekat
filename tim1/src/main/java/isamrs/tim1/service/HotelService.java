@@ -9,26 +9,34 @@ import isamrs.tim1.repository.HotelRepository;
 
 @Service
 public class HotelService {
-	
+
 	@Autowired
 	private HotelRepository hotelRepository;
 
-	public Boolean addHotel(Hotel hotel) {
-		if(hotelRepository.findOneByName(hotel.getName()) != null) return false;
-		
-//		HotelAdmin admin = new HotelAdmin(); // current user
-//		admin.setHotel(hotel);
-//		hotel.getAdmins().add(admin);
-		
+	public String addHotel(Hotel hotel) {
+		if (hotelRepository.findOneByName(hotel.getName()) != null)
+			return "Hotel with the same name already exists.";
+
+		// HotelAdmin admin = new HotelAdmin(); // current user
+		// admin.setHotel(hotel);
+		// hotel.getAdmins().add(admin);
+
 		hotel.setId(null); // to ensure INSERT command
 		hotelRepository.save(hotel);
-		return true;
+		return null;
 	}
 
-	public Boolean editHotel(Hotel hotel, String oldName) {
+	public String editHotel(Hotel hotel, String oldName) {
 		Hotel hotelToEdit = hotelRepository.findOneByName(oldName);
 		if (hotelToEdit == null) {
-			return false;
+			return "Edited hotel does not exist.";
+		}
+
+		String newName = hotel.getName();
+		if (hotelRepository.findOneByName(newName) != null)
+			return "Name is already in use by some other hotel.";
+		if (newName != null) {
+			hotelToEdit.setName(newName);
 		}
 
 		String newDescription = hotel.getDescription();
@@ -36,19 +44,19 @@ public class HotelService {
 			hotelToEdit.setDescription(newDescription);
 		}
 
-		String newName = hotel.getName();
-		if (newName != null) {
-			hotelToEdit.setName(newName);
-		}
-
 		Location newLocation = hotel.getLocation();
 		if (newLocation != null) {
 			hotelToEdit.getLocation().setLatitude(hotel.getLocation().getLatitude());
 			hotelToEdit.getLocation().setLongitude(hotel.getLocation().getLongitude());
 		}
-
-		hotelRepository.save(hotelToEdit);
-		return true;
+		
+		try {
+			hotelRepository.save(hotelToEdit);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return "Database error.";
+		}
+		return null;
 	}
 
 }
