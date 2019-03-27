@@ -1,2 +1,6 @@
 # Eclipse workspace
 .metadata/**
+
+# database
+tim1/database.mv
+tim1/database.trace
