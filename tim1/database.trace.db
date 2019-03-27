@@ -1745,3 +1745,12 @@ org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "SELECT * VEHICLES[*
 SELECT * VEHICLES [42000-197]2019-03-27 13:20:05 jdbc[13]: exception
 org.h2.jdbc.JdbcSQLException: Table "RENATCARS" not found; SQL statement:
 SELECT * FROM RENATCARS [42102-197]
+2019-03-27 22:28:52 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "UPDATE USERS WHERE[*] USER_ID = 1 SET PHONE_NUMBER = +381665554444 "; expected "., AS, SET"; SQL statement:
+update users where user_id = 1 set phone_number = +381665554444 [42001-197]
+2019-03-27 22:29:27 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "UPDATE USERS WHERE[*] USER_ID = 1 SET PHONE_NUMBER = '+381665554444' "; expected "., AS, SET"; SQL statement:
+update users where user_id = 1 set phone_number = '+381665554444' [42001-197]
+2019-03-27 22:31:47 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "INSERT INTO AIRLINES VALUE[*](3, 3, 3, 'desss', 'name') "; expected "., (, DIRECT, SORTED, DEFAULT, VALUES, SET, (, WITH, SELECT, FROM"; SQL statement:
+insert into airlines value(3, 3, 3, 'desss', 'name') [42001-197]

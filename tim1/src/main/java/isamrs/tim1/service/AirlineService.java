@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import isamrs.tim1.model.Airline;
+import isamrs.tim1.model.Location;
 import isamrs.tim1.repository.AirlineRepository;
 
 @Service
@@ -12,25 +13,40 @@ public class AirlineService {
 	@Autowired
 	private AirlineRepository airlineRepository;
 	
-	public Boolean editProfile(Airline airline, String name) {
-		Airline airlineToEdit = airlineRepository.findOneByName(name);
+	public String editProfile(Airline airline, String oldName) {
+		Airline airlineToEdit = airlineRepository.findOneByName(oldName);
         if (airlineToEdit == null) {
-            return false;
+            return "Airline with given name does not exist.";
         }
-        airlineToEdit.setName(airline.getName());
-        airlineToEdit.setDescription(airline.getDescription());
-        if (airline.getLocation() != null) {
-        	airlineToEdit.getLocation().setLatitude(airline.getLocation().getLatitude());
-        	airlineToEdit.getLocation().setLongitude(airline.getLocation().getLongitude());
-        }
+        
+        String newName = airline.getName();
+		if (airlineRepository.findOneByName(newName) != null)
+			return "Name is already in use by some other airline.";
+		
+		if (newName != null) {
+			airlineToEdit.setName(newName);
+		}
+		
+		String newDescription = airline.getDescription();
+		if (newDescription != null) {
+			airlineToEdit.setDescription(newDescription);
+		}
+		
+		Location newLocation = airline.getLocation();
+		if (newLocation != null) {
+			airlineToEdit.getLocation().setLatitude(airline.getLocation().getLatitude());
+			airlineToEdit.getLocation().setLongitude(airline.getLocation().getLongitude());
+		}
+		
         try {
         	airlineRepository.save(airlineToEdit);
         }
         catch(Exception e) {
-        	return false;
+        	System.out.println(e.getMessage());
+			return "Database error.";
         }
         
-        return true;
+        return null;
 	}
 
 }
