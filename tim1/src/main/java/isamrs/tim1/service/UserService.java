@@ -12,22 +12,40 @@ public class UserService {
 	@Autowired
 	private UserRepository userRepository;
 
-	public boolean editProfile(User user) throws Exception {
+	public String editProfile(User user) throws Exception {
 		User userToEdit = userRepository.findOneByEmail(user.getEmail());
 		if (userToEdit == null) {
-			return false;
+			return "User with given email address does not exist!";
 		}
-		userToEdit.setFirstName(user.getFirstName());
-		userToEdit.setLastName(user.getLastName());
-		userToEdit.setAddress(user.getAddress());
-		userToEdit.setPhoneNumber(user.getPhoneNumber());
+		
+		String firstName = user.getFirstName();
+		if (firstName != null) {
+			userToEdit.setFirstName(firstName);
+		}
+		
+		String lastName = user.getLastName();
+		if (lastName != null) {
+			userToEdit.setLastName(lastName);
+		}
+		
+		String address = user.getAddress();
+		if (address != null) {
+			userToEdit.setAddress(address);
+		}
+
+		String phoneNumber = user.getPhoneNumber();
+		if (phoneNumber != null) {
+			userToEdit.setPhoneNumber(user.getPhoneNumber());
+		}
+	
 		try {
 			userRepository.save(userToEdit);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
-			return false;
+			return "Database error!";
 		}
-		return true;
+		
+		return null;
 	}
 
 }

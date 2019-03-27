@@ -21,11 +21,11 @@ public class AirlineController {
 	
 	@RequestMapping(
 			value = "/api/airlines",
-			method = RequestMethod.POST,
+			method = RequestMethod.PUT,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> editUserProfile(
-			@RequestBody Airline airline, @RequestParam String name) throws Exception {
-		return new ResponseEntity<Boolean>(airlineService.editProfile(airline, name), HttpStatus.OK);
+	public ResponseEntity<String> editAirline(
+			@RequestBody Airline airline, @RequestParam(required = true) String oldName) throws Exception {
+		return new ResponseEntity<String>(airlineService.editProfile(airline, oldName), HttpStatus.OK);
 	}
 }
