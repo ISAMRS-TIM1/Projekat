@@ -21,7 +21,7 @@ public class UserController {
 	private UserService userService;
 	
 	@RequestMapping(
-			value = "/api/users",
+			value = "/api/editUser",
 			method = RequestMethod.PUT,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE)

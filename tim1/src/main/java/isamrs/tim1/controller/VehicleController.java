@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import isamrs.tim1.dto.VehicleDTO;
 import isamrs.tim1.model.Vehicle;
 import isamrs.tim1.service.VehicleService;
 
@@ -24,7 +25,7 @@ public class VehicleController {
 			method = RequestMethod.POST,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ArrayList<Vehicle>> searchVehicles(@RequestBody Vehicle vehicle) {
-		return new ResponseEntity<ArrayList<Vehicle>>(vehicleService.searchVehicles(vehicle), HttpStatus.OK);
+	public ResponseEntity<ArrayList<VehicleDTO>> searchVehicles(@RequestBody Vehicle vehicle) {
+		return new ResponseEntity<ArrayList<VehicleDTO>>(vehicleService.searchVehicles(vehicle), HttpStatus.OK);
 	}
 }
