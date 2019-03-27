@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim1.model.Hotel;
@@ -26,5 +27,15 @@ public class HotelController {
 	public ResponseEntity<Boolean> addHotel(
 			@RequestBody Hotel hotel) {
 		return new ResponseEntity<Boolean>(hotelService.addHotel(hotel), HttpStatus.OK);
+	}
+	
+	@RequestMapping(
+			value = "/api/editHotel",
+			method = RequestMethod.PUT,
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Boolean> editHotel(
+			@RequestBody Hotel hotel, @RequestParam(required = true) String oldName) {
+		return new ResponseEntity<Boolean>(hotelService.editHotel(hotel, oldName), HttpStatus.OK);
 	}
 }
