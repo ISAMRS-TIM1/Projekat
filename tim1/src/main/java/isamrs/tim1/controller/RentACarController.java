@@ -23,4 +23,9 @@ public class RentACarController {
 			@RequestParam(required = true) String oldName) {
 		return new ResponseEntity<Boolean>(rentACarService.editProfile(rentACar, oldName), HttpStatus.OK);
 	}
+
+	@RequestMapping(value = "/api/getRentACarInfo", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<RentACar> getRentACarInfo(@RequestBody RentACar rentACar) {
+		return new ResponseEntity<RentACar>(rentACarService.getRentACarInfo(rentACar), HttpStatus.OK);
+	}
 }
