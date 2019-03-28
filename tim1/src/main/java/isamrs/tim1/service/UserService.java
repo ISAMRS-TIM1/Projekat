@@ -15,7 +15,7 @@ public class UserService {
 	public String editProfile(User user) throws Exception {
 		User userToEdit = userRepository.findOneByEmail(user.getEmail());
 		if (userToEdit == null) {
-			return "User with given email address does not exist!";
+			return "User with given email address does not exist.";
 		}
 		
 		String firstName = user.getFirstName();
@@ -42,7 +42,7 @@ public class UserService {
 			userRepository.save(userToEdit);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
-			return "Database error!";
+			return "Database error.";
 		}
 		
 		return null;

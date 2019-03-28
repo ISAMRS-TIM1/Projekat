@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import isamrs.tim1.dto.VehicleDTO;
 import isamrs.tim1.model.FuelType;
 import isamrs.tim1.model.Vehicle;
 import isamrs.tim1.model.VehicleType;
@@ -15,7 +16,7 @@ public class VehicleService {
 	@Autowired
 	private VehicleRepository vehicleRepository;
 
-	public ArrayList<Vehicle> searchVehicles(Vehicle vehicle) {
+	public ArrayList<VehicleDTO> searchVehicles(Vehicle vehicle) {
 		String model = vehicle.getModel();
 
 		if (model == null) {
@@ -61,10 +62,11 @@ public class VehicleService {
 		ArrayList<Vehicle> searchResults = this.vehicleRepository.findByParameters(vehicle.getRentACar().getId(), model,
 				producer, year, numStr, ftStr, vtStr);
 
+		ArrayList<VehicleDTO> toBeReturned = new ArrayList<VehicleDTO>();
 		for (Vehicle v : searchResults) {
-			v.setRentACar(null);
+			toBeReturned.add(new VehicleDTO(v));
 		}
 
-		return searchResults;
+		return toBeReturned;
 	}
 }

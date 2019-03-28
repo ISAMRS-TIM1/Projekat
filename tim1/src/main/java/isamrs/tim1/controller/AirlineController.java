@@ -20,7 +20,7 @@ public class AirlineController {
 	private AirlineService airlineService;
 	
 	@RequestMapping(
-			value = "/api/airlines",
+			value = "/api/editAirline",
 			method = RequestMethod.PUT,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE)
