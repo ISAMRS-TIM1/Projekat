@@ -1,5 +1,6 @@
 # Eclipse workspace
 .metadata/**
+.recommenders/**
 
 # database
 tim1/database.mv
