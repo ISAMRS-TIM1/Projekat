@@ -28,52 +28,46 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "Users")
-@Inheritance(strategy=InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.JOINED)
 public class User implements Serializable, UserDetails {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "user_id", unique = true, nullable = false)
 	private Long id;
-	
+
 	@Column(name = "email", unique = true, nullable = false)
-	@Pattern(regexp="^(.+)@(.+)$")
+	@Pattern(regexp = "^(.+)@(.+)$")
 	private String email;
 
 	@Column(name = "password", unique = false, nullable = false)
 	private String password;
-	
+
 	@Column(name = "firstName", unique = false, nullable = false)
-	@Pattern(regexp="[A-Z][a-z]*")
+	@Pattern(regexp = "[A-Z][a-z]*")
 	private String firstName;
-	
+
 	@Column(name = "lastName", unique = false, nullable = false)
-	@Pattern(regexp="[A-Z][a-z]*")
+	@Pattern(regexp = "[A-Z][a-z]*")
 	private String lastName;
 
 	@Column(name = "address", unique = false, nullable = false)
 	private String address;
 
 	@Column(name = "phoneNumber", unique = false, nullable = false)
-	@Pattern(regexp="\\+[0-9]{12}")
+	@Pattern(regexp = "\\+[0-9]{12}")
 	private String phoneNumber;
 
-	@Column(name = "userType", unique = false, nullable = false)
-	private UserType userType;
+	@Column(name = "last_password_reset_date")
+	private Timestamp lastPasswordResetDate;
 
-	
-    @Column(name = "last_password_reset_date")
-    private Timestamp lastPasswordResetDate;
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinTable(name = "user_authority", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"), inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
+	private List<Authority> authorities;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "user_authority",
-            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
-    private List<Authority> authorities;
+	@Column(name = "enabled")
+	private boolean enabled;
 
-    @Column(name = "enabled")
-    private boolean enabled;
-    
 	public User() {
 		super();
 	}
@@ -99,9 +93,9 @@ public class User implements Serializable, UserDetails {
 	}
 
 	public void setPassword(String password) {
-        Timestamp now = new Timestamp(DateTime.now().getMillis());
-        this.setLastPasswordResetDate( now );
-        this.password = password;
+		Timestamp now = new Timestamp(DateTime.now().getMillis());
+		this.setLastPasswordResetDate(now);
+		this.password = password;
 	}
 
 	public String getFirstName() {
@@ -136,15 +130,6 @@ public class User implements Serializable, UserDetails {
 		this.phoneNumber = phoneNumber;
 	}
 
-	public UserType getUserType() {
-		return userType;
-	}
-
-	public void setUserType(UserType userType) {
-		this.userType = userType;
-	}
-
-
 	public Timestamp getLastPasswordResetDate() {
 		return lastPasswordResetDate;
 	}
@@ -167,23 +152,23 @@ public class User implements Serializable, UserDetails {
 		return this.email;
 	}
 
-    @JsonIgnore
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+	@JsonIgnore
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
 
-    @JsonIgnore
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+	@JsonIgnore
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
 
-    @JsonIgnore
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+	@JsonIgnore
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
 
 	@Override
 	public boolean isEnabled() {

@@ -47,12 +47,8 @@ public class TokenUtils {
 	// Functions for generating new JWT token
 
 	public String generateToken(String username, Device device) {
-		return Jwts.builder()
-				.setIssuer(APP_NAME)
-				.setSubject(username)
-				.setAudience(generateAudience(device))
-				.setIssuedAt(timeProvider.now())
-				.setExpiration(generateExpirationDate(device))
+		return Jwts.builder().setIssuer(APP_NAME).setSubject(username).setAudience(generateAudience(device))
+				.setIssuedAt(timeProvider.now()).setExpiration(generateExpirationDate(device))
 				.signWith(SIGNATURE_ALGORITHM, SECRET).compact();
 	}
 
@@ -80,9 +76,7 @@ public class TokenUtils {
 		try {
 			final Claims claims = this.getAllClaimsFromToken(token);
 			claims.setIssuedAt(timeProvider.now());
-			refreshedToken = Jwts.builder()
-					.setClaims(claims)
-					.setExpiration(generateExpirationDate(device))
+			refreshedToken = Jwts.builder().setClaims(claims).setExpiration(generateExpirationDate(device))
 					.signWith(SIGNATURE_ALGORITHM, SECRET).compact();
 		} catch (Exception e) {
 			refreshedToken = null;
@@ -102,7 +96,7 @@ public class TokenUtils {
 		User user = (User) userDetails;
 		final String username = getUsernameFromToken(token);
 		final Date created = getIssuedAtDateFromToken(token);
-		
+
 		return (username != null && username.equals(userDetails.getUsername())
 				&& !isCreatedBeforeLastPasswordReset(created, user.getLastPasswordResetDate()));
 	}
@@ -126,10 +120,7 @@ public class TokenUtils {
 	private Claims getAllClaimsFromToken(String token) {
 		Claims claims;
 		try {
-			claims = Jwts.parser()
-					.setSigningKey(SECRET)
-					.parseClaimsJws(token)
-					.getBody();
+			claims = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody();
 		} catch (Exception e) {
 			claims = null;
 		}
