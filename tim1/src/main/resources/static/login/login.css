@@ -10,14 +10,14 @@ body {
 	transform: translate(-50%, -50%);
 	width: 40%;
 	background: #5994FF;
-	border: 3px solid #B27A00;
-  	border-radius: 50px 20px;
-  	font-size: 20px;
+	border: 0.24vw solid #B27A00;
+  	border-radius: 4vw 1.6vw;
+  	font-size: 1.6vw;
 }
 
 form{
-	padding: 35px;
-	padding-bottom: 20px;
+	padding: 2.8vw;
+	padding-bottom: 1.6vw;
 }
 
 button[type="submit"]{
@@ -25,16 +25,16 @@ button[type="submit"]{
 	margin-left: 25%;
 	background: #0D63FF;
 	color: white;
-  	font-size: 20px;
-  	border: 2px solid #B27A00;
+  	font-size: 1.6vw;
+  	border: 0.16vw solid #B27A00;
 }
 
 button[type="button"]{
-	margin-left: 25%;
+	margin-left: 23%;
 	background: none;
 	color: white;
-  	font-size: 20px;
-  	margin-top: 10px;
+  	font-size: 1.6vw;
+  	margin-top: 0.8vw;
 }
 
 #background-img{
