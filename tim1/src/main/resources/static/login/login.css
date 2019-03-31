@@ -1,0 +1,47 @@
+body {
+	background: #0D63FF;
+}
+
+#formDiv {
+	margin: 0;
+	position: absolute;
+	top: 60%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 40%;
+	background: #5994FF;
+	border: 3px solid #B27A00;
+  	border-radius: 50px 20px;
+  	font-size: 20px;
+}
+
+form{
+	padding: 35px;
+	padding-bottom: 20px;
+}
+
+button[type="submit"]{
+	width: 50%;
+	margin-left: 25%;
+	background: #0D63FF;
+	color: white;
+  	font-size: 20px;
+  	border: 2px solid #B27A00;
+}
+
+button[type="button"]{
+	margin-left: 25%;
+	background: none;
+	color: white;
+  	font-size: 20px;
+  	margin-top: 10px;
+}
+
+#background-img{
+	margin: 0;
+	position: absolute;
+	top: 38%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: -1;
+}
