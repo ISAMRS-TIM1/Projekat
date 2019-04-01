@@ -2,6 +2,7 @@ package isamrs.tim1.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -28,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "Users")
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class User implements Serializable, UserDetails {
 
 	@Id
@@ -70,6 +71,7 @@ public class User implements Serializable, UserDetails {
 
 	public User() {
 		super();
+		authorities = new ArrayList<Authority>();
 	}
 
 	public Long getId() {
@@ -177,6 +179,10 @@ public class User implements Serializable, UserDetails {
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
 	private static final long serialVersionUID = -7894899186482431843L;

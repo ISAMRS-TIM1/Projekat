@@ -1,7 +1,10 @@
 package isamrs.tim1.model;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,16 +13,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "vehicles")
 public class Vehicle implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2140092751859938725L;
 
+	private static final long serialVersionUID = 2140092751859938725L;
+	
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "vehicle_id", unique = true, nullable = false)
@@ -40,6 +43,12 @@ public class Vehicle implements Serializable {
 	@Column(name = "fuelType", unique = false, nullable = false)
 	private FuelType fuelType;
 
+	@Column(name = "averageGrade", unique = false, nullable = false)
+	private Double averageGrade;
+
+	@Column(name = "pricePerDay", unique = false, nullable = false)
+	private Integer pricePerDay;
+
 	@Column(name = "vehicleType", unique = false, nullable = false)
 	private VehicleType vehicleType;
 
@@ -47,6 +56,20 @@ public class Vehicle implements Serializable {
 	@JoinColumn(name = "rentACar")
 	private RentACar rentACar;
 
+	@OneToMany(mappedBy = "vehicle", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<QuickVehicleReservation> quickReservations;
+
+	@OneToMany(mappedBy = "vehicle", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<VehicleReservation> normalReservations;
+	
+
+	public Vehicle() {
+		super();
+		quickReservations = new HashSet<QuickVehicleReservation>();
+		normalReservations = new HashSet<VehicleReservation>();
+	}
+
+	
 	public Integer getId() {
 		return id;
 	}
@@ -103,16 +126,48 @@ public class Vehicle implements Serializable {
 		this.vehicleType = vehicleType;
 	}
 
-	public Vehicle() {
-		super();
-	}
-
 	public RentACar getRentACar() {
 		return rentACar;
 	}
 
 	public void setRentACar(RentACar rentACar) {
 		this.rentACar = rentACar;
+	}
+
+	public Double getAverageGrade() {
+		return averageGrade;
+	}
+
+	public void setAverageGrade(Double averageGrade) {
+		this.averageGrade = averageGrade;
+	}
+
+	public Integer getPricePerDay() {
+		return pricePerDay;
+	}
+
+	public void setPricePerDay(Integer pricePerDay) {
+		this.pricePerDay = pricePerDay;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public Set<QuickVehicleReservation> getQuickReservations() {
+		return quickReservations;
+	}
+
+	public void setQuickReservations(Set<QuickVehicleReservation> quickReservations) {
+		this.quickReservations = quickReservations;
+	}
+
+	public Set<VehicleReservation> getNormalReservations() {
+		return normalReservations;
+	}
+
+	public void setNormalReservations(Set<VehicleReservation> normalReservations) {
+		this.normalReservations = normalReservations;
 	}
 
 	@Override

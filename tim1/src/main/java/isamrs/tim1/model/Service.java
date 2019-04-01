@@ -1,6 +1,8 @@
 package isamrs.tim1.model;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,17 +13,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 @Entity
-@Table(name = "services")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class Service implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1401956470554926899L;
 
 	@Id
@@ -36,16 +35,21 @@ public abstract class Service implements Serializable {
 	private String description;
 
 	@Column(name = "averageGrade", unique = false, nullable = true)
-	private double averageGrade;
+	private Double averageGrade;
 
 	@Column(name = "averagePrice", unique = false, nullable = true)
-	private double averagePrice;
+	private Double averagePrice;
 
-	@OneToOne(mappedBy = "service", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "location")
 	private Location location;
 
+	@OneToMany(mappedBy = "service", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<ServiceGrade> serviceGrades;
+	
 	public Service() {
 		super();
+		serviceGrades = new HashSet<ServiceGrade>();
 	}
 
 	public Integer getId() {
@@ -72,19 +76,19 @@ public abstract class Service implements Serializable {
 		this.description = description;
 	}
 
-	public double getAverageGrade() {
+	public Double getAverageGrade() {
 		return averageGrade;
 	}
 
-	public void setAverageGrade(double averageGrade) {
+	public void setAverageGrade(Double averageGrade) {
 		this.averageGrade = averageGrade;
 	}
 
-	public double getAveragePrice() {
+	public Double getAveragePrice() {
 		return averagePrice;
 	}
 
-	public void setAveragePrice(double averagePrice) {
+	public void setAveragePrice(Double averagePrice) {
 		this.averagePrice = averagePrice;
 	}
 
@@ -92,7 +96,21 @@ public abstract class Service implements Serializable {
 		return location;
 	}
 
+
 	public void setLocation(Location location) {
 		this.location = location;
 	}
+
+	public Set<ServiceGrade> getServiceGrades() {
+		return serviceGrades;
+	}
+	
+	public void setServiceGrades(Set<ServiceGrade> serviceGrades) {
+		this.serviceGrades = serviceGrades;
+	}
+	
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
 }
