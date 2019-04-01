@@ -15,9 +15,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "vehicles")
 public class Vehicle implements Serializable {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 2140092751859938725L;
 
 	@Id
@@ -39,6 +37,12 @@ public class Vehicle implements Serializable {
 
 	@Column(name = "fuelType", unique = false, nullable = false)
 	private FuelType fuelType;
+
+	@Column(name = "averageGrade", unique = false, nullable = false)
+	private Double averageGrade;
+
+	@Column(name = "pricePerDay", unique = false, nullable = false)
+	private Integer pricePerDay;
 
 	@Column(name = "vehicleType", unique = false, nullable = false)
 	private VehicleType vehicleType;
@@ -113,6 +117,26 @@ public class Vehicle implements Serializable {
 
 	public void setRentACar(RentACar rentACar) {
 		this.rentACar = rentACar;
+	}
+
+	public Double getAverageGrade() {
+		return averageGrade;
+	}
+
+	public void setAverageGrade(Double averageGrade) {
+		this.averageGrade = averageGrade;
+	}
+
+	public Integer getPricePerDay() {
+		return pricePerDay;
+	}
+
+	public void setPricePerDay(Integer pricePerDay) {
+		this.pricePerDay = pricePerDay;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
 	@Override

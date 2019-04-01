@@ -19,9 +19,6 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class Service implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1401956470554926899L;
 
 	@Id
@@ -95,4 +92,9 @@ public abstract class Service implements Serializable {
 	public void setLocation(Location location) {
 		this.location = location;
 	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
 }

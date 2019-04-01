@@ -17,15 +17,16 @@ import javax.persistence.Table;
 @Table(name = "branchOffices")
 public class BranchOffice implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 8729860394188669019L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "branchOffice_id", unique = true, nullable = false)
 	private Long id;
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 
 	@Column(name = "name", unique = true, nullable = false)
 	private String name;

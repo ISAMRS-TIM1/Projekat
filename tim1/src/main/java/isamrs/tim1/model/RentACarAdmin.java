@@ -8,27 +8,28 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class HotelAdmin extends User implements Serializable {
+public class RentACarAdmin extends User implements Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "hotel")
-	private Hotel hotel;
+	@JoinColumn(name = "rentacar")
+	private RentACar rentACar;
 
-	public HotelAdmin() {
+	public RentACarAdmin() {
 		super();
 	}
 
-	public Hotel getHotel() {
-		return hotel;
+	public RentACar getRentACar() {
+		return rentACar;
 	}
 
-	public void setHotel(Hotel hotel) {
-		this.hotel = hotel;
+	public void setRentACar(RentACar rentACar) {
+		this.rentACar = rentACar;
 	}
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
 
-	private static final long serialVersionUID = -930796955501309612L;
+	private static final long serialVersionUID = 1892679582107777957L;
+
 }
