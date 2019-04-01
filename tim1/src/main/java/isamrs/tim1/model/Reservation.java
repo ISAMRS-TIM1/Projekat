@@ -13,6 +13,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
@@ -34,9 +35,9 @@ public abstract class Reservation implements Serializable {
 	@Column(name = "discount", unique = false, nullable = false)
 	private Integer discount;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user")
-	private RegisteredUser user;
+	private UserReservation user;
 
 	public Reservation() {
 		super();
@@ -74,11 +75,11 @@ public abstract class Reservation implements Serializable {
 		this.discount = discount;
 	}
 
-	public RegisteredUser getUser() {
+	public UserReservation getUser() {
 		return user;
 	}
 
-	public void setUser(RegisteredUser user) {
+	public void setUser(UserReservation user) {
 		this.user = user;
 	}
 

@@ -1,10 +1,9 @@
 package isamrs.tim1.model;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,7 +12,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -23,8 +21,7 @@ public class Flight {
 
 	public Flight() {
 		super();
-		locationsOfConnecting = new HashSet<String>();
-		reservations = new HashSet<FlightReservation>();
+		locationsOfConnecting = new ArrayList<String>();
 	}
 
 	@Id
@@ -48,22 +45,17 @@ public class Flight {
 	private Integer numberOfFlightConnections;
 
 	@Column(name = "locationsOfConnecting", unique = false, nullable = false)
-	private Set<String> locationsOfConnecting;
+	private ArrayList<String> locationsOfConnecting;
 
 	@Column(name = "ticketPrice", unique = false, nullable = false)
-	private Integer ticketPrice;
+	private Double ticketPrice;
 
-	/*
-	 * @Column(name = "luggagePricelist", unique = false, nullable = false)
-	 * private Map<String, Integer> luggagePricelist;
-	 */
+	@Column(name = "pricePerBag", unique = false, nullable = false)
+	private Double pricePerBag;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "airline")
 	private Airline airline;
-
-	@OneToMany(mappedBy = "flight", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<FlightReservation> reservations;
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "startDestination")
@@ -121,12 +113,20 @@ public class Flight {
 		this.numberOfFlightConnections = numberOfFlightConnections;
 	}
 
-	public Integer getTicketPrice() {
+	public Double getTicketPrice() {
 		return ticketPrice;
 	}
 
-	public void setTicketPrice(Integer ticketPrice) {
+	public void setTicketPrice(Double ticketPrice) {
 		this.ticketPrice = ticketPrice;
+	}
+
+	public Double getPricePerBag() {
+		return pricePerBag;
+	}
+
+	public void setPricePerBag(Double pricePerBag) {
+		this.pricePerBag = pricePerBag;
 	}
 
 	public Airline getAirline() {
@@ -135,14 +135,6 @@ public class Flight {
 
 	public void setAirline(Airline airline) {
 		this.airline = airline;
-	}
-
-	public Set<FlightReservation> getReservations() {
-		return reservations;
-	}
-
-	public void setReservations(Set<FlightReservation> reservations) {
-		this.reservations = reservations;
 	}
 
 	public Destination getStartDestination() {
@@ -161,12 +153,13 @@ public class Flight {
 		this.endDestination = endDestination;
 	}
 
-	public Set<String> getLocationsOfConnecting() {
+	public ArrayList<String> getLocationsOfConnecting() {
 		return locationsOfConnecting;
 	}
 
-	public void setLocationsOfConnecting(Set<String> locationsOfConnecting) {
+	public void setLocationsOfConnecting(ArrayList<String> locationsOfConnecting) {
 		this.locationsOfConnecting = locationsOfConnecting;
 	}
 
+	
 }

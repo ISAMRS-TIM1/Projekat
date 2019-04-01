@@ -1,7 +1,10 @@
 package isamrs.tim1.model;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -17,7 +21,8 @@ import javax.persistence.Table;
 public class Vehicle implements Serializable {
 
 	private static final long serialVersionUID = 2140092751859938725L;
-
+	
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "vehicle_id", unique = true, nullable = false)
@@ -51,6 +56,20 @@ public class Vehicle implements Serializable {
 	@JoinColumn(name = "rentACar")
 	private RentACar rentACar;
 
+	@OneToMany(mappedBy = "vehicle", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<QuickVehicleReservation> quickReservations;
+
+	@OneToMany(mappedBy = "vehicle", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<VehicleReservation> normalReservations;
+	
+
+	public Vehicle() {
+		super();
+		quickReservations = new HashSet<QuickVehicleReservation>();
+		normalReservations = new HashSet<VehicleReservation>();
+	}
+
+	
 	public Integer getId() {
 		return id;
 	}
@@ -107,10 +126,6 @@ public class Vehicle implements Serializable {
 		this.vehicleType = vehicleType;
 	}
 
-	public Vehicle() {
-		super();
-	}
-
 	public RentACar getRentACar() {
 		return rentACar;
 	}
@@ -137,6 +152,22 @@ public class Vehicle implements Serializable {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public Set<QuickVehicleReservation> getQuickReservations() {
+		return quickReservations;
+	}
+
+	public void setQuickReservations(Set<QuickVehicleReservation> quickReservations) {
+		this.quickReservations = quickReservations;
+	}
+
+	public Set<VehicleReservation> getNormalReservations() {
+		return normalReservations;
+	}
+
+	public void setNormalReservations(Set<VehicleReservation> normalReservations) {
+		this.normalReservations = normalReservations;
 	}
 
 	@Override

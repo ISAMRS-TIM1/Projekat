@@ -10,8 +10,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "PassengerSeats")
 public class PassengerSeat implements Serializable {
 
 	private static final long serialVersionUID = 2760793982505559478L;
@@ -22,8 +24,12 @@ public class PassengerSeat implements Serializable {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "reservation")
-	private FlightReservation reservation;
+	@JoinColumn(name = "normalReservation")
+	private FlightReservation normalReservation;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "quickReservation")
+	private QuickFlightReservation quickReservation;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "seat")
@@ -50,12 +56,20 @@ public class PassengerSeat implements Serializable {
 		this.id = id;
 	}
 
-	public FlightReservation getReservation() {
-		return reservation;
+	public FlightReservation getNormalReservation() {
+		return normalReservation;
 	}
 
-	public void setReservation(FlightReservation reservation) {
-		this.reservation = reservation;
+	public void setNormalReservation(FlightReservation normalReservation) {
+		this.normalReservation = normalReservation;
+	}
+
+	public QuickFlightReservation getQuickReservation() {
+		return quickReservation;
+	}
+
+	public void setQuickReservation(QuickFlightReservation quickReservation) {
+		this.quickReservation = quickReservation;
 	}
 
 	public Seat getSeat() {

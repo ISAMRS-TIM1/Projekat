@@ -20,9 +20,12 @@ public class RentACar extends Service implements Serializable {
 	@OneToMany(mappedBy = "rentACar", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Vehicle> vehicles;
 
-	@OneToMany(mappedBy = "rentACar", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<QuickCarReservation> quickReservations;
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<QuickVehicleReservation> quickReservations;
 
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<VehicleReservation> normalReservations;
+	
 	@OneToMany(mappedBy = "rentACar", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<RentACarAdmin> admins;
 
@@ -49,14 +52,16 @@ public class RentACar extends Service implements Serializable {
 		branchOffices = new HashSet<BranchOffice>();
 		admins = new HashSet<RentACarAdmin>();
 		vehicles = new HashSet<Vehicle>();
-		quickReservations = new HashSet<QuickCarReservation>();
+		quickReservations = new HashSet<QuickVehicleReservation>();
+		normalReservations = new HashSet<VehicleReservation>();
+
 	}
 
-	public Set<QuickCarReservation> getQuickReservations() {
+	public Set<QuickVehicleReservation> getQuickReservations() {
 		return quickReservations;
 	}
 
-	public void setQuickReservations(Set<QuickCarReservation> quickReservations) {
+	public void setQuickReservations(Set<QuickVehicleReservation> quickReservations) {
 		this.quickReservations = quickReservations;
 	}
 
@@ -66,6 +71,15 @@ public class RentACar extends Service implements Serializable {
 
 	public void setAdmins(Set<RentACarAdmin> admins) {
 		this.admins = admins;
+	}
+
+	
+	public Set<VehicleReservation> getNormalReservations() {
+		return normalReservations;
+	}
+
+	public void setNormalReservations(Set<VehicleReservation> normalReservations) {
+		this.normalReservations = normalReservations;
 	}
 
 	public static long getSerialversionuid() {

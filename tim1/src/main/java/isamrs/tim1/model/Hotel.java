@@ -18,7 +18,8 @@ public class Hotel extends Service implements Serializable {
 		additionalServices = new HashSet<HotelAdditionalService>();
 		rooms = new HashSet<HotelRoom>();
 		admins = new HashSet<HotelAdmin>();
-		quickReservations = new HashSet<QuickHotelRoomReservation>();
+		quickReservations = new HashSet<QuickHotelReservation>();
+		normalReservations = new HashSet<HotelReservation>();
 	}
 
 	@OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -30,14 +31,17 @@ public class Hotel extends Service implements Serializable {
 	@OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<HotelAdmin> admins;
 
-	@OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<QuickHotelRoomReservation> quickReservations;
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<QuickHotelReservation> quickReservations;
+	
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<HotelReservation> normalReservations;
 
-	public Set<QuickHotelRoomReservation> getQuickReservations() {
+	public Set<QuickHotelReservation> getQuickReservations() {
 		return quickReservations;
 	}
 
-	public void setQuickReservations(Set<QuickHotelRoomReservation> quickReservations) {
+	public void setQuickReservations(Set<QuickHotelReservation> quickReservations) {
 		this.quickReservations = quickReservations;
 	}
 
@@ -63,6 +67,15 @@ public class Hotel extends Service implements Serializable {
 
 	public void setAdmins(Set<HotelAdmin> admins) {
 		this.admins = admins;
+	}
+	
+
+	public Set<HotelReservation> getNormalReservations() {
+		return normalReservations;
+	}
+
+	public void setNormalReservations(Set<HotelReservation> normalReservations) {
+		this.normalReservations = normalReservations;
 	}
 
 	public static long getSerialversionuid() {

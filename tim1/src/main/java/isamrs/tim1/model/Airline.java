@@ -7,9 +7,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -23,12 +20,14 @@ public class Airline extends Service implements Serializable {
 	@OneToMany(mappedBy = "airline", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<AirlineAdmin> admins;
 
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinTable(name = "airline_destinations", joinColumns = @JoinColumn(name = "airline_id", referencedColumnName = "service_id"), inverseJoinColumns = @JoinColumn(name = "destination_id", referencedColumnName = "destination_id"))
+	@OneToMany(mappedBy = "airline", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<Destination> destinations;
 
-	@OneToMany(mappedBy = "airline", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<QuickFlightReservationTicket> quickReservations;
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<QuickFlightReservation> quickReservations;
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<FlightReservation> normalReservations;
 
 	@OneToMany(mappedBy = "airline", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<PlaneSegment> planeSegments;
@@ -37,10 +36,12 @@ public class Airline extends Service implements Serializable {
 
 	public Airline() {
 		super();
+		flights = new HashSet<Flight>();
 		admins = new HashSet<AirlineAdmin>();
 		destinations = new HashSet<Destination>();
-		quickReservations = new HashSet<QuickFlightReservationTicket>();
+		quickReservations = new HashSet<QuickFlightReservation>();
 		planeSegments = new HashSet<PlaneSegment>();
+		normalReservations = new HashSet<FlightReservation>();
 	}
 
 	public Set<Flight> getFlights() {
@@ -67,11 +68,11 @@ public class Airline extends Service implements Serializable {
 		this.destinations = destinations;
 	}
 
-	public Set<QuickFlightReservationTicket> getQuickReservations() {
+	public Set<QuickFlightReservation> getQuickReservations() {
 		return quickReservations;
 	}
 
-	public void setQuickReservations(Set<QuickFlightReservationTicket> quickReservations) {
+	public void setQuickReservations(Set<QuickFlightReservation> quickReservations) {
 		this.quickReservations = quickReservations;
 	}
 
@@ -81,6 +82,15 @@ public class Airline extends Service implements Serializable {
 
 	public void setPlaneSegments(Set<PlaneSegment> planeSegments) {
 		this.planeSegments = planeSegments;
+	}
+
+	
+	public Set<FlightReservation> getNormalReservations() {
+		return normalReservations;
+	}
+
+	public void setNormalReservations(Set<FlightReservation> normalReservations) {
+		this.normalReservations = normalReservations;
 	}
 
 	public static long getSerialversionuid() {
