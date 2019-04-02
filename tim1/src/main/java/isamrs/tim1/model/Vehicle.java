@@ -7,6 +7,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -41,6 +43,7 @@ public class Vehicle implements Serializable {
 	private Integer numberOfSeats;
 
 	@Column(name = "fuelType", unique = false, nullable = false)
+	@Enumerated(EnumType.STRING)
 	private FuelType fuelType;
 
 	@Column(name = "averageGrade", unique = false, nullable = false)
@@ -50,6 +53,7 @@ public class Vehicle implements Serializable {
 	private Integer pricePerDay;
 
 	@Column(name = "vehicleType", unique = false, nullable = false)
+	@Enumerated(EnumType.STRING)
 	private VehicleType vehicleType;
 
 	@ManyToOne(fetch = FetchType.LAZY)

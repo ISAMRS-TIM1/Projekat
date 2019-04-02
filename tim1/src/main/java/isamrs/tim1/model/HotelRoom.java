@@ -1,5 +1,6 @@
 package isamrs.tim1.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,7 +18,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "HotelRooms")
-public class HotelRoom {
+public class HotelRoom implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -33,23 +34,27 @@ public class HotelRoom {
 	@Column(name = "roomNumber", unique = false, nullable = false)
 	private Integer roomNumber;
 
-	@Column(name = "priceOneNight", unique = false, nullable = false)
-	private Double priceOneNight;
+	@Column(name = "defaultPriceOneNight", unique = false, nullable = false)
+	private Double defaultPriceOneNight;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "hotel")
 	private Hotel hotel;
-	
+
+	@OneToMany(mappedBy = "hotelRoom", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<SeasonalHotelRoomPrice> seasonalPrices;
+
 	@OneToMany(mappedBy = "hotelRoom", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<QuickHotelReservation> quickReservations;
-	
+
 	@OneToMany(mappedBy = "hotelRoom", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<HotelReservation> normalReservations;
-	
+
 	public HotelRoom() {
 		super();
 		quickReservations = new HashSet<QuickHotelReservation>();
 		normalReservations = new HashSet<HotelReservation>();
+		seasonalPrices = new HashSet<SeasonalHotelRoomPrice>();
 	}
 
 	public Double getAverageGrade() {
@@ -76,12 +81,12 @@ public class HotelRoom {
 		this.roomNumber = roomNumber;
 	}
 
-	public Double getPriceOneNight() {
-		return priceOneNight;
+	public Double getDefaultPriceOneNight() {
+		return defaultPriceOneNight;
 	}
 
-	public void setPriceOneNight(Double priceOneNight) {
-		this.priceOneNight = priceOneNight;
+	public void setDefaultPriceOneNight(Double defaultPriceOneNight) {
+		this.defaultPriceOneNight = defaultPriceOneNight;
 	}
 
 	public Integer getId() {
@@ -116,7 +121,17 @@ public class HotelRoom {
 		this.normalReservations = normalReservations;
 	}
 
-	
-	
+	public Set<SeasonalHotelRoomPrice> getSeasonalPrices() {
+		return seasonalPrices;
+	}
 
+	public void setSeasonalPrices(Set<SeasonalHotelRoomPrice> seasonalPrices) {
+		this.seasonalPrices = seasonalPrices;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	private static final long serialVersionUID = 1359942200118829407L;
 }
