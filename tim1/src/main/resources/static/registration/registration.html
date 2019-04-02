@@ -2,9 +2,71 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Insert title here</title>
+<title>Registration</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" type="image/png" href="login/favicon.png" />
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="registration/registration.css">
+<link rel="stylesheet"
+	href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="auth/auth.js"></script>
+<script src="registration/registration.js"></script>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 </head>
 <body>
-
+	<div class="container">
+		<div id="formDiv">
+			<form id="registrationForm">
+				<div id="leftSide">
+					<div class="form-group">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+							<input class="form-control" type="text" name="email" placeholder="Email" required autofocus>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+							<input class="form-control" type="text" name="fname" placeholder="First name" required>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="glyphicon glyphicon-phone"></i></span>
+							<input class="form-control" type="text" name="phone" placeholder="Phone number" required>
+						</div>
+					</div>
+				</div>
+				<div id="rightSide">
+					<div class="form-group">
+						<div class="input-group">
+							<span class="input-group-addon" id="eye"><i class="glyphicon glyphicon-eye-close" id="eye-icon"></i></span>
+							<input class="form-control" type="password" name="password" placeholder="Password" required>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+							<input class="form-control" type="text" name="lname" placeholder="Last name" required>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="glyphicon glyphicon-map-marker"></i></span>
+							<input class="form-control" type="text" name="address" placeholder="Address" required>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
 </body>
 </html>
