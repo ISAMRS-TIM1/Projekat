@@ -17,17 +17,17 @@ public class UserService {
 		if (userToEdit == null) {
 			return "User with given email address does not exist.";
 		}
-		
+
 		String firstName = user.getFirstName();
 		if (firstName != null) {
 			userToEdit.setFirstName(firstName);
 		}
-		
+
 		String lastName = user.getLastName();
 		if (lastName != null) {
 			userToEdit.setLastName(lastName);
 		}
-		
+
 		String address = user.getAddress();
 		if (address != null) {
 			userToEdit.setAddress(address);
@@ -37,14 +37,14 @@ public class UserService {
 		if (phoneNumber != null) {
 			userToEdit.setPhoneNumber(user.getPhoneNumber());
 		}
-	
+
 		try {
 			userRepository.save(userToEdit);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return "Database error.";
 		}
-		
+
 		return null;
 	}
 

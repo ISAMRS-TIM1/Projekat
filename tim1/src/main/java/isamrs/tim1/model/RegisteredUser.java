@@ -11,10 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 @Entity
-@Table(name = "RegisteredUsers")
 public class RegisteredUser extends User {
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

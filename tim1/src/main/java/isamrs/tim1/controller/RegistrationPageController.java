@@ -6,9 +6,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class LoginPageController {
-	@GetMapping("/")
-	public String showLoginPage(Map<String, Object> model){
-		return "login/login.html";
+public class RegistrationPageController {
+	@GetMapping("/register")
+	public String showRegistrationPage(Map<String, Object> model){
+		return "registration/registration.html";
 	}
 }

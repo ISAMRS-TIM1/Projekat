@@ -1,6 +1,8 @@
-var rootURL1 = "../auth/login/"
-var rootURL2 = "../index/index.html"
-var rootURL3 = "../registration/registration.html"
+var rootURL1 = "../auth/login/";
+var rootURL2 = "../index/index.html";
+var rootURL3 = "../register";
+	
+var TOKEN_KEY = 'jwtToken';
 	
 $(document).on('submit', '#loginForm', function(e){
 	e.preventDefault()
@@ -35,7 +37,8 @@ $(document).on('submit', '#loginForm', function(e){
 				$('input[name="email"]').val("")
 				$('input[name="password"]').val("")
 			} else{
-				// put token in local storage and redirect to main page
+				setJwtToken(TOKEN_KEY, data);
+				document.location.href = rootURL2;
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {

@@ -2,8 +2,6 @@ package isamrs.tim1.model;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
