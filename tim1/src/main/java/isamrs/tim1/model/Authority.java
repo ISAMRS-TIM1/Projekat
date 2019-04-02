@@ -17,6 +17,7 @@ public class Authority implements GrantedAuthority {
 	Long id;
 
 	@Column(name = "name")
+	@Enumerated(EnumType.STRING)
 	UserType type;
 
 	@Override
