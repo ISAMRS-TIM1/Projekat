@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flights</title>
+<link rel="shortcut icon" type="image/png" href="login/favicon.png" />
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="hotelAdmin/index.css">
+<link rel="stylesheet"
+	href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<script src="hotelAdmin/index.js"></script>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
+	
+</head>
+<body>
+	<div class="container">
+		<img id="background-img" src="login/flight.png">
+		<div id="formDiv">
+			<form onsubmit="editHotel(event)">
+				<table id="formTable">
+					<tr>
+						<th colspan="2"><input type="text" id="hotelName"></th>
+					</tr>
+					<tr>
+						<td><textarea rows="10" cols="30" id="hotelDescription"></textarea>
+						<td>
+						<td><div id="mapDiv"></div></td>
+					</tr>
+					<tr>
+						<td colspan="2"><input type="submit" value="Save changes"></td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<table id="additionalServicesTable">
+								<tr><th>Additional service</th><th>Price</th></tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<table id="roomsTable">
+								<tr><th>Room</th><th>Current price</th><th>For people</th><th>Average grade</th></tr>
+							</table>
+						</td>
+					</tr>
+					<input type="hidden" id="destinationLatitudeAdd" value="45"required">
+					<input type="hidden" id="destinationLongitudeAdd" value="0"required">
+				</table>
+			</form>
+		</div>
+	</div>
+</body>
+</html>
