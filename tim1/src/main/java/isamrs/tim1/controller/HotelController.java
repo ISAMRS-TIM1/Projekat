@@ -45,7 +45,7 @@ public class HotelController {
 		return new ResponseEntity<String>(hotelService.editHotel(hotel, oldName), HttpStatus.OK);
 	}
 	
-	@PreAuthorize("hasRole('HOTELADMIN')")
+	//@PreAuthorize("hasRole('HOTELADMIN')")
 	@RequestMapping(
 			value = "/api/getHotelOfAdmin",
 			method = RequestMethod.GET,
