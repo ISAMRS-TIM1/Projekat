@@ -19,6 +19,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.joda.time.DateTime;
@@ -42,6 +44,8 @@ public class User implements Serializable, UserDetails {
 	private String email;
 
 	@Column(name = "password", unique = false, nullable = false)
+	@NotNull
+	@NotBlank
 	private String password;
 
 	@Column(name = "firstName", unique = false, nullable = false)
@@ -53,6 +57,8 @@ public class User implements Serializable, UserDetails {
 	private String lastName;
 
 	@Column(name = "address", unique = false, nullable = false)
+	@NotNull
+	@NotBlank
 	private String address;
 
 	@Column(name = "phoneNumber", unique = false, nullable = false)
