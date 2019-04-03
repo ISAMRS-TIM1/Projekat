@@ -3,7 +3,9 @@ package isamrs.tim1.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import isamrs.tim1.dto.HotelDTO;
 import isamrs.tim1.model.Hotel;
+import isamrs.tim1.model.HotelAdmin;
 import isamrs.tim1.model.Location;
 import isamrs.tim1.repository.HotelRepository;
 
@@ -57,6 +59,10 @@ public class HotelService {
 			return "Database error.";
 		}
 		return null;
+	}
+
+	public HotelDTO getHotel(HotelAdmin admin) {
+		return new HotelDTO(admin.getHotel());
 	}
 
 }
