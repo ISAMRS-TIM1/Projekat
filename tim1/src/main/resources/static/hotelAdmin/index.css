@@ -32,7 +32,7 @@ body {
 #formDiv {
 	margin: 0;
 	position: absolute;
-	top: 60%;
+	top: 90%;
 	left: 50%;
 	transform: translate(-50%, -50%);
 	background: #5994FF;
@@ -52,6 +52,7 @@ button[type="submit"]{
 	color: white;
   	font-size: 1.6vw;
   	border: 0.16vw solid #B27A00;
+  	margin-bottom: 1%;
 }
 
 button[type="button"]{

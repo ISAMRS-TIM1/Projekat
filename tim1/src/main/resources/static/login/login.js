@@ -37,7 +37,7 @@ $(document).on('submit', '#loginForm', function(e){
 				$('input[name="email"]').val("")
 				$('input[name="password"]').val("")
 			} else{
-				setJwtToken(TOKEN_KEY, data);
+				setJwtToken(TOKEN_KEY, data.accessToken);
 				document.location.href = rootURL2;
 			}
 		},

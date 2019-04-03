@@ -64,13 +64,13 @@ function loadAirline() {
 	$.ajax({
 		dataType : "json",
 		url : getAirlineOfAdminURL,
-		//headers : createAuthorizationTokenHeader(TOKEN_KEY),
+		headers : createAuthorizationTokenHeader(TOKEN_KEY),
 		success : function(data) {
-			$("#airlineName").text(data["name"]);
+			$("#airlineName").val(data["name"]);
 			$("#airlineGrade").text(data["averageGrade"]);
 			$("#airlineDescription").text(data["description"]);
-			/*setUpMap(data["location"]["latitude"],
-					data["location"]["longitude"]);*/
+			/*setUpMap(data["latitude"],
+					data["longitude"]);*/
 			renderDestinations(data["destinations"]);
 			renderFlights(data["flights"]);
 			//renderQuickReservations[data["quickReservations"]];
