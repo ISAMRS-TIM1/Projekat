@@ -61,13 +61,10 @@ function editHotel(e) {
 }
 
 function loadHotel() {
-	token = localStorage.getItem[TOKEN_KEY];
 	$.ajax({
 		dataType : "json",
 		url : getHotelOfAdminURL,
-		headers : {
-			"Authorization" : "Bearer" + token
-		},
+		headers : createAuthorizationTokenHeader(TOKEN_KEY),
 		success : function(data) {
 			$("#hotelName").text(data["name"]);
 			$("#hotelGrade").text(data["averageGrade"]);
