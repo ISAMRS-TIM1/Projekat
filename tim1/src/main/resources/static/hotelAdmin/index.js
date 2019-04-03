@@ -7,28 +7,41 @@ const MAP_ID = 'mapbox.streets';
 const editHotelURL = "/api/editHotel";
 const getAdditionalServicesURL = "/api/getAdditionalServicesURL";
 const getRoomsURL = "/api/getRooms";
+const getHotelOfAdminURL = "/api/getHotelOfAdmin";
 
 $(document).ready(function(){
-	setUpMap();
-	loadAdditionalServices();
-	loadRooms();
+	loadHotel();
 	
 })
 
-function setUpMap(){
-	var destMap = L.map('mapDiv').setView([45,0], 3);
+function setUpMap(latitude, longitude){
+	var destMap = L.map('mapDiv').setView([latitude, longitude], MAP_ZOOM);
 	L.tileLayer(tileLayerURL, {
 		maxZoom: MAX_MAP_ZOOM,
 		id: MAP_ID
 	}).addTo(destMap);
-	var marker = L.marker([45,0],{
+	var marker = L.marker([latitude, longitude],{
 		draggable: true
 	  }).addTo(destMap);
 	marker.on('dragend', function (e) {
-		$("#destinationLatitudeAdd").val(marker.getLatLng().lat);
-		$("#destinationLongitudeAdd").val(marker.getLatLng().lng);
+		$("#latitude").val(marker.getLatLng().lat);
+		$("#longitude").val(marker.getLatLng().lng);
 	  });
 }
+
+function hideModal(){
+	$("#modalDialog").fadeOut(function(){
+		$("#modalDialog").empty();
+	});
+	$("#overlayDiv").fadeOut();
+}
+function showModal(callback){
+	$("#modalDialog").fadeIn(function(){
+		if(callback !== undefined) callback();
+	});
+	$("#overlayDiv").fadeIn();
+}
+
 
 function editHotel(e){
 	e.preventDefault();
@@ -46,33 +59,41 @@ function editHotel(e){
 }
 
 
-function loadAdditionalServices(){
-	$.getJSON(getAdditionalServicesURL, function(data){
-		var list = data == null ? [] : (data instanceof Array ? data : [ data ]);
-		renderAdditionalServices(list);
-	});
+function loadHotel(){
+	token = localStorage.getItem["token"];
+	$.ajax({
+		  dataType: "json",
+		  url: getHotelOfAdminURL,
+		  headers:{"Authorization":"Bearer" + token},
+		  success: function(data){
+			  	$("#hotelName").text(data["name"]);
+			  	$("#hotelDescription").text(data["description"]);
+			  	setUpMap(data["location"]["latitude"], data["location"]["longitude"]);
+				renderAdditionalServices(data["additionalServices"]);
+				renderRooms(data["rooms"]);
+			}
+		});
 }
 
 function renderAdditionalServices(list){
 	var table = $("#additionalServicesTable");
 	$.each(list, function(i, val){
-		
-	
-	});
-}
-
-function loadRooms(){
-	$.getJSON(getRoomsURL, function(data){
-		var list = data == null ? [] : (data instanceof Array ? data : [ data ]);
-		renderRooms(list);
+		var tr = $("<tr class='tableData'></tr>");
+		tr.append(`<td>${val.name}</td>`);
+		tr.append(`<td>${val.price}</td>`);
+		table.append(tr);
 	});
 }
 
 function renderRooms(list){
 	var table = $("#roomsTable");
 	$.each(list, function(i, val){
-		
-	
+		var tr = $("<tr class='tableData'></tr>");
+		tr.append(`<td>${val.roomNumber}</td>`);
+		tr.append(`<td>${val.defaultPriceOneNight}</td>`);
+		tr.append(`<td>${val.numberOfPeople}</td>`);
+		tr.append(`<td>${val.averageGrade}</td>`);
+		table.append(tr);
 	});
 }
 

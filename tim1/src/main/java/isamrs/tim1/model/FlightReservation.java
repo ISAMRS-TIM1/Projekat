@@ -29,6 +29,11 @@ public class FlightReservation extends Reservation {
 	@JoinColumn(name = "flight")
 	private Flight flight;
 
+	
+	public FlightReservation() {
+		super();
+	}
+
 	public Set<PassengerSeat> getPassengerSeats() {
 		return passengerSeats;
 	}

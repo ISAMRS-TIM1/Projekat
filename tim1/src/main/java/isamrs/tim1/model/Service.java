@@ -37,16 +37,13 @@ public abstract class Service implements Serializable {
 	@Column(name = "averageGrade", unique = false, nullable = true)
 	private Double averageGrade;
 
-	@Column(name = "averagePrice", unique = false, nullable = true)
-	private Double averagePrice;
-
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "location")
 	private Location location;
 
 	@OneToMany(mappedBy = "service", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<ServiceGrade> serviceGrades;
-	
+
 	public Service() {
 		super();
 		serviceGrades = new HashSet<ServiceGrade>();
@@ -84,18 +81,9 @@ public abstract class Service implements Serializable {
 		this.averageGrade = averageGrade;
 	}
 
-	public Double getAveragePrice() {
-		return averagePrice;
-	}
-
-	public void setAveragePrice(Double averagePrice) {
-		this.averagePrice = averagePrice;
-	}
-
 	public Location getLocation() {
 		return location;
 	}
-
 
 	public void setLocation(Location location) {
 		this.location = location;
@@ -104,11 +92,11 @@ public abstract class Service implements Serializable {
 	public Set<ServiceGrade> getServiceGrades() {
 		return serviceGrades;
 	}
-	
+
 	public void setServiceGrades(Set<ServiceGrade> serviceGrades) {
 		this.serviceGrades = serviceGrades;
 	}
-	
+
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}

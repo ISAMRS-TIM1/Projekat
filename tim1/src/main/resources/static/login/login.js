@@ -35,7 +35,7 @@ $(document).on('submit', '#loginForm', function(e){
 				$('input[name="email"]').val("")
 				$('input[name="password"]').val("")
 			} else{
-				// put token in local storage and redirect to main page
+				sessionStorage.setItem("token", data);
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
