@@ -1,19 +1,22 @@
-var rootURL1 = "../auth/login/";
+var rootURL1 = "../auth/register/";
 var rootURL2 = "../index/index.html";
-var rootURL3 = "../register";
+var rootURL3 = "../login";
 	
-var TOKEN_KEY = 'jwtToken';
+$(document).on('submit', '#registrationForm', function(e){
+	e.preventDefault();
+	var email = $('input[name="email"]').val();
+	var password = $('input[name="password"]').val();
+	var firstName = $('input[name="fname"]').val();
+	var lastName = $('input[name="lname"]').val();
+	var phone = $('input[name="phone"]').val();
+	var address = $('input[name="address"]').val();
 	
-$(document).on('submit', '#loginForm', function(e){
-	e.preventDefault()
-	var email = $('input[name="email"]').val()
-	var password = $('input[name="password"]').val()
 	$.ajax({
 		type : 'POST',
 		url : rootURL1,
 		contentType : 'application/json',
 		dataType : "json",
-		data : formToJSON(email, password),
+		data : formToJSON(email, password, firstName, lastName, phone, address),
 		success: function(data){
 			if(data.message != undefined){
 				toastr.options = {
@@ -33,12 +36,20 @@ $(document).on('submit', '#loginForm', function(e){
 						  "showMethod": "fadeIn",
 						  "hideMethod": "fadeOut"
 						}
-				toastr["error"](data.message, data.header)
-				$('input[name="email"]').val("")
-				$('input[name="password"]').val("")
+				toastr["error"](data.message, data.header);
+				$('input[name="email"]').val("");
+				$('input[name="password"]').val("");
+				$('input[name="fname"]').val("");
+				$('input[name="lname"]').val("");
+				$('input[name="phone"]').val("");
+				$('input[name="address"]').val("");
 			} else{
-				setJwtToken(TOKEN_KEY, data);
-				document.location.href = rootURL2;
+				if(data){
+					document.location.href = rootURL3;
+					// backend should send email with verification link
+				} else{
+					console.log("error");
+				}	
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
@@ -47,7 +58,7 @@ $(document).on('submit', '#loginForm', function(e){
 	})
 })
 
-$(document).on("click", "#regButton", function(e){
+$(document).on("click", "#logButton", function(e){
 	document.location.href = rootURL3
 })
 
@@ -63,9 +74,13 @@ $(document).on("click", "#eye", function(e){
 	}
 })
 
-function formToJSON(username, password){
+function formToJSON(email, password, firstName, lastName, phone, address){
 	return JSON.stringify({
-		"username": username,
-		"password": password
+		"email": email,
+		"password": password,
+		"firstName": firstName,
+		"lastName": lastName,
+		"phoneNumber": phone,
+		"address": address
 	})
 }
