@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flights</title>
+<link rel="shortcut icon" type="image/png" href="login/favicon.png" />
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="airlineAdmin/index.css">
+<link rel="stylesheet"
+	href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<script src="airlineAdmin/index.js"></script>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
+	
+</head>
+<body>
+	<div class="container">
+		<div id="formDiv">
+			<form onsubmit="editAirline(event)">
+				<table id="formTable">
+					<tr>
+						<td colspan="2"><input type="text" id="airlineName"
+							class="textInput"></td>
+					</tr>
+					<tr>
+						<td colspan="2"><p id="airlineGrade"></p></td>
+					</tr>
+					<tr>
+						<td><textarea rows="10" cols="30" id="airlineDescription"
+								class="textInput"></textarea></td>
+						<td><div id="mapDiv"></div></td>
+					</tr>
+					<tr>
+						<td colspan="2"><button type="submit" class="btn btn-default">Save
+								changes</button></td>
+					</tr>
+					<tr>
+						<td colspan="2"><button type="submit" class="btn btn-default">Daily
+								sold tickets</button>
+							<button type="submit" class="btn btn-default">Weekly
+								sold tickets</button>
+							<button type="submit" class="btn btn-default">Monthly
+								sold tickets</button>
+							<button type="submit" class="btn btn-default">Airline
+								income</button></td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<ul class="nav nav-tabs">
+								<li class="active" id="destinationsTab"><a
+									href="javascript:changeContentToDestinations()">Destinations</a></li>
+								<li id="flightsTab"><a
+									href="javascript:changeContentToFlights()">Flights</a></li>
+								<li id="planeSeatsTab"><a
+									href="javascript:changeContentToPlaneSeats()">Plane seats</a></li>
+								<li id="quickReservationsTab"><a
+									href="javascript:changeContentToQuickRes()">Quick reservations</a></li>
+							</ul>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<table id="destinationsTable" class="contentTable">
+								<tr>
+									<th>Name</th>
+								</tr>
+							</table>
+							<table id="flightsTable" class="contentTable" hidden="true">
+								<tr><th>Start destination</th><th>End destination</th><th>Departure time</th><th>Landing time</th><th>Flight duration</th><th>Flight distance</th>
+								<th>Number of connections</th><th>Locations of connections</th><th>Ticket price</th><th>Price per bag</th></tr>
+							</table>
+							<button class="contentTable" id="addQuickReservationButton"
+								type="submit" class="btn btn-default" hidden="true">Add
+								a quick reservation</button> <br>
+							<table id="quickReservationsTable" class="contentTable"
+								hidden="true">
+								<tr>
+									<th>Reservations</th>
+								</tr>
+							</table>
+							<div id="planeSeatsTable" class="contentTable" hidden="true">Plane seats</div>
+						</td>
+					</tr>
+					<input type="hidden" id="latitude" value="45"required">
+					<input type="hidden" id="longitude" value="0"required">
+				</table>
+			</form>
+		</div>
+	</div>
+	<div id="overlayDiv" hidden></div>
+	<div id="modalDialog" hidden></div>
+</body>
+</html>

@@ -1,0 +1,107 @@
+body {
+	background: #0D63FF;
+}
+
+#overlayDiv {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #536675;
+    opacity: 0.6;
+    z-index: 1;
+}
+
+#modalDialog {
+    position: fixed;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    top: 45vh;
+    left: 50vw;
+    transform: translate(-50%,-50%);
+    height: auto;
+    width: auto;
+    background-color: rgb(255,255,255);
+    padding: 30px;
+    z-index: 1;
+}
+
+
+#formDiv {
+	margin: 0;
+	position: absolute;
+	top: 60%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background: #5994FF;
+	border: 0.24vw solid #B27A00;
+  	border-radius: 4vw 1.6vw;
+  	font-size: 1.6vw;
+}
+
+form{
+	padding: 2.8vw;
+	padding-bottom: 1.6vw;
+}
+
+button[type="submit"]{
+	width: 27.5%;
+	background: #0D63FF;
+	color: white;
+  	font-size: 1.6vw;
+  	border: 0.16vw solid #B27A00;
+  	margin-bottom: 1%;
+}
+
+button[type="button"]{
+	margin-left: 23%;
+	background: none;
+	color: white;
+  	font-size: 1.6vw;
+  	margin-top: 0.8vw;
+}
+
+#background-img{
+	margin: 0;
+	position: absolute;
+	top: 38%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: -1;
+}
+
+#mapDiv {
+	width: 30vw; 
+	height: 30vh;
+}
+
+#airlineName{
+	background-color: #5994FF;
+}
+
+#airlineDescription{
+	background-color: #5994FF;
+}
+
+#formTable td{
+	padding: 30px;
+	text-align: center;
+}
+
+#formTable table{
+	margin:auto;
+}
+
+.textInput{
+	border: none;
+	resize: none;
+}
+.textInput:focus{
+	border: 1px solid black;
+	resize: none;
+}
+#addQuickReservationButton {
+	width: 32.5% !important;
+}
