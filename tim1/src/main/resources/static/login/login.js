@@ -1,7 +1,11 @@
-var rootURL1 = "../auth/login/";
-var rootURL2 = "../index/index.html";
-var rootURL3 = "../register";
-	
+var loginURL = "../auth/login/";
+var registeredUserURL = "../registeredUser";
+var registrationURL = "../register";
+var airlineAdminURL = "../airlineAdmin";
+var hotelAdminURL = "../hotelAdmin";
+var rentACarAdminURL = "../rentACarAdmin";
+var sysAdminURL = "../sysAdmin";
+
 var TOKEN_KEY = 'jwtToken';
 	
 $(document).on('submit', '#loginForm', function(e){
@@ -10,7 +14,7 @@ $(document).on('submit', '#loginForm', function(e){
 	var password = $('input[name="password"]').val()
 	$.ajax({
 		type : 'POST',
-		url : rootURL1,
+		url : loginURL,
 		contentType : 'application/json',
 		dataType : "json",
 		data : formToJSON(email, password),
@@ -37,8 +41,19 @@ $(document).on('submit', '#loginForm', function(e){
 				$('input[name="email"]').val("")
 				$('input[name="password"]').val("")
 			} else{
-				setJwtToken(TOKEN_KEY, data);
-				document.location.href = rootURL2;
+				setJwtToken(TOKEN_KEY, data.accessToken);
+				
+				if(data.userType == "REGISTEREDUSER"){
+					document.location.href = registeredUserURL;					
+				} else if(data.userType == "AIRADMIN"){
+					document.location.href = airlineAdminURL;
+				} else if(data.userType == "HOTELADMIN"){
+					document.location.href = hotelAdminURL;
+				} else if(data.userType == "RENTADMIN"){
+					document.location.href = rentACarAdminURL;
+				} else{
+					document.location.href = sysAdminURL;
+				}
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
@@ -48,7 +63,7 @@ $(document).on('submit', '#loginForm', function(e){
 })
 
 $(document).on("click", "#regButton", function(e){
-	document.location.href = rootURL3
+	document.location.href = registrationURL
 })
 
 $(document).on("click", "#eye", function(e){

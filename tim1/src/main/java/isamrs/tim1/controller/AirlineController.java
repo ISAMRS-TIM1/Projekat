@@ -1,6 +1,5 @@
 package isamrs.tim1.controller;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,26 +19,22 @@ import isamrs.tim1.service.AirlineService;
 
 @RestController
 public class AirlineController {
-	
+
 	@Autowired
 	private AirlineService airlineService;
-	
+
 	@PreAuthorize("hasRole('AIRADMIN')")
-	@RequestMapping(
-			value = "/api/editAirline",
-			method = RequestMethod.PUT,
-			consumes = MediaType.APPLICATION_JSON_VALUE,
-			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> editAirline(
-			@RequestBody Airline airline, @RequestParam(required = true) String oldName) throws Exception {
+	@RequestMapping(value = "/api/editAirline", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> editAirline(@RequestBody Airline airline,
+			@RequestParam(required = true) String oldName) throws Exception {
 		return new ResponseEntity<String>(airlineService.editProfile(airline, oldName), HttpStatus.OK);
 	}
-	
-	@RequestMapping(
-			value = "/api/getAirlineOfAdmin",
-			method = RequestMethod.GET,
-			produces = MediaType.APPLICATION_JSON_VALUE)
+
+	@RequestMapping(value = "/api/getAirlineOfAdmin", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<AirlineDTO> getAirline() {
-		return new ResponseEntity<AirlineDTO>(airlineService.getAirline((AirlineAdmin)SecurityContextHolder.getContext().getAuthentication().getPrincipal()), HttpStatus.OK);
+		return new ResponseEntity<AirlineDTO>(
+				airlineService.getAirline(
+						(AirlineAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()),
+				HttpStatus.OK);
 	}
 }
