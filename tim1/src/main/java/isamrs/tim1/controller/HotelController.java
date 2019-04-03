@@ -46,14 +46,12 @@ public class HotelController {
 		return new ResponseEntity<String>(hotelService.editHotel(hotel, oldName), HttpStatus.OK);
 	}
 	
-	//@PreAuthorize("hasRole('HOTELADMIN')")
+	@PreAuthorize("hasRole('HOTELADMIN')")
 	@RequestMapping(
 			value = "/api/getHotelOfAdmin",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<HotelDTO> getHotel() {
-		SecurityContext c = SecurityContextHolder.getContext();
-		System.out.println(c);
 		return new ResponseEntity<HotelDTO>(hotelService.getHotel((HotelAdmin)SecurityContextHolder.getContext().getAuthentication().getPrincipal()), HttpStatus.OK);
 	}
 }
