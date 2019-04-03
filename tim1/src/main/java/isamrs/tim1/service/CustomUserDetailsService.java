@@ -13,10 +13,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import isamrs.tim1.model.RegisteredUser;
 import isamrs.tim1.model.User;
 import isamrs.tim1.repository.UserRepository;
-
-
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -32,6 +31,25 @@ public class CustomUserDetailsService implements UserDetailsService {
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
+	public boolean saveUser(RegisteredUser ru) {
+		try {
+			this.userRepository.save(ru);
+		} catch (Exception e) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public boolean usernameTaken(String email) {
+		User user = userRepository.findOneByEmail(email);
+
+		if (user != null) {
+			return true;
+		}
+		return false;
+	}
+
 	// Funkcija koja na osnovu username-a iz baze vraca objekat User-a
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -41,6 +59,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 		} else {
 			return user;
 		}
+	}
+
+	public String encodePassword(String password) {
+		return this.passwordEncoder.encode(password);
 	}
 
 	// Funkcija pomocu koje korisnik menja svoju lozinku
