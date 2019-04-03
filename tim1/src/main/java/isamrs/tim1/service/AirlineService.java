@@ -3,7 +3,9 @@ package isamrs.tim1.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import isamrs.tim1.dto.AirlineDTO;
 import isamrs.tim1.model.Airline;
+import isamrs.tim1.model.AirlineAdmin;
 import isamrs.tim1.model.Location;
 import isamrs.tim1.repository.AirlineRepository;
 
@@ -47,6 +49,10 @@ public class AirlineService {
         }
         
         return null;
+	}
+
+	public AirlineDTO getAirline(AirlineAdmin admin) {
+		return new AirlineDTO(admin.getAirline());
 	}
 
 }

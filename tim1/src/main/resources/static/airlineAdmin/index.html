@@ -26,31 +26,69 @@
 <body>
 	<div class="container">
 		<div id="formDiv">
-			<form onsubmit="editHotel(event)">
+			<form onsubmit="editAirline(event)">
 				<table id="formTable">
 					<tr>
-						<td colspan="2"><input type="text" id="hotelName" class="textInput"></td>
+						<td colspan="2"><input type="text" id="airlineName"
+							class="textInput"></td>
 					</tr>
 					<tr>
-						<td><textarea rows="10" cols="30" id="hotelDescription" class="textInput"></textarea></td>
+						<td colspan="2"><p id="airlineGrade"></p></td>
+					</tr>
+					<tr>
+						<td><textarea rows="10" cols="30" id="airlineDescription"
+								class="textInput"></textarea></td>
 						<td><div id="mapDiv"></div></td>
 					</tr>
 					<tr>
-						<td colspan="2"><button type="submit" class="btn btn-default">Save changes</button></td>
+						<td colspan="2"><button type="submit" class="btn btn-default">Save
+								changes</button></td>
+					</tr>
+					<tr>
+						<td colspan="2"><button type="submit" class="btn btn-default">Daily
+								sold tickets</button>
+							<button type="submit" class="btn btn-default">Weekly
+								sold tickets</button>
+							<button type="submit" class="btn btn-default">Monthly
+								sold tickets</button>
+							<button type="submit" class="btn btn-default">Airline
+								income</button></td>
 					</tr>
 					<tr>
 						<td colspan="2">
-							<table id="destinationsTable">
-								<tr><th>Name</th></tr>
-							</table>
+							<ul class="nav nav-tabs">
+								<li class="active" id="destinationsTab"><a
+									href="javascript:changeContentToDestinations()">Destinations</a></li>
+								<li id="flightsTab"><a
+									href="javascript:changeContentToFlights()">Flights</a></li>
+								<li id="planeSeatsTab"><a
+									href="javascript:changeContentToPlaneSeats()">Plane seats</a></li>
+								<li id="quickReservationsTab"><a
+									href="javascript:changeContentToQuickRes()">Quick reservations</a></li>
+							</ul>
 						</td>
 					</tr>
 					<tr>
 						<td colspan="2">
-							<table id="flightTable">
-								<tr><th>Departure time</th><th>Landing time</th><th>Flight duration</th><th>Flight distance</th>
+							<table id="destinationsTable" class="contentTable">
+								<tr>
+									<th>Name</th>
+								</tr>
+							</table>
+							<table id="flightsTable" class="contentTable" hidden="true">
+								<tr><th>Start destination</th><th>End destination</th><th>Departure time</th><th>Landing time</th><th>Flight duration</th><th>Flight distance</th>
 								<th>Number of connections</th><th>Locations of connections</th><th>Ticket price</th><th>Price per bag</th></tr>
 							</table>
+							<button class="contentTable" id="addQuickReservationButton"
+								type="submit" class="btn btn-default" hidden="true">Add
+								a quick reservation</button> <br>
+							<table id="quickReservationsTable" class="contentTable"
+								hidden="true">
+								<tr>
+									<th>Reservations</th>
+								</tr>
+							</table>
+							<div id="planeSeatsTable" class="contentTable" hidden="true">Plane seats</div>
 						</td>
 					</tr>
 					<input type="hidden" id="latitude" value="45"required">
