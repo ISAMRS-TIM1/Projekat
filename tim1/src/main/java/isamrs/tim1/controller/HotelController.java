@@ -19,38 +19,28 @@ import isamrs.tim1.service.HotelService;
 
 @RestController
 public class HotelController {
-	
+
 	@Autowired
 	private HotelService hotelService;
-	
+
 	@PreAuthorize("hasRole('HOTELADMIN')")
-	@RequestMapping(
-			value = "/api/addHotel",
-			method = RequestMethod.POST,
-			consumes = MediaType.APPLICATION_JSON_VALUE,
-			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> addHotel(
-			@RequestBody Hotel hotel) {
+	@RequestMapping(value = "/api/addHotel", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> addHotel(@RequestBody Hotel hotel) {
 		return new ResponseEntity<String>(hotelService.addHotel(hotel), HttpStatus.OK);
 	}
-	
+
 	@PreAuthorize("hasRole('HOTELADMIN')")
-	@RequestMapping(
-			value = "/api/editHotel",
-			method = RequestMethod.PUT,
-			consumes = MediaType.APPLICATION_JSON_VALUE,
-			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> editHotel(
-			@RequestBody Hotel hotel, @RequestParam(required = true) String oldName) {
+	@RequestMapping(value = "/api/editHotel", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> editHotel(@RequestBody Hotel hotel, @RequestParam(required = true) String oldName) {
 		return new ResponseEntity<String>(hotelService.editHotel(hotel, oldName), HttpStatus.OK);
 	}
-	
-	//@PreAuthorize("hasRole('HOTELADMIN')")
-	@RequestMapping(
-			value = "/api/getHotelOfAdmin",
-			method = RequestMethod.GET,
-			produces = MediaType.APPLICATION_JSON_VALUE)
+
+	@PreAuthorize("hasRole('HOTELADMIN')")
+	@RequestMapping(value = "/api/getHotelOfAdmin", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<HotelDTO> getHotel() {
-		return new ResponseEntity<HotelDTO>(hotelService.getHotel((HotelAdmin)SecurityContextHolder.getContext().getAuthentication().getPrincipal()), HttpStatus.OK);
+		return new ResponseEntity<HotelDTO>(
+				hotelService
+						.getHotel((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()),
+				HttpStatus.OK);
 	}
 }

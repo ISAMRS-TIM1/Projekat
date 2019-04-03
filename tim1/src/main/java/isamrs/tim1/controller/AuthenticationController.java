@@ -24,8 +24,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim1.dto.MessageDTO;
+import isamrs.tim1.model.AirlineAdmin;
 import isamrs.tim1.model.Authority;
+import isamrs.tim1.model.HotelAdmin;
 import isamrs.tim1.model.RegisteredUser;
+import isamrs.tim1.model.RentACarAdmin;
 import isamrs.tim1.model.ServiceGrade;
 import isamrs.tim1.model.User;
 import isamrs.tim1.model.UserReservation;
@@ -96,9 +99,21 @@ public class AuthenticationController {
 		User user = (User) authentication.getPrincipal();
 		String jwt = tokenUtils.generateToken(user.getUsername());
 		int expiresIn = tokenUtils.getExpiredIn();
+		UserType userType = null;
+
+		if (user instanceof RegisteredUser) {
+			userType = UserType.REGISTEREDUSER;
+		} else if (user instanceof HotelAdmin) {
+			userType = UserType.HOTELADMIN;
+		} else if (user instanceof RentACarAdmin) {
+			userType = UserType.RENTADMIN;
+		} else if (user instanceof AirlineAdmin) {
+			userType = UserType.AIRADMIN;
+		} else {
+			userType = UserType.SYSADMIN;
+		}
 
 		// Vrati token kao odgovor na uspesno autentifikaciju
-		return new ResponseEntity<UserTokenState>(new UserTokenState(jwt, expiresIn), HttpStatus.OK);
-		// return ResponseEntity.ok(new UserTokenState(jwt, expiresIn));
+		return new ResponseEntity<UserTokenState>(new UserTokenState(jwt, expiresIn, userType), HttpStatus.OK);
 	}
 }
