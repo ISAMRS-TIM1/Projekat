@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class LoginPageController {
-	@GetMapping("/")
+	@GetMapping("/login")
 	public String showLoginPage(Map<String, Object> model){
 		return "login/login.html";
 	}
