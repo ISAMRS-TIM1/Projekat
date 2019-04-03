@@ -66,11 +66,11 @@ function loadHotel() {
 		url : getHotelOfAdminURL,
 		headers : createAuthorizationTokenHeader(TOKEN_KEY),
 		success : function(data) {
-			$("#hotelName").text(data["name"]);
+			$("#hotelName").val(data["name"]);
 			$("#hotelGrade").text(data["averageGrade"]);
 			$("#hotelDescription").text(data["description"]);
-			setUpMap(data["location"]["latitude"],
-					data["location"]["longitude"]);
+			setUpMap(data["latitude"],
+					data["longitude"]);
 			renderAdditionalServices(data["additionalServices"]);
 			renderRooms(data["rooms"]);
 		}

@@ -41,8 +41,7 @@ $(document).on('submit', '#loginForm', function(e){
 				$('input[name="email"]').val("")
 				$('input[name="password"]').val("")
 			} else{
-				setJwtToken(TOKEN_KEY, data.accessToken);
-				
+				setJwtToken(TOKEN_KEY, data.accessToken);			
 				if(data.userType == "REGISTEREDUSER"){
 					document.location.href = registeredUserURL;					
 				} else if(data.userType == "AIRADMIN"){
