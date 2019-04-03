@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flights</title>
+<link rel="shortcut icon" type="image/png" href="login/favicon.png" />
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="hotelAdmin/index.css">
+<link rel="stylesheet"
+	href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<script src="hotelAdmin/index.js"></script>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+<link rel="stylesheet"
+	href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+	integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+	crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+	integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+	crossorigin=""></script>
+<script src="auth/auth.js"></script>
+
+</head>
+<body>
+	<div class="container">
+		<div id="formDiv">
+			<form onsubmit="editHotel(event)">
+				<table id="formTable">
+					<tr>
+						<td colspan="2"><input type="text" id="hotelName"
+							class="textInput"></td>
+					</tr>
+					<tr>
+						<td colspan="2"><p id="hotelGrade"></p></td>
+					</tr>
+					<tr>
+						<td><textarea rows="10" cols="30" id="hotelDescription"
+								class="textInput"></textarea></td>
+						<td><div id="mapDiv"></div></td>
+					</tr>
+					<tr>
+						<td colspan="2"><button type="submit" class="btn btn-default">Save
+								changes</button></td>
+					</tr>
+					<tr>
+						<td colspan="2"><button type="submit" class="btn btn-default">Daily
+								visitors</button>
+							<button type="submit" class="btn btn-default">Weekly
+								visitors</button>
+							<button type="submit" class="btn btn-default">Monthly
+								visitors</button>
+							<button type="submit" class="btn btn-default">Hotel
+								income</button></td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<ul class="nav nav-tabs">
+								<li class="active" id="roomsTab"><a
+									href="javascript:changeContentToRooms()">Rooms</a></li>
+								<li id="additionalServicesTab"><a
+									href="javascript:changeContentToAddServices()">Additional
+										services</a></li>
+								<li id="quickReservationsTab"><a
+									href="javascript:changeContentToQuickRes()">Quick
+										reservations</a></li>
+							</ul>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<table id="roomsTable" class="contentTable">
+								<tr>
+									<th>Room</th>
+									<th>Current price</th>
+									<th>For people</th>
+									<th>Average grade</th>
+								</tr>
+							</table>
+							<table id="additionalServicesTable" class="contentTable"
+								hidden="true">
+								<tr>
+									<th>Additional service</th>
+									<th>Price</th>
+								</tr>
+							</table>
+							<button class="contentTable" id="addQuickReservationButton"
+								type="submit" class="btn btn-default" hidden="true">Add
+								a quick reservation</button> </br>
+							<table id="quickReservationsTable" class="contentTable"
+								hidden="true">
+								<tr>
+									<th>Reservation</th>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<input type="hidden" id="latitude" value="45"required">
+					<input type="hidden" id="longitude" value="0"required">
+				</table>
+			</form>
+		</div>
+	</div>
+	<div id="overlayDiv" hidden></div>
+	<div id="modalDialog" hidden></div>
+</body>
+</html>

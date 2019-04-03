@@ -31,7 +31,7 @@ public class HotelRoom implements Serializable {
 	@Column(name = "numberOfPeople", unique = false, nullable = false)
 	private Integer numberOfPeople;
 
-	@Column(name = "roomNumber", unique = false, nullable = false)
+	@Column(name = "roomNumber", unique = true, nullable = false)
 	private Integer roomNumber;
 
 	@Column(name = "defaultPriceOneNight", unique = false, nullable = false)

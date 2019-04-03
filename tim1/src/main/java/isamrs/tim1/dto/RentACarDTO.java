@@ -12,7 +12,6 @@ public class RentACarDTO implements Serializable {
 	private String name;
 	private String description;
 	private double averageGrade;
-	private double averagePrice;
 	private double latitude;
 	private double longitude;
 
@@ -20,18 +19,16 @@ public class RentACarDTO implements Serializable {
 		this.name = rentACar.getName();
 		this.description = rentACar.getDescription();
 		this.averageGrade = rentACar.getAverageGrade();
-		this.averagePrice = rentACar.getAveragePrice();
 		this.latitude = rentACar.getLocation().getLatitude();
 		this.longitude = rentACar.getLocation().getLongitude();
 	}
 
-	public RentACarDTO(String name, String description, double averageGrade, double averagePrice, double latitude,
+	public RentACarDTO(String name, String description, double averageGrade, double latitude,
 			double longitude) {
 		super();
 		this.name = name;
 		this.description = description;
 		this.averageGrade = averageGrade;
-		this.averagePrice = averagePrice;
 		this.latitude = latitude;
 		this.longitude = longitude;
 	}
@@ -58,14 +55,6 @@ public class RentACarDTO implements Serializable {
 
 	public void setAverageGrade(double averageGrade) {
 		this.averageGrade = averageGrade;
-	}
-
-	public double getAveragePrice() {
-		return averagePrice;
-	}
-
-	public void setAveragePrice(double averagePrice) {
-		this.averagePrice = averagePrice;
 	}
 
 	public double getLatitude() {
