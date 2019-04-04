@@ -62,7 +62,7 @@ public class AuthenticationController {
 		ru.setAddress(user.getAddress());
 		List<Authority> authorities = new ArrayList<Authority>();
 		Authority a = new Authority();
-		a.setType(UserType.REGISTEREDUSER);
+		a.setType(UserType.ROLE_REGISTEREDUSER);
 		authorities.add(a);
 		ru.setAuthorities(authorities);
 		ru.setDiscountPoints(0);
@@ -102,15 +102,15 @@ public class AuthenticationController {
 		UserType userType = null;
 
 		if (user instanceof RegisteredUser) {
-			userType = UserType.REGISTEREDUSER;
+			userType = UserType.ROLE_REGISTEREDUSER;
 		} else if (user instanceof HotelAdmin) {
-			userType = UserType.HOTELADMIN;
+			userType = UserType.ROLE_HOTELADMIN;
 		} else if (user instanceof RentACarAdmin) {
-			userType = UserType.RENTADMIN;
+			userType = UserType.ROLE_RENTADMIN;
 		} else if (user instanceof AirlineAdmin) {
-			userType = UserType.AIRADMIN;
+			userType = UserType.ROLE_AIRADMIN;
 		} else {
-			userType = UserType.SYSADMIN;
+			userType = UserType.ROLE_SYSADMIN;
 		}
 
 		// Vrati token kao odgovor na uspesno autentifikaciju
