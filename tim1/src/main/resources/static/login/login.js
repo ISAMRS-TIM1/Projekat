@@ -42,13 +42,13 @@ $(document).on('submit', '#loginForm', function(e){
 				$('input[name="password"]').val("")
 			} else{
 				setJwtToken(TOKEN_KEY, data.accessToken);			
-				if(data.userType == "REGISTEREDUSER"){
+				if(data.userType == "ROLE_REGISTEREDUSER"){
 					document.location.href = registeredUserURL;					
-				} else if(data.userType == "AIRADMIN"){
+				} else if(data.userType == "ROLE_AIRADMIN"){
 					document.location.href = airlineAdminURL;
-				} else if(data.userType == "HOTELADMIN"){
+				} else if(data.userType == "ROLE_HOTELADMIN"){
 					document.location.href = hotelAdminURL;
-				} else if(data.userType == "RENTADMIN"){
+				} else if(data.userType == "ROLE_RENTADMIN"){
 					document.location.href = rentACarAdminURL;
 				} else{
 					document.location.href = sysAdminURL;
