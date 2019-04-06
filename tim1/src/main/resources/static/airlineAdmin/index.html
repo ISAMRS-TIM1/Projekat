@@ -13,9 +13,12 @@
 <link rel="stylesheet" href="airlineAdmin/index.css">
 <link rel="stylesheet"
 	href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+<link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="airlineAdmin/jquery.seat-charts.css">
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 <script src="airlineAdmin/index.js"></script>
+<script src="airlineAdmin/jquery.seat-charts.min.js"></script> 
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
 <script type="text/javascript"
@@ -89,7 +92,24 @@
 									<th>Reservations</th>
 								</tr>
 							</table>
-							<div id="planeSeatsTable" class="contentTable" hidden="true">Plane seats</div>
+							<div id="planeSeatsTable" class="contentTable" hidden="true">
+								<div id="seat-map">
+								    <div class="front-indicator">Front</div>
+								</div>
+								<div class="booking-details">
+								   <h2>Configure seats</h2>
+								   <h3>First class</h3><input type="text" id="first">
+								   <span><button class="configure-button" id="addButton" onclick="addFirstClass(event)">Add</button>
+								   <button class="configure-button" onclick="deleteSeat(event, 1)">Delete</button></span>
+								   <h3>Business class</h3><input type="text" id="business">
+								   <button class="configure-button" id="addButton" onclick="addBusinessClass(event)">Add</button>
+								   <button class="configure-button" onclick="deleteSeat(event, 2)">Delete</button>
+								   <h3>Economy class</h3><input type="text" id="economy">
+								   <button class="configure-button" id="addButton" onclick="addEconomyClass(event)">Add</button>
+								   <button class="configure-button" onclick="deleteSeat(event, 3)">Delete</button>
+								   <div id="legend"></div>
+								 </div>
+							</div>
 						</td>
 					</tr>
 					<input type="hidden" id="latitude" value="45"required">

@@ -160,3 +160,6 @@ insert into user_authorities values(15, 1) [42102-197]
 2019-04-03 21:16:41 jdbc[13]: exception
 org.h2.jdbc.JdbcSQLException: Table "USER_AUTHORITIY" not found; SQL statement:
 insert into user_authoritiy values(15, 1) [42102-197]
+2019-04-06 16:07:37 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "INSERT INTO USER_AUTHORITY(15[*], 1) "; expected "identifier"; SQL statement:
+insert into user_authority(15, 1) [42001-197]
