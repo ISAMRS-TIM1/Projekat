@@ -141,148 +141,92 @@ var firstSeatLabel = 1;
 var firstClass = [];
 var businessClass = [];
 var economyClass = [];
-var seatsForDelete = [];
+var numberOfSeatsPerClass = [0, 0, 0];
 
 function renderPlaneSeats(list) {
 	showPlaneSeats([]);
 }
 
-function addFirstClass(e) {
+function add(e, cat) {
 	e.preventDefault();
-	var number = parseInt($("#first").val());
-	console.log(number);
-	var row = '';
-	var seq = 1;
-	if (firstClass.length != 0) {
-		firstClass.pop();
-		var lastRow = firstClass[firstClass.length - 1].split("");
-		var counter = 0;
-		for (var i = 0; i < 5; i++) {
-			if (lastRow[i] == '_' && i != 2) {
-				lastRow[i] = 'f';
-				counter++;
-			}
-		}
-		firstClass[firstClass.length - 1] = lastRow.join("");
-		number -= counter;
+	var number, seatClass;
+	if (cat == 1) {
+		number = parseInt($("#first").val());
+		addSeats(number, firstClass, 'f', cat);
 	}
-	number += Math.ceil(number / 5);
-	console.log(number);
-	for(var i = 0; i < number; i++) {
-		if (i == (2 + 5 * (seq - 1))) {
-			row += '_';
-		}
-		else
-			row += 'f';
-		if (i % (4 + 5 * (seq - 1)) == 0 && i != 0) {
-			firstClass.push(row);
-			row = '';
-			seq++;
-		}
-		if ((number - i - 1 < 5) && row == '' && (number != i + 1)) {
-			row = 'f'.repeat(number - i - 1) + '_'.repeat(5 - (number - i - 1));
-			firstClass.push(row);
-			break;
-		}
+	else if (cat == 2) {
+		number = parseInt($("#business").val());
+		addSeats(number, businessClass, 'b', cat);
 	}
-	console.log(firstClass);
-	firstClass.push("_____");
-	var seats = firstClass.concat(businessClass).concat(economyClass);
-	$('.seatCharts-row').remove();
-	$('.seatCharts-legendItem').remove();
-	$('#seat-map,#seat-map *').unbind().removeData();
-	firstSeatLabel = 1;
-	showPlaneSeats(seats);
+	else {
+		number = parseInt($("#economy").val());
+		addSeats(number, economyClass, 'e', cat);
+	}
 }
 
-function addBusinessClass(e) {
-	e.preventDefault();
-	var number = parseInt($("#business").val());
-	console.log(number);
+function addSeats(number, seatClass, label, cat) {
 	var row = '';
 	var seq = 1;
-	if (businessClass.length != 0) {
-		businessClass.pop();
-		var lastRow = businessClass[businessClass.length - 1].split("");
+	var num = number;
+	if (seatClass[0] == '_____') {
+		seatClass.pop();
+	}
+	if (seatClass.length != 0) {
+		seatClass.pop();
+		var lastRow = seatClass[seatClass.length - 1].split("");
 		var counter = 0;
 		for (var i = 0; i < 5; i++) {
 			if (lastRow[i] == '_' && i != 2) {
-				lastRow[i] = 'b';
+				lastRow[i] = label;
+				numberOfSeatsPerClass[cat - 1]++;
 				counter++;
+				if (counter == number) {
+					break;
+				}
 			}
 		}
-		businessClass[businessClass.length - 1] = lastRow.join("");
+		seatClass[seatClass.length - 1] = lastRow.join("");
 		number -= counter;
 	}
-	number += Math.ceil(number / 5);
-	console.log(number);
+	if (number != 1)
+		number += Math.ceil(number / 5);
+	
 	for(var i = 0; i < number; i++) {
 		if (i == (2 + 5 * (seq - 1))) {
 			row += '_';
 		}
-		else
-			row += 'b';
+		else {
+			row += label;
+			numberOfSeatsPerClass[cat - 1]++;
+		}
 		if (i % (4 + 5 * (seq - 1)) == 0 && i != 0) {
-			businessClass.push(row);
+			seatClass.push(row);
 			row = '';
 			seq++;
 		}
 		if ((number - i - 1 < 5) && row == '' && (number != i + 1)) {
-			row = 'b'.repeat(number - i - 1) + '_'.repeat(5 - (number - i - 1));
-			businessClass.push(row);
-			break;
-		}
-	}
-	console.log(businessClass);
-	businessClass.push("_____");
-	var seats = firstClass.concat(businessClass).concat(economyClass);
-	$('.seatCharts-row').remove();
-	$('.seatCharts-legendItem').remove();
-	$('#seat-map,#seat-map *').unbind().removeData();
-	firstSeatLabel = 1;
-	showPlaneSeats(seats);
-}
-
-function addEconomyClass(e) {
-	e.preventDefault();
-	var number = parseInt($("#economy").val());
-	console.log(number);
-	var row = '';
-	var seq = 1;
-	if (economyClass.length != 0) {
-		economyClass.pop();
-		var lastRow = economyClass[economyClass.length - 1].split("");
-		var counter = 0;
-		for (var i = 0; i < 5; i++) {
-			if (lastRow[i] == '_' && i != 2) {
-				lastRow[i] = 'e';
-				counter++;
+			if (number - i - 1 == 3) {
+				row = label.repeat(number - i - 2) + '_' + label + '_';
+				numberOfSeatsPerClass[cat - 1] += number - i - 1;
 			}
-		}
-		economyClass[economyClass.length - 1] = lastRow.join("");
-		number -= counter;
-	}
-	number += Math.ceil(number / 5);
-	console.log(number);
-	for(var i = 0; i < number; i++) {
-		if (i == (2 + 5 * (seq - 1))) {
-			row += '_';
-		}
-		else
-			row += 'e';
-		if (i % (4 + 5 * (seq - 1)) == 0 && i != 0) {
-			economyClass.push(row);
-			row = '';
-			seq++;
-		}
-		if ((number - i - 1 < 5) && row == '' && (number != i + 1)) {
-			row = 'e'.repeat(number - i - 1) + '_'.repeat(5 - (number - i - 1));
-			economyClass.push(row);
+			else if (number - i - 1 == 4) {
+				row = label.repeat(number - i - 3) + '_' + label + '_';
+				numberOfSeatsPerClass[cat - 1] += number - i - 2;
+			}
+			else {
+				row = label.repeat(number - i - 1) + '_'.repeat(5 - (number - i - 1));
+				numberOfSeatsPerClass[cat - 1] += number - i - 1;
+			}
+			seatClass.push(row);
 			break;
 		}
+		else if ((i == number - 1) && (row.length != 5) && (num % 4 != 0)) {
+			var len = 5 - row.length;
+			row += '_'.repeat(len);
+			seatClass.push(row);
+		}
 	}
-	console.log(economyClass);
-	economyClass.push("_____");
+	seatClass.push("_____");
 	var seats = firstClass.concat(businessClass).concat(economyClass);
 	$('.seatCharts-row').remove();
 	$('.seatCharts-legendItem').remove();
@@ -295,33 +239,33 @@ function deleteSeat(e, cat) {
 	e.preventDefault();
 	if (cat == 1) {
 		var number = parseInt($("#first").val());
-		if (number > firstClass.length) {
+		if (number > numberOfSeatsPerClass[cat - 1]) {
 			return;
 		}
-		while (number - 4 >= 0) {
-			firstClass.pop();
-			number -= 4;
+		var newNumber = numberOfSeatsPerClass[cat - 1] - number;
+		numberOfSeatsPerClass[cat - 1] = 0;
+		firstClass = [];
+		addSeats(newNumber, firstClass, 'f', cat);
+	}
+	else if (cat == 2) {
+		var number = parseInt($("#business").val());
+		if (number > numberOfSeatsPerClass[cat - 1]) {
+			return;
 		}
-		if (number > 0) {
-			if (number > 2) {
-				number -= 2;
-			}
-			var lastRow = firstClass[firstClass.length - 1].split("");
-			for (var i = 4; i >= number; i--) {
-				if (lastRow[i] == '_') {
-					continue;
-				}
-				lastRow[i] = '_';
-			}
-			firstClass[firstClass.length - 1] = lastRow.join("");
+		var newNumber = numberOfSeatsPerClass[cat - 1] - number;
+		numberOfSeatsPerClass[cat - 1] = 0;
+		businessClass = [];
+		addSeats(newNumber, businessClass, 'b', cat);
+	}
+	else {
+		var number = parseInt($("#economy").val());
+		if (number > numberOfSeatsPerClass[cat - 1]) {
+			return;
 		}
-		firstClass.push('_____');
-		var seats = firstClass.concat(businessClass).concat(economyClass);
-		$('.seatCharts-row').remove();
-		$('.seatCharts-legendItem').remove();
-		$('#seat-map,#seat-map *').unbind().removeData();
-		firstSeatLabel = 1;
-		showPlaneSeats(seats);
+		var newNumber = numberOfSeatsPerClass[cat - 1] - number;
+		numberOfSeatsPerClass[cat - 1] = 0;
+		economyClass = [];
+		addSeats(newNumber, economyClass, 'e', cat);
 	}
 }
 
@@ -356,59 +300,11 @@ function showPlaneSeats(seats) {
 	    items : [
 			[ 'f', 'available',   'First Class' ],
 			[ 'b', 'available',   'Business Class'],
-			[ 'e', 'available',   'Economy Class'],
-			[ 'f', 'unavailable', 'Already Booked']
+			[ 'e', 'available',   'Economy Class']
 	    ]					
 	},
 	click: function () {
-		if (this.status() == 'available') {
-			//let's create a new <li> which we'll add to the cart items
-			seatsForDelete.push(this.settings.label);
-			/*
-			 * Lets update the counter and total
-			 *
-			 * .find function will not find the current seat, because it will change its stauts only after return
-			 * 'selected'. This is why we have to add 1 to the length and the current seat price to the total.
-			 */
-			$counter.text(sc.find('selected').length+1);
-			$total.text(recalculateTotal(sc)+this.data().price);
-			
-			return 'selected';
-		} else if (this.status() == 'selected') {
-			var index = seatsForDelete.indexOf(this.settings.label);
-			seatsForDelete.splice(index, 1);
-			//update the counter
-			$counter.text(sc.find('selected').length-1);
-			//and total
-			$total.text(recalculateTotal(sc)-this.data().price);
-		
-			//remove the item from our cart
-			$('#cart-item-'+this.settings.id).remove();
-		
-			//seat has been vacated
-			return 'available';
-		} else if (this.status() == 'unavailable') {
-			//seat has been already booked
-			return 'unavailable';
-		} else {
 			return this.style();
 		}
-	}
-});
-}
-//this will handle "[cancel]" link clicks
-$('#selected-seats').on('click', '.cancel-cart-item', function () {
-	//let's just trigger Click event on the appropriate seat, so we don't have to repeat the logic here
-	sc.get($(this).parents('li:first').data('seatId')).click();
-});
-
-function recalculateTotal(sc) {
-	var total = 0;
-	
-	//basically find every selected seat and sum its price
-	sc.find('selected').each(function () {
-		total += this.data().price;
 	});
-
-	return total;
 }

@@ -196,7 +196,10 @@ span.seatCharts-legendDescription {
 	line-height: 30px;
 }
 #addButton {
-	float:left;
+	display: inline-block !important;
+}
+#deleteButton {
+	display: inline-block !important;
 }
 .configure-button {
 	display: block;

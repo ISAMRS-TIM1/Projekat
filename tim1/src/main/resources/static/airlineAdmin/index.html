@@ -99,14 +99,14 @@
 								<div class="booking-details">
 								   <h2>Configure seats</h2>
 								   <h3>First class</h3><input type="text" id="first">
-								   <span><button class="configure-button" id="addButton" onclick="addFirstClass(event)">Add</button>
-								   <button class="configure-button" onclick="deleteSeat(event, 1)">Delete</button></span>
+								   <div><button class="configure-button" id="addButton" onclick="add(event, 1)">Add</button>
+								   <button class="configure-button" id="deleteButton" onclick="deleteSeat(event, 1)">Delete</button></div>
 								   <h3>Business class</h3><input type="text" id="business">
-								   <button class="configure-button" id="addButton" onclick="addBusinessClass(event)">Add</button>
-								   <button class="configure-button" onclick="deleteSeat(event, 2)">Delete</button>
+								   <div><button class="configure-button" id="addButton" onclick="add(event, 2)">Add</button>
+								   <button class="configure-button" id="deleteButton" onclick="deleteSeat(event, 2)">Delete</button></div>
 								   <h3>Economy class</h3><input type="text" id="economy">
-								   <button class="configure-button" id="addButton" onclick="addEconomyClass(event)">Add</button>
-								   <button class="configure-button" onclick="deleteSeat(event, 3)">Delete</button>
+								   <div><button class="configure-button" id="addButton" onclick="add(event, 3)">Add</button>
+								   <button class="configure-button" id="deleteButton" onclick="deleteSeat(event, 3)">Delete</button></div>
 								   <div id="legend"></div>
 								 </div>
 							</div>
