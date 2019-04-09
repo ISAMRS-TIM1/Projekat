@@ -37,7 +37,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 		} catch (Exception e) {
 			return false;
 		}
-
 		return true;
 	}
 

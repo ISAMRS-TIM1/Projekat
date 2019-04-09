@@ -18,10 +18,12 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.model.AirlineAdmin;
@@ -37,6 +39,7 @@ import isamrs.tim1.model.UserType;
 import isamrs.tim1.security.TokenUtils;
 import isamrs.tim1.security.auth.JwtAuthenticationRequest;
 import isamrs.tim1.service.CustomUserDetailsService;
+import isamrs.tim1.service.EmailService;
 
 @RestController
 public class AuthenticationController {
@@ -48,6 +51,14 @@ public class AuthenticationController {
 
 	@Autowired
 	private CustomUserDetailsService userDetailsService;
+
+	@Autowired
+	private EmailService mailService;
+
+	@RequestMapping(value = "auth/confirm", method = RequestMethod.GET)
+	public String confirmRegistration(@PathVariable String token){
+		return "registration/registrationConfirmed.html";
+	}
 
 	@RequestMapping(value = "auth/register", method = RequestMethod.POST)
 	public ResponseEntity<?> register(@Valid @RequestBody User user) {
@@ -66,7 +77,7 @@ public class AuthenticationController {
 		authorities.add(a);
 		ru.setAuthorities(authorities);
 		ru.setDiscountPoints(0);
-		ru.setEnabled(true);
+		ru.setEnabled(false); // false before confirmation mail
 		ru.setFriends(new HashSet<RegisteredUser>());
 		ru.setFirstName(user.getFirstName());
 		ru.setLastName(user.getLastName());
@@ -76,6 +87,7 @@ public class AuthenticationController {
 		ru.setServiceGrades(new HashSet<ServiceGrade>());
 
 		if (this.userDetailsService.saveUser(ru)) {
+			mailService.sendMailAsync(ru); // mail sent
 			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 		}
 		return new ResponseEntity<Boolean>(false, HttpStatus.OK);
