@@ -1,5 +1,7 @@
 package isamrs.tim1.service;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +39,14 @@ public class EmailService {
 		mail.setTo(ru.getEmail());
 		mail.setFrom(env.getProperty("spring.mail.username"));
 		mail.setSubject("Flights - registration");
-		String content = String.format(
-				"Hello %s,\nTo finish registration click on link below:\nlocalhost:8000/auth/confirm?token=%s",
-				ru.getEmail(), token);
+		String content = null;
+		try {
+			content = String.format(
+					"Hello %s,\nTo finish registration click on link below:\nhttp://localhost:8000/auth/confirm?token=%s",
+					ru.getEmail(), URLEncoder.encode(token, "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		mail.setText(content);
 		mailSender.send(mail);
 	}

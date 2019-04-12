@@ -46,7 +46,6 @@ $(document).on('submit', '#registrationForm', function(e){
 			} else{
 				if(data){
 					document.location.href = rootURL3;
-					// backend should send email with verification link
 				} else{
 					console.log("error");
 				}	
