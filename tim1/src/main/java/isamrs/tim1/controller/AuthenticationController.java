@@ -21,7 +21,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.model.AirlineAdmin;
@@ -37,6 +39,8 @@ import isamrs.tim1.model.UserType;
 import isamrs.tim1.security.TokenUtils;
 import isamrs.tim1.security.auth.JwtAuthenticationRequest;
 import isamrs.tim1.service.CustomUserDetailsService;
+import isamrs.tim1.service.EmailService;
+import isamrs.tim1.service.UserService;
 
 @RestController
 public class AuthenticationController {
@@ -48,6 +52,23 @@ public class AuthenticationController {
 
 	@Autowired
 	private CustomUserDetailsService userDetailsService;
+
+	@Autowired
+	private EmailService mailService;
+
+	@Autowired
+	private UserService userService;
+
+	@RequestMapping(value = "auth/confirm", method = RequestMethod.GET)
+	public RedirectView confirmRegistration(@RequestParam String token) {
+		User ru = userService.findUserByToken(token);
+		if (ru != null) {
+			ru.setEnabled(true);
+			userDetailsService.saveUser(ru);
+			return new RedirectView("/registration/verified.html");
+		}
+		return null;
+	}
 
 	@RequestMapping(value = "auth/register", method = RequestMethod.POST)
 	public ResponseEntity<?> register(@Valid @RequestBody User user) {
@@ -66,7 +87,7 @@ public class AuthenticationController {
 		authorities.add(a);
 		ru.setAuthorities(authorities);
 		ru.setDiscountPoints(0);
-		ru.setEnabled(true);
+		ru.setEnabled(false);
 		ru.setFriends(new HashSet<RegisteredUser>());
 		ru.setFirstName(user.getFirstName());
 		ru.setLastName(user.getLastName());
@@ -76,6 +97,7 @@ public class AuthenticationController {
 		ru.setServiceGrades(new HashSet<ServiceGrade>());
 
 		if (this.userDetailsService.saveUser(ru)) {
+			mailService.sendMailAsync(ru);
 			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 		}
 		return new ResponseEntity<Boolean>(false, HttpStatus.OK);
@@ -92,11 +114,16 @@ public class AuthenticationController {
 		} catch (BadCredentialsException e) {
 			return new ResponseEntity<MessageDTO>(new MessageDTO("Wrong email or password.", "Error"), HttpStatus.OK);
 		}
+		User user = (User) authentication.getPrincipal();
+
+		if (!user.isEnabled()) {
+			return new ResponseEntity<MessageDTO>(new MessageDTO("Account is not verified. Check your email.", "Error"),
+					HttpStatus.OK);
+		}
 		// Ubaci username + password u kontext
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		// Kreiraj token
-		User user = (User) authentication.getPrincipal();
 		String jwt = tokenUtils.generateToken(user.getUsername());
 		int expiresIn = tokenUtils.getExpiredIn();
 		UserType userType = null;

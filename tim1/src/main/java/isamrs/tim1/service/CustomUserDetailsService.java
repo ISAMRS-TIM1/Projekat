@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import isamrs.tim1.model.RegisteredUser;
 import isamrs.tim1.model.User;
 import isamrs.tim1.repository.UserRepository;
 
@@ -31,13 +30,12 @@ public class CustomUserDetailsService implements UserDetailsService {
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
-	public boolean saveUser(RegisteredUser ru) {
+	public boolean saveUser(User ru) {
 		try {
 			this.userRepository.save(ru);
 		} catch (Exception e) {
 			return false;
 		}
-
 		return true;
 	}
 

@@ -11,6 +11,10 @@ public class UserService {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	public User findUserByToken(String token){
+		return userRepository.findByToken(token);
+	}
 
 	public String editProfile(User user) throws Exception {
 		User userToEdit = userRepository.findOneByEmail(user.getEmail());
