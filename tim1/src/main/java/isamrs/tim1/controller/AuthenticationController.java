@@ -65,10 +65,9 @@ public class AuthenticationController {
 		if (ru != null) {
 			ru.setEnabled(true);
 			userDetailsService.saveUser(ru);
-			return new RedirectView("registration/verified");
-		} else {
-			return new RedirectView("registration/notVerified");
+			return new RedirectView("/registration/verified.html");
 		}
+		return null;
 	}
 
 	@RequestMapping(value = "auth/register", method = RequestMethod.POST)

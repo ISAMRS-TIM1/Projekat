@@ -3,7 +3,6 @@ package isamrs.tim1.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import isamrs.tim1.model.RegisteredUser;
 import isamrs.tim1.model.VerificationToken;
 import isamrs.tim1.repository.VerificationTokenRepository;
 
