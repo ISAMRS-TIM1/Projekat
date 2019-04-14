@@ -1,0 +1,32 @@
+body {
+	background: #0D63FF;
+}
+
+#topMenu {
+	display: flex;
+}
+
+#tabsDiv {
+	width: 90%;
+	margin-top: 1%;
+	margin-left: 5%;
+}
+
+a {
+	border-radius: 2vw 2vw 0vw 0vw !important;
+	background: #5994FF;
+	border: 0.18vw solid #B27A00 !important;
+	font-size: 1.3vw;
+	color: white;
+}
+
+#logout {
+	width: 10%;
+	margin-right: 0% !important;
+	background: none;
+	color: white;
+  	font-size: 1.4vw;
+  	margin-top: 0.8vw;
+  	font-style: italic;
+  	text-decoration: underline;
+}
