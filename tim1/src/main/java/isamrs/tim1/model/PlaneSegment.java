@@ -7,6 +7,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -38,6 +40,10 @@ public class PlaneSegment implements Serializable {
 
 	@OneToMany(mappedBy = "planeSegment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Seat> seats;
+	
+	@Column(name = "class")
+	@Enumerated(EnumType.STRING)
+	PlaneSegmentClass segmentClass;
 
 	public Long getId() {
 		return id;
@@ -61,6 +67,14 @@ public class PlaneSegment implements Serializable {
 
 	public void setSeats(Set<Seat> seats) {
 		this.seats = seats;
+	}
+	
+	public PlaneSegmentClass getSegmentClass() {
+		return segmentClass;
+	}
+
+	public void setSegmentClass(PlaneSegmentClass segmentClass) {
+		this.segmentClass = segmentClass;
 	}
 
 	public static long getSerialversionuid() {

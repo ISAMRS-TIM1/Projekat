@@ -17,11 +17,8 @@ public class Seat {
 	@Column(name = "seat_id", unique = true, nullable = false)
 	private Long id;
 
-	@Column(name = "row", unique = false, nullable = false)
-	private Integer row;
-
-	@Column(name = "label", unique = false, nullable = false)
-	private String label;
+	@Column(name = "number", unique = true, nullable = false)
+	private Integer number;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "planeSegment")
@@ -39,20 +36,12 @@ public class Seat {
 		this.id = id;
 	}
 
-	public Integer getRow() {
-		return row;
+	public Integer getNumber() {
+		return number;
 	}
 
-	public void setRow(Integer row) {
-		this.row = row;
-	}
-
-	public String getLabel() {
-		return label;
-	}
-
-	public void setLabel(String label) {
-		this.label = label;
+	public void setNumber(Integer number) {
+		this.number = number;
 	}
 
 	public PlaneSegment getPlaneSegment() {

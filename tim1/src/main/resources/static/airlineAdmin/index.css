@@ -166,6 +166,13 @@ div.seatCharts-seat.available.first-class {
 div.seatCharts-seat.available.economy-class {
 	background-color: #FF851B !important;
 }
+div.seatCharts-seat.available.business-class {
+	background-color: #00d33b !important;
+}
+div.seatCharts-seat.available.blank-class {
+/* 	background: url(vip.png); */
+	background-color: white !important;
+}
 div.seatCharts-seat.focused {
 	background-color: #76B474 !important;
 }
