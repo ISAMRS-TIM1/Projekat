@@ -22,7 +22,7 @@ public class AirlineDTO implements Serializable {
 	private ArrayList<Flight> flights;
 	private ArrayList<PlaneSegment> planeSegments;
 	private ArrayList<QuickFlightReservation> quickReservations;
-	private ArrayList<Integer> reservedSeats;
+	private ArrayList<String> reservedSeats;
 
 	public AirlineDTO() {
 		super();
@@ -39,18 +39,18 @@ public class AirlineDTO implements Serializable {
 		this.flights = new ArrayList<Flight>(airline.getFlights());
 		this.planeSegments = new ArrayList<PlaneSegment>(airline.getPlaneSegments());
 		this.quickReservations = new ArrayList<QuickFlightReservation>(airline.getQuickReservations());
-		this.reservedSeats = new ArrayList<Integer>();
+		this.reservedSeats = new ArrayList<String>();
 		for (FlightReservation r : airline.getNormalReservations()) {
 			for (PassengerSeat ps : r.getPassengerSeats()) {
 				if (ps.getSeat() != null) {
-					this.reservedSeats.add(ps.getSeat().getNumber());
+					this.reservedSeats.add(ps.getSeat().getRow() + "_" + ps.getSeat().getColumn());
 				}
 			}
 		}
 		for (QuickFlightReservation r : airline.getQuickReservations()) {
 			for (PassengerSeat ps : r.getPassengerSeats()) {
 				if (ps.getSeat() != null) {
-					this.reservedSeats.add(ps.getSeat().getNumber());
+					this.reservedSeats.add(ps.getSeat().getRow() + "_" + ps.getSeat().getColumn());
 				}
 			}
 		}
