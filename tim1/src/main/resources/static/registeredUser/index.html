@@ -20,26 +20,88 @@
 			<div id="tabsDiv">
 				<ul class="nav nav-tabs nav-justified">
 					<li class="active">
-						<a href="#">Flights</a>
+						<a data-toggle="tab" href="#flights">Flights</a>
 					</li>
 					<li>
-						<a href="#">Hotels</a>
+						<a data-toggle="tab" href="#hotels">Hotels</a>
 					</li>
 					<li>
-						<a href="#">Cars</a>
+						<a data-toggle="tab" href="#cars">Cars</a>
 					</li>
 					<li>
-						<a href="#">Friends</a>
+						<a data-toggle="tab" href="#friends">Friends</a>
 					</li>
 					<li>
-						<a href="#">My reservations</a>
+						<a data-toggle="tab" href="#reservations">My reservations</a>
 					</li>
 					<li>
-						<a href="#">Profile</a>
+						<a data-toggle="tab" href="#profile">Profile</a>
 					</li>
 				</ul>
 			</div>
 			<button type="button" class="btn .btn-link" id="logout">Logout</button>
+		</div>
+		<div class="tab-content">
+			<div id="flights" class="tab-pane fade in active">
+				<h3>FLIGHTS</h3>
+    			<p>Some content.</p>
+			</div>
+			<div id="hotels" class="tab-pane fade">
+				<h3>HOTELS</h3>
+    			<p>Some content.</p>
+			</div>
+			<div id="cars" class="tab-pane fade">
+				<h3>CARS</h3>
+    			<p>Some content.</p>
+			</div>
+			<div id="friends" class="tab-pane fade">
+				<h3>FRIENDS</h3>
+    			<p>Some content.</p>
+			</div>
+			<div id="reservations" class="tab-pane fade">
+				<h3>RESERVATIONS</h3>
+    			<p>Some content.</p>
+			</div>
+			<div id="profile" class="tab-pane fade">
+				<div id="profileContent">
+					<div id="userImgDiv">
+						<img src="registeredUser/user.png" id="userImg">
+					</div>
+					<div id="profileEdit">
+						<form id="userEditForm">
+							<div class="form-group">
+								<label for="fname">First name:</label>
+								<div class="input-group">
+									<input class="form-control" type="text" name="fname" pattern="[A-Z][a-z]*" title="Must start with a capital letter" readonly>
+									<span class="input-group-addon edit"><i class="glyphicon glyphicon-edit"></i></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="lname">Last name:</label>
+								<div class="input-group">
+									<input class="form-control" type="text" name="lname" pattern="[A-Z][a-z]*" title="Must start with a capital letter" readonly>
+									<span class="input-group-addon edit"><i class="glyphicon glyphicon-edit"></i></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="phone">Phone:</label>
+								<div class="input-group">
+									<input class="form-control" type="tel" name="phone" pattern="\+[0-9]{12}" title="12 digits starting with +" readonly>
+									<span class="input-group-addon edit"><i class="glyphicon glyphicon-edit"></i></span>
+								</div>
+							</div>		
+							<div class="form-group">
+								<label for="address">Address:</label>
+								<div class="input-group">
+									<input class="form-control" type="text" name="address" pattern="[A-Z][a-z]*" title="Must start with a capital letter" readonly>
+									<span class="input-group-addon edit"><i class="glyphicon glyphicon-edit"></i></span>
+								</div>
+							</div>
+							<button type="submit" class="btn btn-default" id="saveChanges">Save changes</button>	
+						</form>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </body>

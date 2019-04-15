@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
 import isamrs.tim1.dto.MessageDTO;
+import isamrs.tim1.dto.UserDTO;
 import isamrs.tim1.model.AirlineAdmin;
 import isamrs.tim1.model.Authority;
 import isamrs.tim1.model.HotelAdmin;
@@ -142,5 +143,13 @@ public class AuthenticationController {
 
 		// Vrati token kao odgovor na uspesno autentifikaciju
 		return new ResponseEntity<UserTokenState>(new UserTokenState(jwt, expiresIn, userType), HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/api/getUserInfo", method = RequestMethod.GET)
+	public ResponseEntity<UserDTO> getUserData() {
+		// fix this
+		User u = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return new ResponseEntity<UserDTO>(
+				new UserDTO(u.getFirstName(), u.getLastName(), u.getPhoneNumber(), u.getAddress()), HttpStatus.OK);
 	}
 }
