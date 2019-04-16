@@ -1,5 +1,7 @@
 package isamrs.tim1.controller;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim1.dto.HotelDTO;
+import isamrs.tim1.dto.ServiceDTO;
 import isamrs.tim1.model.Hotel;
 import isamrs.tim1.model.HotelAdmin;
 import isamrs.tim1.service.HotelService;
@@ -44,6 +47,14 @@ public class HotelController {
 		return new ResponseEntity<HotelDTO>(
 				hotelService
 						.getHotel((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()),
+				HttpStatus.OK);
+	}
+	
+	@PreAuthorize("hasRole('SYSADMIN')")
+	@RequestMapping(value = "/api/getHotels", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ArrayList<ServiceDTO>> getHotels() {
+		return new ResponseEntity<ArrayList<ServiceDTO>>(
+				hotelService.getAirlines(),
 				HttpStatus.OK);
 	}
 }

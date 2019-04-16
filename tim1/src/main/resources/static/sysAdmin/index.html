@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flights</title>
+<link rel="shortcut icon" type="image/png" href="favicon.png" />
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="sysAdmin/index.css">
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="auth/auth.js"></script>
+<script type="text/javascript" src="sysAdmin/index.js"></script>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+<script type="text/javascript"
+	src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript"
+	src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
+</head>
+<body>
+	<div class="container-fluid">
+		<div id="topMenu">
+			<div id="tabsDiv">
+				<ul class="nav nav-tabs nav-justified">
+					<li class="active"><a data-toggle="tab" href="#airlines">Airlines</a>
+					</li>
+					<li><a data-toggle="tab" href="#hotels">Hotels</a></li>
+					<li><a data-toggle="tab" href="#rentACars">Rent A Cars</a></li>
+					<li><a data-toggle="tab" href="#profile">Profile</a></li>
+				</ul>
+			</div>
+			<button type="button" class="btn .btn-link" id="logout">Logout</button>
+		</div>
+		<div class="tab-content">
+			<div id="airlines" class="tab-pane fade in active">
+				<h3>Airlines</h3>
+				<div id="airlinesTableDiv">
+					<table id="airlinesTable" class="table display table-bordered">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Average grade</th>
+								<th>Number of admins</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div id="hotels" class="tab-pane fade">
+				<h3>Hotels</h3>
+				<div id="hotelsTableDiv">
+					<table id="hotelsTable" class="table display table-bordered">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Average grade</th>
+								<th>Number of admins</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div id="rentACars" class="tab-pane fade">
+				<h3>Rent a cars</h3>
+				<div id="rentACarsTableDiv">
+					<table id="rentACarsTable" class="table display table-bordered">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Average grade</th>
+								<th>Number of admins</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div id="profile" class="tab-pane fade">
+				<div id="profileContent">
+					<div id="userImgDiv">
+						<img src="registeredUser/user.png" id="userImg">
+					</div>
+					<div id="profileEdit">
+						<h2 id='email'></h2>
+						<form id="userEditForm">
+							<div class="form-group">
+								<label for="fname">First name:</label>
+								<div class="input-group">
+									<input class="form-control" type="text" name="fname"
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
+										readonly> <span class="input-group-addon edit"><i
+										class="glyphicon glyphicon-edit"></i></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="lname">Last name:</label>
+								<div class="input-group">
+									<input class="form-control" type="text" name="lname"
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
+										readonly> <span class="input-group-addon edit"><i
+										class="glyphicon glyphicon-edit"></i></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="phone">Phone:</label>
+								<div class="input-group">
+									<input class="form-control" type="tel" name="phone"
+										pattern="\+[0-9]{12}" title="12 digits starting with +"
+										readonly> <span class="input-group-addon edit"><i
+										class="glyphicon glyphicon-edit"></i></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="address">Address:</label>
+								<div class="input-group">
+									<input class="form-control" type="text" name="address"
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
+										readonly> <span class="input-group-addon edit"><i
+										class="glyphicon glyphicon-edit"></i></span>
+								</div>
+							</div>
+							<button type="submit" class="btn btn-default" id="saveChanges">Save
+								changes</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
