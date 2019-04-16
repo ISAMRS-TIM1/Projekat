@@ -7,6 +7,14 @@ var tokenKey = "jwtToken";
 $(document).ready(function(){
 	loadData();
 	
+	$('#friendsTable').DataTable({
+        "paging": false,
+        "info": false,
+        "scrollY": "17vw",
+        "scrollCollapse": true,
+        "retrieve": true,
+    });
+	
 	$(".nav li").click(function(){
         $(this).addClass("active");
         $(this).siblings().removeClass("active");
@@ -72,6 +80,10 @@ $(document).ready(function(){
 	
 	$('a[href="#profile"]').click(function(){
 		loadData();
+	});
+	
+	$('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
+		$($.fn.dataTable.tables(true)).DataTable().columns.adjust();
 	});
 });
 
