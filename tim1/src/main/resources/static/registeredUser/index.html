@@ -12,7 +12,10 @@
 <link rel="stylesheet" href="registeredUser/index.css">
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="auth/auth.js"></script>
 <script type="text/javascript" src="registeredUser/index.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 </head>
 <body>
 	<div class="container-fluid">
@@ -68,6 +71,7 @@
 						<img src="registeredUser/user.png" id="userImg">
 					</div>
 					<div id="profileEdit">
+						<h2 id='email'></h2>
 						<form id="userEditForm">
 							<div class="form-group">
 								<label for="fname">First name:</label>

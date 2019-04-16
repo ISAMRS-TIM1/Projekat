@@ -2,6 +2,8 @@ var logoutURL = "../logout";
 var loadUserInfoURL = "../api/getUserInfo";
 var saveChangesURL = "../api/editUser";
 
+var tokenKey = "jwtToken";
+
 $(document).ready(function(){
 	loadData();
 	
@@ -32,15 +34,16 @@ $(document).ready(function(){
 		let lastName = $('input[name="lname"]').val();
 		let phone = $('input[name="phone"]').val();
 		let address = $('input[name="address"]').val();
+		let email = $('#email').text();
 		
 		$.ajax({
-			type : 'POST',
+			type : 'PUT',
 			url : saveChangesURL,
 			contentType : 'application/json',
-			dataType : "json",
-			data : formToJSON(firstName, lastName, phone, address),
+			dataType : "html",
+			data : formToJSON(firstName, lastName, phone, address, email),
 			success: function(data){
-				if(data != null){
+				if(data != ""){
 					toastr.options = {
 							  "closeButton": true,
 							  "debug": false,
@@ -66,18 +69,27 @@ $(document).ready(function(){
 			}
 		});
 	});
+	
+	$('a[href="#profile"]').click(function(){
+		loadData();
+	});
 });
 
 function loadData(){
+	let token = getJwtToken("jwtToken");
 	$.ajax({
 		type : 'GET',
 		url : loadUserInfoURL,
 		dataType : "json",
+		headers: createAuthorizationTokenHeader(tokenKey),
 		success: function(data){
+			if(data != null){
 			$('input[name="fname"]').val(data.firstName);
 			$('input[name="lname"]').val(data.lastName);
 			$('input[name="phone"]').val(data.phone);
 			$('input[name="address"]').val(data.address);
+			$('#email').text(data.email);
+			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
 			alert("AJAX ERROR: " + textStatus);
@@ -85,11 +97,12 @@ function loadData(){
 	});
 }
 
-function formToJSON(firstName, lastName, phone, address){
+function formToJSON(firstName, lastName, phone, address, email){
 	return JSON.stringify({
 		"firstName": firstName,
 		"lastName": lastName,
 		"phoneNumber": phone,
-		"address": address
+		"address": address,
+		"email": email
 	});
 }

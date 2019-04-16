@@ -150,6 +150,7 @@ public class AuthenticationController {
 		// fix this
 		User u = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		return new ResponseEntity<UserDTO>(
-				new UserDTO(u.getFirstName(), u.getLastName(), u.getPhoneNumber(), u.getAddress()), HttpStatus.OK);
+				new UserDTO(u.getFirstName(), u.getLastName(), u.getPhoneNumber(), u.getAddress(), u.getEmail()),
+				HttpStatus.OK);
 	}
 }

@@ -51,6 +51,7 @@ a {
 
 #profileEdit {
 	width: 50%;
+	margin-top: -6%;
 }
 
 #saveChanges {
@@ -62,4 +63,8 @@ a {
   	font-size: 1.6vw;
   	border: 0.16vw solid #B27A00;
   	border-radius: 2vw 2vw 2vw 2vw;
+}
+
+#email {
+	text-align: center;
 }
