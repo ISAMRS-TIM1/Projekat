@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flights</title>
+<link rel="shortcut icon" type="image/png" href="favicon.png" />
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="carAdmin/index.css">
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="auth/auth.js"></script>
+<script type="text/javascript" src="carAdmin/index.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
+<link rel="stylesheet"
+	href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+	integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+	crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+	integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+	crossorigin=""></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
+</head>
+<body>
+	<div class="container-fluid">
+		<div id="topMenu">
+			<div id="tabsDiv">
+				<ul class="nav nav-tabs nav-justified">
+					<li class="active">
+						<a data-toggle="tab" href="#basic">Basic info</a>
+					</li>
+					<li>
+						<a data-toggle="tab" href="#branch">Branch offices</a>
+					</li>
+					<li>
+						<a data-toggle="tab" href="#report">Reports</a>
+					</li>
+					<li>
+						<a data-toggle="tab" href="#vehicle">Vehicles</a>
+					</li>
+					<li>
+						<a data-toggle="tab" href="#additional">Additional services</a>
+					</li>
+					<li>
+						<a data-toggle="tab" href="#quick">Quick reservations</a>
+					</li>
+				</ul>
+			</div>		
+			<div id="logoutDiv">
+				<h4>email@email.com</h4>
+				<button type="button" class="btn .btn-link" id="logout">Logout</button>
+			</div>
+		</div>
+		<div class="tab-content">
+			<div id="basic" class="tab-pane fade in active">
+				<div id="basicInfo">
+					<h2>Name</h2>
+					<h4>Description</h4>
+				</div>
+				<div id="basicMapDiv" class="map leaflet-container"></div>
+				<button type="button" id="saveChangesBasic" class="btn btn-default">Save changes</button>
+			</div>
+			<div id="branch" class="tab-pane fade in">
+				<div id="branchMapDiv" class="map"></div>
+				<div id="branchTableWrapper">
+					<div id="branchTableDiv">
+						<table id="branchTable" class="table display table-bordered">
+							<thead>
+		            			<tr>
+		            				<th>ID</th>
+					                <th>Name</th>
+		            			</tr>
+		        			</thead>
+		        			<tbody>
+		        				<tr>
+		            				<th>Ime1</th>
+					                <th>First name</th>
+		            			</tr>
+		            			<tr>
+		            				<th>Email</th>
+					                <th>First name</th>
+		            			</tr>
+		            			<tr>
+		            				<th>Email</th>
+					                <th>First name</th>
+		            			</tr>
+		            			<tr>
+		            				<th>Ime2</th>
+					                <th>First name</th>
+		            			</tr>
+		            			<tr>
+		            				<th>Email</th>
+					                <th>First name</th>
+		            			</tr>
+		            			<tr>
+		            				<th>Email</th>
+					                <th>First name</th>
+		            			</tr>
+		            			<tr>
+		            				<th>Ddsad</th>
+					                <th>First name</th>
+		            			</tr>
+		            			<tr>
+		            				<th>Email</th>
+					                <th>First name</th>
+		            			</tr>
+		            			<tr>
+		            				<th>Email</th>
+					                <th>First name</th>
+		            			</tr>
+		        			</tbody>
+						</table>
+					</div>
+				</div>
+				<div id="branchButtons">
+					<button type="button" id="addBranchOffice" class="btn btn-default">Add branch office</button>
+					<button type="button" id="saveChangesBranch" class="btn btn-default">Save changes</button>
+				</div>
+			</div>
+			<div id="report" class="tab-pane fade">
+				<h3>Reports</h3>
+    			<p>Some content.</p>
+			</div>
+			<div id="vehicle" class="tab-pane fade">
+				<h3>Vehicles</h3>
+    			<p>Some content.</p>
+			</div>
+			<div id="additional" class="tab-pane fade">
+				<h3>Additional services</h3>
+    			<p>Some content.</p>
+			</div>
+			<div id="quick" class="tab-pane fade">
+				<h3>Quick reservations</h3>
+    			<p>Some content.</p>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
