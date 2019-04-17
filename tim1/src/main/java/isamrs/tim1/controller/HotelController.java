@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import isamrs.tim1.dto.DetailedServiceDTO;
 import isamrs.tim1.dto.HotelDTO;
 import isamrs.tim1.dto.ServiceDTO;
 import isamrs.tim1.model.Hotel;
@@ -55,6 +56,15 @@ public class HotelController {
 	public ResponseEntity<ArrayList<ServiceDTO>> getHotels() {
 		return new ResponseEntity<ArrayList<ServiceDTO>>(
 				hotelService.getHotels(),
+				HttpStatus.OK);
+	}
+	
+
+	@PreAuthorize("hasRole('SYSADMIN')")
+	@RequestMapping(value = "/api/getHotel", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<DetailedServiceDTO> getHotel(@RequestParam String name) {
+		return new ResponseEntity<DetailedServiceDTO>(
+				hotelService.getHotel(name),
 				HttpStatus.OK);
 	}
 }

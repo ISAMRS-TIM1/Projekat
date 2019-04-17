@@ -12,7 +12,7 @@ body {
 	margin-left: 5%;
 }
 
-a {
+a[data-toggle="tab"] {
 	border-radius: 2vw 2vw 0vw 0vw !important;
 	background: #5994FF;
 	border: 0.18vw solid #B27A00 !important;
@@ -78,6 +78,44 @@ a {
 	border-radius: 4vw 1.6vw;
 	margin-left: 13%;
 	padding: 2vw;
+}
+
+#serviceDiv {
+	margin: 0;
+	background: #5994FF;
+	border: 0.24vw solid #B27A00;
+  	border-radius: 4vw 1.6vw;
+}
+
+#mapDiv {
+	width: 25vw; 
+	height: 25vh;
+}
+
+#serviceName{
+	background-color: #5994FF;
+}
+
+#serviceDescription{
+	background-color: #5994FF;
+}
+
+#serviceTable td{
+	padding: 30px;
+	text-align: center;
+}
+
+#serviceTable table{
+	margin:auto;
+}
+
+.textInput{
+	border: none;
+	resize: none;
+}
+.textInput:focus{
+	border: 1px solid black;
+	resize: none;
 }
 
 /*

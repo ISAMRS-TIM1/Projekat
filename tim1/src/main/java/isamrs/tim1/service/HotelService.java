@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import isamrs.tim1.dto.DetailedServiceDTO;
 import isamrs.tim1.dto.HotelDTO;
 import isamrs.tim1.dto.ServiceDTO;
 import isamrs.tim1.model.Airline;
@@ -74,6 +75,10 @@ public class HotelService {
 		for(Hotel h : hotelRepository.findAll())
 			retval.add(new ServiceDTO(h));
 		return retval;
+	}
+
+	public DetailedServiceDTO getHotel(String name) {
+		return new DetailedServiceDTO(hotelRepository.findOneByName(name));
 	}
 
 }

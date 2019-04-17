@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import isamrs.tim1.dto.AirlineDTO;
+import isamrs.tim1.dto.DetailedServiceDTO;
 import isamrs.tim1.dto.ServiceDTO;
 import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.AirlineAdmin;
@@ -54,7 +55,7 @@ public class AirlineService {
         return null;
 	}
 
-	public AirlineDTO getAirline(AirlineAdmin admin) {
+	public AirlineDTO getAirlineOfAdmin(AirlineAdmin admin) {
 		return new AirlineDTO(admin.getAirline());
 	}
 
@@ -65,4 +66,9 @@ public class AirlineService {
 		return retval;
 	}
 
+	public DetailedServiceDTO getAirline(String name) {
+		return new DetailedServiceDTO(airlineRepository.findOneByName(name));
+	}
+	
+	
 }
