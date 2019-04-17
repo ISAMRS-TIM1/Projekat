@@ -10,8 +10,11 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Table(name = "Airlines")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Airline extends Service implements Serializable {
 
 	@OneToMany(mappedBy = "airline", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -41,6 +44,9 @@ public class Airline extends Service implements Serializable {
 		destinations = new HashSet<Destination>();
 		quickReservations = new HashSet<QuickFlightReservation>();
 		planeSegments = new HashSet<PlaneSegment>();
+		planeSegments.add(new PlaneSegment(PlaneSegmentClass.FIRST));
+		planeSegments.add(new PlaneSegment(PlaneSegmentClass.BUSINESS));
+		planeSegments.add(new PlaneSegment(PlaneSegmentClass.ECONOMY));
 		normalReservations = new HashSet<FlightReservation>();
 	}
 

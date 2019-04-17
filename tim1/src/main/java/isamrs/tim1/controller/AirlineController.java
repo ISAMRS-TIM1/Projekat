@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import isamrs.tim1.dto.AirlineDTO;
 import isamrs.tim1.dto.DetailedServiceDTO;
 import isamrs.tim1.dto.ServiceDTO;
+import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.AirlineAdmin;
 import isamrs.tim1.service.AirlineService;
@@ -56,5 +57,10 @@ public class AirlineController {
 		return new ResponseEntity<DetailedServiceDTO>(
 				airlineService.getAirline(name),
 				HttpStatus.OK);
+
+	@RequestMapping(value = "/api/saveSeats", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MessageDTO> saveSeats(@RequestBody String[] savedSeats) {
+		AirlineAdmin a = (AirlineAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return new ResponseEntity<MessageDTO>(airlineService.saveSeats(savedSeats, a), HttpStatus.OK);
 	}
 }

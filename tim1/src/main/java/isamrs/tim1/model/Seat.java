@@ -9,6 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Seat {
 
@@ -20,11 +22,12 @@ public class Seat {
 	@Column(name = "row", unique = false, nullable = false)
 	private Integer row;
 
-	@Column(name = "label", unique = false, nullable = false)
-	private String label;
+	@Column(name = "column", unique = false, nullable = false)
+	private Integer column;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "planeSegment")
+	@JsonIgnore
 	private PlaneSegment planeSegment;
 
 	public Seat() {
@@ -38,7 +41,7 @@ public class Seat {
 	public void setId(Long id) {
 		this.id = id;
 	}
-
+	
 	public Integer getRow() {
 		return row;
 	}
@@ -47,12 +50,12 @@ public class Seat {
 		this.row = row;
 	}
 
-	public String getLabel() {
-		return label;
+	public Integer getColumn() {
+		return column;
 	}
 
-	public void setLabel(String label) {
-		this.label = label;
+	public void setColumn(int i) {
+		this.column = i;
 	}
 
 	public PlaneSegment getPlaneSegment() {

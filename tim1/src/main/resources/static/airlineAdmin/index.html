@@ -13,9 +13,12 @@
 <link rel="stylesheet" href="airlineAdmin/index.css">
 <link rel="stylesheet"
 	href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+<link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="airlineAdmin/jquery.seat-charts.css">
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 <script src="airlineAdmin/index.js"></script>
+<script src="airlineAdmin/jquery.seat-charts.min.js"></script> 
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
 <script type="text/javascript"
@@ -89,7 +92,27 @@
 									<th>Reservations</th>
 								</tr>
 							</table>
-							<div id="planeSeatsTable" class="contentTable" hidden="true">Plane seats</div>
+							<div id="planeSeatsTable" class="contentTable" hidden="true">
+								<div id="seat-map">
+								    <div class="front-indicator">Front</div>
+								</div>
+								<div class="booking-details">
+								   <h2>Configure seats</h2>
+								   <h3>First class</h3><input type="text" id="first">
+								   <div><button class="configure-button" id="addButton" onclick="add(event, 1)">Add</button>
+								   <button class="configure-button" id="deleteButton" onclick="deleteSeats(event, 1)">Delete</button></div>
+								   <h3>Business class</h3><input type="text" id="business">
+								   <div><button class="configure-button" id="addButton" onclick="add(event, 2)">Add</button>
+								   <button class="configure-button" id="deleteButton" onclick="deleteSeats(event, 2)">Delete</button></div>
+								   <h3>Economy class</h3><input type="text" id="economy">
+								   <div><button class="configure-button" id="addButton" onclick="add(event, 3)">Add</button>
+								   <button class="configure-button" id="deleteButton" onclick="deleteSeats(event, 3)">Delete</button></div>
+								   <div><button class="configure-button" id="addButton" onclick="addSeatsIndividually(event)">Add seats individually</button><br>
+								   <button class="configure-button" id="deleteButton" onclick="deleteSeatsIndividually(event)">Delete seats individually</button>
+								   <button class="configure-button"  onclick="saveSeatsChanges(event)">Save changes</button></div>
+								   <div id="legend"></div>
+								 </div>
+							</div>
 						</td>
 					</tr>
 					<input type="hidden" id="latitude" value="45"required">
