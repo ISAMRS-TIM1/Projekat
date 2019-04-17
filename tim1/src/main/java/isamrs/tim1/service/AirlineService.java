@@ -13,6 +13,7 @@ import isamrs.tim1.dto.AirlineDTO;
 import isamrs.tim1.dto.DetailedServiceDTO;
 import isamrs.tim1.dto.ServiceDTO;
 import isamrs.tim1.dto.MessageDTO;
+import isamrs.tim1.dto.PlaneSeatsDTO;
 import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.AirlineAdmin;
 import isamrs.tim1.model.Location;
@@ -132,5 +133,10 @@ public class AirlineService {
 			seatRepository.delete(s);
 		}
 		return new MessageDTO("Seats saved successfully", "");
+	}
+
+	public PlaneSeatsDTO getPlaneSeats() {
+		Airline a = airlineRepository.findOneByName("AirSerbia");
+		return new PlaneSeatsDTO(a);
 	}
 }
