@@ -24,7 +24,7 @@ public class RegisteredUser extends User {
 
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<ServiceGrade> serviceGrades;
-	
+
 	@Column(name = "discountPoints", unique = false, nullable = false)
 	private Integer discountPoints;
 
@@ -62,8 +62,6 @@ public class RegisteredUser extends User {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	
-	
 
 	public Set<ServiceGrade> getServiceGrades() {
 		return serviceGrades;
@@ -73,8 +71,5 @@ public class RegisteredUser extends User {
 		this.serviceGrades = serviceGrades;
 	}
 
-
-
 	private static final long serialVersionUID = 4453092532257405053L;
-
 }

@@ -80,6 +80,17 @@ a {
 	padding: 2vw;
 }
 
+#reservationsTableDiv {
+	width: 70%;
+	height: 30vw; margin-left : 13%;
+	margin-top: 5%;
+	background: #5994FF;
+	border: 0.24vw solid #B27A00;
+	border-radius: 4vw 1.6vw;
+	margin-left: 13%;
+	padding: 2vw;
+}
+
 /*
  * Table styles
  */

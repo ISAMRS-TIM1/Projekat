@@ -15,6 +15,14 @@ $(document).ready(function(){
         "retrieve": true,
     });
 	
+	$('#reservationsTable').DataTable({
+        "paging": false,
+        "info": false,
+        "scrollY": "17vw",
+        "scrollCollapse": true,
+        "retrieve": true,
+    });
+	
 	$(".nav li").click(function(){
         $(this).addClass("active");
         $(this).siblings().removeClass("active");
