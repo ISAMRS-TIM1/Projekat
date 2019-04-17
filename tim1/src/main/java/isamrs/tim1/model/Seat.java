@@ -9,6 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Seat {
 
@@ -25,6 +27,7 @@ public class Seat {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "planeSegment")
+	@JsonIgnore
 	private PlaneSegment planeSegment;
 
 	public Seat() {

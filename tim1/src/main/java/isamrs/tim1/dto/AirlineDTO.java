@@ -3,14 +3,19 @@ package isamrs.tim1.dto;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.Destination;
 import isamrs.tim1.model.Flight;
 import isamrs.tim1.model.FlightReservation;
 import isamrs.tim1.model.PassengerSeat;
 import isamrs.tim1.model.PlaneSegment;
+import isamrs.tim1.model.PlaneSegmentClass;
 import isamrs.tim1.model.QuickFlightReservation;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class AirlineDTO implements Serializable {
 
 	private String name;
@@ -133,5 +138,14 @@ public class AirlineDTO implements Serializable {
 	}
 
 	private static final long serialVersionUID = 2401745303204690548L;
+
+	public PlaneSegment getPlaneSegmentByClass(PlaneSegmentClass segmentClass) {
+		for (PlaneSegment p : this.getPlaneSegments()) {
+			if (p.getSegmentClass() == segmentClass) {
+				return p;
+			}
+		}
+		return null;
+	}
 
 }

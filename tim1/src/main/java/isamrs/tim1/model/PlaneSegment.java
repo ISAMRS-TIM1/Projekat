@@ -18,15 +18,24 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Table(name = "PlaneSegment")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class PlaneSegment implements Serializable {
 
 	private static final long serialVersionUID = 3125198304242174732L;
-
+	
 	public PlaneSegment() {
 		super();
+	}
+	
+	public PlaneSegment(PlaneSegmentClass segmentClass) {
+		super();
 		seats = new HashSet<Seat>();
+		this.segmentClass = segmentClass;
 	}
 
 	@Id
@@ -36,6 +45,7 @@ public class PlaneSegment implements Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "airline")
+	@JsonIgnore
 	private Airline airline;
 
 	@OneToMany(mappedBy = "planeSegment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -44,7 +54,18 @@ public class PlaneSegment implements Serializable {
 	@Column(name = "class")
 	@Enumerated(EnumType.STRING)
 	PlaneSegmentClass segmentClass;
-
+	
+	public boolean checkSeatExistence(int row, int column) {
+		boolean exist = false;
+		for (Seat s : this.getSeats()) {
+			if (s.getRow() == row && s.getColumn() == column) {
+				exist = true;
+				break;
+			}
+		}
+		return exist;
+	}
+	
 	public Long getId() {
 		return id;
 	}

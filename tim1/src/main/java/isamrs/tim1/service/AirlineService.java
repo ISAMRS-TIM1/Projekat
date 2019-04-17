@@ -1,22 +1,32 @@
 package isamrs.tim1.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import isamrs.tim1.dto.AirlineDTO;
+import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.AirlineAdmin;
 import isamrs.tim1.model.Location;
 import isamrs.tim1.model.PlaneSegment;
-import isamrs.tim1.model.PlaneSegmentClass;
 import isamrs.tim1.model.Seat;
 import isamrs.tim1.repository.AirlineRepository;
+import isamrs.tim1.repository.SeatRepository;
 
 @Service
 public class AirlineService {
 	
 	@Autowired
 	private AirlineRepository airlineRepository;
+	
+	@Autowired
+	private SeatRepository seatRepository;
 	
 	public String editProfile(Airline airline, String oldName) {
 		Airline airlineToEdit = airlineRepository.findOneByName(oldName);
@@ -55,45 +65,59 @@ public class AirlineService {
 	}
 
 	public AirlineDTO getAirline(AirlineAdmin admin) {
-		AirlineDTO a = new AirlineDTO(admin.getAirline());
-		PlaneSegment p1 = new PlaneSegment();
-		p1.setSegmentClass(PlaneSegmentClass.FIRST);
-		PlaneSegment p2 = new PlaneSegment();
-		p2.setSegmentClass(PlaneSegmentClass.BUSINESS);
-		PlaneSegment p3 = new PlaneSegment();
-		p3.setSegmentClass(PlaneSegmentClass.ECONOMY);
-		Seat s1 = new Seat();
-		s1.setRow(1);
-		s1.setColumn(1);
-		Seat s2 = new Seat();
-		s2.setRow(1);
-		s2.setColumn(4);
-		Seat s3 = new Seat();
-		s3.setRow(2);
-		s3.setColumn(2);
-		Seat s4 = new Seat();
-		s4.setRow(2);
-		s4.setColumn(3);
-		Seat s5 = new Seat();
-		s5.setRow(3);
-		s5.setColumn(4);
-		Seat s6 = new Seat();
-		s6.setRow(4);
-		s6.setColumn(2);
-		Seat s7 = new Seat();
-		s7.setRow(4);
-		s7.setColumn(1);
-		p1.getSeats().add(s1);
-		p1.getSeats().add(s2);
-		p2.getSeats().add(s3);
-		p2.getSeats().add(s4);
-		p2.getSeats().add(s5);
-		p3.getSeats().add(s6);
-		p3.getSeats().add(s7);
-		a.getPlaneSegments().add(p1);
-		a.getPlaneSegments().add(p2);
-		a.getPlaneSegments().add(p3);
-		return a;
+		return new AirlineDTO(admin.getAirline());
+	}
+
+	public MessageDTO saveSeats(String[] savedSeats, AirlineAdmin a) {
+		Set<PlaneSegment> planeSegments = a.getAirline().getPlaneSegments();
+		for (PlaneSegment p : planeSegments) {
+			if (p.getSeats().size() == 0) {
+				for (String s : savedSeats) {
+					String[] idx = s.split("_");
+					if (idx[2].equalsIgnoreCase(p.getSegmentClass().toString().substring(0, 1))) {
+						Seat st = new Seat();
+						st.setRow(Integer.parseInt(idx[0]));
+						st.setColumn(Integer.parseInt(idx[1]));
+						st.setPlaneSegment(p);
+						p.getSeats().add(st);
+					}
+				}
+			}
+		}
+		for (String s : savedSeats) {
+			String[] idx = s.split("_");
+			int row = Integer.parseInt(idx[0]);
+			int column = Integer.parseInt(idx[1]);
+			for (PlaneSegment p : planeSegments) {
+				if (idx[2].equalsIgnoreCase(p.getSegmentClass().toString().substring(0, 1))
+						&& (!p.checkSeatExistence(row, column))) {
+					Seat st = new Seat();
+					st.setRow(row);
+					st.setColumn(column);
+					st.setPlaneSegment(p);
+					p.getSeats().add(st);
+				}
+			}
+		}
+		ArrayList<Seat> seatForDelete = new ArrayList<Seat>();
+		for (PlaneSegment p : planeSegments) {
+			Iterator<Seat> it = p.getSeats().iterator();
+			while (it.hasNext()) {
+				Seat s = it.next();
+				List<String> st = Arrays.asList(savedSeats);
+				String ste = s.getRow() + "_" + s.getColumn() + "_" + p.getSegmentClass().toString().toLowerCase().charAt(0);
+				if (!(st.contains(ste))) {
+					seatForDelete.add(s);
+					it.remove();
+				}
+			}
+		}
+		a.getAirline().setPlaneSegments(planeSegments);
+		airlineRepository.save(a.getAirline());
+		for (Seat s : seatForDelete) {
+			seatRepository.delete(s);
+		}
+		return new MessageDTO("Seats saved successfully", "");
 	}
 
 }

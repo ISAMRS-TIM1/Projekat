@@ -219,3 +219,6 @@ span.seatCharts-legendDescription {
 	overflow-x: none;
 	width: 170px;
 }
+#saveSeatsButton {
+	width: 70%;
+}

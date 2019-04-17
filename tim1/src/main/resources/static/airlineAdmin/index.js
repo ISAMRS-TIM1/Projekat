@@ -9,6 +9,7 @@ const editAirlineURL = "/api/editAirline";
 const getDestinationsURL = "/api/getDestinations";
 const getFlightsURL = "/api/getFlights";
 const getAirlineOfAdminURL = "/api/getAirlineOfAdmin";
+const saveSeatsChangesURL = "/api/saveSeats";
 
 $(document).ready(function() {
 	loadAirline();
@@ -148,30 +149,49 @@ var reservedSeats = [];
 var seatsForDelete = [];
 
 function renderPlaneSeats(planeSegments, reserved) {
-	if (planeSegments.length == 0) {
+	if (planeSegments[0].length == 0 && planeSegments[1].length == 0 && planeSegments[2].length == 0) {
 		showPlaneSeats([]);
 	}
 	else {
-		reservedSeats = ["3_4"];
-		var maxRowFirst = -1;
-		$.each(planeSegments[0].seats, function(i, val) {
+		reservedSeats = [];
+		var maxRowFirst = 0;
+		var segment;
+		for (var i = 0; i < planeSegments.length; i++) {
+			if (planeSegments[i].segmentClass == "FIRST") {
+				segment = planeSegments[i];
+				break;
+			}
+		}
+		$.each(segment.seats, function(i, val) {
 			if (val["row"] > maxRowFirst)
 				maxRowFirst = val["row"];
 		});
-		initializeSeats(maxRowFirst, firstClass, planeSegments[0].seats, 'f', 1);
+		initializeSeats(maxRowFirst, firstClass, segment.seats, 'f', 1);
 		var maxRowBusiness = -1;
-		$.each(planeSegments[1].seats, function(i, val) {
+		for (var i = 0; i < planeSegments.length; i++) {
+			if (planeSegments[i].segmentClass == "BUSINESS") {
+				segment = planeSegments[i];
+				break;
+			}
+		}
+		$.each(segment.seats, function(i, val) {
 			if (val["row"] > maxRowBusiness)
 				maxRowBusiness = val["row"];
 		});
-		initializeSeats(maxRowBusiness - maxRowFirst, businessClass, planeSegments[1].seats, 'b', 2);
+		initializeSeats(maxRowBusiness - maxRowFirst, businessClass, segment.seats, 'b', 2);
 		var maxRowEconomy = -1;
-		$.each(planeSegments[2].seats, function(i, val) {
+		for (var i = 0; i < planeSegments.length; i++) {
+			if (planeSegments[i].segmentClass == "ECONOMY") {
+				segment = planeSegments[i];
+				break;
+			}
+		}
+		$.each(segment.seats, function(i, val) {
 			if (val["row"] > maxRowEconomy)
 				maxRowEconomy = val["row"];
 		});
 		maxRowEconomy -= maxRowBusiness;
-		initializeSeats(maxRowEconomy, economyClass, planeSegments[2].seats, 'e', 3);
+		initializeSeats(maxRowEconomy, economyClass, segment.seats, 'e', 3);
 		var seats = firstClass.concat(businessClass).concat(economyClass);
 		$('.seatCharts-row').remove();
 		$('.seatCharts-legendItem').remove();
@@ -209,10 +229,14 @@ function add(e, cat) {
 	}
 	else if (cat == 2) {
 		number = parseInt($("#business").val());
+		if (numberOfSeatsPerClass[0] == 0)
+			return;
 		addSeats(number, businessClass, 'b', cat);
 	}
 	else {
 		number = parseInt($("#economy").val());
+		if (numberOfSeatsPerClass[0] == 0 && numberOfSeatsPerClass[1] == 0)
+			return;
 		addSeats(number, economyClass, 'e', cat);
 	}
 }
@@ -647,6 +671,33 @@ function showPlaneSeats(seats) {
 			} else {
 				return this.style();
 			}
+		}
+	});
+}
+
+function saveSeatsChanges(e) {
+	e.preventDefault();
+	var seats = firstClass.concat(businessClass).concat(economyClass);
+	var savedSeats = [];
+	for (var i = 0; i < seats.length; i++) {
+		for (var j = 0; j < 5; j++) {
+			if (seats[i][j] != 'l' && seats[i][j] != '_') {
+				if (j == 3 || j == 4)
+					savedSeats.push((i + 1) + "_" + j + "_" + seats[i][j]);
+				else
+					savedSeats.push((i + 1) + "_" + (j + 1) + "_" + seats[i][j]);
+			}
+		}
+	}
+	console.log(savedSeats);
+	$.ajax({
+		method: "PUT",
+		url : saveSeatsChangesURL,
+		headers : createAuthorizationTokenHeader(TOKEN_KEY),
+		contentType: "application/json",
+		data : JSON.stringify(savedSeats),
+		success : function(data) {
+			console.log(data);
 		}
 	});
 }
