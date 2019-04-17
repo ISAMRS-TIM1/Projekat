@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import isamrs.tim1.dto.DetailedServiceDTO;
 import isamrs.tim1.dto.RentACarDTO;
 import isamrs.tim1.dto.ServiceDTO;
 import isamrs.tim1.model.RentACar;
@@ -34,12 +35,16 @@ public class RentACarController {
 	public ResponseEntity<RentACarDTO> getRentACarInfo(@PathVariable String rentACarName) {
 		return new ResponseEntity<RentACarDTO>(rentACarService.getRentACarInfo(rentACarName), HttpStatus.OK);
 	}
-	
+
 	@PreAuthorize("hasRole('SYSADMIN')")
 	@RequestMapping(value = "/api/getRentACars", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArrayList<ServiceDTO>> getRentACars() {
-		return new ResponseEntity<ArrayList<ServiceDTO>>(
-				rentACarService.getRentACars(),
-				HttpStatus.OK);
+		return new ResponseEntity<ArrayList<ServiceDTO>>(rentACarService.getRentACars(), HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasRole('SYSADMIN')")
+	@RequestMapping(value = "/api/getRentACar", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<DetailedServiceDTO> getRentACar(@RequestParam String name) {
+		return new ResponseEntity<DetailedServiceDTO>(rentACarService.getRentACar(name), HttpStatus.OK);
 	}
 }

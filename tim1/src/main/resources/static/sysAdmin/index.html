@@ -24,6 +24,10 @@
 	src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
 <link rel="stylesheet"
 	href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
+	
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
+	
 </head>
 <body>
 	<div class="container-fluid">
@@ -41,7 +45,6 @@
 		</div>
 		<div class="tab-content">
 			<div id="airlines" class="tab-pane fade in active">
-				<h3>Airlines</h3>
 				<div id="airlinesTableDiv">
 					<table id="airlinesTable" class="table display table-bordered">
 						<thead>
@@ -57,7 +60,6 @@
 				</div>
 			</div>
 			<div id="hotels" class="tab-pane fade">
-				<h3>Hotels</h3>
 				<div id="hotelsTableDiv">
 					<table id="hotelsTable" class="table display table-bordered">
 						<thead>
@@ -73,7 +75,6 @@
 				</div>
 			</div>
 			<div id="rentACars" class="tab-pane fade">
-				<h3>Rent a cars</h3>
 				<div id="rentACarsTableDiv">
 					<table id="rentACarsTable" class="table display table-bordered">
 						<thead>
@@ -137,6 +138,47 @@
 						</form>
 					</div>
 				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- Modal -->
+	<div class="modal fade" id="modalDialog" tabindex="-1" role="dialog"
+		aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content" id="serviceDiv">
+				<table id="serviceTable">
+					<tr>
+						<td colspan="2"><input type="text" id="serviceName"
+							class="textInput"></td>
+					</tr>
+					<tr>
+						<td colspan="2">Average grade: <p id="serviceGrade"></p></td>
+					</tr>
+					<tr>
+						<td><textarea rows="8" cols="20" id="serviceDescription"
+								class="textInput"></textarea></td>
+						<td><div id="mapDiv"></div></td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<table id="adminsTable" class="table display table-bordered">
+								<thead>
+									<tr>
+										<th>Email</th>
+										<th>First name</th>
+										<th>Last name</th>
+										<th>Address</th>
+										<th>Phone number</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+				</table>
 			</div>
 		</div>
 	</div>

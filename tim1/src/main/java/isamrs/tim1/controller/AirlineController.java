@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim1.dto.AirlineDTO;
+import isamrs.tim1.dto.DetailedServiceDTO;
 import isamrs.tim1.dto.ServiceDTO;
 import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.AirlineAdmin;
@@ -34,9 +35,9 @@ public class AirlineController {
 	}
 
 	@RequestMapping(value = "/api/getAirlineOfAdmin", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<AirlineDTO> getAirline() {
+	public ResponseEntity<AirlineDTO> getAirlineOfAdmin() {
 		return new ResponseEntity<AirlineDTO>(
-				airlineService.getAirline(
+				airlineService.getAirlineOfAdmin(
 						(AirlineAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()),
 				HttpStatus.OK);
 	}
@@ -46,6 +47,14 @@ public class AirlineController {
 	public ResponseEntity<ArrayList<ServiceDTO>> getAirlines() {
 		return new ResponseEntity<ArrayList<ServiceDTO>>(
 				airlineService.getAirlines(),
+				HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasRole('SYSADMIN')")
+	@RequestMapping(value = "/api/getAirline", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<DetailedServiceDTO> getAirline(@RequestParam String name) {
+		return new ResponseEntity<DetailedServiceDTO>(
+				airlineService.getAirline(name),
 				HttpStatus.OK);
 	}
 }
