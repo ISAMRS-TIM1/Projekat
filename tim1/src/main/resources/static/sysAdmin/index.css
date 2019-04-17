@@ -88,8 +88,8 @@ a[data-toggle="tab"] {
 }
 
 #mapDiv {
-	width: 25vw; 
-	height: 25vh;
+	width: 21vw; 
+	height: 21vh;
 }
 
 #serviceName{
@@ -116,6 +116,11 @@ a[data-toggle="tab"] {
 .textInput:focus{
 	border: 1px solid black;
 	resize: none;
+}
+
+.modal-content{
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
 }
 
 /*
