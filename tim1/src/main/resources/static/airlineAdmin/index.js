@@ -225,18 +225,119 @@ function add(e, cat) {
 	var number, seatClass;
 	if (cat == 1) {
 		number = parseInt($("#first").val());
+		if (isNaN(number) || number <= 0) {
+			toastr.options = {
+					  "closeButton": true,
+					  "debug": false,
+					  "newestOnTop": false,
+					  "progressBar": false,
+					  "positionClass": "toast-top-center",
+					  "preventDuplicates": false,
+					  "onclick": null,
+					  "showDuration": "300",
+					  "hideDuration": "1000",
+					  "timeOut": "3000",
+					  "extendedTimeOut": "1000",
+					  "showEasing": "swing",
+					  "hideEasing": "linear",
+					  "showMethod": "fadeIn",
+					  "hideMethod": "fadeOut"
+					}
+			toastr["error"]("Invalid number.");
+			return;
+		}
 		addSeats(number, firstClass, 'f', cat);
 	}
 	else if (cat == 2) {
 		number = parseInt($("#business").val());
-		if (numberOfSeatsPerClass[0] == 0)
+		if (isNaN(number) || number <= 0) {
+			toastr.options = {
+					  "closeButton": true,
+					  "debug": false,
+					  "newestOnTop": false,
+					  "progressBar": false,
+					  "positionClass": "toast-top-center",
+					  "preventDuplicates": false,
+					  "onclick": null,
+					  "showDuration": "300",
+					  "hideDuration": "1000",
+					  "timeOut": "3000",
+					  "extendedTimeOut": "1000",
+					  "showEasing": "swing",
+					  "hideEasing": "linear",
+					  "showMethod": "fadeIn",
+					  "hideMethod": "fadeOut"
+					}
+			toastr["error"]("Invalid number.");
 			return;
+		}
+		if (numberOfSeatsPerClass[0] == 0) {
+			toastr.options = {
+					  "closeButton": true,
+					  "debug": false,
+					  "newestOnTop": false,
+					  "progressBar": false,
+					  "positionClass": "toast-top-center",
+					  "preventDuplicates": false,
+					  "onclick": null,
+					  "showDuration": "300",
+					  "hideDuration": "1000",
+					  "timeOut": "3000",
+					  "extendedTimeOut": "1000",
+					  "showEasing": "swing",
+					  "hideEasing": "linear",
+					  "showMethod": "fadeIn",
+					  "hideMethod": "fadeOut"
+					}
+			toastr["error"]("There are no seats in First class.");
+			return;
+		}
 		addSeats(number, businessClass, 'b', cat);
 	}
 	else {
 		number = parseInt($("#economy").val());
-		if (numberOfSeatsPerClass[0] == 0 && numberOfSeatsPerClass[1] == 0)
+		if (isNaN(number) || number <= 0) {
+			toastr.options = {
+					  "closeButton": true,
+					  "debug": false,
+					  "newestOnTop": false,
+					  "progressBar": false,
+					  "positionClass": "toast-top-center",
+					  "preventDuplicates": false,
+					  "onclick": null,
+					  "showDuration": "300",
+					  "hideDuration": "1000",
+					  "timeOut": "3000",
+					  "extendedTimeOut": "1000",
+					  "showEasing": "swing",
+					  "hideEasing": "linear",
+					  "showMethod": "fadeIn",
+					  "hideMethod": "fadeOut"
+					}
+			toastr["error"]("Invalid number.");
 			return;
+		}
+		if (numberOfSeatsPerClass[0] == 0 && numberOfSeatsPerClass[1] == 0) {
+			toastr.options = {
+					  "closeButton": true,
+					  "debug": false,
+					  "newestOnTop": false,
+					  "progressBar": false,
+					  "positionClass": "toast-top-center",
+					  "preventDuplicates": false,
+					  "onclick": null,
+					  "showDuration": "300",
+					  "hideDuration": "1000",
+					  "timeOut": "3000",
+					  "extendedTimeOut": "1000",
+					  "showEasing": "swing",
+					  "hideEasing": "linear",
+					  "showMethod": "fadeIn",
+					  "hideMethod": "fadeOut"
+					}
+			toastr["error"]("There are no seats in First and Business classes.");
+			return;
+		}	
 		addSeats(number, economyClass, 'e', cat);
 	}
 }
@@ -261,8 +362,27 @@ function addSeatsIndividually(e) {
 		if (row[idx[1] - 1] != 'l')
 			invalid = true;
 	});
-	if (invalid)
+	if (invalid) {
+		toastr.options = {
+				  "closeButton": true,
+				  "debug": false,
+				  "newestOnTop": false,
+				  "progressBar": false,
+				  "positionClass": "toast-top-center",
+				  "preventDuplicates": false,
+				  "onclick": null,
+				  "showDuration": "300",
+				  "hideDuration": "1000",
+				  "timeOut": "3000",
+				  "extendedTimeOut": "1000",
+				  "showEasing": "swing",
+				  "hideEasing": "linear",
+				  "showMethod": "fadeIn",
+				  "hideMethod": "fadeOut"
+				}
+		toastr["error"]("Seats which already exist can not be added");
 		return;
+	}
 	$.each(seatsForDelete, function(i, val) {
 		var idx = val.split('_');
 		if (idx[0] <= firstClass.length) {
@@ -395,8 +515,27 @@ function deleteSeatsIndividually(e) {
 		if (row[idx[1] - 1] == 'l')
 			invalid = true;
 	});
-	if (invalid)
+	if (invalid) {
+		toastr.options = {
+				  "closeButton": true,
+				  "debug": false,
+				  "newestOnTop": false,
+				  "progressBar": false,
+				  "positionClass": "toast-top-center",
+				  "preventDuplicates": false,
+				  "onclick": null,
+				  "showDuration": "300",
+				  "hideDuration": "1000",
+				  "timeOut": "3000",
+				  "extendedTimeOut": "1000",
+				  "showEasing": "swing",
+				  "hideEasing": "linear",
+				  "showMethod": "fadeIn",
+				  "hideMethod": "fadeOut"
+				}
+		toastr["error"]("Empty seats can not be deleted.");
 		return;
+	}
 	$.each(seatsForDelete, function(i, val) {
 		var idx = val.split('_');
 		if (idx[0] <= firstClass.length) {
@@ -439,7 +578,46 @@ function deleteSeats(e, cat) {
 	var number;
 	if (cat == 1) {
 		number = parseInt($("#first").val());
+		if (isNaN(number) || number <= 0) {
+			toastr.options = {
+					  "closeButton": true,
+					  "debug": false,
+					  "newestOnTop": false,
+					  "progressBar": false,
+					  "positionClass": "toast-top-center",
+					  "preventDuplicates": false,
+					  "onclick": null,
+					  "showDuration": "300",
+					  "hideDuration": "1000",
+					  "timeOut": "3000",
+					  "extendedTimeOut": "1000",
+					  "showEasing": "swing",
+					  "hideEasing": "linear",
+					  "showMethod": "fadeIn",
+					  "hideMethod": "fadeOut"
+					}
+			toastr["error"]("Invalid number.");
+			return;
+		}
 		if (number > numberOfSeatsPerClass[cat - 1]) {
+			toastr.options = {
+					  "closeButton": true,
+					  "debug": false,
+					  "newestOnTop": false,
+					  "progressBar": false,
+					  "positionClass": "toast-top-center",
+					  "preventDuplicates": false,
+					  "onclick": null,
+					  "showDuration": "300",
+					  "hideDuration": "1000",
+					  "timeOut": "3000",
+					  "extendedTimeOut": "1000",
+					  "showEasing": "swing",
+					  "hideEasing": "linear",
+					  "showMethod": "fadeIn",
+					  "hideMethod": "fadeOut"
+					}
+			toastr["error"]("Number is greather than number of seats.");
 			return;
 		}
 		var tempNumber = number;
@@ -464,8 +642,27 @@ function deleteSeats(e, cat) {
 					valid = true;
 			});
 		});
-		if (invalid)
+		if (invalid) {
+			toastr.options = {
+					  "closeButton": true,
+					  "debug": false,
+					  "newestOnTop": false,
+					  "progressBar": false,
+					  "positionClass": "toast-top-center",
+					  "preventDuplicates": false,
+					  "onclick": null,
+					  "showDuration": "300",
+					  "hideDuration": "1000",
+					  "timeOut": "3000",
+					  "extendedTimeOut": "1000",
+					  "showEasing": "swing",
+					  "hideEasing": "linear",
+					  "showMethod": "fadeIn",
+					  "hideMethod": "fadeOut"
+					}
+			toastr["error"]("Reserved seat can not be deleted.");
 			return;
+		}
 		$.each(tempClass, function(i, val) {
 			if (number == 0)
 				return;
@@ -488,7 +685,46 @@ function deleteSeats(e, cat) {
 	}
 	else if (cat == 2) {
 		number = parseInt($("#business").val());
+		if (isNaN(number) || number <= 0) {
+			toastr.options = {
+					  "closeButton": true,
+					  "debug": false,
+					  "newestOnTop": false,
+					  "progressBar": false,
+					  "positionClass": "toast-top-center",
+					  "preventDuplicates": false,
+					  "onclick": null,
+					  "showDuration": "300",
+					  "hideDuration": "1000",
+					  "timeOut": "3000",
+					  "extendedTimeOut": "1000",
+					  "showEasing": "swing",
+					  "hideEasing": "linear",
+					  "showMethod": "fadeIn",
+					  "hideMethod": "fadeOut"
+					}
+			toastr["error"]("Invalid number.");
+			return;
+		}
 		if (number > numberOfSeatsPerClass[cat - 1]) {
+			toastr.options = {
+					  "closeButton": true,
+					  "debug": false,
+					  "newestOnTop": false,
+					  "progressBar": false,
+					  "positionClass": "toast-top-center",
+					  "preventDuplicates": false,
+					  "onclick": null,
+					  "showDuration": "300",
+					  "hideDuration": "1000",
+					  "timeOut": "3000",
+					  "extendedTimeOut": "1000",
+					  "showEasing": "swing",
+					  "hideEasing": "linear",
+					  "showMethod": "fadeIn",
+					  "hideMethod": "fadeOut"
+					}
+			toastr["error"]("Number is greather than number of seats.");
 			return;
 		}
 		var tempNumber = number;
@@ -513,8 +749,27 @@ function deleteSeats(e, cat) {
 					valid = true;
 			});
 		});
-		if (invalid)
+		if (invalid) {
+			toastr.options = {
+					  "closeButton": true,
+					  "debug": false,
+					  "newestOnTop": false,
+					  "progressBar": false,
+					  "positionClass": "toast-top-center",
+					  "preventDuplicates": false,
+					  "onclick": null,
+					  "showDuration": "300",
+					  "hideDuration": "1000",
+					  "timeOut": "3000",
+					  "extendedTimeOut": "1000",
+					  "showEasing": "swing",
+					  "hideEasing": "linear",
+					  "showMethod": "fadeIn",
+					  "hideMethod": "fadeOut"
+					}
+			toastr["error"]("Reserved seat can not be deleted.");
 			return;
+		}
 		$.each(tempClass, function(i, val) {
 			if (number == 0)
 				return;
@@ -537,7 +792,46 @@ function deleteSeats(e, cat) {
 	}
 	else {
 		number = parseInt($("#economy").val());
+		if (isNaN(number) || number <= 0) {
+			toastr.options = {
+					  "closeButton": true,
+					  "debug": false,
+					  "newestOnTop": false,
+					  "progressBar": false,
+					  "positionClass": "toast-top-center",
+					  "preventDuplicates": false,
+					  "onclick": null,
+					  "showDuration": "300",
+					  "hideDuration": "1000",
+					  "timeOut": "3000",
+					  "extendedTimeOut": "1000",
+					  "showEasing": "swing",
+					  "hideEasing": "linear",
+					  "showMethod": "fadeIn",
+					  "hideMethod": "fadeOut"
+					}
+			toastr["error"]("Invalid number.");
+			return;
+		}
 		if (number > numberOfSeatsPerClass[cat - 1]) {
+			toastr.options = {
+					  "closeButton": true,
+					  "debug": false,
+					  "newestOnTop": false,
+					  "progressBar": false,
+					  "positionClass": "toast-top-center",
+					  "preventDuplicates": false,
+					  "onclick": null,
+					  "showDuration": "300",
+					  "hideDuration": "1000",
+					  "timeOut": "3000",
+					  "extendedTimeOut": "1000",
+					  "showEasing": "swing",
+					  "hideEasing": "linear",
+					  "showMethod": "fadeIn",
+					  "hideMethod": "fadeOut"
+					}
+			toastr["error"]("Number is greather than number of seats.");
 			return;
 		}
 		var tempNumber = number;
@@ -562,8 +856,27 @@ function deleteSeats(e, cat) {
 					valid = true;
 			});
 		});
-		if (invalid)
+		if (invalid) {
+			toastr.options = {
+					  "closeButton": true,
+					  "debug": false,
+					  "newestOnTop": false,
+					  "progressBar": false,
+					  "positionClass": "toast-top-center",
+					  "preventDuplicates": false,
+					  "onclick": null,
+					  "showDuration": "300",
+					  "hideDuration": "1000",
+					  "timeOut": "3000",
+					  "extendedTimeOut": "1000",
+					  "showEasing": "swing",
+					  "hideEasing": "linear",
+					  "showMethod": "fadeIn",
+					  "hideMethod": "fadeOut"
+					}
+			toastr["error"]("Reserved seat can not be deleted.");
 			return;
+		}
 		$.each(tempClass, function(i, val) {
 			if (number == 0)
 				return;
