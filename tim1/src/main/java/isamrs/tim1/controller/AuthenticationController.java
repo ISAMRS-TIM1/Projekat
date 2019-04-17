@@ -13,11 +13,13 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,16 +29,21 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.UserDTO;
+import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.AirlineAdmin;
 import isamrs.tim1.model.Authority;
+import isamrs.tim1.model.Hotel;
 import isamrs.tim1.model.HotelAdmin;
 import isamrs.tim1.model.RegisteredUser;
+import isamrs.tim1.model.RentACar;
 import isamrs.tim1.model.RentACarAdmin;
+import isamrs.tim1.model.Service;
 import isamrs.tim1.model.ServiceGrade;
 import isamrs.tim1.model.User;
 import isamrs.tim1.model.UserReservation;
 import isamrs.tim1.model.UserTokenState;
 import isamrs.tim1.model.UserType;
+import isamrs.tim1.repository.ServiceRepository;
 import isamrs.tim1.security.TokenUtils;
 import isamrs.tim1.security.auth.JwtAuthenticationRequest;
 import isamrs.tim1.service.CustomUserDetailsService;
@@ -59,6 +66,9 @@ public class AuthenticationController {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private ServiceRepository serviceRepository;
 
 	@RequestMapping(value = "auth/confirm", method = RequestMethod.GET)
 	public RedirectView confirmRegistration(@RequestParam String token) {
@@ -152,5 +162,50 @@ public class AuthenticationController {
 		return new ResponseEntity<UserDTO>(
 				new UserDTO(u.getFirstName(), u.getLastName(), u.getPhoneNumber(), u.getAddress(), u.getEmail()),
 				HttpStatus.OK);
+	}
+	
+
+	@RequestMapping(value = "auth/registerAdmin/{serviceName}", method = RequestMethod.POST)
+	public ResponseEntity<Boolean> registerAirlineAdmin(@Valid @RequestBody User user, @PathVariable("serviceName") String serviceName) {
+		
+		Service service = serviceRepository.findOneByName(serviceName);
+		if(service==null) return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
+		User admin = null;
+		Authority a = new Authority();
+		
+		if(service instanceof Airline) {
+			admin = new AirlineAdmin();
+			((Airline) service).getAdmins().add((AirlineAdmin) admin);
+			((AirlineAdmin) admin).setAirline((Airline) service);
+			a.setType(UserType.ROLE_AIRADMIN);
+		}else if(service instanceof Hotel) {
+			admin = new HotelAdmin();
+			((Hotel) service).getAdmins().add((HotelAdmin) admin);
+			((HotelAdmin) admin).setHotel((Hotel) service);
+			a.setType(UserType.ROLE_HOTELADMIN);
+		}else if(service instanceof RentACar) {
+			admin = new RentACarAdmin();
+			((RentACar) service).getAdmins().add((RentACarAdmin) admin);
+			((RentACarAdmin) admin).setRentACar((RentACar) service);
+			a.setType(UserType.ROLE_RENTADMIN);
+		}
+		
+		admin.setId(null);
+		admin.setEmail(user.getEmail());
+		admin.setPassword(this.userDetailsService.encodePassword(user.getPassword()));
+		admin.setAddress(user.getAddress());
+		List<Authority> authorities = new ArrayList<Authority>();
+		authorities.add(a);
+		admin.setAuthorities(authorities);
+		admin.setEnabled(true);
+		admin.setFirstName(user.getFirstName());
+		admin.setLastName(user.getLastName());
+		admin.setLastPasswordResetDate(new Timestamp(System.currentTimeMillis()));
+		admin.setPhoneNumber(user.getPhoneNumber());
+		if (this.userDetailsService.saveUser(admin)) {
+			mailService.sendMailToAdmin(admin, user.getPassword());
+			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+		}
+		return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 	}
 }

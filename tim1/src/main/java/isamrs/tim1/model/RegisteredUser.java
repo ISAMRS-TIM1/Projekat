@@ -25,7 +25,7 @@ public class RegisteredUser extends User {
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<ServiceGrade> serviceGrades;
 
-	@Column(name = "discountPoints", unique = false, nullable = false)
+	@Column(name = "discountPoints", unique = false)
 	private Integer discountPoints;
 
 	public RegisteredUser() {
