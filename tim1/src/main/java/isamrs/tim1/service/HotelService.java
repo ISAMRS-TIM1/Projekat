@@ -69,7 +69,7 @@ public class HotelService {
 		return new HotelDTO(admin.getHotel());
 	}
 
-	public ArrayList<ServiceDTO> getAirlines() {
+	public ArrayList<ServiceDTO> getHotels() {
 		ArrayList<ServiceDTO> retval = new ArrayList<ServiceDTO>();
 		for(Hotel h : hotelRepository.findAll())
 			retval.add(new ServiceDTO(h));

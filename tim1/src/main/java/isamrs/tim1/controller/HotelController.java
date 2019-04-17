@@ -54,7 +54,7 @@ public class HotelController {
 	@RequestMapping(value = "/api/getHotels", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArrayList<ServiceDTO>> getHotels() {
 		return new ResponseEntity<ArrayList<ServiceDTO>>(
-				hotelService.getAirlines(),
+				hotelService.getHotels(),
 				HttpStatus.OK);
 	}
 }

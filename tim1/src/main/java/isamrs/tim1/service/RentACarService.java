@@ -63,7 +63,7 @@ public class RentACarService {
 		}
 	}
 
-	public ArrayList<ServiceDTO> getAirlines() {
+	public ArrayList<ServiceDTO> getRentACars() {
 		ArrayList<ServiceDTO> retval = new ArrayList<ServiceDTO>();
 		for(RentACar r : rentACarRepository.findAll())
 			retval.add(new ServiceDTO(r));

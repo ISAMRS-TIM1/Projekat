@@ -39,7 +39,7 @@ public class RentACarController {
 	@RequestMapping(value = "/api/getRentACars", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArrayList<ServiceDTO>> getRentACars() {
 		return new ResponseEntity<ArrayList<ServiceDTO>>(
-				rentACarService.getAirlines(),
+				rentACarService.getRentACars(),
 				HttpStatus.OK);
 	}
 }
