@@ -1,7 +1,5 @@
 package isamrs.tim1.controller;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,7 +24,7 @@ public class UserController {
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> editUserProfile(
-			@RequestBody @Valid User user) throws Exception {
+			@RequestBody User user) throws Exception {
 		return new ResponseEntity<String>(userService.editProfile(user), HttpStatus.OK);
 	}
 }
