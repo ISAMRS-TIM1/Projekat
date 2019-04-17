@@ -24,10 +24,15 @@
 	src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
 <link rel="stylesheet"
 	href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
-	
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
-<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
-	
+
+<link rel="stylesheet"
+	href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+	integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+	crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+	integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+	crossorigin=""></script>
+
 </head>
 <body>
 	<div class="container-fluid">
@@ -154,12 +159,83 @@
 							class="textInput"></td>
 					</tr>
 					<tr>
-						<td colspan="2">Average grade: <p id="serviceGrade"></p></td>
+						<td colspan="2">Average grade:
+							<p id="serviceGrade"></p>
+						</td>
 					</tr>
 					<tr>
 						<td><textarea rows="8" cols="20" id="serviceDescription"
 								class="textInput"></textarea></td>
 						<td><div id="mapDiv"></div></td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<div id="formDiv">
+								<form id="registrationForm">
+									<div id="fields">
+										<div id="leftSide">
+											<div class="form-group">
+												<div class="input-group">
+													<span class="input-group-addon"><i
+														class="glyphicon glyphicon-envelope"></i></span> <input
+														class="form-control" type="email" id="adminEmail"
+														placeholder="Email" required autofocus>
+												</div>
+											</div>
+											<div class="form-group">
+												<div class="input-group">
+													<span class="input-group-addon"><i
+														class="glyphicon glyphicon-user"></i></span> <input
+														class="form-control" type="text" id="adminFirstName"
+														placeholder="First name" pattern="[A-Z][a-z]*"
+														title="Must start with a capital letter" required>
+												</div>
+											</div>
+											<div class="form-group">
+												<div class="input-group">
+													<span class="input-group-addon"><i
+														class="glyphicon glyphicon-phone"></i></span> <input
+														class="form-control" type="tel" id="adminPhone"
+														placeholder="Phone number" pattern="\+[0-9]{12}"
+														title="12 digits starting with +" required>
+												</div>
+											</div>
+										</div>
+										<div id="separator">&nbsp</div>
+										<div id="rightSide">
+											<div class="form-group">
+												<div class="input-group">
+													<span class="input-group-addon" id="eye"><i
+														class="glyphicon glyphicon-eye-close" id="eye-icon"></i></span> <input
+														class="form-control" type="password" id="adminPassword"
+														placeholder="Password" required>
+												</div>
+											</div>
+											<div class="form-group">
+												<div class="input-group">
+													<span class="input-group-addon"><i
+														class="glyphicon glyphicon-user"></i></span> <input
+														class="form-control" type="text" id="adminLastName"
+														placeholder="Last name" pattern="[A-Z][a-z]*"
+														title="Must start with a capital letter" required>
+												</div>
+											</div>
+											<div class="form-group">
+												<div class="input-group">
+													<span class="input-group-addon"><i
+														class="glyphicon glyphicon-map-marker"></i></span> <input
+														class="form-control" type="text" id="adminAddress"
+														placeholder="Address" required>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div id="buttons">
+										<button id="registerNewAdmin" type="submit" class="btn btn-default">Register new admin</button>
+									</div>
+								</form>
+							</div>
+						</td>
 					</tr>
 					<tr>
 						<td colspan="2">

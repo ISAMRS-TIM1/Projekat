@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import isamrs.tim1.model.RegisteredUser;
+import isamrs.tim1.model.User;
 import isamrs.tim1.model.VerificationToken;
 
 @Service
@@ -47,6 +48,20 @@ public class EmailService {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
+		mail.setText(content);
+		mailSender.send(mail);
+	}
+	
+	@Async
+	public void sendMailToAdmin(User admin, String password) {
+
+		SimpleMailMessage mail = new SimpleMailMessage();
+		mail.setTo(admin.getEmail());
+		mail.setFrom(env.getProperty("spring.mail.username"));
+		mail.setSubject("Flights - registration");
+		String content = String.format(
+					"Hello %s %s,\nYour password is: %s",
+					admin.getFirstName(), admin.getLastName(), password);
 		mail.setText(content);
 		mailSender.send(mail);
 	}

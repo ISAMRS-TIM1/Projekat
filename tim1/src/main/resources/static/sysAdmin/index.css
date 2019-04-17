@@ -123,6 +123,49 @@ a[data-toggle="tab"] {
     overflow-y: auto;
 }
 
+
+
+/*
+* New admin registration
+*/
+
+#formDiv {
+	margin: 0;
+	background: #5994FF;
+	border: 0.24vw solid #B27A00;
+  	border-radius: 4vw 1.6vw;
+}
+
+#registrationForm {
+	padding: 2.8vw;
+	padding-bottom: 1.6vw;
+}
+
+#fields div {
+	float: left;
+}
+
+#leftSide {
+	width: 45%;
+}
+
+#separator {
+	width: 10% !important;
+}
+
+#rightSide {
+	width: 45%;
+}
+
+#registerNewAdmin {
+	margin-left: 25%;
+	margin-right: 25%;
+	background: #0D63FF;
+	color: white;
+  	border: 0.16vw solid #B27A00;
+}
+
+
 /*
  * Table styles
  */

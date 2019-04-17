@@ -36,13 +36,13 @@ public class RentACarController {
 		return new ResponseEntity<RentACarDTO>(rentACarService.getRentACarInfo(rentACarName), HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasRole('SYSADMIN')")
+	//@PreAuthorize("hasRole('SYSADMIN')")
 	@RequestMapping(value = "/api/getRentACars", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArrayList<ServiceDTO>> getRentACars() {
 		return new ResponseEntity<ArrayList<ServiceDTO>>(rentACarService.getRentACars(), HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasRole('SYSADMIN')")
+	//@PreAuthorize("hasRole('SYSADMIN')")
 	@RequestMapping(value = "/api/getRentACar", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DetailedServiceDTO> getRentACar(@RequestParam String name) {
 		return new ResponseEntity<DetailedServiceDTO>(rentACarService.getRentACar(name), HttpStatus.OK);

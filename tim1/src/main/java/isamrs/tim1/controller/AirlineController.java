@@ -42,7 +42,7 @@ public class AirlineController {
 				HttpStatus.OK);
 	}
 	
-	@PreAuthorize("hasRole('SYSADMIN')")
+	//@PreAuthorize("hasRole('SYSADMIN')")
 	@RequestMapping(value = "/api/getAirlines", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArrayList<ServiceDTO>> getAirlines() {
 		return new ResponseEntity<ArrayList<ServiceDTO>>(
@@ -50,7 +50,7 @@ public class AirlineController {
 				HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasRole('SYSADMIN')")
+	//@PreAuthorize("hasRole('SYSADMIN')")
 	@RequestMapping(value = "/api/getAirline", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DetailedServiceDTO> getAirline(@RequestParam String name) {
 		return new ResponseEntity<DetailedServiceDTO>(
