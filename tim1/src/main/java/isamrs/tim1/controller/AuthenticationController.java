@@ -137,7 +137,7 @@ public class AuthenticationController {
 			userType = UserType.ROLE_RENTADMIN;
 		} else if (user instanceof AirlineAdmin) {
 			userType = UserType.ROLE_AIRADMIN;
-		} else {
+		} else if (user.getClass().equals(User.class)){
 			userType = UserType.ROLE_SYSADMIN;
 		}
 

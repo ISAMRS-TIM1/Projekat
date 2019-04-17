@@ -1,9 +1,12 @@
 package isamrs.tim1.service;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import isamrs.tim1.dto.AirlineDTO;
+import isamrs.tim1.dto.ServiceDTO;
 import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.AirlineAdmin;
 import isamrs.tim1.model.Location;
@@ -53,6 +56,13 @@ public class AirlineService {
 
 	public AirlineDTO getAirline(AirlineAdmin admin) {
 		return new AirlineDTO(admin.getAirline());
+	}
+
+	public ArrayList<ServiceDTO> getAirlines() {
+		ArrayList<ServiceDTO> retval = new ArrayList<ServiceDTO>();
+		for(Airline a : airlineRepository.findAll())
+			retval.add(new ServiceDTO(a));
+		return retval;
 	}
 
 }

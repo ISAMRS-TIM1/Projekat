@@ -1,9 +1,13 @@
 package isamrs.tim1.service;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import isamrs.tim1.dto.HotelDTO;
+import isamrs.tim1.dto.ServiceDTO;
+import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.Hotel;
 import isamrs.tim1.model.HotelAdmin;
 import isamrs.tim1.model.Location;
@@ -63,6 +67,13 @@ public class HotelService {
 
 	public HotelDTO getHotel(HotelAdmin admin) {
 		return new HotelDTO(admin.getHotel());
+	}
+
+	public ArrayList<ServiceDTO> getHotels() {
+		ArrayList<ServiceDTO> retval = new ArrayList<ServiceDTO>();
+		for(Hotel h : hotelRepository.findAll())
+			retval.add(new ServiceDTO(h));
+		return retval;
 	}
 
 }

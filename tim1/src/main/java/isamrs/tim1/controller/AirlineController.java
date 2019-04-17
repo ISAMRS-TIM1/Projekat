@@ -1,5 +1,7 @@
 package isamrs.tim1.controller;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim1.dto.AirlineDTO;
+import isamrs.tim1.dto.ServiceDTO;
 import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.AirlineAdmin;
 import isamrs.tim1.service.AirlineService;
@@ -35,6 +38,14 @@ public class AirlineController {
 		return new ResponseEntity<AirlineDTO>(
 				airlineService.getAirline(
 						(AirlineAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()),
+				HttpStatus.OK);
+	}
+	
+	@PreAuthorize("hasRole('SYSADMIN')")
+	@RequestMapping(value = "/api/getAirlines", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ArrayList<ServiceDTO>> getAirlines() {
+		return new ResponseEntity<ArrayList<ServiceDTO>>(
+				airlineService.getAirlines(),
 				HttpStatus.OK);
 	}
 }

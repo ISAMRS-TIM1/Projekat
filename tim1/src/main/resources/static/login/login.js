@@ -50,7 +50,7 @@ $(document).on('submit', '#loginForm', function(e){
 					document.location.href = hotelAdminURL;
 				} else if(data.userType == "ROLE_RENTADMIN"){
 					document.location.href = rentACarAdminURL;
-				} else{
+				} else if(data.userType == "ROLE_SYSADMIN"){
 					document.location.href = sysAdminURL;
 				}
 			}
