@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import isamrs.tim1.dto.DetailedServiceDTO;
 import isamrs.tim1.dto.HotelDTO;
 import isamrs.tim1.dto.ServiceDTO;
-import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.Hotel;
 import isamrs.tim1.model.HotelAdmin;
 import isamrs.tim1.model.Location;
@@ -56,7 +55,7 @@ public class HotelService {
 			hotelToEdit.getLocation().setLatitude(hotel.getLocation().getLatitude());
 			hotelToEdit.getLocation().setLongitude(hotel.getLocation().getLongitude());
 		}
-		
+
 		try {
 			hotelRepository.save(hotelToEdit);
 		} catch (Exception e) {
@@ -72,7 +71,7 @@ public class HotelService {
 
 	public ArrayList<ServiceDTO> getHotels() {
 		ArrayList<ServiceDTO> retval = new ArrayList<ServiceDTO>();
-		for(Hotel h : hotelRepository.findAll())
+		for (Hotel h : hotelRepository.findAll())
 			retval.add(new ServiceDTO(h));
 		return retval;
 	}

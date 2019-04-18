@@ -1,9 +1,9 @@
-var logoutURL = "../logout";
-var loadUserInfoURL = "../api/getUserInfo";
-var saveChangesURL = "../api/editUser";
+const logoutURL = "../logout";
+const loadUserInfoURL = "../api/getUserInfo";
+const saveChangesURL = "../api/editUser";
 const getPlaneSeatsURL = "/api/getPlaneSeats";
 
-var tokenKey = "jwtToken";
+const tokenKey = "jwtToken";
 
 $(document).ready(function(){
 	loadData();

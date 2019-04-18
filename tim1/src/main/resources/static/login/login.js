@@ -3,7 +3,7 @@ var registeredUserURL = "../registeredUser";
 var registrationURL = "../register";
 var airlineAdminURL = "../airlineAdmin";
 var hotelAdminURL = "../hotelAdmin";
-var rentACarAdminURL = "../rentACarAdmin";
+var rentACarAdminURL = "../carAdmin";
 var sysAdminURL = "../sysAdmin";
 
 var TOKEN_KEY = 'jwtToken';
