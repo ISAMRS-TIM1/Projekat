@@ -3,7 +3,6 @@ package isamrs.tim1.dto;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import isamrs.tim1.model.Airline;
@@ -15,7 +14,7 @@ import isamrs.tim1.model.PlaneSegment;
 import isamrs.tim1.model.PlaneSegmentClass;
 import isamrs.tim1.model.QuickFlightReservation;
 
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class AirlineDTO implements Serializable {
 
 	private String name;
@@ -132,7 +131,7 @@ public class AirlineDTO implements Serializable {
 	public void setQuickReservations(ArrayList<QuickFlightReservation> quickReservations) {
 		this.quickReservations = quickReservations;
 	}
-	
+
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}

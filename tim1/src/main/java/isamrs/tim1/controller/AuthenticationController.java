@@ -13,7 +13,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
 import isamrs.tim1.dto.MessageDTO;
-import isamrs.tim1.dto.UserDTO;
 import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.AirlineAdmin;
 import isamrs.tim1.model.Authority;
@@ -66,7 +64,7 @@ public class AuthenticationController {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private ServiceRepository serviceRepository;
 
@@ -147,7 +145,7 @@ public class AuthenticationController {
 			userType = UserType.ROLE_RENTADMIN;
 		} else if (user instanceof AirlineAdmin) {
 			userType = UserType.ROLE_AIRADMIN;
-		} else if (user.getClass().equals(User.class)){
+		} else if (user.getClass().equals(User.class)) {
 			userType = UserType.ROLE_SYSADMIN;
 		}
 
@@ -155,41 +153,33 @@ public class AuthenticationController {
 		return new ResponseEntity<UserTokenState>(new UserTokenState(jwt, expiresIn, userType), HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/api/getUserInfo", method = RequestMethod.GET)
-	public ResponseEntity<UserDTO> getUserData() {
-		// fix this
-		User u = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		return new ResponseEntity<UserDTO>(
-				new UserDTO(u.getFirstName(), u.getLastName(), u.getPhoneNumber(), u.getAddress(), u.getEmail()),
-				HttpStatus.OK);
-	}
-	
-
 	@RequestMapping(value = "auth/registerAdmin/{serviceName}", method = RequestMethod.POST)
-	public ResponseEntity<Boolean> registerAirlineAdmin(@Valid @RequestBody User user, @PathVariable("serviceName") String serviceName) {
-		
+	public ResponseEntity<Boolean> registerAirlineAdmin(@Valid @RequestBody User user,
+			@PathVariable("serviceName") String serviceName) {
+
 		Service service = serviceRepository.findOneByName(serviceName);
-		if(service==null) return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
+		if (service == null)
+			return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
 		User admin = null;
 		Authority a = new Authority();
-		
-		if(service instanceof Airline) {
+
+		if (service instanceof Airline) {
 			admin = new AirlineAdmin();
 			((Airline) service).getAdmins().add((AirlineAdmin) admin);
 			((AirlineAdmin) admin).setAirline((Airline) service);
 			a.setType(UserType.ROLE_AIRADMIN);
-		}else if(service instanceof Hotel) {
+		} else if (service instanceof Hotel) {
 			admin = new HotelAdmin();
 			((Hotel) service).getAdmins().add((HotelAdmin) admin);
 			((HotelAdmin) admin).setHotel((Hotel) service);
 			a.setType(UserType.ROLE_HOTELADMIN);
-		}else if(service instanceof RentACar) {
+		} else if (service instanceof RentACar) {
 			admin = new RentACarAdmin();
 			((RentACar) service).getAdmins().add((RentACarAdmin) admin);
 			((RentACarAdmin) admin).setRentACar((RentACar) service);
 			a.setType(UserType.ROLE_RENTADMIN);
 		}
-		
+
 		admin.setId(null);
 		admin.setEmail(user.getEmail());
 		admin.setPassword(this.userDetailsService.encodePassword(user.getPassword()));

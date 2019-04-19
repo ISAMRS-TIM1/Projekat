@@ -43,7 +43,7 @@ public class EmailService {
 		String content = null;
 		try {
 			content = String.format(
-					"Hello %s,\nTo finish registration click on link below:\nhttp://localhost:8000/auth/confirm?token=%s",
+					"Hello %s,\nTo finish the registration, click on link below:\nhttp://localhost:8000/auth/confirm?token=%s",
 					ru.getEmail(), URLEncoder.encode(token, "UTF-8"));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
