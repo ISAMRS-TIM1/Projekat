@@ -8,4 +8,6 @@ import isamrs.tim1.model.BranchOffice;
 public interface BranchOfficeRepository extends JpaRepository<BranchOffice, Integer> {
 	@Query(value = "select * from branch_offices b where b.name = ?1 and b.rent_a_car = ?2", nativeQuery = true)
 	BranchOffice findOneByNameAndService(String name, Integer rentACar);
+	
+	BranchOffice findOneByName(String name);
 }

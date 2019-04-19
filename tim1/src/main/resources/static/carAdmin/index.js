@@ -10,6 +10,7 @@ const loadUserInfoURL = "/api/getUserInfo";
 const logoutURL = "../logout";
 const loadBranchOfficesURL = "/api/getBranchOffices";
 const addBranchOfficeURL = "/api/addBranchOffice";
+const editBranchOfficeURL = "/api/editBranchOffice";
 const editUserInfoURL = "../api/editUser";
 
 $(document).ready(function() {
@@ -76,6 +77,11 @@ $(document).ready(function() {
 	$('#addBranch').click(function() {
 		addBranchOffice();
 		loadBranchOffices();
+	});
+	
+	$(document).on('click', '#branchTable tbody tr', function(e) {
+		let oldName = e.target.children[1].nodeValue;
+		editBranchOffice(oldName);
 	});
 });
 
@@ -180,6 +186,43 @@ function addBranchOffice() {
 		contentType: "application/json",
 		dataType : "json",
 		data: branchOfficeFormToJSON(name, latitude, longitude),
+		headers: createAuthorizationTokenHeader(TOKEN_KEY),
+		success: function(data){
+			toastr.options = {
+					  "closeButton": true,
+					  "debug": false,
+					  "newestOnTop": false,
+					  "progressBar": false,
+					  "positionClass": "toast-top-center",
+					  "preventDuplicates": false,
+					  "onclick": null,
+					  "showDuration": "300",
+					  "hideDuration": "1000",
+					  "timeOut": "3000",
+					  "extendedTimeOut": "1000",
+					  "showEasing": "swing",
+					  "hideEasing": "linear",
+					  "showMethod": "fadeIn",
+					  "hideMethod": "fadeOut"
+					}
+			toastr[data.header](data.message);
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
+function editBranchOffice(oldName) {
+	let token = getJwtToken("jwtToken");
+	let name = $("input[name='name']").val();
+	// extract latitude and longitude from map marker
+	$.ajax({
+		type : 'PUT',
+		url : editBranchOfficeURL,
+		contentType: "application/json",
+		dataType : "json",
+		data: branchOfficeFormToJSON(name, latitude, longitude),// add old name as param
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
 			toastr.options = {
