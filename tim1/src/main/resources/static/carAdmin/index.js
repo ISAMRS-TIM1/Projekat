@@ -73,6 +73,14 @@ $(document).ready(function() {
 		});
 	});
 	
+	$('.edit').click(function() {
+		if ($(this).siblings().first().is('[readonly]')) {
+			$(this).siblings().first().removeAttr('readonly');
+		} else {
+			$(this).siblings().first().prop('readonly', 'true');
+		}
+	});
+	
 	$('#addBranch').click(function() {
 		addBranchOffice();
 		loadBranchOffices();
