@@ -74,6 +74,12 @@ public class User implements Serializable, UserDetails {
 
 	@Column(name = "enabled")
 	private boolean enabled;
+	
+	@Column(name = "passwordChanged")
+	private boolean passwordChanged;
+	
+	@Column(name = "verified")
+	private boolean verified;
 
 	public User() {
 		super();
@@ -185,6 +191,22 @@ public class User implements Serializable, UserDetails {
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+	
+	public boolean isPasswordChanged() {
+		return passwordChanged;
+	}
+
+	public void setPasswordChanged(boolean passwordChanged) {
+		this.passwordChanged = passwordChanged;
+	}
+	
+	public boolean isVerified() {
+		return verified;
+	}
+
+	public void setVerified(boolean verified) {
+		this.verified = verified;
 	}
 
 	public static long getSerialversionuid() {

@@ -10,17 +10,20 @@ public class UserTokenState implements Serializable {
 	private String accessToken;
 	private Long expiresIn;
 	private UserType userType;
+	private boolean passwordChanged;
 
 	public UserTokenState() {
 		this.accessToken = null;
 		this.expiresIn = null;
 		this.setUserType(null);
+		this.passwordChanged = false;
 	}
 
-	public UserTokenState(String accessToken, long expiresIn, UserType userType) {
+	public UserTokenState(String accessToken, long expiresIn, UserType userType, boolean passwordChanged) {
 		this.accessToken = accessToken;
 		this.expiresIn = expiresIn;
 		this.setUserType(userType);
+		this.passwordChanged = passwordChanged;
 	}
 
 	public String getAccessToken() {
@@ -45,5 +48,17 @@ public class UserTokenState implements Serializable {
 
 	public void setUserType(UserType userType) {
 		this.userType = userType;
+	}
+
+	public boolean isPasswordChanged() {
+		return passwordChanged;
+	}
+
+	public void setPasswordChanged(boolean passwordChanged) {
+		this.passwordChanged = passwordChanged;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 }
