@@ -3,19 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Flights</title>
+<title>Hotel Admin</title>
 <link rel="shortcut icon" type="image/png" href="login/favicon.png" />
-<script src="auth/auth.js"></script>
+
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link href="http://www.jqueryscript.net/css/jquerysctipttop.css"
+	rel="stylesheet" type="text/css">
+
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="hotelAdmin/index.css">
 <link rel="stylesheet"
 	href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-<script src="hotelAdmin/index.js"></script>
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
 <script type="text/javascript"
@@ -28,87 +29,174 @@
 	integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
 	crossorigin=""></script>
 
+<script type="text/javascript"
+	src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript"
+	src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
+
+<script src="auth/auth.js"></script>
+<script src="hotelAdmin/index.js"></script>
+<link rel="stylesheet" href="hotelAdmin/index.css">
+<link rel="stylesheet" href="tableStyle.css">
 </head>
 <body>
-	<div class="container">
-		<div id="formDiv">
-			<form onsubmit="editHotel(event)">
-				<table id="formTable">
-					<tr>
-						<td colspan="2"><input type="text" id="hotelName"
-							class="textInput"></td>
-					</tr>
-					<tr>
-						<td colspan="2"><p id="hotelGrade"></p></td>
-					</tr>
-					<tr>
-						<td><textarea rows="10" cols="30" id="hotelDescription"
-								class="textInput"></textarea></td>
-						<td><div id="mapDiv"></div></td>
-					</tr>
-					<tr>
-						<td colspan="2"><button type="submit" class="btn btn-default">Save
-								changes</button></td>
-					</tr>
-					<tr>
-						<td colspan="2"><button type="submit" class="btn btn-default">Daily
-								visitors</button>
-							<button type="submit" class="btn btn-default">Weekly
-								visitors</button>
-							<button type="submit" class="btn btn-default">Monthly
-								visitors</button>
-							<button type="submit" class="btn btn-default">Hotel
-								income</button></td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<ul class="nav nav-tabs">
-								<li class="active" id="roomsTab"><a
-									href="javascript:changeContentToRooms()">Rooms</a></li>
-								<li id="additionalServicesTab"><a
-									href="javascript:changeContentToAddServices()">Additional
-										services</a></li>
-								<li id="quickReservationsTab"><a
-									href="javascript:changeContentToQuickRes()">Quick
-										reservations</a></li>
-							</ul>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<table id="roomsTable" class="contentTable">
+	<div class="container-fluid">
+		<div id="topMenu">
+			<div id="tabsDiv">
+				<ul class="nav nav-tabs nav-justified">
+					<li class="active"><a data-toggle="tab" href="#basicTab">Basic
+							info</a></li>
+					<li><a data-toggle="tab" href="#reportsTab">Reports</a></li>
+					<li><a data-toggle="tab" href="#roomsTab">Rooms</a></li>
+					<li><a data-toggle="tab" href="#additionalServicesTab">Additional
+							services</a></li>
+					<li><a data-toggle="tab" href="#quickResevationsTab">Quick
+							reservations</a></li>
+					<li><a data-toggle="tab" href="#profile">Profile</a></li>
+				</ul>
+			</div>
+			<button type="button" class="btn .btn-link" id="logout">Logout</button>
+		</div>
+		<div class="tab-content">
+			<div id="basicTab" class="tab-pane fade in active">
+				<div id="basicInfo">
+					<input type="text" id="airlineName" class="textInput">
+					<p id="airlineGrade">
+						<textarea rows="10" cols="30" id="airlineDescription"
+							class="textInput"></textarea>
+				</div>
+				<div id="basicMapDiv" class="map leaflet-container"></div>
+				<input type="hidden" id="latitude" value="45"required"> <input
+					type="hidden" id="longitude" value="0"required">
+				<button type="button" id="saveChangesBasic" class="btn btn-default">Save
+					changes</button>
+			</div>
+			<div id="roomsTab" class="tab-pane fade in">
+				<div class="tableWrapper">
+					<div class="tableButtons">
+						<button type="button" id="addRoomButton" class="btn btn-default"
+							data-toggle="modal" data-target="addRoomModal">Add room</button>
+					</div>
+					<div class="tableDiv">
+						<table id="roomsTable" class="table display table-bordered">
+							<thead>
 								<tr>
 									<th>Room</th>
 									<th>Current price</th>
 									<th>For people</th>
 									<th>Average grade</th>
 								</tr>
-							</table>
-							<table id="additionalServicesTable" class="contentTable"
-								hidden="true">
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div id="reportsTab" class="tab-pane fade">
+				<h3>Reports</h3>
+				<p>Some content.</p>
+				<button type="submit" class="btn btn-default">Daily sold
+					tickets</button>
+				<button type="submit" class="btn btn-default">Weekly sold
+					tickets</button>
+				<button type="submit" class="btn btn-default">Monthly sold
+					tickets</button>
+				<button type="submit" class="btn btn-default">Hotel income</button>
+			</div>
+			<div id="additionalServicesTab" class="tab-pane fade">
+				<div class="tableDiv">
+					<table id="additionalServicesTable"
+						class="table display table-bordered">
+						<thead>
+							<tr>
+								<th>Additional service</th>
+								<th>Price</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div id="quickResevationsTab" class="tab-pane fade">
+				<div class="tableWrapper">
+					<div class="tableButtons">
+						<button type="button" id="addQuickReservationButton"
+							class="btn btn-default" data-toggle="modal"
+							data-target="addQuickReservationModal">Add quick
+							reservation</button>
+					</div>
+					<div class="tableDiv">
+						<table id="quickReservationsTable"
+							class="table display table-bordered">
+							<thead>
 								<tr>
-									<th>Additional service</th>
-									<th>Price</th>
+									<th>Reservation ID</th>
 								</tr>
-							</table>
-							<button class="contentTable" id="addQuickReservationButton"
-								type="submit" class="btn btn-default" hidden="true">Add
-								a quick reservation</button> </br>
-							<table id="quickReservationsTable" class="contentTable"
-								hidden="true">
-								<tr>
-									<th>Reservation</th>
-								</tr>
-							</table>
-						</td>
-					</tr>
-					<input type="hidden" id="latitude" value="45"required">
-					<input type="hidden" id="longitude" value="0"required">
-				</table>
-			</form>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div id="profile" class="tab-pane fade">
+				<div id="profileContent">
+					<div id="userImgDiv">
+						<img src="user.png" id="userImg">
+					</div>
+					<div id="profileEdit">
+						<h2 id='email'></h2>
+						<form id="userEditForm">
+							<div class="form-group">
+								<label for="fname">First name:</label>
+								<div class="input-group">
+									<input class="form-control" type="text" name="fname"
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
+										readonly> <span class="input-group-addon edit"><i
+										class="glyphicon glyphicon-edit"></i></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="lname">Last name:</label>
+								<div class="input-group">
+									<input class="form-control" type="text" name="lname"
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
+										readonly> <span class="input-group-addon edit"><i
+										class="glyphicon glyphicon-edit"></i></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="phone">Phone:</label>
+								<div class="input-group">
+									<input class="form-control" type="tel" name="phone"
+										pattern="\+[0-9]{12}" title="12 digits starting with +"
+										readonly> <span class="input-group-addon edit"><i
+										class="glyphicon glyphicon-edit"></i></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="address">Address:</label>
+								<div class="input-group">
+									<input class="form-control" type="text" name="address"
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
+										readonly> <span class="input-group-addon edit"><i
+										class="glyphicon glyphicon-edit"></i></span>
+								</div>
+							</div>
+							<button type="button" class="btn btn-default"
+								id="changePasswordButton">Change password</button>
+							<br>
+							<button type="submit" class="btn btn-default" id="saveChanges">Save
+								changes</button>
+						</form>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
-	<div id="overlayDiv" hidden></div>
-	<div id="modalDialog" hidden></div>
 </body>
 </html>
