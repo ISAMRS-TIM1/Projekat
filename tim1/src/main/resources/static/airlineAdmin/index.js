@@ -14,6 +14,7 @@ const saveSeatsChangesURL = "/api/saveSeats";
 const logoutURL = "../logout";
 const loadUserInfoURL = "../api/getUserInfo";
 const editUserInfoURL = "../api/editUser";
+const changePasswordURL = "../changePassword";
 
 $(document).ready(function() {
 	loadAirline();
@@ -155,6 +156,11 @@ function loadProfileData() {
 		}
 	});
 }
+
+$(document).on("click", "#changePasswordButton", function(e){
+	e.preventDefault();
+	document.location.href = changePasswordURL;
+});
 
 function userFormToJSON(firstName, lastName, phone, address, email) {
 	return JSON.stringify({
@@ -416,6 +422,28 @@ function add(e, cat) {
 function addSeatsIndividually(e) {
 	e.preventDefault();
 	var invalid = false;
+	if (seatsForDelete.length == 0) {
+		toastr.options = {
+				"closeButton" : true,
+				"debug" : false,
+				"newestOnTop" : false,
+				"progressBar" : false,
+				"positionClass" : "toast-top-center",
+				"preventDuplicates" : false,
+				"onclick" : null,
+				"showDuration" : "300",
+				"hideDuration" : "1000",
+				"timeOut" : "3000",
+				"extendedTimeOut" : "1000",
+				"showEasing" : "swing",
+				"hideEasing" : "linear",
+				"showMethod" : "fadeIn",
+				"hideMethod" : "fadeOut"
+			}
+			toastr["error"]
+					("No empty places chosen.");
+			return;
+	}
 	$.each(seatsForDelete, function(i, val) {
 		if (invalid)
 			return;
@@ -576,6 +604,28 @@ function addSeats(number, seatClass, label, cat, initial) {
 function deleteSeatsIndividually(e) {
 	e.preventDefault();
 	var invalid = false;
+	if (seatsForDelete.length == 0) {
+		toastr.options = {
+				"closeButton" : true,
+				"debug" : false,
+				"newestOnTop" : false,
+				"progressBar" : false,
+				"positionClass" : "toast-top-center",
+				"preventDuplicates" : false,
+				"onclick" : null,
+				"showDuration" : "300",
+				"hideDuration" : "1000",
+				"timeOut" : "3000",
+				"extendedTimeOut" : "1000",
+				"showEasing" : "swing",
+				"hideEasing" : "linear",
+				"showMethod" : "fadeIn",
+				"hideMethod" : "fadeOut"
+			}
+			toastr["error"]
+					("No seats chosen.");
+			return;
+	}
 	$.each(seatsForDelete, function(i, val) {
 		if (invalid)
 			return;
@@ -1073,6 +1123,11 @@ function showPlaneSeats(seats) {
 
 function saveSeatsChanges(e) {
 	e.preventDefault();
+	var firstPrice = $("#firstPrice").val();
+	var businessPrice = $("#businessPrice").val();
+	var economyPrice = $("#economyPrice").val();
+	if (firstPrice < 0 || businessPrice < 0 || economyPrice < 0 || firstPrice == "" || businessPrice == "" || economyPrice == "")
+		return;
 	var seats = firstClass.concat(businessClass).concat(economyClass);
 	var savedSeats = [];
 	for (var i = 0; i < seats.length; i++) {

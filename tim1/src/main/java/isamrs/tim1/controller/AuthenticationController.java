@@ -72,7 +72,7 @@ public class AuthenticationController {
 	public RedirectView confirmRegistration(@RequestParam String token) {
 		User ru = userService.findUserByToken(token);
 		if (ru != null) {
-			ru.setEnabled(true);
+			ru.setVerified(true);
 			userDetailsService.saveUser(ru);
 			return new RedirectView("/registration/verified.html");
 		}
@@ -96,7 +96,9 @@ public class AuthenticationController {
 		authorities.add(a);
 		ru.setAuthorities(authorities);
 		ru.setDiscountPoints(0);
-		ru.setEnabled(false);
+		ru.setEnabled(true);
+		ru.setPasswordChanged(true);
+		ru.setVerified(false);
 		ru.setFriends(new HashSet<RegisteredUser>());
 		ru.setFirstName(user.getFirstName());
 		ru.setLastName(user.getLastName());
@@ -125,7 +127,7 @@ public class AuthenticationController {
 		}
 		User user = (User) authentication.getPrincipal();
 
-		if (!user.isEnabled()) {
+		if (!user.isVerified()) {
 			return new ResponseEntity<MessageDTO>(new MessageDTO("Account is not verified. Check your email.", "Error"),
 					HttpStatus.OK);
 		}
@@ -136,21 +138,27 @@ public class AuthenticationController {
 		String jwt = tokenUtils.generateToken(user.getUsername());
 		int expiresIn = tokenUtils.getExpiredIn();
 		UserType userType = null;
-
+		boolean valid = false;
+		
 		if (user instanceof RegisteredUser) {
 			userType = UserType.ROLE_REGISTEREDUSER;
+			valid = true;
 		} else if (user instanceof HotelAdmin) {
 			userType = UserType.ROLE_HOTELADMIN;
+			valid = user.isPasswordChanged();
 		} else if (user instanceof RentACarAdmin) {
 			userType = UserType.ROLE_RENTADMIN;
+			valid = user.isPasswordChanged();
 		} else if (user instanceof AirlineAdmin) {
 			userType = UserType.ROLE_AIRADMIN;
+			valid = user.isPasswordChanged();
 		} else if (user.getClass().equals(User.class)) {
 			userType = UserType.ROLE_SYSADMIN;
+			valid = true;
 		}
 
 		// Vrati token kao odgovor na uspesno autentifikaciju
-		return new ResponseEntity<UserTokenState>(new UserTokenState(jwt, expiresIn, userType), HttpStatus.OK);
+		return new ResponseEntity<UserTokenState>(new UserTokenState(jwt, expiresIn, userType, valid), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "auth/registerAdmin/{serviceName}", method = RequestMethod.POST)
@@ -188,6 +196,8 @@ public class AuthenticationController {
 		authorities.add(a);
 		admin.setAuthorities(authorities);
 		admin.setEnabled(true);
+		admin.setPasswordChanged(false);
+		admin.setVerified(true);
 		admin.setFirstName(user.getFirstName());
 		admin.setLastName(user.getLastName());
 		admin.setLastPasswordResetDate(new Timestamp(System.currentTimeMillis()));
@@ -197,5 +207,16 @@ public class AuthenticationController {
 			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 		}
 		return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "auth/changePassword", method = RequestMethod.PUT)
+	public ResponseEntity<UserTokenState> changePassword(@RequestBody String password) {
+		User u = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		userDetailsService.changePassword(password);
+		String jwt = tokenUtils.generateToken(u.getUsername());
+		int expiresIn = tokenUtils.getExpiredIn();
+		List<Authority> a = (List<Authority>) u.getAuthorities();
+		return new ResponseEntity<UserTokenState>(new UserTokenState(jwt, expiresIn, a.get(0).getType(), true), HttpStatus.OK);
 	}
 }

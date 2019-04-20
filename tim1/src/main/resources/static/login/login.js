@@ -5,6 +5,7 @@ var airlineAdminURL = "../airlineAdmin";
 var hotelAdminURL = "../hotelAdmin";
 var rentACarAdminURL = "../carAdmin";
 var sysAdminURL = "../sysAdmin";
+var adminPasswordURL = "../changePassword";
 
 var TOKEN_KEY = 'jwtToken';
 	
@@ -41,7 +42,11 @@ $(document).on('submit', '#loginForm', function(e){
 				$('input[name="email"]').val("")
 				$('input[name="password"]').val("")
 			} else{
-				setJwtToken(TOKEN_KEY, data.accessToken);			
+				setJwtToken(TOKEN_KEY, data.accessToken);
+				if (data.passwordChanged == false) {
+					document.location.href = adminPasswordURL;
+					return;
+				}
 				if(data.userType == "ROLE_REGISTEREDUSER"){
 					document.location.href = registeredUserURL;					
 				} else if(data.userType == "ROLE_AIRADMIN"){

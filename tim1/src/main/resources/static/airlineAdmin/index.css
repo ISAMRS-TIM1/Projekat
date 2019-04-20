@@ -175,6 +175,7 @@ a {
 	font-size: 12px;
 	position: relative;
 	height: 401px;
+	color:white;
 }
 .booking-details h2 {
 	margin: 25px 0 20px 0;
@@ -204,7 +205,7 @@ div.seatCharts-seat.available {
 }
 div.seatCharts-seat.available.first-class {
 /* 	background: url(vip.png); */
-	background-color: #3a78c3 !important;
+	background-color: #39CCCC !important;
 }
 div.seatCharts-seat.available.economy-class {
 	background-color: #FF851B !important;
@@ -233,10 +234,11 @@ div.seatCharts-container {
 }
 div.seatCharts-legend {
 	padding-left: 0px;
-	position: absolute;
-	bottom:175px;
-	left: 200px;
+	position: relative;
+	margin-top : 0 px;
+	left: 0 px;;
 	width: 200px;
+	color: white;
 }
 ul.seatCharts-legendList {
 	padding-left: 0px;
@@ -264,4 +266,24 @@ span.seatCharts-legendDescription {
 }
 #saveSeatsButton {
 	width: 70%;
+}
+#price {
+	position: absolute;
+	top: 45px;
+	left: 200px;
+	width:400px;
+}
+#price h3 {
+	margin-top: 20px;
+}
+#seatDiv {
+	margin-top:25px;
+	margin-left:-15px;
+}
+#saveSeatButton {
+	margin-top: 50px;
+	margin-left: 125px;
+}
+input {
+	color: black;
 }
