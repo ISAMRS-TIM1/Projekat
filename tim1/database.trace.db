@@ -316,3 +316,9 @@ select * from branch_offices b where b.name = ? and b.rent_a_car = ? [42122-197]
 2019-04-21 17:30:06 jdbc[14]: exception
 org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "UPDATE BRANCH_OFFICES SET(LOCATION =[*] 3) WHERE BRANCH_OFFICE_ID = 1 "; expected "., ,, )"; SQL statement:
 UPDATE BRANCH_OFFICES SET(location = 3) WHERE BRANCH_OFFICE_ID = 1 [42001-197]
+2019-04-21 19:23:32 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "DELETE FROM BRANCH_OFFICES WHERE BR BRANCH_OFFICE_ID[*] = 104"; SQL statement:
+DELETE FROM BRANCH_OFFICES WHERE BR BRANCH_OFFICE_ID = 104 [42000-197]
+2019-04-21 19:23:38 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "DELETE BRANCH_OFFICES WHERE BR BRANCH_OFFICE_ID[*] = 104"; SQL statement:
+DELETE BRANCH_OFFICES WHERE BR BRANCH_OFFICE_ID = 104 [42000-197]

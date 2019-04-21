@@ -10,10 +10,11 @@ const loadUserInfoURL = "/api/getUserInfo";
 const logoutURL = "../logout";
 const loadBranchOfficesURL = "/api/getBranchOffices";
 const addBranchOfficeURL = "/api/addBranchOffice";
-const editBranchOfficeURL = "/api/editBranchOffice";
+const editBranchOfficeURL = "/api/editBranchOffice/";
 const editUserInfoURL = "../api/editUser";
 
 $(document).ready(function() {
+	setUpToastr();
 	loadBasicData();
 	loadProfileData();
 	setUpTable();
@@ -48,7 +49,6 @@ $(document).ready(function() {
 			data : userFormToJSON(firstName, lastName, phone, address, email),
 			success: function(data){
 				if(data != ""){
-					setUpToastr();
 					toastr["error"](data);
 				}
 			},
@@ -58,9 +58,9 @@ $(document).ready(function() {
 		});
 	});
 	
-	$('#addBranch').click(function() {
+	$(document).on('click', '#addBranch', function(e) {
+		e.preventDefault();
 		addBranchOffice();
-		loadBranchOffices();
 	});
 	
 	$('.edit').click(function(){
@@ -79,10 +79,10 @@ $(document).ready(function() {
 		$('#editBranchModalDialog').modal('show');
 	});
 	
-	$('#editBranch').click(function() {
+	$(document).on('click', '#editBranch', function(e) {
+		e.preventDefault();
 		let newName = $("#editBranchOfficeForm input[name='name']").val();
-		// extract latitude and longitude from marker
-		editBranchOffice(oldName, newName, latitude, longitude);
+		editBranchOffice(oldName, newName, 14, 14/* latitude, longitude*/);
 	});
 });
 
@@ -179,7 +179,7 @@ function loadBranchOffices() {
 
 function addBranchOffice() {
 	let token = getJwtToken("jwtToken");
-	let name = $("input[name='name']").val();
+	let name = $("#addBranchOfficeForm input[name='name']").val();
 	// extract latitude and longitude from map marker
 	$.ajax({
 		type : 'POST',
@@ -189,8 +189,8 @@ function addBranchOffice() {
 		data: branchOfficeFormToJSON(name, 14, 14/*latitude, longitude*/),
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
-			setUpToastr();
 			toastr[data.header](data.message);
+			loadBranchOffices();
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
 			alert("AJAX ERROR: " + textStatus);
@@ -202,14 +202,14 @@ function editBranchOffice(oldName, name, latitude, longitude) {
 	let token = getJwtToken("jwtToken");
 	$.ajax({
 		type : 'PUT',
-		url : editBranchOfficeURL,
+		url : editBranchOfficeURL + oldName,
 		contentType: "application/json",
 		dataType : "json",
-		data: {"branch": branchOfficeFormToJSON(name, latitude, longitude), "oldName": oldName},
+		data: branchOfficeFormToJSON(name, latitude, longitude),
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
-			setUpToastr();
 			toastr[data.header](data.message);
+			loadBranchOffices();
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
 			alert("AJAX ERROR: " + textStatus);
