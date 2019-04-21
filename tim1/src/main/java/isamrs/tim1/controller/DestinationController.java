@@ -7,18 +7,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import isamrs.tim1.dto.FlightDTO;
+import isamrs.tim1.dto.DestinationDTO;
 import isamrs.tim1.dto.MessageDTO;
-import isamrs.tim1.service.FlightService;
+import isamrs.tim1.service.DestinationService;
 
 @RestController
-public class FlightController {
+public class DestinationController {
 	
 	@Autowired
-	private FlightService flightService;
+	private DestinationService destinationService;
 	
-	@RequestMapping(value = "api/addFlight", method = RequestMethod.POST)
-	public ResponseEntity<MessageDTO> addFlight(@RequestBody FlightDTO flight) {
-		return flightService.addFlight(flight);
+	@RequestMapping(value = "/api/addDestination", method = RequestMethod.POST)
+	public ResponseEntity<MessageDTO> addDestination(@RequestBody DestinationDTO d) {
+		return destinationService.addDestination(d);
 	}
 }

@@ -11,6 +11,7 @@ const getFlightsURL = "/api/getFlights";
 const getAirlineOfAdminURL = "/api/getAirlineOfAdmin";
 const saveSeatsChangesURL = "/api/saveSeats";
 const addFlightURL = "/api/addFlight";
+const addDestinationURL = "/api/addDestination";
 
 const logoutURL = "../logout";
 const loadUserInfoURL = "../api/getUserInfo";
@@ -76,8 +77,8 @@ function setUpMap(latitude, longitude, div) {
 		draggable : true
 	}).addTo(destMap);
 	marker.on('dragend', function(e) {
-		$("#latitude").val(marker.getLatLng().lat);
-		$("#longitude").val(marker.getLatLng().lng);
+		$("#" + div + "Latitude").val(marker.getLatLng().lat);
+		$("#" + div + "Longitude").val(marker.getLatLng().lng);
 	});
 }
 
@@ -135,7 +136,6 @@ function loadAirline() {
 			reservedSeats = data["reservedSeats"];
 			renderPlaneSeats(data["planeSegments"], data["reservedSeats"]);
 			console.log(data["planeSegments"]);
-			console.log("a");
 		}
 	});
 }
@@ -872,13 +872,40 @@ function addFlight(e) {
 	e.preventDefault();
 	var startDestination = $( "#startDestination option:selected" ).text();
 	var endDestination = $( "#endDestination  option:selected" ).text();
+	if (startDestination == endDestination) {
+		toastrError("Start destination and end destination must not be the same.");
+		return;
+	}
 	var departureTime = $("#departureTime").val();
+	if (departureTime == null || departureTime == "") {
+		toastrError("Departure time is not valid.")
+		return;
+	}
 	var landingTime = $("#landingTime").val();
-	console.log();
+	if (landingTime == null || landingTime == "") {
+		toastrError("Landing time is not valid.")
+		return;
+	}
+	if (moment(landingTime).isBefore(departureTime) || moment(landingTime).isSame(departureTime)) {
+		toastrError("Landing time must be after the departure time.");
+		return;
+	}
 	var flightDistance = $("#flightDistance").val();
+	if (isNaN(flightDistance) || flightDistance <= 0) {
+		toastrError("Invalid flight distance.");
+		return;
+	}
 	var ticketPrice = $("#ticketPrice").val();
+	if (isNaN(ticketPrice) || ticketPrice <= 0) {
+		toastrError("Invalid ticket price.");
+		return;
+	}
 	var connections = $("#connections").val();
 	var pricePerBag = $("#pricePerBag").val();
+	if (isNaN(pricePerBag) || pricePerBag < 0) {
+		toastrError("Invalid price per bag.");
+		return;
+	}
 	$.ajax({
 		method : "POST",
 		url : addFlightURL,
@@ -887,6 +914,7 @@ function addFlight(e) {
 		data : flightToJSON(startDestination, endDestination, departureTime, landingTime, flightDistance, ticketPrice,
 				connections, pricePerBag),
 		success : function(data) {
+			if (data.message == "success") {
 				var table = $('#flightsTable').DataTable();
 				var date1 = moment(departureTime);
 				var date2 = moment(landingTime);
@@ -901,6 +929,7 @@ function addFlight(e) {
 							moment(new Date(landingTime)).format("DD.MM.YYYY HH:mm"), diff + " min", flightDistance,
 								connections.length, conn, ticketPrice,
 								pricePerBag]).draw(false);
+			}
 		}
 	});
 }
@@ -919,4 +948,47 @@ function flightToJSON(startDestination, endDestination, departureTime, landingTi
 		"airlineName" : airlineName
 	});
 	return a;
+}
+
+function setDestMap(e) {
+	e.preventDefault();
+	setUpMap(45, 45, 'destMapDiv');
+}
+
+function addDestination(e) {
+	e.preventDefault();
+	var nameOfDest = $("#destinationName").val();
+	if (nameOfDest == null || nameOfDest == "") {
+		toastrError("Invalid name of destination.");
+		return;
+	}
+	var latitude = $("#destMapDivLatitude").val();
+	var longitude = $("#destMapDivLongitude").val();
+	$.ajax({
+		method : "POST",
+		url : addDestinationURL,
+		headers : createAuthorizationTokenHeader(TOKEN_KEY),
+		contentType : "application/json",
+		data : JSON.stringify({
+			"nameOfDest": nameOfDest,
+			"latitude": latitude,
+			"longitude": longitude,
+			"airlineName": airlineName
+		}),
+		success : function(data) {
+			if (data.message == "success") {
+				var table = $('#destinationsTable').DataTable();
+				table.row.add([ nameOfDest ]).draw(false);
+				var start = $("#startDestination");
+				var end = $("#endDestination");
+				var con = $("#connections");
+				start.append("<option value=" + nameOfDest + ">" + nameOfDest + "</option>");
+				end.append("<option value=" + nameOfDest + ">" + nameOfDest + "</option>");
+				con.append("<option value=" + nameOfDest + ">" + nameOfDest + "</option>");
+			}
+			else {
+				toastrError(data.message);
+			}
+		}
+	});
 }

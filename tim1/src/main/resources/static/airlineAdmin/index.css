@@ -333,3 +333,18 @@ input, select {
 	border-radius: 2vw 2vw 2vw 2vw;
 	margin-bottom: 2vw;
 }
+#destMapDiv {
+	width: 30vw !important;
+	height: 20vw !important;
+}
+.destModal {
+	height: 70vh !important;
+}
+#destDiv {
+	color:white;
+	position: absolute;
+  	left: 50%;
+  	top: 50%;
+  	transform: translate(-50%, -50%);
+  	text-align:center;
+}

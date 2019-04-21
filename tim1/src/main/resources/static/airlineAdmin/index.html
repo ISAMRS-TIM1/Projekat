@@ -72,8 +72,8 @@
 							class="textInput"></textarea>
 				</div>
 				<div id="basicMapDiv" class="map leaflet-container"></div>
-				<input type="hidden" id="latitude" value="45"required"> <input
-					type="hidden" id="longitude" value="0"required">
+				<input type="hidden" id="basicMapDivLatitude" value="45" required> <input
+					type="hidden" id="basicMapDivLongitude" value="0" required>
 				<button type="button" id="saveChangesBasic" class="btn btn-default">Save
 					changes</button>
 			</div>
@@ -82,7 +82,7 @@
 					<div class="tableButtons">
 						<button type="button" id="addDestinationButton"
 							class="btn btn-default" data-toggle="modal"
-							data-target="#branchModalDialog">Add destination</button>
+							data-target="#destinationModalDialog" onclick="setDestMap(event)">Add destination</button>
 					</div>
 					<div class="tableDiv">
 						<table id="destinationsTable" class="table display table-bordered">
@@ -330,6 +330,22 @@
 					</td>
 				</tr>
 				</table>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="destinationModalDialog" tabindex="-1" role="dialog"
+		aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content destModal" id="serviceDiv">
+				<div id="destDiv">
+					Name of destination <input type="text" id="destinationName"/><br><br>
+					<div id="destMapDiv" class="map leaflet-container"></div><br>
+					<input type="hidden" id="destMapDivLatitude" value="45" required> <input
+						type="hidden" id="destMapDivLongitude" value="0" required>
+					<button type="button" id="modalDestButton" class="btn btn-default" onclick="addDestination(event)">Save
+						changes</button>
+				</div>
 			</div>
 		</div>
 	</div>
