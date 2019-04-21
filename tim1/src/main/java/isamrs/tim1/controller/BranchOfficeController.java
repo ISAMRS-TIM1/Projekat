@@ -44,12 +44,9 @@ public class BranchOfficeController {
 		}
 		BranchOffice bo = new BranchOffice();
 		bo.setId(null);
-		Location l;
-		if((l = locationRepository.findOneByLatitudeAndLongitude(branch.getLocation().getLatitude(), branch.getLocation().getLongitude())) == null) {
-			l = branch.getLocation();
-			l.setId(null);
-			locationRepository.save(l);
-		}
+		Location l = branch.getLocation();
+		l.setId(null);
+		locationRepository.save(l);
 		bo.setLocation(l);
 		bo.setName(branch.getName());
 		bo.setRentACar(rentACar);
@@ -85,12 +82,9 @@ public class BranchOfficeController {
 					HttpStatus.OK);
 		}
 		BranchOffice bo = branchOfficeService.findByName(oldName);
-		Location l;
-		if((l = locationRepository.findOneByLatitudeAndLongitude(branch.getLocation().getLatitude(), branch.getLocation().getLongitude())) == null) {
-			l = branch.getLocation();
-			l.setId(null);
-			locationRepository.save(l);
-		}
+		Location l = branch.getLocation();
+		l.setId(null);
+		locationRepository.save(l);
 		bo.setLocation(l);
 		bo.setName(branch.getName());
 
