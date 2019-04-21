@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
 import isamrs.tim1.dto.MessageDTO;
+import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.AirlineAdmin;
 import isamrs.tim1.model.Authority;
@@ -162,12 +163,12 @@ public class AuthenticationController {
 	}
 
 	@RequestMapping(value = "auth/registerAdmin/{serviceName}", method = RequestMethod.POST)
-	public ResponseEntity<Boolean> registerAirlineAdmin(@Valid @RequestBody User user,
+	public ResponseEntity<MessageDTO> registerAirlineAdmin(@Valid @RequestBody User user,
 			@PathVariable("serviceName") String serviceName) {
 
 		Service service = serviceRepository.findOneByName(serviceName);
 		if (service == null)
-			return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<MessageDTO>(new MessageDTO("Service to which is admin added is not existent", ToasterType.ERROR.toString()), HttpStatus.BAD_REQUEST);
 		User admin = null;
 		Authority a = new Authority();
 
@@ -204,9 +205,9 @@ public class AuthenticationController {
 		admin.setPhoneNumber(user.getPhoneNumber());
 		if (this.userDetailsService.saveUser(admin)) {
 			mailService.sendMailToAdmin(admin, user.getPassword());
-			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+			return new ResponseEntity<MessageDTO>(new MessageDTO("Admin added successfully", ToasterType.SUCCESS.toString()), HttpStatus.OK);
 		}
-		return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+		return new ResponseEntity<MessageDTO>(new MessageDTO("Email already in use", ToasterType.ERROR.toString()), HttpStatus.OK);
 	}
 	
 	@SuppressWarnings("unchecked")

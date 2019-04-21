@@ -12,6 +12,8 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import isamrs.tim1.dto.ServiceDTO;
+
 @Entity
 @Table(name = "Airlines")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -48,6 +50,10 @@ public class Airline extends Service implements Serializable {
 		planeSegments.add(new PlaneSegment(PlaneSegmentClass.BUSINESS));
 		planeSegments.add(new PlaneSegment(PlaneSegmentClass.ECONOMY));
 		normalReservations = new HashSet<FlightReservation>();
+	}
+
+	public Airline(ServiceDTO airline) {
+		super(airline);
 	}
 
 	public Set<Flight> getFlights() {

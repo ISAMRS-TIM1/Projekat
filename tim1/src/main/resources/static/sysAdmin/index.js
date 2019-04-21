@@ -8,6 +8,9 @@ const getAirlineURL = "../api/getAirline";
 const getHotelURL = "../api/getHotel";
 const getRentACarURL = "../api/getRentACar";
 const registerAdminURL = "../auth/registerAdmin/";
+const addAirlineURL = "../api/addAirline";
+const addHotelURL = "../api/addHotel";
+const addRentACarURL = "../api/addRentACar";
 
 const tokenKey = "jwtToken";
 
@@ -16,139 +19,119 @@ const MAP_ZOOM = 8;
 const MAX_MAP_ZOOM = 19;
 const MAP_ID = 'mapbox.streets';
 
-$(document).ready(
-		function() {
-			loadData();
+const NEW_AIRLINE = 1;
+const NEW_HOTEL = 2;
+const NEW_RENTACAR = 3;
+var CURRENT_ADD = NEW_AIRLINE;
 
-			$(".nav li").click(function() {
-				$(this).addClass("active");
-				$(this).siblings().removeClass("active");
-			});
+var currentService = "";
+var currentServiceURL = "";
 
-			$("#logout").click(function() {
-				document.location.href = logoutURL;
-			});
+var destMap = null;
 
-			$('.nav-tabs a').click(function() {
-				$(this).tab('show');
-			});
+$(document).ready(function() {
+	setUpToastr();
+	loadData();
 
-			$('.edit').click(function() {
-				if ($(this).siblings().first().is('[readonly]')) {
-					$(this).siblings().first().removeAttr('readonly');
-				} else {
-					$(this).siblings().first().prop('readonly', 'true');
-				}
-			});
+	$(".nav li").click(function() {
+		$(this).addClass("active");
+		$(this).siblings().removeClass("active");
+	});
 
-			$('#userEditForm').on(
-					'submit',
-					function(e) {
-						e.preventDefault();
-						let firstName = $('input[name="fname"]').val();
-						let lastName = $('input[name="lname"]').val();
-						let phone = $('input[name="phone"]').val();
-						let address = $('input[name="address"]').val();
-						let email = $('#email').text();
+	$("#logout").click(function() {
+		document.location.href = logoutURL;
+	});
 
-						$.ajax({
-							type : 'PUT',
-							url : saveChangesURL,
-							contentType : 'application/json',
-							dataType : "html",
-							data : userEditFormToJSON(firstName, lastName,
-									phone, address, email),
-							success : function(data) {
-								if (data != "") {
-									toastr.options = {
-										"closeButton" : true,
-										"debug" : false,
-										"newestOnTop" : false,
-										"progressBar" : false,
-										"positionClass" : "toast-top-center",
-										"preventDuplicates" : false,
-										"onclick" : null,
-										"showDuration" : "300",
-										"hideDuration" : "1000",
-										"timeOut" : "3000",
-										"extendedTimeOut" : "1000",
-										"showEasing" : "swing",
-										"hideEasing" : "linear",
-										"showMethod" : "fadeIn",
-										"hideMethod" : "fadeOut"
-									}
-									toastr["error"](data);
-								}
-							},
-							error : function(XMLHttpRequest, textStatus,
-									errorThrown) {
-								alert("AJAX ERROR: " + textStatus);
-							}
-						});
-					});
+	$('.nav-tabs a').click(function() {
+		$(this).tab('show');
+	});
 
-			var airlinesTable = $('#airlinesTable').DataTable({
-				"paging" : false,
-				"info" : false,
-			});
+	$('.edit').click(function() {
+		if ($(this).siblings().first().is('[readonly]')) {
+			$(this).siblings().first().removeAttr('readonly');
+		} else {
+			$(this).siblings().first().prop('readonly', 'true');
+		}
+	});
 
-			var hotelsTable = $('#hotelsTable').DataTable({
-				"paging" : false,
-				"info" : false,
-			});
+	setUpEditForm();
+	setUpAddServiceForm();
+	setUpRegistrationForm();
 
-			var rentACarsTable = $('#rentACarsTable').DataTable({
-				"paging" : false,
-				"info" : false,
-			});
+	var airlinesTable = $('#airlinesTable').DataTable({
+		"paging" : false,
+		"info" : false,
+	});
 
-			$('#airlinesTable tbody').on('click', 'tr', function() {
-				airlinesTable.$('tr.selected').removeClass('selected');
-				$(this).addClass('selected');
-				loadService(airlinesTable.row(this).data()[0], getAirlineURL);
-				$("#modalDialog").modal();
-			});
+	var hotelsTable = $('#hotelsTable').DataTable({
+		"paging" : false,
+		"info" : false,
+	});
 
-			$('#hotelsTable tbody').on('click', 'tr', function() {
-				hotelsTable.$('tr.selected').removeClass('selected');
-				$(this).addClass('selected');
-				loadService(hotelsTable.row(this).data()[0], getHotelURL);
-				$("#modalDialog").modal();
-			});
+	var rentACarsTable = $('#rentACarsTable').DataTable({
+		"paging" : false,
+		"info" : false,
+	});
 
-			$('#rentACarsTable tbody')
-					.on(
-							'click',
-							'tr',
-							function() {
-								rentACarsTable.$('tr.selected').removeClass(
-										'selected');
-								$(this).addClass('selected');
-								loadService(rentACarsTable.row(this).data()[0],
-										getRentACarURL);
-								$("#modalDialog").modal();
-							});
+	$('#airlinesTable tbody').on('click', 'tr', function() {
+		airlinesTable.$('tr.selected').removeClass('selected');
+		$(this).addClass('selected');
+		currentService = airlinesTable.row(this).data()[0];
+		currentServiceURL = getAirlineURL;
+		loadService(currentService, currentServiceURL);
+		$("#modalDialog").modal();
+	});
 
-			$('#modalDialog').on('hidden.bs.modal', function() {
-				airlinesTable.$('tr.selected').removeClass('selected');
-				hotelsTable.$('tr.selected').removeClass('selected');
-				rentACarsTable.$('tr.selected').removeClass('selected');
-				destMap.off();
-				destMap.remove();
-				adminsTable.clear().draw();
-			})
+	$('#hotelsTable tbody').on('click', 'tr', function() {
+		hotelsTable.$('tr.selected').removeClass('selected');
+		$(this).addClass('selected');
+		currentService = hotelsTable.row(this).data()[0];
+		currentServiceURL = getHotelURL;
+		loadService(currentService, currentServiceURL);
+		$("#modalDialog").modal();
+	});
 
-			$('#modalDialog').on('shown.bs.modal', function() {
-				setTimeout(function() {
-					destMap.invalidateSize()
-				}, 10);
-			});
+	$('#rentACarsTable tbody').on('click', 'tr', function() {
+		rentACarsTable.$('tr.selected').removeClass('selected');
+		$(this).addClass('selected');
+		currentService = rentACarsTable.row(this).data()[0];
+		currentServiceURL = getRentACarURL;
+		loadService(currentService, currentServiceURL);
+		$("#modalDialog").modal();
+	});
 
-			adminsTable = $("#adminsTable").DataTable({
-				"paging" : false,
-				"info" : false
-			});
-		});
+	$('#modalDialog').on('hidden.bs.modal', function() {
+		airlinesTable.$('tr.selected').removeClass('selected');
+		hotelsTable.$('tr.selected').removeClass('selected');
+		rentACarsTable.$('tr.selected').removeClass('selected');
+		destMap.off();
+		destMap.remove();
+		destMap = null;
+		adminsTable.clear().draw();
+	})
+
+	$('#modalDialog').on('shown.bs.modal', function() {
+		setTimeout(function() {
+			destMap.invalidateSize()
+		}, 100);
+		setTimeout(function() {
+			destMap.invalidateSize()
+		}, 1000);
+	});
+
+	adminsTable = $("#adminsTable").DataTable({
+		"paging" : false,
+		"info" : false
+	});
+
+	newServiceMap = setUpMap(45, 0, 'newServiceMapDiv', true);
+	$('#addServiceModal').on('shown.bs.modal', function() {
+		setTimeout(function() {
+			newServiceMap.invalidateSize()
+		}, 10);
+	});
+
+});
 
 function loadData() {
 	loadProfile();
@@ -162,6 +145,7 @@ function loadProfile() {
 	$.ajax({
 		type : 'GET',
 		url : loadUserInfoURL,
+		contentType : 'application/json',
 		dataType : "json",
 		headers : createAuthorizationTokenHeader(tokenKey),
 		success : function(data) {
@@ -179,6 +163,118 @@ function loadProfile() {
 	});
 }
 
+function setUpEditForm() {
+	$('#userEditForm').on(
+			'submit',
+			function(e) {
+				e.preventDefault();
+				let firstName = $('input[name="fname"]').val();
+				let lastName = $('input[name="lname"]').val();
+				let phone = $('input[name="phone"]').val();
+				let address = $('input[name="address"]').val();
+				let email = $('#email').text();
+
+				$.ajax({
+					type : 'PUT',
+					url : saveChangesURL,
+					contentType : 'application/json',
+					dataType : "json",
+					data : userEditFormToJSON(firstName, lastName, phone,
+							address, email),
+					success : function(data) {
+						if (data != "") {
+							toastr["error"](data);
+						}
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown) {
+						alert("AJAX ERROR: " + textStatus);
+					}
+				});
+			});
+}
+
+function setUpAddServiceForm() {
+	$('#addServiceForm').on(
+			'submit',
+			function(e) {
+				e.preventDefault();
+				let name = $('#newServiceName').val();
+				let description = $('#newServiceDescription').val();
+				let lat = $('#latitude').val();
+				let long = $('#longitude').val();
+				let url = "";
+				switch (CURRENT_ADD) {
+				case NEW_AIRLINE:
+					url = addAirlineURL;
+					break;
+				case NEW_HOTEL:
+					url = addHotelURL;
+					break;
+				case NEW_RENTACAR:
+					url = addRentACarURL;
+					break;
+				}
+				
+				$.ajax({
+					type : 'POST',
+					url : url,
+					contentType : 'application/json',
+					dataType : 'json',
+					data : JSON.stringify({"name":name, "description":description, "latitude":lat, "longitude":long}),
+					success : function(data) {
+						loadData();
+						if (data != null) {
+							toastr[data.toastType](data.message);
+						}
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown) {
+						alert("AJAX ERROR: " + textStatus);
+					}
+				});
+			});
+}
+
+function setUpRegistrationForm(){
+	$(document).on(
+			'submit',
+			'#registrationForm',
+			function(e) {
+				e.preventDefault();
+				var email = $('#adminEmail').val();
+				var password = $('#adminPassword').val();
+				var firstName = $('#adminFirstName').val();
+				var lastName = $('#adminLastName').val();
+				var phone = $('#adminPhone').val();
+				var address = $('#adminAddress').val();
+
+				$.ajax({
+					type : 'POST',
+					url : registerAdminURL + $('#serviceName').val(),
+					contentType : 'application/json',
+					dataType : "json",
+					data : registerAdminFormToJSON(email, password, firstName,
+							lastName, phone, address),
+					success : function(data) {
+						if (data != null) {
+							loadService(currentService, currentServiceURL);
+							toastr[data.toastType](data.message);
+							if (data.toastType=="success") {
+								$('#adminEmail').val("");
+								$('#adminPassword').val("");
+								$('#adminFirstName').val("");
+								$('#adminLastName').val("");
+								$('#adminPhone').val("");
+								$('#adminAddress').val("");
+							}
+						}
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown) {
+						alert("AJAX ERROR: " + textStatus);
+					}
+				})
+			})
+}
+
 function loadServices(url, tableID) {
 	let token = getJwtToken("jwtToken");
 	$.ajax({
@@ -189,6 +285,7 @@ function loadServices(url, tableID) {
 		success : function(data) {
 			if (data != null) {
 				var table = $(tableID).DataTable();
+				table.clear();
 				$.each(data, function(i, val) {
 					table.row.add(
 							[ val.name, val.averageGrade, val.numberOfAdmins ])
@@ -218,7 +315,14 @@ function loadService(name, url) {
 				$("#serviceName").val(data["name"]);
 				$("#serviceGrade").text(data["averageGrade"]);
 				$("#serviceDescription").text(data["description"]);
-				setUpMap(data["latitude"], data["longitude"]);
+				if(destMap != null){
+					destMap.off();
+					destMap.remove();
+					destMap = null;
+				}
+				destMap = setUpMap(data["latitude"], data["longitude"],
+						'mapDiv', false);
+				adminsTable.clear();
 				$.each(data.admins, function(i, val) {
 					adminsTable.row.add(
 							[ val.email, val.firstName, val.lastName,
@@ -233,52 +337,22 @@ function loadService(name, url) {
 
 }
 
-$(document).on(
-		'submit',
-		'#registrationForm',
-		function(e) {
-			e.preventDefault();
-			var email = $('#adminEmail').val();
-			var password = $('#adminPassword').val();
-			var firstName = $('#adminFirstName').val();
-			var lastName = $('#adminLastName').val();
-			var phone = $('#adminPhone').val();
-			var address = $('#adminAddress').val();
-
-			$.ajax({
-				type : 'POST',
-				url : registerAdminURL + $('#serviceName').val(),
-				contentType : 'application/json',
-				dataType : "json",
-				data : registerAdminFormToJSON(email, password, firstName,
-						lastName, phone, address),
-				success : function(data) {
-					if (data) {
-						$('#adminEmail').val("");
-						$('#adminPassword').val("");
-						$('#adminFirstName').val("");
-						$('#adminLastName').val("");
-						$('#adminPhone').val("");
-						$('#adminAddress').val("");
-					} else {
-						alert("Admin cannot be added!");
-					}
-				},
-				error : function(XMLHttpRequest, textStatus, errorThrown) {
-					alert("AJAX ERROR: " + textStatus);
-				}
-			})
-		})
-
-function setUpMap(latitude, longitude) {
-	destMap = L.map('mapDiv').setView([ latitude, longitude ], MAP_ZOOM);
+function setUpMap(latitude, longitude, div, draggable) {
+	var retval = L.map(div).setView([ latitude, longitude ], MAP_ZOOM);
 	L.tileLayer(tileLayerURL, {
 		maxZoom : MAX_MAP_ZOOM,
 		id : MAP_ID
-	}).addTo(destMap);
+	}).addTo(retval);
 	var marker = L.marker([ latitude, longitude ], {
-		draggable : false
-	}).addTo(destMap);
+		draggable : draggable
+	}).addTo(retval);
+	if (draggable) {
+		marker.on('dragend', function(e) {
+			$("#latitude").val(marker.getLatLng().lat);
+			$("#longitude").val(marker.getLatLng().lng);
+		});
+	}
+	return retval
 }
 
 function registerAdminFormToJSON(email, password, firstName, lastName, phone,
@@ -301,4 +375,24 @@ function userEditFormToJSON(firstName, lastName, phone, address, email) {
 		"address" : address,
 		"email" : email
 	});
+}
+
+function setUpToastr() {
+	toastr.options = {
+		"closeButton" : true,
+		"debug" : false,
+		"newestOnTop" : false,
+		"progressBar" : false,
+		"positionClass" : "toast-top-center",
+		"preventDuplicates" : false,
+		"onclick" : null,
+		"showDuration" : "300",
+		"hideDuration" : "1000",
+		"timeOut" : "3000",
+		"extendedTimeOut" : "1000",
+		"showEasing" : "swing",
+		"hideEasing" : "linear",
+		"showMethod" : "fadeIn",
+		"hideMethod" : "fadeOut"
+	}
 }

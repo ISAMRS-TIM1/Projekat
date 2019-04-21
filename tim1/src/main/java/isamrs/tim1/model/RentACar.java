@@ -10,6 +10,8 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import isamrs.tim1.dto.ServiceDTO;
+
 @Entity
 @Table(name = "RentACars")
 public class RentACar extends Service implements Serializable {
@@ -31,6 +33,7 @@ public class RentACar extends Service implements Serializable {
 
 	private static final long serialVersionUID = 8960219458856435612L;
 
+	
 	public Set<BranchOffice> getBranchOffices() {
 		return branchOffices;
 	}
@@ -55,6 +58,10 @@ public class RentACar extends Service implements Serializable {
 		quickReservations = new HashSet<QuickVehicleReservation>();
 		normalReservations = new HashSet<VehicleReservation>();
 
+	}
+	
+	public RentACar(ServiceDTO rentACar) {
+		super(rentACar);
 	}
 
 	public Set<QuickVehicleReservation> getQuickReservations() {

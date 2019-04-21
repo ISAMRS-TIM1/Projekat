@@ -10,6 +10,8 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import isamrs.tim1.dto.ServiceDTO;
+
 @Entity
 @Table(name = "Hotels")
 public class Hotel extends Service implements Serializable {
@@ -20,6 +22,10 @@ public class Hotel extends Service implements Serializable {
 		admins = new HashSet<HotelAdmin>();
 		quickReservations = new HashSet<QuickHotelReservation>();
 		normalReservations = new HashSet<HotelReservation>();
+	}
+
+	public Hotel(ServiceDTO hotel) {
+		super(hotel);
 	}
 
 	@OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
