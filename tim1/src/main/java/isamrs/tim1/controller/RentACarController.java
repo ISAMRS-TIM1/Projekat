@@ -42,7 +42,7 @@ public class RentACarController {
 		return new ResponseEntity<RentACarDTO>(rentACarService.getRentACarInfo(rentACarName), HttpStatus.OK);
 	}
 
-	// @PreAuthorize("hasRole('RENTADMIN')")
+	@PreAuthorize("hasRole('RENTADMIN')")
 	@RequestMapping(value = "/api/getRentACarInfo", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<RentACarDTO> getRentACar() {
 		RentACarAdmin admin = (RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -61,7 +61,7 @@ public class RentACarController {
 		return new ResponseEntity<DetailedServiceDTO>(rentACarService.getRentACar(name), HttpStatus.OK);
 	}
 
-	//@PreAuthorize("hasRole('RENTADMIN')")
+	@PreAuthorize("hasRole('RENTADMIN')")
 	@RequestMapping(value = "/api/getBranchOffices", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArrayList<BranchOfficeDTO>> getBranchOffices() {
 		RentACarAdmin admin = (RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
