@@ -347,3 +347,9 @@ select * from user_a [42102-197]
 2019-04-20 19:44:31 jdbc[13]: exception
 org.h2.jdbc.JdbcSQLException: Table "USER_A" not found; SQL statement:
 select * from user_a [42102-197]
+2019-04-21 13:04:02 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLException: Table "DESTINATION" not found; SQL statement:
+select * from destination [42102-197]
+2019-04-21 13:04:17 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLException: Table "DESTINATION" not found; SQL statement:
+insert into destination values(1, 'Beograd', 8, 2) [42102-197]

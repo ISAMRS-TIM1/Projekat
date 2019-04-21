@@ -10,11 +10,14 @@ const getDestinationsURL = "/api/getDestinations";
 const getFlightsURL = "/api/getFlights";
 const getAirlineOfAdminURL = "/api/getAirlineOfAdmin";
 const saveSeatsChangesURL = "/api/saveSeats";
+const addFlightURL = "/api/addFlight";
+const addDestinationURL = "/api/addDestination";
 
 const logoutURL = "../logout";
 const loadUserInfoURL = "../api/getUserInfo";
 const editUserInfoURL = "../api/editUser";
 const changePasswordURL = "../changePassword";
+var airlineName = "";
 
 $(document).ready(function() {
 	loadAirline();
@@ -48,6 +51,7 @@ function setUpTables() {
 		"retrieve" : true,
 	});
 	$('#flightsTable').DataTable({
+		"scrollX": true,
 		"paging" : false,
 		"info" : false,
 		"scrollY" : "17vw",
@@ -73,9 +77,30 @@ function setUpMap(latitude, longitude, div) {
 		draggable : true
 	}).addTo(destMap);
 	marker.on('dragend', function(e) {
-		$("#latitude").val(marker.getLatLng().lat);
-		$("#longitude").val(marker.getLatLng().lng);
+		$("#" + div + "Latitude").val(marker.getLatLng().lat);
+		$("#" + div + "Longitude").val(marker.getLatLng().lng);
 	});
+}
+
+function toastrError(message) {
+	toastr.options = {
+			"closeButton" : true,
+			"debug" : false,
+			"newestOnTop" : false,
+			"progressBar" : false,
+			"positionClass" : "toast-top-center",
+			"preventDuplicates" : false,
+			"onclick" : null,
+			"showDuration" : "300",
+			"hideDuration" : "1000",
+			"timeOut" : "3000",
+			"extendedTimeOut" : "1000",
+			"showEasing" : "swing",
+			"hideEasing" : "linear",
+			"showMethod" : "fadeIn",
+			"hideMethod" : "fadeOut"
+		}
+		toastr["error"](message);
 }
 
 function editAirline(e) {
@@ -101,6 +126,7 @@ function loadAirline() {
 		headers : createAuthorizationTokenHeader(TOKEN_KEY),
 		success : function(data) {
 			$("#airlineName").val(data["name"]);
+			airlineName = data["name"];
 			$("#airlineGrade").text(data["averageGrade"]);
 			$("#airlineDescription").text(data["description"]);
 			setUpMap(data["latitude"], data["longitude"], 'basicMapDiv');
@@ -110,7 +136,6 @@ function loadAirline() {
 			reservedSeats = data["reservedSeats"];
 			renderPlaneSeats(data["planeSegments"], data["reservedSeats"]);
 			console.log(data["planeSegments"]);
-			console.log("a");
 		}
 	});
 }
@@ -120,16 +145,32 @@ function renderDestinations(data) {
 	$.each(data, function(i, val) {
 		table.row.add([ val.name ]).draw(false);
 	});
+	var start = $("#startDestination");
+	var end = $("#endDestination");
+	var con = $("#connections");
+	$.each(data, function(i, val) {
+		start.append("<option value=" + val.name + ">" + val.name + "</option>");
+		end.append("<option value=" + val.name + ">" + val.name + "</option>");
+		con.append("<option value=" + val.name + ">" + val.name + "</option>");
+	});
 }
 
 function renderFlights(data) {
 	var table = $('#flightsTable').DataTable();
 	$.each(data, function(i, val) {
+		var date1 = moment(val.departureTime);
+		var date2 = moment(val.landingTime);
+		var diff = date2.diff(date1, 'minutes');
+		var conn = "<select>";
+		$.each(val.connections, function(i, val) {
+			conn += "<option>" + val + "</option>";
+		});
+		conn += "</select>";
 		table.row.add(
 				[ val.startDestination, val.endDestination, val.departureTime,
-						val.landingTime, val.flightDuration, val.flightLength,
-						val.numberOfFlightConnections, val.ticketPrice,
-						val.pricePerBag, val.averageGrade ]).draw(false);
+					val.landingTime, diff + " min", val.flightDistance,
+						val.connections.length, conn, val.ticketPrice,
+						val.pricePerBag]).draw(false);
 	});
 }
 
@@ -189,24 +230,7 @@ function userEditFormSetUp() {
 			data : userFormToJSON(firstName, lastName, phone, address, email),
 			success : function(data) {
 				if (data != "") {
-					toastr.options = {
-						"closeButton" : true,
-						"debug" : false,
-						"newestOnTop" : false,
-						"progressBar" : false,
-						"positionClass" : "toast-top-center",
-						"preventDuplicates" : false,
-						"onclick" : null,
-						"showDuration" : "300",
-						"hideDuration" : "1000",
-						"timeOut" : "3000",
-						"extendedTimeOut" : "1000",
-						"showEasing" : "swing",
-						"hideEasing" : "linear",
-						"showMethod" : "fadeIn",
-						"hideMethod" : "fadeOut"
-					}
-					toastr["error"](data);
+					toastrError(data);
 				}
 			},
 			error : function(XMLHttpRequest, textStatus, errorThrown) {
@@ -304,115 +328,28 @@ function add(e, cat) {
 	if (cat == 1) {
 		number = parseInt($("#first").val());
 		if (isNaN(number) || number <= 0) {
-			toastr.options = {
-				"closeButton" : true,
-				"debug" : false,
-				"newestOnTop" : false,
-				"progressBar" : false,
-				"positionClass" : "toast-top-center",
-				"preventDuplicates" : false,
-				"onclick" : null,
-				"showDuration" : "300",
-				"hideDuration" : "1000",
-				"timeOut" : "3000",
-				"extendedTimeOut" : "1000",
-				"showEasing" : "swing",
-				"hideEasing" : "linear",
-				"showMethod" : "fadeIn",
-				"hideMethod" : "fadeOut"
-			}
-			toastr["error"]("Invalid number.");
+			toastrError("Invalid number.");
 			return;
 		}
 		addSeats(number, firstClass, 'f', cat);
 	} else if (cat == 2) {
 		number = parseInt($("#business").val());
 		if (isNaN(number) || number <= 0) {
-			toastr.options = {
-				"closeButton" : true,
-				"debug" : false,
-				"newestOnTop" : false,
-				"progressBar" : false,
-				"positionClass" : "toast-top-center",
-				"preventDuplicates" : false,
-				"onclick" : null,
-				"showDuration" : "300",
-				"hideDuration" : "1000",
-				"timeOut" : "3000",
-				"extendedTimeOut" : "1000",
-				"showEasing" : "swing",
-				"hideEasing" : "linear",
-				"showMethod" : "fadeIn",
-				"hideMethod" : "fadeOut"
-			}
-			toastr["error"]("Invalid number.");
+			toastrError("Invalid number.");
 			return;
 		}
 		if (numberOfSeatsPerClass[0] == 0) {
-			toastr.options = {
-				"closeButton" : true,
-				"debug" : false,
-				"newestOnTop" : false,
-				"progressBar" : false,
-				"positionClass" : "toast-top-center",
-				"preventDuplicates" : false,
-				"onclick" : null,
-				"showDuration" : "300",
-				"hideDuration" : "1000",
-				"timeOut" : "3000",
-				"extendedTimeOut" : "1000",
-				"showEasing" : "swing",
-				"hideEasing" : "linear",
-				"showMethod" : "fadeIn",
-				"hideMethod" : "fadeOut"
-			}
-			toastr["error"]("There are no seats in First class.");
-			return;
+			toastrError("There are no seats in First class.");
 		}
 		addSeats(number, businessClass, 'b', cat);
 	} else {
 		number = parseInt($("#economy").val());
 		if (isNaN(number) || number <= 0) {
-			toastr.options = {
-				"closeButton" : true,
-				"debug" : false,
-				"newestOnTop" : false,
-				"progressBar" : false,
-				"positionClass" : "toast-top-center",
-				"preventDuplicates" : false,
-				"onclick" : null,
-				"showDuration" : "300",
-				"hideDuration" : "1000",
-				"timeOut" : "3000",
-				"extendedTimeOut" : "1000",
-				"showEasing" : "swing",
-				"hideEasing" : "linear",
-				"showMethod" : "fadeIn",
-				"hideMethod" : "fadeOut"
-			}
-			toastr["error"]("Invalid number.");
+			toastrError("Invalid number.");
 			return;
 		}
 		if (numberOfSeatsPerClass[0] == 0 && numberOfSeatsPerClass[1] == 0) {
-			toastr.options = {
-				"closeButton" : true,
-				"debug" : false,
-				"newestOnTop" : false,
-				"progressBar" : false,
-				"positionClass" : "toast-top-center",
-				"preventDuplicates" : false,
-				"onclick" : null,
-				"showDuration" : "300",
-				"hideDuration" : "1000",
-				"timeOut" : "3000",
-				"extendedTimeOut" : "1000",
-				"showEasing" : "swing",
-				"hideEasing" : "linear",
-				"showMethod" : "fadeIn",
-				"hideMethod" : "fadeOut"
-			}
-			toastr["error"]
-					("There are no seats in First and Business classes.");
+			toastrError("There are no seats in First and Business classes.");
 			return;
 		}
 		addSeats(number, economyClass, 'e', cat);
@@ -423,26 +360,8 @@ function addSeatsIndividually(e) {
 	e.preventDefault();
 	var invalid = false;
 	if (seatsForDelete.length == 0) {
-		toastr.options = {
-				"closeButton" : true,
-				"debug" : false,
-				"newestOnTop" : false,
-				"progressBar" : false,
-				"positionClass" : "toast-top-center",
-				"preventDuplicates" : false,
-				"onclick" : null,
-				"showDuration" : "300",
-				"hideDuration" : "1000",
-				"timeOut" : "3000",
-				"extendedTimeOut" : "1000",
-				"showEasing" : "swing",
-				"hideEasing" : "linear",
-				"showMethod" : "fadeIn",
-				"hideMethod" : "fadeOut"
-			}
-			toastr["error"]
-					("No empty places chosen.");
-			return;
+		toastrError("No empty places chosen.");
+		return;
 	}
 	$.each(seatsForDelete, function(i, val) {
 		if (invalid)
@@ -464,24 +383,7 @@ function addSeatsIndividually(e) {
 			invalid = true;
 	});
 	if (invalid) {
-		toastr.options = {
-			"closeButton" : true,
-			"debug" : false,
-			"newestOnTop" : false,
-			"progressBar" : false,
-			"positionClass" : "toast-top-center",
-			"preventDuplicates" : false,
-			"onclick" : null,
-			"showDuration" : "300",
-			"hideDuration" : "1000",
-			"timeOut" : "3000",
-			"extendedTimeOut" : "1000",
-			"showEasing" : "swing",
-			"hideEasing" : "linear",
-			"showMethod" : "fadeIn",
-			"hideMethod" : "fadeOut"
-		}
-		toastr["error"]("Seats which already exist can not be added");
+		toastrError("Seats which already exist can not be added");
 		return;
 	}
 	$.each(seatsForDelete,
@@ -605,26 +507,8 @@ function deleteSeatsIndividually(e) {
 	e.preventDefault();
 	var invalid = false;
 	if (seatsForDelete.length == 0) {
-		toastr.options = {
-				"closeButton" : true,
-				"debug" : false,
-				"newestOnTop" : false,
-				"progressBar" : false,
-				"positionClass" : "toast-top-center",
-				"preventDuplicates" : false,
-				"onclick" : null,
-				"showDuration" : "300",
-				"hideDuration" : "1000",
-				"timeOut" : "3000",
-				"extendedTimeOut" : "1000",
-				"showEasing" : "swing",
-				"hideEasing" : "linear",
-				"showMethod" : "fadeIn",
-				"hideMethod" : "fadeOut"
-			}
-			toastr["error"]
-					("No seats chosen.");
-			return;
+		toastrError("No seats chosen.");
+		return;
 	}
 	$.each(seatsForDelete, function(i, val) {
 		if (invalid)
@@ -646,24 +530,7 @@ function deleteSeatsIndividually(e) {
 			invalid = true;
 	});
 	if (invalid) {
-		toastr.options = {
-			"closeButton" : true,
-			"debug" : false,
-			"newestOnTop" : false,
-			"progressBar" : false,
-			"positionClass" : "toast-top-center",
-			"preventDuplicates" : false,
-			"onclick" : null,
-			"showDuration" : "300",
-			"hideDuration" : "1000",
-			"timeOut" : "3000",
-			"extendedTimeOut" : "1000",
-			"showEasing" : "swing",
-			"hideEasing" : "linear",
-			"showMethod" : "fadeIn",
-			"hideMethod" : "fadeOut"
-		}
-		toastr["error"]("Empty seats can not be deleted.");
+		toastrError("Empty seats can not be deleted.");
 		return;
 	}
 	$.each(seatsForDelete,
@@ -715,45 +582,11 @@ function deleteSeats(e, cat) {
 	if (cat == 1) {
 		number = parseInt($("#first").val());
 		if (isNaN(number) || number <= 0) {
-			toastr.options = {
-				"closeButton" : true,
-				"debug" : false,
-				"newestOnTop" : false,
-				"progressBar" : false,
-				"positionClass" : "toast-top-center",
-				"preventDuplicates" : false,
-				"onclick" : null,
-				"showDuration" : "300",
-				"hideDuration" : "1000",
-				"timeOut" : "3000",
-				"extendedTimeOut" : "1000",
-				"showEasing" : "swing",
-				"hideEasing" : "linear",
-				"showMethod" : "fadeIn",
-				"hideMethod" : "fadeOut"
-			}
-			toastr["error"]("Invalid number.");
+			toastrError("Invalid number.");
 			return;
 		}
 		if (number > numberOfSeatsPerClass[cat - 1]) {
-			toastr.options = {
-				"closeButton" : true,
-				"debug" : false,
-				"newestOnTop" : false,
-				"progressBar" : false,
-				"positionClass" : "toast-top-center",
-				"preventDuplicates" : false,
-				"onclick" : null,
-				"showDuration" : "300",
-				"hideDuration" : "1000",
-				"timeOut" : "3000",
-				"extendedTimeOut" : "1000",
-				"showEasing" : "swing",
-				"hideEasing" : "linear",
-				"showMethod" : "fadeIn",
-				"hideMethod" : "fadeOut"
-			}
-			toastr["error"]("Number is greather than number of seats.");
+			toastrError("Number is greather than number of seats.");
 			return;
 		}
 		var tempNumber = number;
@@ -779,24 +612,7 @@ function deleteSeats(e, cat) {
 			});
 		});
 		if (invalid) {
-			toastr.options = {
-				"closeButton" : true,
-				"debug" : false,
-				"newestOnTop" : false,
-				"progressBar" : false,
-				"positionClass" : "toast-top-center",
-				"preventDuplicates" : false,
-				"onclick" : null,
-				"showDuration" : "300",
-				"hideDuration" : "1000",
-				"timeOut" : "3000",
-				"extendedTimeOut" : "1000",
-				"showEasing" : "swing",
-				"hideEasing" : "linear",
-				"showMethod" : "fadeIn",
-				"hideMethod" : "fadeOut"
-			}
-			toastr["error"]("Reserved seat can not be deleted.");
+			toastrError("Reserved seat can not be deleted.");
 			return;
 		}
 		$.each(tempClass, function(i, val) {
@@ -821,45 +637,11 @@ function deleteSeats(e, cat) {
 	} else if (cat == 2) {
 		number = parseInt($("#business").val());
 		if (isNaN(number) || number <= 0) {
-			toastr.options = {
-				"closeButton" : true,
-				"debug" : false,
-				"newestOnTop" : false,
-				"progressBar" : false,
-				"positionClass" : "toast-top-center",
-				"preventDuplicates" : false,
-				"onclick" : null,
-				"showDuration" : "300",
-				"hideDuration" : "1000",
-				"timeOut" : "3000",
-				"extendedTimeOut" : "1000",
-				"showEasing" : "swing",
-				"hideEasing" : "linear",
-				"showMethod" : "fadeIn",
-				"hideMethod" : "fadeOut"
-			}
-			toastr["error"]("Invalid number.");
+			toastrError("Invalid number.");
 			return;
 		}
 		if (number > numberOfSeatsPerClass[cat - 1]) {
-			toastr.options = {
-				"closeButton" : true,
-				"debug" : false,
-				"newestOnTop" : false,
-				"progressBar" : false,
-				"positionClass" : "toast-top-center",
-				"preventDuplicates" : false,
-				"onclick" : null,
-				"showDuration" : "300",
-				"hideDuration" : "1000",
-				"timeOut" : "3000",
-				"extendedTimeOut" : "1000",
-				"showEasing" : "swing",
-				"hideEasing" : "linear",
-				"showMethod" : "fadeIn",
-				"hideMethod" : "fadeOut"
-			}
-			toastr["error"]("Number is greather than number of seats.");
+			toastrError("Number is greather than number of seats.");
 			return;
 		}
 		var tempNumber = number;
@@ -885,24 +667,7 @@ function deleteSeats(e, cat) {
 			});
 		});
 		if (invalid) {
-			toastr.options = {
-				"closeButton" : true,
-				"debug" : false,
-				"newestOnTop" : false,
-				"progressBar" : false,
-				"positionClass" : "toast-top-center",
-				"preventDuplicates" : false,
-				"onclick" : null,
-				"showDuration" : "300",
-				"hideDuration" : "1000",
-				"timeOut" : "3000",
-				"extendedTimeOut" : "1000",
-				"showEasing" : "swing",
-				"hideEasing" : "linear",
-				"showMethod" : "fadeIn",
-				"hideMethod" : "fadeOut"
-			}
-			toastr["error"]("Reserved seat can not be deleted.");
+			toastrError("Reserved seat can not be deleted.");
 			return;
 		}
 		$.each(tempClass, function(i, val) {
@@ -927,45 +692,11 @@ function deleteSeats(e, cat) {
 	} else {
 		number = parseInt($("#economy").val());
 		if (isNaN(number) || number <= 0) {
-			toastr.options = {
-				"closeButton" : true,
-				"debug" : false,
-				"newestOnTop" : false,
-				"progressBar" : false,
-				"positionClass" : "toast-top-center",
-				"preventDuplicates" : false,
-				"onclick" : null,
-				"showDuration" : "300",
-				"hideDuration" : "1000",
-				"timeOut" : "3000",
-				"extendedTimeOut" : "1000",
-				"showEasing" : "swing",
-				"hideEasing" : "linear",
-				"showMethod" : "fadeIn",
-				"hideMethod" : "fadeOut"
-			}
-			toastr["error"]("Invalid number.");
+			toastrError("Invalid number.");
 			return;
 		}
 		if (number > numberOfSeatsPerClass[cat - 1]) {
-			toastr.options = {
-				"closeButton" : true,
-				"debug" : false,
-				"newestOnTop" : false,
-				"progressBar" : false,
-				"positionClass" : "toast-top-center",
-				"preventDuplicates" : false,
-				"onclick" : null,
-				"showDuration" : "300",
-				"hideDuration" : "1000",
-				"timeOut" : "3000",
-				"extendedTimeOut" : "1000",
-				"showEasing" : "swing",
-				"hideEasing" : "linear",
-				"showMethod" : "fadeIn",
-				"hideMethod" : "fadeOut"
-			}
-			toastr["error"]("Number is greather than number of seats.");
+			toastrError("Number is greather than number of seats.");
 			return;
 		}
 		var tempNumber = number;
@@ -991,24 +722,7 @@ function deleteSeats(e, cat) {
 			});
 		});
 		if (invalid) {
-			toastr.options = {
-				"closeButton" : true,
-				"debug" : false,
-				"newestOnTop" : false,
-				"progressBar" : false,
-				"positionClass" : "toast-top-center",
-				"preventDuplicates" : false,
-				"onclick" : null,
-				"showDuration" : "300",
-				"hideDuration" : "1000",
-				"timeOut" : "3000",
-				"extendedTimeOut" : "1000",
-				"showEasing" : "swing",
-				"hideEasing" : "linear",
-				"showMethod" : "fadeIn",
-				"hideMethod" : "fadeOut"
-			}
-			toastr["error"]("Reserved seat can not be deleted.");
+			toastrError("Reserved seat can not be deleted.");
 			return;
 		}
 		$.each(tempClass, function(i, val) {
@@ -1150,6 +864,131 @@ function saveSeatsChanges(e) {
 		data : JSON.stringify(savedSeats),
 		success : function(data) {
 			console.log(data);
+		}
+	});
+}
+
+function addFlight(e) {
+	e.preventDefault();
+	var startDestination = $( "#startDestination option:selected" ).text();
+	var endDestination = $( "#endDestination  option:selected" ).text();
+	if (startDestination == endDestination) {
+		toastrError("Start destination and end destination must not be the same.");
+		return;
+	}
+	var departureTime = $("#departureTime").val();
+	if (departureTime == null || departureTime == "") {
+		toastrError("Departure time is not valid.")
+		return;
+	}
+	var landingTime = $("#landingTime").val();
+	if (landingTime == null || landingTime == "") {
+		toastrError("Landing time is not valid.")
+		return;
+	}
+	if (moment(landingTime).isBefore(departureTime) || moment(landingTime).isSame(departureTime)) {
+		toastrError("Landing time must be after the departure time.");
+		return;
+	}
+	var flightDistance = $("#flightDistance").val();
+	if (isNaN(flightDistance) || flightDistance <= 0) {
+		toastrError("Invalid flight distance.");
+		return;
+	}
+	var ticketPrice = $("#ticketPrice").val();
+	if (isNaN(ticketPrice) || ticketPrice <= 0) {
+		toastrError("Invalid ticket price.");
+		return;
+	}
+	var connections = $("#connections").val();
+	var pricePerBag = $("#pricePerBag").val();
+	if (isNaN(pricePerBag) || pricePerBag < 0) {
+		toastrError("Invalid price per bag.");
+		return;
+	}
+	$.ajax({
+		method : "POST",
+		url : addFlightURL,
+		headers : createAuthorizationTokenHeader(TOKEN_KEY),
+		contentType : "application/json",
+		data : flightToJSON(startDestination, endDestination, departureTime, landingTime, flightDistance, ticketPrice,
+				connections, pricePerBag),
+		success : function(data) {
+			if (data.message == "success") {
+				var table = $('#flightsTable').DataTable();
+				var date1 = moment(departureTime);
+				var date2 = moment(landingTime);
+				var diff = date2.diff(date1, 'minutes');
+				var conn = "<select>";
+				$.each(connections, function(i, val) {
+					conn += "<option>" + val + "</option>";
+				});
+				conn += "</select>";
+				table.row.add(
+						[ startDestination, endDestination, moment(new Date(departureTime)).format("DD.MM.YYYY HH:mm"),
+							moment(new Date(landingTime)).format("DD.MM.YYYY HH:mm"), diff + " min", flightDistance,
+								connections.length, conn, ticketPrice,
+								pricePerBag]).draw(false);
+			}
+		}
+	});
+}
+
+function flightToJSON(startDestination, endDestination, departureTime, landingTime, flightDistance, ticketPrice,
+		connections, pricePerBag) {
+	var a = JSON.stringify({
+		"startDestination" : startDestination,
+		"endDestination" : endDestination,
+		"departureTime" : departureTime,
+		"landingTime" : landingTime,
+		"flightDistance" : flightDistance,
+		"ticketPrice" : ticketPrice,
+		"connections" : connections,
+		"pricePerBag" : pricePerBag,
+		"airlineName" : airlineName
+	});
+	return a;
+}
+
+function setDestMap(e) {
+	e.preventDefault();
+	setUpMap(45, 45, 'destMapDiv');
+}
+
+function addDestination(e) {
+	e.preventDefault();
+	var nameOfDest = $("#destinationName").val();
+	if (nameOfDest == null || nameOfDest == "") {
+		toastrError("Invalid name of destination.");
+		return;
+	}
+	var latitude = $("#destMapDivLatitude").val();
+	var longitude = $("#destMapDivLongitude").val();
+	$.ajax({
+		method : "POST",
+		url : addDestinationURL,
+		headers : createAuthorizationTokenHeader(TOKEN_KEY),
+		contentType : "application/json",
+		data : JSON.stringify({
+			"nameOfDest": nameOfDest,
+			"latitude": latitude,
+			"longitude": longitude,
+			"airlineName": airlineName
+		}),
+		success : function(data) {
+			if (data.message == "success") {
+				var table = $('#destinationsTable').DataTable();
+				table.row.add([ nameOfDest ]).draw(false);
+				var start = $("#startDestination");
+				var end = $("#endDestination");
+				var con = $("#connections");
+				start.append("<option value=" + nameOfDest + ">" + nameOfDest + "</option>");
+				end.append("<option value=" + nameOfDest + ">" + nameOfDest + "</option>");
+				con.append("<option value=" + nameOfDest + ">" + nameOfDest + "</option>");
+			}
+			else {
+				toastrError(data.message);
+			}
 		}
 	});
 }
