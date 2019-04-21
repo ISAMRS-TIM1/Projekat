@@ -86,7 +86,7 @@
 					</div>
 				</div>
 				<div id="branchButtons">
-					<button type="button" id="addBranchOffice" class="btn btn-default" data-toggle="modal" data-target="#branchModalDialog">Add branch office</button>
+					<button type="button" id="addBranchOffice" class="btn btn-default" data-toggle="modal" data-target="#addBranchModalDialog">Add branch office</button>
 					<button type="button" id="saveChangesBranch" class="btn btn-default">Save changes</button>
 				</div>
 			</div>
@@ -145,7 +145,7 @@
 			</div>
 		</div>
 		<!-- Add branch office modal -->
-		<div class="modal fade" id="branchModalDialog" role="dialog">
+		<div class="modal fade" id="addBranchModalDialog" role="dialog">
 			<div class="modal-dialog modal-lg">
 				<div class="modal-content dialogStyle">
 					<div class="modal-header">
@@ -162,6 +162,31 @@
 									</div>
 								</div>
 								<button class="btn btn-default" id="addBranch">Add</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Edit branch office modal -->
+		<div class="modal fade" id="editBranchModalDialog" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content dialogStyle">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h2 class="modal-title">Edit branch office</h2>
+					</div>
+					<div class="modal-body">
+						<div id="editBranchOfficeMap"></div>
+						<div id="editBranchOfficeFormDiv">
+							<form id="editBranchOfficeForm">
+								<div class="form-group">
+									<div class="input-group">
+										<input class="form-control" type="text" name="name" pattern="[A-z0-9a-z]+" title="Must contain only letters and numbers" readonly>
+										<span class="input-group-addon edit"><i class="glyphicon glyphicon-edit"></i></span>
+									</div>
+								</div>
+								<button class="btn btn-default" id="editBranch">Save</button>
 							</form>
 						</div>
 					</div>

@@ -74,7 +74,7 @@ public class BranchOfficeController {
 		}
 		BranchOffice bo = branchOfficeService.findByName(oldName);
 		bo.setLocation(branch.getLocation());
-		bo.setName(bo.getName());
+		bo.setName(branch.getName());
 
 		branchOfficeService.save(bo);
 		return new ResponseEntity<MessageDTO>(new MessageDTO("Branch office saved.", "success"), HttpStatus.OK);

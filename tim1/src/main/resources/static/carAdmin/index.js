@@ -48,23 +48,7 @@ $(document).ready(function() {
 			data : userFormToJSON(firstName, lastName, phone, address, email),
 			success: function(data){
 				if(data != ""){
-					toastr.options = {
-							  "closeButton": true,
-							  "debug": false,
-							  "newestOnTop": false,
-							  "progressBar": false,
-							  "positionClass": "toast-top-center",
-							  "preventDuplicates": false,
-							  "onclick": null,
-							  "showDuration": "300",
-							  "hideDuration": "1000",
-							  "timeOut": "3000",
-							  "extendedTimeOut": "1000",
-							  "showEasing": "swing",
-							  "hideEasing": "linear",
-							  "showMethod": "fadeIn",
-							  "hideMethod": "fadeOut"
-							}
+					setUpToastr();
 					toastr["error"](data);
 				}
 			},
@@ -79,9 +63,26 @@ $(document).ready(function() {
 		loadBranchOffices();
 	});
 	
+	$('.edit').click(function(){
+		if($(this).siblings().first().is('[readonly]')) {
+			$(this).siblings().first().removeAttr('readonly');
+		} else {
+			$(this).siblings().first().prop('readonly', 'true');
+		}
+	});
+	
+	var oldName;
 	$(document).on('click', '#branchTable tbody tr', function(e) {
-		let oldName = e.target.children[1].nodeValue;
-		editBranchOffice(oldName);
+		oldName = e.target.parentNode.childNodes[1].innerText;
+		$("#editBranchOfficeForm input[name='name']").val(oldName);
+		// add branch location to map
+		$('#editBranchModalDialog').modal('show');
+	});
+	
+	$('#editBranch').click(function() {
+		let newName = $("#editBranchOfficeForm input[name='name']").val();
+		// extract latitude and longitude from marker
+		editBranchOffice(oldName, newName, latitude, longitude);
 	});
 });
 
@@ -185,26 +186,10 @@ function addBranchOffice() {
 		url : addBranchOfficeURL,
 		contentType: "application/json",
 		dataType : "json",
-		data: branchOfficeFormToJSON(name, latitude, longitude),
+		data: branchOfficeFormToJSON(name, 14, 14/*latitude, longitude*/),
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
-			toastr.options = {
-					  "closeButton": true,
-					  "debug": false,
-					  "newestOnTop": false,
-					  "progressBar": false,
-					  "positionClass": "toast-top-center",
-					  "preventDuplicates": false,
-					  "onclick": null,
-					  "showDuration": "300",
-					  "hideDuration": "1000",
-					  "timeOut": "3000",
-					  "extendedTimeOut": "1000",
-					  "showEasing": "swing",
-					  "hideEasing": "linear",
-					  "showMethod": "fadeIn",
-					  "hideMethod": "fadeOut"
-					}
+			setUpToastr();
 			toastr[data.header](data.message);
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
@@ -213,35 +198,17 @@ function addBranchOffice() {
 	});
 }
 
-function editBranchOffice(oldName) {
+function editBranchOffice(oldName, name, latitude, longitude) {
 	let token = getJwtToken("jwtToken");
-	let name = $("input[name='name']").val();
-	// extract latitude and longitude from map marker
 	$.ajax({
 		type : 'PUT',
 		url : editBranchOfficeURL,
 		contentType: "application/json",
 		dataType : "json",
-		data: branchOfficeFormToJSON(name, latitude, longitude),// add old name as param
+		data: {"branch": branchOfficeFormToJSON(name, latitude, longitude), "oldName": oldName},
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
-			toastr.options = {
-					  "closeButton": true,
-					  "debug": false,
-					  "newestOnTop": false,
-					  "progressBar": false,
-					  "positionClass": "toast-top-center",
-					  "preventDuplicates": false,
-					  "onclick": null,
-					  "showDuration": "300",
-					  "hideDuration": "1000",
-					  "timeOut": "3000",
-					  "extendedTimeOut": "1000",
-					  "showEasing": "swing",
-					  "hideEasing": "linear",
-					  "showMethod": "fadeIn",
-					  "hideMethod": "fadeOut"
-					}
+			setUpToastr();
 			toastr[data.header](data.message);
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
@@ -268,5 +235,25 @@ function branchOfficeFormToJSON(name, latitude, longitude){
 			"longitude": longitude
 		}
 	});
+}
+
+function setUpToastr() {
+	toastr.options = {
+			  "closeButton": true,
+			  "debug": false,
+			  "newestOnTop": false,
+			  "progressBar": false,
+			  "positionClass": "toast-top-center",
+			  "preventDuplicates": false,
+			  "onclick": null,
+			  "showDuration": "300",
+			  "hideDuration": "1000",
+			  "timeOut": "3000",
+			  "extendedTimeOut": "1000",
+			  "showEasing": "swing",
+			  "hideEasing": "linear",
+			  "showMethod": "fadeIn",
+			  "hideMethod": "fadeOut"
+			}
 }
 
