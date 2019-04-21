@@ -22,6 +22,7 @@ $(document).ready(function() {
 	setUpTables();
 	
 	userEditFormSetUp();
+	loadDestinations();
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
 		$($.fn.dataTable.tables(true)).DataTable().columns.adjust();
 	});
@@ -48,6 +49,7 @@ function setUpTables() {
 		"retrieve" : true,
 	});
 	$('#flightsTable').DataTable({
+		"scrollX": true,
 		"paging" : false,
 		"info" : false,
 		"scrollY" : "17vw",
@@ -111,6 +113,17 @@ function loadAirline() {
 			renderPlaneSeats(data["planeSegments"], data["reservedSeats"]);
 			console.log(data["planeSegments"]);
 			console.log("a");
+		}
+	});
+}
+
+function loadDestinations() {
+	$.ajax({
+		dataType : "json",
+		url : getDestinationsURL,
+		headers : createAuthorizationTokenHeader(TOKEN_KEY),
+		success : function(data) {
+			renderDestinations(data);
 		}
 	});
 }
@@ -1151,5 +1164,49 @@ function saveSeatsChanges(e) {
 		success : function(data) {
 			console.log(data);
 		}
+	});
+}
+
+function addFlight(e) {
+	e.preventDefault();
+	var startDestination = $( "#startDestination option:selected" ).text();
+	var endDestination = $( "#endDestination  option:selected" ).text();
+	var departureTime = $("#departureTime").val();
+	var landingTime = $("#landingTime").val();
+	var flightDistance = $("#flightDistance").val();
+	var ticketPrice = $("#ticketPrice").val();
+	var connections = $("#connections").val();
+	var pricePerBag = $("#pricePerBag").val();
+	$.ajax({
+		method : "POST",
+		url : addFlightURL,
+		headers : createAuthorizationTokenHeader(TOKEN_KEY),
+		contentType : "application/json",
+		data : flightToJSON(startDestination, endDestination, departureTime, landingTime, flightDistance, ticketPrice,
+				connections, pricerPerBag),
+		success : function(data) {
+			if (data.message == "success") {
+				var table = $('#flightsTable').DataTable();
+				table.row.add(
+						[ startDestination, endDestination, departureTime,
+								landingTime, flightDuration, flightDistance,
+								connections.length, "asd", ticketPrice,
+								pricePerBag]).draw(false);
+			}
+		}
+	});
+}
+
+function flightToJSON(startDestination, endDestination, departureTime, landingTime, flightDistance, ticketPrice,
+		connections, pricerPerBag) {
+	return JSON.stringify({
+		"startDestination" : firstName,
+		"endDestination" : lastName,
+		"departureTime" : phone,
+		"landingTime" : address,
+		"flightDistance" : email,
+		"ticketPrice" : ticketPrice,
+		"connections" : connections,
+		"pricePerBag" : pricePerBag
 	});
 }
