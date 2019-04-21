@@ -44,6 +44,7 @@
 					</li>
 					<li><a data-toggle="tab" href="#hotels">Hotels</a></li>
 					<li><a data-toggle="tab" href="#rentACars">Rent A Cars</a></li>
+					<li><a data-toggle="tab" href="#discounts">Discounts</a></li>
 					<li><a data-toggle="tab" href="#profile">Profile</a></li>
 				</ul>
 			</div>
@@ -102,6 +103,32 @@
 						<tbody>
 						</tbody>
 					</table>
+				</div>
+			</div>
+			<div id="discounts" class="tab-pane fade">
+				<div id="discountsDiv">
+					<form id="editDiscountInfoForm">
+						<table id="editDiscountInfoTable">
+							<tr>
+								<td><label for="discountPercentagePerPoint">Discount
+										percentage per discount point:</label><input type="number"
+									id="discountPercentagePerPoint" step="0.01" min="0" max="100"
+									oninput="validity.valid||(value='');"></td>
+							</tr>
+							<tr>
+								<td><label for="kmsNeededForPoint">Kilometers
+										needed for discount point:</label><input type="number"
+									id="kmsNeededForPoint" step="0.01" min="0" max="100000000"
+									oninput="validity.valid||(value='');"></td>
+							</tr>
+							<tr>
+								<td>
+									<button type="submit" class="addServiceButton btn btn-default">Save
+										changes</button>
+								</td>
+							</tr>
+						</table>
+					</form>
 				</div>
 			</div>
 			<div id="profile" class="tab-pane fade">

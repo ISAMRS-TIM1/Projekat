@@ -69,7 +69,7 @@ a[data-toggle="tab"] {
 	text-align: center;
 }
 
-#airlinesTableDiv, #hotelsTableDiv, #rentACarsTableDiv {
+#airlinesTableDiv, #hotelsTableDiv, #rentACarsTableDiv, #discountsDiv {
 	width: 70%;
 	height: 30vw;
 	margin-left: 13%;
@@ -127,6 +127,21 @@ a[data-toggle="tab"] {
 
 #serviceName, #newServiceName {
 	font-size: 1.6vw;
+}
+
+/* Discounts tab */
+#editDiscountInfoTable {
+	width: 100%;
+}
+
+#kmsNeededForPoint, #discountPercentagePerPoint {
+	font-size: 1.6vw;
+	margin-left: 3vw;
+}
+
+label[for=kmsNeededForPoint], label[for=discountPercentagePerPoint] {
+	font-size: 1.6vw;
+	margin-left: 10vw;
 }
 
 /*

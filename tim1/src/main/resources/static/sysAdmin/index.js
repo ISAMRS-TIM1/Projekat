@@ -11,6 +11,8 @@ const registerAdminURL = "../auth/registerAdmin/";
 const addAirlineURL = "../api/addAirline";
 const addHotelURL = "../api/addHotel";
 const addRentACarURL = "../api/addRentACar";
+const getDiscountInfoURL = "../api/getDiscountInfo"
+const editDiscountInfoURL = "../api/editDiscountInfo"
 
 const tokenKey = "jwtToken";
 
@@ -57,6 +59,7 @@ $(document).ready(function() {
 	setUpEditForm();
 	setUpAddServiceForm();
 	setUpRegistrationForm();
+	setUpEditDiscountInfoForm();
 
 	var airlinesTable = $('#airlinesTable').DataTable({
 		"paging" : false,
@@ -138,10 +141,29 @@ function loadData() {
 	loadServices(getAirlinesURL, "#airlinesTable");
 	loadServices(getHotelsURL, "#hotelsTable");
 	loadServices(getRentACarsURL, "#rentACarsTable");
+	loadDiscountInfo();
+}
+
+function loadDiscountInfo(){
+	$.ajax({
+		type : 'GET',
+		url : getDiscountInfoURL,
+		contentType : 'application/json',
+		dataType : "json",
+		headers : createAuthorizationTokenHeader(tokenKey),
+		success : function(data) {
+			if (data != null) {
+				$('#discountPercentagePerPoint').val(data.discountPercentagePerPoint);
+				$('#kmsNeededForPoint').val(data.kmsNeededForPoint);
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
 }
 
 function loadProfile() {
-	let token = getJwtToken("jwtToken");
 	$.ajax({
 		type : 'GET',
 		url : loadUserInfoURL,
@@ -275,8 +297,34 @@ function setUpRegistrationForm(){
 			})
 }
 
+function setUpEditDiscountInfoForm(){
+	$('#editDiscountInfoForm').on(
+			'submit',
+			function(e) {
+				e.preventDefault();
+				let discountPercentagePerPoint = $('#discountPercentagePerPoint').val();
+				let kmsNeededForPoint = $('#kmsNeededForPoint').val();
+				$.ajax({
+					type : 'PUT',
+					url : editDiscountInfoURL,
+					contentType : 'application/json',
+					dataType : 'json',
+					data : JSON.stringify({"discountPercentagePerPoint":discountPercentagePerPoint, "kmsNeededForPoint":kmsNeededForPoint}),
+					success : function(data) {
+						loadData();
+						if (data != null) {
+							toastr[data.toastType](data.message);
+						}
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown) {
+						alert("AJAX ERROR: " + textStatus);
+					}
+				});
+			});
+	
+}
+
 function loadServices(url, tableID) {
-	let token = getJwtToken("jwtToken");
 	$.ajax({
 		type : 'GET',
 		url : url,
@@ -300,7 +348,6 @@ function loadServices(url, tableID) {
 }
 
 function loadService(name, url) {
-	let token = getJwtToken("jwtToken");
 	$.ajax({
 		type : 'GET',
 		url : url,
