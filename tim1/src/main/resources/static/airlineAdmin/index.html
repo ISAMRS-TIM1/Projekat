@@ -42,6 +42,7 @@
 <script src="auth/auth.js"></script>
 <script src="airlineAdmin/index.js"></script>
 <link rel="stylesheet" href="airlineAdmin/index.css">
+<link rel="stylesheet" href="tableStyle.css">
 </head>
 <body>
 	<div class="container-fluid">
@@ -81,7 +82,7 @@
 					<div class="tableButtons">
 						<button type="button" id="addDestinationButton"
 							class="btn btn-default" data-toggle="modal"
-							data-target="#branchModalDialog">Add destination</button>
+							data-target="addDestinationModal">Add destination</button>
 					</div>
 					<div class="tableDiv">
 						<table id="destinationsTable" class="table display table-bordered">
@@ -145,7 +146,8 @@
 								onclick="add(event, 1)">Add</button>
 							<button class="btn btn-default configure-button"
 								id="deleteButton" onclick="deleteSeats(event, 1)">Delete</button>
-						</div><br>
+						</div>
+						<br>
 						<h3>Business class</h3>
 						<input type="number" id="business">
 						<div>
@@ -153,7 +155,8 @@
 								onclick="add(event, 2)">Add</button>
 							<button class="btn btn-default configure-button"
 								id="deleteButton" onclick="deleteSeats(event, 2)">Delete</button>
-						</div><br>
+						</div>
+						<br>
 						<h3>Economy class</h3>
 						<input type="number" id="economy">
 						<div>
@@ -169,22 +172,27 @@
 							<input type="number" id="businessPrice">
 							<h3>Economy class seat price</h3>
 							<input type="number" id="economyPrice">
-							<div id="seatDiv"><button class="btn btn-default configure-button" id="addButton"
+							<div id="seatDiv">
+								<button class="btn btn-default configure-button" id="addButton"
 									onclick="addSeatsIndividually(event)">Add seat</button>
-							<button class="btn btn-default configure-button"
-									id="deleteButton" onclick="deleteSeatsIndividually(event)">Delete seat</button></div>
+								<button class="btn btn-default configure-button"
+									id="deleteButton" onclick="deleteSeatsIndividually(event)">Delete
+									seat</button>
+							</div>
 						</div>
-						<button id="saveSeatButton" class="btn btn-default configure-button"
-								onclick="saveSeatsChanges(event)">Save changes</button>
+						<button id="saveSeatButton"
+							class="btn btn-default configure-button"
+							onclick="saveSeatsChanges(event)">Save changes</button>
 					</div>
 				</div>
 			</div>
 			<div id="quickResevationsTab" class="tab-pane fade">
 				<div class="tableWrapper">
 					<div class="tableButtons">
-						<button type="button" id="addDestinationButton"
+						<button type="button" id="addQuickReservationButton"
 							class="btn btn-default" data-toggle="modal"
-							data-target="#branchModalDialog">Add quick reservation</button>
+							data-target="addQuickReservationModal">Add quick
+							reservation</button>
 					</div>
 					<div class="tableDiv">
 						<table id="quickReservationsTable"
@@ -244,7 +252,9 @@
 										class="glyphicon glyphicon-edit"></i></span>
 								</div>
 							</div>
-							<button type="button" class="btn btn-default" id="changePasswordButton">Change password</button><br>
+							<button type="button" class="btn btn-default"
+								id="changePasswordButton">Change password</button>
+							<br>
 							<button type="submit" class="btn btn-default" id="saveChanges">Save
 								changes</button>
 						</form>

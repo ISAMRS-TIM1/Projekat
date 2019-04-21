@@ -338,3 +338,12 @@ select * from users; [42000-197]
 2019-04-20 13:20:38 jdbc[13]: exception
 org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "DELETE *[*] FROM USER_AUTHORITY WHERE USER_ID=1 "; expected "identifier"; SQL statement:
 delete * from user_authority where user_id=1 [42001-197]
+2019-04-20 19:42:03 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "SELEC[*] * FROM USERS "; expected "SELECT, SET, SAVEPOINT, SCRIPT, SHUTDOWN, SHOW, {"; SQL statement:
+selec * from users [42001-197]
+2019-04-20 19:44:30 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLException: Table "USER_A" not found; SQL statement:
+select * from user_a [42102-197]
+2019-04-20 19:44:31 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLException: Table "USER_A" not found; SQL statement:
+select * from user_a [42102-197]
