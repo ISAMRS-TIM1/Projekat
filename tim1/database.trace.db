@@ -338,3 +338,9 @@ select * from users; [42000-197]
 2019-04-20 13:20:38 jdbc[13]: exception
 org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "DELETE *[*] FROM USER_AUTHORITY WHERE USER_ID=1 "; expected "identifier"; SQL statement:
 delete * from user_authority where user_id=1 [42001-197]
+2019-04-21 13:04:02 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLException: Table "DESTINATION" not found; SQL statement:
+select * from destination [42102-197]
+2019-04-21 13:04:17 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLException: Table "DESTINATION" not found; SQL statement:
+insert into destination values(1, 'Beograd', 8, 2) [42102-197]

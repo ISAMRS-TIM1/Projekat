@@ -11,6 +11,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "Destinations")
 public class Destination {
@@ -26,7 +28,8 @@ public class Destination {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "location")
 	private Location location;
-
+	
+	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "airline")
 	private Airline airline;
