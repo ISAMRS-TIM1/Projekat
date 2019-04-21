@@ -23,7 +23,7 @@ public class AirlineDTO implements Serializable {
 	private double latitude;
 	private double longitude;
 	private ArrayList<Destination> destinations;
-	private ArrayList<Flight> flights;
+	private ArrayList<FlightDTO> flights;
 	private ArrayList<PlaneSegment> planeSegments;
 	private ArrayList<QuickFlightReservation> quickReservations;
 	private ArrayList<String> reservedSeats;
@@ -40,7 +40,10 @@ public class AirlineDTO implements Serializable {
 		this.latitude = airline.getLocation().getLatitude();
 		this.longitude = airline.getLocation().getLongitude();
 		this.destinations = new ArrayList<Destination>(airline.getDestinations());
-		this.flights = new ArrayList<Flight>(airline.getFlights());
+		this.flights = new ArrayList<FlightDTO>();
+		for (Flight f : airline.getFlights()) {
+			this.flights.add(new FlightDTO(f));
+		}
 		this.planeSegments = new ArrayList<PlaneSegment>(airline.getPlaneSegments());
 		this.quickReservations = new ArrayList<QuickFlightReservation>(airline.getQuickReservations());
 		this.reservedSeats = new ArrayList<String>();
@@ -108,11 +111,11 @@ public class AirlineDTO implements Serializable {
 		this.destinations = destinations;
 	}
 
-	public ArrayList<Flight> getFlights() {
+	public ArrayList<FlightDTO> getFlights() {
 		return flights;
 	}
 
-	public void setFlights(ArrayList<Flight> flights) {
+	public void setFlights(ArrayList<FlightDTO> flights) {
 		this.flights = flights;
 	}
 

@@ -10,9 +10,11 @@ const loadUserInfoURL = "/api/getUserInfo";
 const logoutURL = "../logout";
 const loadBranchOfficesURL = "/api/getBranchOffices";
 const addBranchOfficeURL = "/api/addBranchOffice";
+const editBranchOfficeURL = "/api/editBranchOffice/";
 const editUserInfoURL = "../api/editUser";
 
 $(document).ready(function() {
+	setUpToastr();
 	loadBasicData();
 	loadProfileData();
 	setUpTable();
@@ -47,23 +49,6 @@ $(document).ready(function() {
 			data : userFormToJSON(firstName, lastName, phone, address, email),
 			success: function(data){
 				if(data != ""){
-					toastr.options = {
-							  "closeButton": true,
-							  "debug": false,
-							  "newestOnTop": false,
-							  "progressBar": false,
-							  "positionClass": "toast-top-center",
-							  "preventDuplicates": false,
-							  "onclick": null,
-							  "showDuration": "300",
-							  "hideDuration": "1000",
-							  "timeOut": "3000",
-							  "extendedTimeOut": "1000",
-							  "showEasing": "swing",
-							  "hideEasing": "linear",
-							  "showMethod": "fadeIn",
-							  "hideMethod": "fadeOut"
-							}
 					toastr["error"](data);
 				}
 			},
@@ -73,17 +58,31 @@ $(document).ready(function() {
 		});
 	});
 	
-	$('.edit').click(function() {
-		if ($(this).siblings().first().is('[readonly]')) {
+	$(document).on('click', '#addBranch', function(e) {
+		e.preventDefault();
+		addBranchOffice();
+	});
+	
+	$('.edit').click(function(){
+		if($(this).siblings().first().is('[readonly]')) {
 			$(this).siblings().first().removeAttr('readonly');
 		} else {
 			$(this).siblings().first().prop('readonly', 'true');
 		}
 	});
 	
-	$('#addBranch').click(function() {
-		addBranchOffice();
-		loadBranchOffices();
+	var oldName;
+	$(document).on('click', '#branchTable tbody tr', function(e) {
+		oldName = e.target.parentNode.childNodes[1].innerText;
+		$("#editBranchOfficeForm input[name='name']").val(oldName);
+		// add branch location to map
+		$('#editBranchModalDialog').modal('show');
+	});
+	
+	$(document).on('click', '#editBranch', function(e) {
+		e.preventDefault();
+		let newName = $("#editBranchOfficeForm input[name='name']").val();
+		editBranchOffice(oldName, newName, 14, 14/* latitude, longitude*/);
 	});
 });
 
@@ -180,34 +179,37 @@ function loadBranchOffices() {
 
 function addBranchOffice() {
 	let token = getJwtToken("jwtToken");
-	let name = $("input[name='name']").val();
+	let name = $("#addBranchOfficeForm input[name='name']").val();
 	// extract latitude and longitude from map marker
 	$.ajax({
 		type : 'POST',
 		url : addBranchOfficeURL,
 		contentType: "application/json",
 		dataType : "json",
+		data: branchOfficeFormToJSON(name, 14, 14/*latitude, longitude*/),
+		headers: createAuthorizationTokenHeader(TOKEN_KEY),
+		success: function(data){
+			toastr[data.header](data.message);
+			loadBranchOffices();
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
+function editBranchOffice(oldName, name, latitude, longitude) {
+	let token = getJwtToken("jwtToken");
+	$.ajax({
+		type : 'PUT',
+		url : editBranchOfficeURL + oldName,
+		contentType: "application/json",
+		dataType : "json",
 		data: branchOfficeFormToJSON(name, latitude, longitude),
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
-			toastr.options = {
-					  "closeButton": true,
-					  "debug": false,
-					  "newestOnTop": false,
-					  "progressBar": false,
-					  "positionClass": "toast-top-center",
-					  "preventDuplicates": false,
-					  "onclick": null,
-					  "showDuration": "300",
-					  "hideDuration": "1000",
-					  "timeOut": "3000",
-					  "extendedTimeOut": "1000",
-					  "showEasing": "swing",
-					  "hideEasing": "linear",
-					  "showMethod": "fadeIn",
-					  "hideMethod": "fadeOut"
-					}
 			toastr[data.header](data.message);
+			loadBranchOffices();
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
 			alert("AJAX ERROR: " + textStatus);
@@ -233,5 +235,25 @@ function branchOfficeFormToJSON(name, latitude, longitude){
 			"longitude": longitude
 		}
 	});
+}
+
+function setUpToastr() {
+	toastr.options = {
+			  "closeButton": true,
+			  "debug": false,
+			  "newestOnTop": false,
+			  "progressBar": false,
+			  "positionClass": "toast-top-center",
+			  "preventDuplicates": false,
+			  "onclick": null,
+			  "showDuration": "300",
+			  "hideDuration": "1000",
+			  "timeOut": "3000",
+			  "extendedTimeOut": "1000",
+			  "showEasing": "swing",
+			  "hideEasing": "linear",
+			  "showMethod": "fadeIn",
+			  "hideMethod": "fadeOut"
+			}
 }
 
