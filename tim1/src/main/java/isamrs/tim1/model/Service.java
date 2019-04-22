@@ -17,6 +17,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import isamrs.tim1.dto.ServiceDTO;
+
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class Service implements Serializable {
@@ -37,7 +39,7 @@ public abstract class Service implements Serializable {
 	@Column(name = "averageGrade", unique = false, nullable = true)
 	private Double averageGrade;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "location")
 	private Location location;
 
@@ -46,9 +48,22 @@ public abstract class Service implements Serializable {
 
 	public Service() {
 		super();
+		this.location = new Location();
 		serviceGrades = new HashSet<ServiceGrade>();
+		this.averageGrade = 0.0;
 	}
 
+	public Service(ServiceDTO serviceDTO) {
+		super();
+		this.location = new Location();
+		serviceGrades = new HashSet<ServiceGrade>();
+		this.name = serviceDTO.getName();
+		this.description = serviceDTO.getDescription();
+		this.location.setLatitude(serviceDTO.getLatitude());
+		this.location.setLongitude(serviceDTO.getLongitude());
+		this.averageGrade = 0.0;
+	}
+	
 	public Integer getId() {
 		return id;
 	}
