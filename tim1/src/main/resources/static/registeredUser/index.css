@@ -199,3 +199,44 @@ input, button {
 	border: none !important;
 	font-size: 15px;
 }
+#searchUsersButton {
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	color: white;
+	font-size: 1.6vw;
+	border: 0.16vw solid #B27A00;
+	border-radius: 2vw 2vw 2vw 2vw;
+	margin-top: 1%;
+	margin-bottom: 2vw;
+}
+.btn-default {
+	background: #5994FF;
+}
+.modal-content{
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}
+#serviceDiv {
+	margin: 0;
+	background: #5994FF;
+	border: 0.24vw solid #B27A00;
+  	border-radius: 4vw 1.6vw;
+  	height: 50vh;
+}
+#searchUserForm {
+	text-align:center;
+	margin-top: 3%;
+	color:white;
+}
+#submitButton {
+	color: white;
+	font-size: 1.6vw;
+	border: 0.16vw solid #B27A00;
+	border-radius: 2vw 2vw 2vw 2vw;
+	margin-left: 3%;
+}
+#usersDiv {
+	margin-left:3%;
+	margin-right:3%;
+}

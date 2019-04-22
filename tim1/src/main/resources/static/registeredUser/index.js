@@ -2,6 +2,7 @@ const logoutURL = "../logout";
 const loadUserInfoURL = "../api/getUserInfo";
 const saveChangesURL = "../api/editUser";
 const getPlaneSeatsURL = "/api/getPlaneSeats";
+const getUsersURL = "/api/getUsers";
 
 const tokenKey = "jwtToken";
 
@@ -43,6 +44,24 @@ $(document).ready(function(){
 		} else {
 			$(this).siblings().first().prop('readonly', 'true');
 		}
+	});
+	
+	$("#searchUserForm").submit(function(e) {
+		  e.preventDefault();
+		  let firstName = $("#userFirstName").val();
+		  let lastName = $("#userLastName").val();
+		  $.ajax({
+				type : 'GET',
+				url : getUsersURL,
+				contentType : 'application/json',
+				data : JSON.stringify({"firstName":firstName, "lastName":lastName}),
+				success: function(data){
+					console.log(data);
+				},
+				error : function(XMLHttpRequest, textStatus, errorThrown) {
+					alert("AJAX ERROR: " + textStatus);
+				}
+			});
 	});
 	
 	$('#userEditForm').on('submit', function(e){
