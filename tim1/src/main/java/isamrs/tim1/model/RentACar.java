@@ -27,13 +27,12 @@ public class RentACar extends Service implements Serializable {
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<VehicleReservation> normalReservations;
-	
+
 	@OneToMany(mappedBy = "rentACar", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<RentACarAdmin> admins;
 
 	private static final long serialVersionUID = 8960219458856435612L;
 
-	
 	public Set<BranchOffice> getBranchOffices() {
 		return branchOffices;
 	}
@@ -59,9 +58,14 @@ public class RentACar extends Service implements Serializable {
 		normalReservations = new HashSet<VehicleReservation>();
 
 	}
-	
+
 	public RentACar(ServiceDTO rentACar) {
 		super(rentACar);
+		branchOffices = new HashSet<BranchOffice>();
+		admins = new HashSet<RentACarAdmin>();
+		vehicles = new HashSet<Vehicle>();
+		quickReservations = new HashSet<QuickVehicleReservation>();
+		normalReservations = new HashSet<VehicleReservation>();
 	}
 
 	public Set<QuickVehicleReservation> getQuickReservations() {
@@ -80,7 +84,6 @@ public class RentACar extends Service implements Serializable {
 		this.admins = admins;
 	}
 
-	
 	public Set<VehicleReservation> getNormalReservations() {
 		return normalReservations;
 	}

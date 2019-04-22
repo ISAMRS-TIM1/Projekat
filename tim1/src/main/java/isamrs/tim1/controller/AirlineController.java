@@ -32,7 +32,7 @@ public class AirlineController {
 
 	//@PreAuthorize("hasRole('SYSADMIN')")
 	@RequestMapping(value = "/api/addAirline", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MessageDTO> addHotel(@RequestBody ServiceDTO airline) {
+	public ResponseEntity<MessageDTO> addAirline(@RequestBody ServiceDTO airline) {
 		return new ResponseEntity<MessageDTO>(airlineService.addAirline(new Airline(airline)), HttpStatus.OK);
 	}
 

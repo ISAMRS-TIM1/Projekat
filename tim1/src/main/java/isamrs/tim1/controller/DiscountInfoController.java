@@ -29,7 +29,7 @@ public class DiscountInfoController {
 
 	// @PreAuthorize("hasRole('SYSADMIN')")
 	@RequestMapping(value = "/api/editDiscountInfo", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MessageDTO> editAirline(@RequestBody DiscountInfo discountInfo) throws Exception {
+	public ResponseEntity<MessageDTO> editDiscountInfo(@RequestBody DiscountInfo discountInfo) throws Exception {
 		return new ResponseEntity<MessageDTO>(discountInfoService.editDiscountInfo(discountInfo), HttpStatus.OK);
 	}
 

@@ -16,7 +16,7 @@ import isamrs.tim1.dto.ServiceDTO;
 
 @Entity
 @Table(name = "Airlines")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Airline extends Service implements Serializable {
 
 	@OneToMany(mappedBy = "airline", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -54,6 +54,15 @@ public class Airline extends Service implements Serializable {
 
 	public Airline(ServiceDTO airline) {
 		super(airline);
+		flights = new HashSet<Flight>();
+		admins = new HashSet<AirlineAdmin>();
+		destinations = new HashSet<Destination>();
+		quickReservations = new HashSet<QuickFlightReservation>();
+		planeSegments = new HashSet<PlaneSegment>();
+		planeSegments.add(new PlaneSegment(PlaneSegmentClass.FIRST));
+		planeSegments.add(new PlaneSegment(PlaneSegmentClass.BUSINESS));
+		planeSegments.add(new PlaneSegment(PlaneSegmentClass.ECONOMY));
+		normalReservations = new HashSet<FlightReservation>();
 	}
 
 	public Set<Flight> getFlights() {
@@ -96,7 +105,6 @@ public class Airline extends Service implements Serializable {
 		this.planeSegments = planeSegments;
 	}
 
-	
 	public Set<FlightReservation> getNormalReservations() {
 		return normalReservations;
 	}

@@ -26,6 +26,11 @@ public class Hotel extends Service implements Serializable {
 
 	public Hotel(ServiceDTO hotel) {
 		super(hotel);
+		additionalServices = new HashSet<HotelAdditionalService>();
+		rooms = new HashSet<HotelRoom>();
+		admins = new HashSet<HotelAdmin>();
+		quickReservations = new HashSet<QuickHotelReservation>();
+		normalReservations = new HashSet<HotelReservation>();
 	}
 
 	@OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -39,7 +44,7 @@ public class Hotel extends Service implements Serializable {
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<QuickHotelReservation> quickReservations;
-	
+
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<HotelReservation> normalReservations;
 
@@ -74,7 +79,6 @@ public class Hotel extends Service implements Serializable {
 	public void setAdmins(Set<HotelAdmin> admins) {
 		this.admins = admins;
 	}
-	
 
 	public Set<HotelReservation> getNormalReservations() {
 		return normalReservations;
