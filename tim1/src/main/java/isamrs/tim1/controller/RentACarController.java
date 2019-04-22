@@ -78,7 +78,9 @@ public class RentACarController {
 		ArrayList<BranchOfficeDTO> branchOffices = new ArrayList<BranchOfficeDTO>();
 
 		for (BranchOffice bo : admin.getRentACar().getBranchOffices()) {
-			branchOffices.add(new BranchOfficeDTO(bo));
+			if(!bo.isDeleted()) {
+				branchOffices.add(new BranchOfficeDTO(bo));				
+			}
 		}
 
 		return new ResponseEntity<ArrayList<BranchOfficeDTO>>(branchOffices, HttpStatus.OK);

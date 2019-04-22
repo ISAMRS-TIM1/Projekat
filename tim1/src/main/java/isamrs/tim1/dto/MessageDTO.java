@@ -6,12 +6,12 @@ public class MessageDTO implements Serializable {
 
 	private static final long serialVersionUID = -6747235972929476490L;
 	private String message;
-	private String toastType;
+	private String header;
 
 	public MessageDTO(String message, String toastType) {
 		super();
 		this.message = message;
-		this.toastType = toastType;
+		this.header = toastType;
 	}
 
 	public MessageDTO() {
@@ -26,12 +26,12 @@ public class MessageDTO implements Serializable {
 		this.message = message;
 	}
 
-	public String getToastType() {
-		return toastType;
+	public String getHeader() {
+		return header;
 	}
 
-	public void setToastType(String toastType) {
-		this.toastType = toastType;
+	public void setHeader(String toastType) {
+		this.header = toastType;
 	}
 
 	public enum ToasterType {
