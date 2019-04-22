@@ -98,11 +98,18 @@ $(document).ready(function(){
 	getPlaneSeats();
 });
 
+var firstPrice = 0;
+var businessPrice = 0;
+var economyPrice = 0;
+
 function getPlaneSeats() {
 	$.ajax({
 		dataType : "json",
 		url : getPlaneSeatsURL,
 		success : function(data) {
+			firstPrice = data["firstClassPrice"];
+			businessPrice = data["businessClassPrice"];
+			economyPrice = data["economyClassPrice"];
 			renderPlaneSeats(data["planeSegments"], data["reservedSeats"]);
 		}
 	});
@@ -155,17 +162,17 @@ function showPlaneSeats(seats) {
 		map: seats,
 		seats: {
 			f: {
-				price   : 100,
+				price   : firstPrice,
 				classes : 'first-class', //your custom CSS class
 				category: 'First Class'
 			},
 			e: {
-				price   : 40,
+				price   : economyPrice,
 				classes : 'economy-class', //your custom CSS class
 				category: 'Economy Class'
 			},
 			b: {
-				price: 40,
+				price: businessPrice,
 				classes : 'business-class',
 				category : 'Business Class'
 			},

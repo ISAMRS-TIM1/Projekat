@@ -49,7 +49,9 @@ public class FlightService {
 		long diffInMillies = Math.abs(flight.getDepartureTime().getTime() - flight.getLandingTime().getTime());
 		int flightDuration = (int) TimeUnit.MINUTES.convert(diffInMillies, TimeUnit.MILLISECONDS);
 		flight.setFlightDuration(flightDuration);
-		flight.setTicketPrice(flightDTO.getTicketPrice());
+		flight.setFirstClassPrice(flightDTO.getFirstClassPrice());
+		flight.setBusinessClassPrice(flightDTO.getBusinessClassPrice());
+		flight.setEconomyClassPrice(flightDTO.getEconomyClassPrice());
 		flight.setPricePerBag(flightDTO.getPricePerBag());
 		flight.setNumberOfFlightConnections(flightDTO.getConnections().length);
 		flight.setLocationsOfConnecting(new ArrayList<String>(Arrays.asList(flightDTO.getConnections())));

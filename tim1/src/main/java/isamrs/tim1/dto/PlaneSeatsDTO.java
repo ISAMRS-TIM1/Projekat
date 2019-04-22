@@ -14,6 +14,9 @@ public class PlaneSeatsDTO implements Serializable {
 	private static final long serialVersionUID = -8886693041430317406L;
 	private ArrayList<PlaneSegment> planeSegments;
 	private ArrayList<String> reservedSeats;
+	private Double firstClassPrice;
+	private Double businessClassPrice;
+	private Double economyClassPrice;
 	
 	public PlaneSeatsDTO() {
 		super();
@@ -23,6 +26,9 @@ public class PlaneSeatsDTO implements Serializable {
 		super();
 		this.planeSegments = new ArrayList<PlaneSegment>(airline.getPlaneSegments());
 		this.reservedSeats = new ArrayList<String>();
+		this.firstClassPrice = 50.0; // until the reservation feature is made
+		this.businessClassPrice = 40.0; // until the reservation feature is made
+		this.economyClassPrice = 30.0; // until the reservation feature is made
 		for (FlightReservation r : airline.getNormalReservations()) {
 			for (PassengerSeat ps : r.getPassengerSeats()) {
 				if (ps.getSeat() != null) {
@@ -53,6 +59,30 @@ public class PlaneSeatsDTO implements Serializable {
 
 	public void setReservedSeats(ArrayList<String> reservedSeats) {
 		this.reservedSeats = reservedSeats;
+	}
+	
+	public Double getFirstClassPrice() {
+		return firstClassPrice;
+	}
+
+	public void setFirstClassPrice(Double firstClassPrice) {
+		this.firstClassPrice = firstClassPrice;
+	}
+
+	public Double getBusinessClassPrice() {
+		return businessClassPrice;
+	}
+
+	public void setBusinessClassPrice(Double businessClassPrice) {
+		this.businessClassPrice = businessClassPrice;
+	}
+
+	public Double getEconomyClassPrice() {
+		return economyClassPrice;
+	}
+
+	public void setEconomyClassPrice(Double economyClassPrice) {
+		this.economyClassPrice = economyClassPrice;
 	}
 
 	public static long getSerialversionuid() {

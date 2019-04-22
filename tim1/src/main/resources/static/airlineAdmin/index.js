@@ -169,7 +169,7 @@ function renderFlights(data) {
 		table.row.add(
 				[ val.startDestination, val.endDestination, val.departureTime,
 					val.landingTime, diff + " min", val.flightDistance,
-						val.connections.length, conn, val.ticketPrice,
+						val.connections.length, conn, val.firstClassPrice, val.businessClassPrice, val.economyClassPrice,
 						val.pricePerBag]).draw(false);
 	});
 }
@@ -837,11 +837,6 @@ function showPlaneSeats(seats) {
 
 function saveSeatsChanges(e) {
 	e.preventDefault();
-	var firstPrice = $("#firstPrice").val();
-	var businessPrice = $("#businessPrice").val();
-	var economyPrice = $("#economyPrice").val();
-	if (firstPrice < 0 || businessPrice < 0 || economyPrice < 0 || firstPrice == "" || businessPrice == "" || economyPrice == "")
-		return;
 	var seats = firstClass.concat(businessClass).concat(economyClass);
 	var savedSeats = [];
 	for (var i = 0; i < seats.length; i++) {
@@ -891,19 +886,29 @@ function addFlight(e) {
 		return;
 	}
 	var flightDistance = $("#flightDistance").val();
-	if (isNaN(flightDistance) || flightDistance <= 0) {
+	if (isNaN(flightDistance) || flightDistance <= 0 || flightDistance == "") {
 		toastrError("Invalid flight distance.");
-		return;
-	}
-	var ticketPrice = $("#ticketPrice").val();
-	if (isNaN(ticketPrice) || ticketPrice <= 0) {
-		toastrError("Invalid ticket price.");
 		return;
 	}
 	var connections = $("#connections").val();
 	var pricePerBag = $("#pricePerBag").val();
-	if (isNaN(pricePerBag) || pricePerBag < 0) {
+	if (isNaN(pricePerBag) || pricePerBag < 0 || pricePerBag == "") {
 		toastrError("Invalid price per bag.");
+		return;
+	}
+	var firstPrice = $("#firstPrice").val();
+	if (isNaN(firstPrice) || firstPrice < 0 || firstPrice == "") {
+		toastrError("Invalid first class seat price.");
+		return;
+	}
+	var businessPrice = $("#businessPrice").val();
+	if (isNaN(businessPrice) || businessPrice < 0 || businessPrice == "") {
+		toastrError("Invalid business class seat price.");
+		return;
+	}
+	var economyPrice = $("#economyPrice").val();
+	if (isNaN(economyPrice) || economyPrice < 0 || economyPrice == "") {
+		toastrError("Invalid economy class seat price.");
 		return;
 	}
 	$.ajax({
@@ -911,8 +916,8 @@ function addFlight(e) {
 		url : addFlightURL,
 		headers : createAuthorizationTokenHeader(TOKEN_KEY),
 		contentType : "application/json",
-		data : flightToJSON(startDestination, endDestination, departureTime, landingTime, flightDistance, ticketPrice,
-				connections, pricePerBag),
+		data : flightToJSON(startDestination, endDestination, departureTime, landingTime, flightDistance, connections, pricePerBag,
+				firstPrice, businessPrice, economyPrice),
 		success : function(data) {
 			if (data.message == "success") {
 				var table = $('#flightsTable').DataTable();
@@ -927,24 +932,26 @@ function addFlight(e) {
 				table.row.add(
 						[ startDestination, endDestination, moment(new Date(departureTime)).format("DD.MM.YYYY HH:mm"),
 							moment(new Date(landingTime)).format("DD.MM.YYYY HH:mm"), diff + " min", flightDistance,
-								connections.length, conn, ticketPrice,
+								connections.length, conn, firstPrice, businessPrice, economyPrice,
 								pricePerBag]).draw(false);
 			}
 		}
 	});
 }
 
-function flightToJSON(startDestination, endDestination, departureTime, landingTime, flightDistance, ticketPrice,
-		connections, pricePerBag) {
+function flightToJSON(startDestination, endDestination, departureTime, landingTime, flightDistance, connections, pricePerBag,
+		firstPrice, businessPrice, economyPrice) {
 	var a = JSON.stringify({
 		"startDestination" : startDestination,
 		"endDestination" : endDestination,
 		"departureTime" : departureTime,
 		"landingTime" : landingTime,
 		"flightDistance" : flightDistance,
-		"ticketPrice" : ticketPrice,
 		"connections" : connections,
 		"pricePerBag" : pricePerBag,
+		"firstClassPrice" : firstPrice,
+		"businessClassPrice": businessPrice,
+		"economyClassPrice": economyPrice,
 		"airlineName" : airlineName
 	});
 	return a;

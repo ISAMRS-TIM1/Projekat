@@ -45,8 +45,14 @@ public class Flight {
 	@Column(name = "locationsOfConnecting", unique = false, nullable = false)
 	private ArrayList<String> locationsOfConnecting;
 
-	@Column(name = "ticketPrice", unique = false, nullable = false)
-	private Double ticketPrice;
+	@Column(name = "firstClassPrice", unique = false, nullable = false)
+	private Double firstClassPrice;
+	
+	@Column(name = "businessClassPrice", unique = false, nullable = false)
+	private Double businessClassPrice;
+	
+	@Column(name = "economyClassPrice", unique = false, nullable = false)
+	private Double economyClassPrice;
 
 	@Column(name = "pricePerBag", unique = false, nullable = false)
 	private Double pricePerBag;
@@ -111,12 +117,28 @@ public class Flight {
 		this.numberOfFlightConnections = numberOfFlightConnections;
 	}
 
-	public Double getTicketPrice() {
-		return ticketPrice;
+	public Double getFirstClassPrice() {
+		return firstClassPrice;
 	}
 
-	public void setTicketPrice(Double ticketPrice) {
-		this.ticketPrice = ticketPrice;
+	public void setFirstClassPrice(Double firstClassPrice) {
+		this.firstClassPrice = firstClassPrice;
+	}
+
+	public Double getBusinessClassPrice() {
+		return businessClassPrice;
+	}
+
+	public void setBusinessClassPrice(Double businessClassPrice) {
+		this.businessClassPrice = businessClassPrice;
+	}
+
+	public Double getEconomyClassPrice() {
+		return economyClassPrice;
+	}
+
+	public void setEconomyClassPrice(Double economyClassPrice) {
+		this.economyClassPrice = economyClassPrice;
 	}
 
 	public Double getPricePerBag() {
