@@ -13,17 +13,26 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "QuickVehicleReservation")
 public class QuickVehicleReservation extends QuickReservation implements Serializable {
-	
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1180459435781814006L;
+
 	@Column(name = "fromDate", unique = false, nullable = false)
 	private Date fromDate;
-	
+
 	@Column(name = "toDate", unique = false, nullable = false)
 	private Date toDate;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "vehicle")
 	private Vehicle vehicle;
-	
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "branchOffice")
+	private BranchOffice branchOffice;
+
 	public Date getFromDate() {
 		return fromDate;
 	}
@@ -48,11 +57,16 @@ public class QuickVehicleReservation extends QuickReservation implements Seriali
 		this.vehicle = vehicle;
 	}
 
-
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
 
-	private static final long serialVersionUID = 1153456013055975443L;
+	public BranchOffice getBranchOffice() {
+		return branchOffice;
+	}
+
+	public void setBranchOffice(BranchOffice branchOffice) {
+		this.branchOffice = branchOffice;
+	}
 
 }
