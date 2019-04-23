@@ -1,10 +1,13 @@
 package isamrs.tim1.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import isamrs.tim1.model.AirlineAdmin;
 import isamrs.tim1.model.HotelAdmin;
+import isamrs.tim1.model.RegisteredUser;
 import isamrs.tim1.model.RentACarAdmin;
+import isamrs.tim1.model.User;
 
 public class UserDTO implements Serializable {
 	/**
@@ -16,6 +19,7 @@ public class UserDTO implements Serializable {
 	private String phone;
 	private String address;
 	private String email;
+	private ArrayList<FriendDTO> friends;
 
 	public UserDTO() {
 		super();
@@ -28,6 +32,22 @@ public class UserDTO implements Serializable {
 		this.phone = phone;
 		this.address = address;
 		this.email = email;
+		this.friends = new ArrayList<FriendDTO>();
+	}
+	
+	public UserDTO(User u) {
+		this(u.getFirstName(), u.getLastName(), u.getPhoneNumber(), u.getAddress(), u.getEmail());
+		if (u instanceof RegisteredUser) {
+			for (User us : ((RegisteredUser) u).getFriends()) {
+				this.friends.add(new FriendDTO(us, "Accepted"));
+			}
+			for (User us : ((RegisteredUser) u).getInvitedUsers()) {
+				this.friends.add(new FriendDTO(us, "Invitation sent"));
+			}
+			for (User us : ((RegisteredUser) u).getInviters()) {
+				this.friends.add(new FriendDTO(us, "Invitation pending"));
+			}
+		}
 	}
 
 	public UserDTO(AirlineAdmin a) {
@@ -97,4 +117,15 @@ public class UserDTO implements Serializable {
 		this.email = email;
 	}
 
+	public ArrayList<FriendDTO> getFriends() {
+		return friends;
+	}
+
+	public void setFriends(ArrayList<FriendDTO> friends) {
+		this.friends = friends;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 }

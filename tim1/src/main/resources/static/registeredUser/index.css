@@ -240,3 +240,9 @@ input, button {
 	margin-left:3%;
 	margin-right:3%;
 }
+#sendInvButton {
+	color: white;
+	font-size: 1vw;
+	border: 0.16vw solid #B27A00;
+	border-radius: 2vw 2vw 2vw 2vw;
+}

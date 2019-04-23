@@ -21,6 +21,12 @@
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
+<script type="text/javascript"
+	src="//cdn.jsdelivr.net/sockjs/1.0.3/sockjs.min.js">
+</script>
+<!-- Koristi stomp biblioteku da se pretplati na brokerov /topic/message endpoint -->
+<script type="text/javascript"
+	src="//cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script src="registeredUser/jquery.seat-charts.min.js"></script> 
 </head>
 <body>
@@ -84,7 +90,7 @@
 		            				<th>Email</th>
 					                <th>First name</th>
 					                <th>Last name</th>
-					                <th>Accepted</th>
+					                <th>Status</th>
 		            			</tr>
 		        			</thead>
 		        			<tbody>

@@ -3,11 +3,28 @@ const loadUserInfoURL = "../api/getUserInfo";
 const saveChangesURL = "../api/editUser";
 const getPlaneSeatsURL = "/api/getPlaneSeats";
 const getUsersURL = "/api/getUsers";
+const friendInvitationURL = "/sendInvitation";
 
 const tokenKey = "jwtToken";
 
+var userMail = "";
+
 $(document).ready(function(){
 	loadData();
+	
+	var socket = new SockJS('/friendsEndpoint');
+	var stompClient = Stomp.over(socket);
+	stompClient.connect({}, function(frame) {
+		stompClient.subscribe("/friendsInvitation/" + userMail, function(data) {
+			var table = $('#friendsTable').DataTable();
+			dataJSON = JSON.parse(data.body);
+			var sendInv = "<div id='invFriendStatus'><form id='accInv' onsubmit='acceptInvitation(event)' " +
+			"style='text-align:center;'>" +
+			"<input type='hidden' value='" + dataJSON.email + "' id='hiddenEmail'/>" +
+			"<input type='submit' id='sendInvButton' class='btn btn-default' value='Accept'/></form></div>";
+			table.row.add([ dataJSON.email, dataJSON.firstName, dataJSON.lastName, sendInv ]).draw(false);
+		});
+	});
 	
 	$('#friendsTable').DataTable({
         "paging": false,
@@ -21,6 +38,13 @@ $(document).ready(function(){
         "paging": false,
         "info": false,
         "scrollY": "17vw",
+        "scrollCollapse": true,
+        "retrieve": true,
+    });
+	
+	$('#usersTable').DataTable({
+        "paging": false,
+        "info": false,
         "scrollCollapse": true,
         "retrieve": true,
     });
@@ -46,6 +70,7 @@ $(document).ready(function(){
 		}
 	});
 	
+	
 	$("#searchUserForm").submit(function(e) {
 		  e.preventDefault();
 		  let firstName = $("#userFirstName").val();
@@ -53,10 +78,18 @@ $(document).ready(function(){
 		  $.ajax({
 				type : 'GET',
 				url : getUsersURL,
+				headers: createAuthorizationTokenHeader(tokenKey),
 				contentType : 'application/json',
-				data : JSON.stringify({"firstName":firstName, "lastName":lastName}),
+				data : {"firstName" : firstName, "lastName" : lastName, "email" : userMail},
 				success: function(data){
-					console.log(data);
+					var table = $('#usersTable').DataTable();
+					table.clear().draw();
+					$.each(data, function(i, val) {
+						var sendInv = "<div id='status" + i + "'><form id='sendInv' onsubmit='friendInvitation(event," + i + ")' style='text-align:center;'>" +
+								"<input type='hidden' value='" + val.email + "' id='hiddenEmail'/>" +
+								"<input type='submit' id='sendInvButton' class='btn btn-default' value='Send invitation'/></form></div>";
+						table.row.add([ val.email, val.firstName, val.lastName, sendInv ]).draw(false);
+					});
 				},
 				error : function(XMLHttpRequest, textStatus, errorThrown) {
 					alert("AJAX ERROR: " + textStatus);
@@ -117,6 +150,48 @@ $(document).ready(function(){
 	getPlaneSeats();
 });
 
+function friendInvitation(e, idx) {
+	e.preventDefault();
+	let invitedUser = $("#hiddenEmail").val();
+	$.ajax({
+		type : 'GET',
+		url : friendInvitationURL,
+		headers: createAuthorizationTokenHeader(tokenKey),
+		contentType : 'application/json',
+		data : {"invitedUser" : invitedUser},
+		success: function(data){
+			if(data.header == "success") {
+				toastr.options = {
+						  "closeButton": true,
+						  "debug": false,
+						  "newestOnTop": false,
+						  "progressBar": false,
+						  "positionClass": "toast-top-center",
+						  "preventDuplicates": false,
+						  "onclick": null,
+						  "showDuration": "300",
+						  "hideDuration": "1000",
+						  "timeOut": "3000",
+						  "extendedTimeOut": "1000",
+						  "showEasing": "swing",
+						  "hideEasing": "linear",
+						  "showMethod": "fadeIn",
+						  "hideMethod": "fadeOut"
+						}
+				toastr["success"](data.message);
+				$("#status" + idx).html("<b>Invitation sent</b>");
+				var table = $('#friendsTable').DataTable();
+				var userTable = $('#usersTable').DataTable();
+				var row = userTable.row(idx).data();
+				table.row.add([ row[0], row[1], row[2], "<b>Invitation sent</b>"]).draw(false);
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
 var firstPrice = 0;
 var businessPrice = 0;
 var economyPrice = 0;
@@ -143,11 +218,26 @@ function loadData(){
 		headers: createAuthorizationTokenHeader(tokenKey),
 		success: function(data){
 			if(data != null){
-			$('input[name="fname"]').val(data.firstName);
-			$('input[name="lname"]').val(data.lastName);
-			$('input[name="phone"]').val(data.phone);
-			$('input[name="address"]').val(data.address);
-			$('#email').text(data.email);
+				$('input[name="fname"]').val(data.firstName);
+				$('input[name="lname"]').val(data.lastName);
+				$('input[name="phone"]').val(data.phone);
+				$('input[name="address"]').val(data.address);
+				$('#email').text(data.email);
+				userMail = data.email;
+				var table = $('#friendsTable').DataTable();
+				table.clear().draw();
+				$.each(data.friends, function(i, val) {
+					if (val.status == "Invitation pending") {
+						var sendInv = "<div id='invFriendStatus'><form id='accInv' onsubmit='acceptInvitation(event)' " +
+								"style='text-align:center;'>" +
+						"<input type='hidden' value='" + val.email + "' id='hiddenEmail'/>" +
+						"<input type='submit' id='sendInvButton' class='btn btn-default' value='Accept'/></form></div>";
+						table.row.add([ val.email, val.firstName, val.lastName, sendInv ]).draw(false);
+					}
+					else {
+						table.row.add([ val.email, val.firstName, val.lastName, "<b>" + val.status + "</b>" ]).draw(false);
+					}
+				});
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {

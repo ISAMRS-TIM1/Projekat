@@ -18,7 +18,15 @@ public class RegisteredUser extends User {
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name = "friends", joinColumns = @JoinColumn(name = "user", referencedColumnName = "user_id"), inverseJoinColumns = @JoinColumn(name = "friend", referencedColumnName = "user_id"))
 	private Set<RegisteredUser> friends;
-
+	
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinTable(name = "invitedUsers", joinColumns = @JoinColumn(name = "inviter", referencedColumnName = "user_id"), inverseJoinColumns = @JoinColumn(name = "invited", referencedColumnName = "user_id"))
+	private Set<RegisteredUser> invitedUsers;
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "inviters", joinColumns = @JoinColumn(name = "invited", referencedColumnName = "user_id"), inverseJoinColumns = @JoinColumn(name = "inviter", referencedColumnName = "user_id"))
+	private Set<RegisteredUser> inviters;
+	
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<UserReservation> userReservations;
 
@@ -70,6 +78,24 @@ public class RegisteredUser extends User {
 	public void setServiceGrades(Set<ServiceGrade> serviceGrades) {
 		this.serviceGrades = serviceGrades;
 	}
+
+	public Set<RegisteredUser> getInvitedUsers() {
+		return invitedUsers;
+	}
+
+	public void setInvitedUsers(Set<RegisteredUser> invitedUsers) {
+		this.invitedUsers = invitedUsers;
+	}
+
+	public Set<RegisteredUser> getInviters() {
+		return inviters;
+	}
+
+	public void setInviters(Set<RegisteredUser> inviters) {
+		this.inviters = inviters;
+	}
+
+
 
 	private static final long serialVersionUID = 4453092532257405053L;
 }
