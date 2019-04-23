@@ -95,8 +95,28 @@
     			<p>Some content.</p>
 			</div>
 			<div id="vehicle" class="tab-pane fade">
-				<h3>Vehicles</h3>
-    			<p>Some content.</p>
+				<div id="vehicleTableWrapper">
+					<div id="vehicleTableDiv">
+						<table id="vehicleTable" class="table display table-bordered">
+							<thead>
+		            			<tr>
+					                <th>Producer</th>
+		            				<th>Model</th>
+					                <th>Year of Production</th>
+					                <th>Number of Seats</th>
+					                <th>Fuel Type</th>
+					                <th>Vehicle Type</th>
+					                <th>Price Per Day</th>
+		            			</tr>
+		        			</thead>
+		        			<tbody>
+		        			</tbody>
+						</table>
+					</div>
+					<div id="vehicleButtons">
+						<button type="button" id="addVehicle" class="btn btn-default" data-toggle="modal" data-target="#addVehicleModalDialog">Add vehicle</button>
+					</div>
+				</div>
 			</div>
 			<div id="quick" class="tab-pane fade">
 				<h3>Quick reservations</h3>
@@ -188,6 +208,49 @@
 								</div>
 								<button class="btn btn-default" id="editBranch">Save</button>
 								<button class="btn btn-default" id="deleteBranch">Delete</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Add vehicle modal -->
+		<div class="modal fade" id="addVehicleModalDialog" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content dialogStyle">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h2 class="modal-title">Add vehicle</h2>
+					</div>
+					<div class="modal-body">
+						<div id="addVehicleFormDiv">
+							<form id="addVehicleForm">
+								<div class="form-group">
+									<div class="input-group">
+										<input class="form-control" type="text" name="producer" placeholder="Producer" required autofocus>
+									</div>
+									<div class="input-group">
+										<input class="form-control" type="text" name="model" placeholder="Model" required>
+									</div>
+									<div class="input-group">
+										<input class="form-control" type="number" name="year" placeholder="Year of production" min="1908" title="Year must be after year 1908." required>
+									</div>
+									<div class="input-group">
+										<input class="form-control" type="number" name="seats" placeholder="Number of seats" min="1" max="9" title="Number of seats must be between 1 and 9" required>
+									</div>
+									<div class="input-group">
+										<input class="form-control" type="number" name="price" placeholder="Price per day" min="1" title="Price per day at least must be 1" required>
+									</div>
+									<div class="form-group">
+  										<select class="form-control" id="vehicleType">
+  										</select>
+									</div>
+									<div class="form-group">
+  										<select class="form-control" id="fuelType">
+  										</select>
+									</div>
+								</div>
+								<button class="btn btn-default" id="addVehicle">Add</button>
 							</form>
 						</div>
 					</div>

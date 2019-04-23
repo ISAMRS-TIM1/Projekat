@@ -23,8 +23,7 @@ import javax.persistence.Table;
 public class Vehicle implements Serializable {
 
 	private static final long serialVersionUID = 2140092751859938725L;
-	
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "vehicle_id", unique = true, nullable = false)
@@ -65,7 +64,12 @@ public class Vehicle implements Serializable {
 
 	@OneToMany(mappedBy = "vehicle", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<VehicleReservation> normalReservations;
-	
+
+	@Column(name = "quantity", unique = false, nullable = false)
+	private Integer quantity;
+
+	@Column(name = "available", unique = false, nullable = false)
+	private Integer available;
 
 	public Vehicle() {
 		super();
@@ -73,7 +77,6 @@ public class Vehicle implements Serializable {
 		normalReservations = new HashSet<VehicleReservation>();
 	}
 
-	
 	public Integer getId() {
 		return id;
 	}
@@ -197,6 +200,22 @@ public class Vehicle implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public Integer getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(Integer quantity) {
+		this.quantity = quantity;
+	}
+
+	public Integer getAvailable() {
+		return available;
+	}
+
+	public void setAvailable(Integer available) {
+		this.available = available;
 	}
 
 }

@@ -58,7 +58,7 @@ a[data-toggle="tab"] {
 	margin-bottom: 2vw;
 }
 
-#branchTableDiv {
+#branchTableDiv, #vehicleTableDiv {
 	width: 70%;
 	height: 30vw; margin-left : 13%;
 	margin-top: 5%;
@@ -71,7 +71,7 @@ a[data-toggle="tab"] {
 	padding: 2vw;
 }
 
-#branchButtons {
+#branchButtons, #vehicleButtons {
 	padding: 2vw;
 	text-align: center;
 	width: 50%;
@@ -80,7 +80,7 @@ a[data-toggle="tab"] {
 	display: block;
 }
 
-#addBranchOffice, #saveChangesBranch {
+#addBranchOffice, #saveChangesBranch, #addVehicle {
 	background: #5994FF;
 	color: white;
 	font-size: 1.6vw;

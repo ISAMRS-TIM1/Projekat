@@ -13,12 +13,17 @@ const addBranchOfficeURL = "/api/addBranchOffice";
 const editBranchOfficeURL = "/api/editBranchOffice/";
 const deleteBranchOfficeURL = "/api/deleteBranchOffice/";
 const editUserInfoURL = "../api/editUser";
+const loadVehiclesURL = "/api/getVehicles";
+const addVehicleURL = "/api/addVehicle/";
+const loadVehicleTypesURL = "/api/getVehicleTypes";
+const loadFuelTypesURL = "/api/getFuelTypes";
+
 
 $(document).ready(function() {
 	setUpToastr();
 	loadBasicData();
 	loadProfileData();
-	setUpTable();
+	setUpTables();
 	setUpMap(45.267136, 19.833549, 'basicMapDiv');
 	setUpMap(45.267136, 19.833549, 'branchMapDiv');
 	
@@ -32,6 +37,10 @@ $(document).ready(function() {
 	
 	$('a[href="#branch"]').click(function(){
 		loadBranchOffices();
+	});
+	
+	$('a[href="#vehicle"]').click(function(){
+		loadVehicles();
 	});
 	
 	$('#userEditForm').on('submit', function(e){
@@ -90,10 +99,23 @@ $(document).ready(function() {
 		e.preventDefault();
 		deleteBranchOffice(oldName);
 	});
+	
+	$(document).on('click', '#addVehicle', function(e) {
+		loadVehicleTypes();
+		loadFuelTypes();
+	});
 });
 
-function setUpTable() {
+function setUpTables() {
 	$('#branchTable').DataTable({
+        "paging": false,
+        "info": false,
+        "scrollY": "17vw",
+        "scrollCollapse": true,
+        "retrieve": true,
+    });
+	
+	$('#vehicleTable').DataTable({
         "paging": false,
         "info": false,
         "scrollY": "17vw",
@@ -111,6 +133,46 @@ function setUpMap(latitude, longitude, div) {
 	var marker = L.marker([ latitude, longitude ], {
 		draggable : true
 	}).addTo(branchOfficeMap);
+}
+
+function loadVehicleTypes() {
+	$.ajax({
+		type : 'GET',
+		url : loadVehicleTypesURL,
+		dataType : "json",
+		headers: createAuthorizationTokenHeader(TOKEN_KEY),
+		success: function(data){
+			if(data != null){
+				let types = $('#vehicleType');
+				for(let vehicleType of data) {
+					types.append('<option value="' + vehicleType + '">' + vehicleType + '</option');
+				}
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
+function loadFuelTypes() {
+	$.ajax({
+		type : 'GET',
+		url : loadFuelTypesURL,
+		dataType : "json",
+		headers: createAuthorizationTokenHeader(TOKEN_KEY),
+		success: function(data){
+			if(data != null){
+				let types = $('#fuelType');
+				for(let fuelType of data) {
+					types.append('<option value="' + fuelType + '">' + fuelType + '</option');
+				}
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
 }
 
 function loadBasicData() {
@@ -233,6 +295,36 @@ function deleteBranchOffice(name) {
 		success: function(data){
 			toastr[data.toastType](data.message);
 			loadBranchOffices();
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
+function loadVehicles() {
+	let token = getJwtToken("jwtToken");
+	$.ajax({
+		type : 'GET',
+		url : loadVehiclesURL,
+		dataType : "json",
+		headers: createAuthorizationTokenHeader(TOKEN_KEY),
+		success: function(data){
+			if(data != null){
+				let table = $("#vehicleTable").DataTable();
+				table.clear();
+				for(let vehicle of data) {
+					table.row.add([
+					               vehicle.producer,
+					               vehicle.model,
+					               vehicle.yearOfProduction,
+					               vehicle.numberOfSeats,
+					               vehicle.fuelType,
+					               vehicle.vehicleType,
+					               vehicle.pricePerDay
+					               ]).draw(false);
+				}
+			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
 			alert("AJAX ERROR: " + textStatus);

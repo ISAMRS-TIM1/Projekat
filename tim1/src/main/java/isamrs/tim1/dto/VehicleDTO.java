@@ -2,21 +2,50 @@ package isamrs.tim1.dto;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import isamrs.tim1.model.FuelType;
 import isamrs.tim1.model.Vehicle;
 import isamrs.tim1.model.VehicleType;
 
 public class VehicleDTO implements Serializable {
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 6347126607915218236L;
+	private static final long serialVersionUID = 9104954817019763655L;
+
+	@NotBlank
+	@NotNull
 	private String model;
+
+	@NotBlank
+	@NotNull
 	private String producer;
+
+	@NotBlank
+	@NotNull
 	private String yearOfProduction;
+
+	@NotBlank
+	@NotNull
+	@Min(1)
 	private Integer numberOfSeats;
+
+	@NotBlank
+	@NotNull
 	private FuelType fuelType;
+
+	@NotBlank
+	@NotNull
 	private VehicleType vehicleType;
+
+	@NotBlank
+	@NotNull
+	@Min(1)
+	private Integer pricePerDay;
 
 	public VehicleDTO(Vehicle v) {
 		this.model = v.getModel();
@@ -25,10 +54,17 @@ public class VehicleDTO implements Serializable {
 		this.numberOfSeats = v.getNumberOfSeats();
 		this.fuelType = v.getFuelType();
 		this.vehicleType = v.getVehicleType();
+		this.pricePerDay = v.getPricePerDay();
 	}
 
-	public VehicleDTO(String model, String producer, String yearOfProduction, Integer numberOfSeats, FuelType fuelType,
-			VehicleType vehicleType) {
+	public VehicleDTO() {
+		super();
+	}
+
+	public VehicleDTO(@NotBlank @NotNull String model, @NotBlank @NotNull String producer,
+			@NotBlank @NotNull String yearOfProduction, @NotBlank @NotNull Integer numberOfSeats,
+			@NotBlank @NotNull FuelType fuelType, @NotBlank @NotNull VehicleType vehicleType,
+			@NotBlank @NotNull Integer pricePerDay) {
 		super();
 		this.model = model;
 		this.producer = producer;
@@ -36,6 +72,7 @@ public class VehicleDTO implements Serializable {
 		this.numberOfSeats = numberOfSeats;
 		this.fuelType = fuelType;
 		this.vehicleType = vehicleType;
+		this.pricePerDay = pricePerDay;
 	}
 
 	public String getModel() {
@@ -84,6 +121,18 @@ public class VehicleDTO implements Serializable {
 
 	public void setVehicleType(VehicleType vehicleType) {
 		this.vehicleType = vehicleType;
+	}
+
+	public Integer getPricePerDay() {
+		return pricePerDay;
+	}
+
+	public void setPricePerDay(Integer pricePerDay) {
+		this.pricePerDay = pricePerDay;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
 }
