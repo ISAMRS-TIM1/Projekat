@@ -26,14 +26,6 @@ public class MessageDTO implements Serializable {
 		this.message = message;
 	}
 
-	public String getToastType() {
-		return toastType;
-	}
-
-	public void setToastType(String toastType) {
-		this.toastType = toastType;
-	}
-
 	public enum ToasterType {
 		SUCCESS("success"), ERROR("error");
 
@@ -47,5 +39,13 @@ public class MessageDTO implements Serializable {
 		public String toString() {
 			return text;
 		}
+	}
+
+	public String getToastType() {
+		return toastType;
+	}
+
+	public void setToastType(String toastType) {
+		this.toastType = toastType;
 	}
 }

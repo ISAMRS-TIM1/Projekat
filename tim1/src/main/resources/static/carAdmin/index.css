@@ -131,7 +131,7 @@ a[data-toggle="tab"] {
 	text-align: center;
 }
 
-#addBranch, #editBranch {
+#addBranch, #editBranch, #deleteBranch {
 	background: #5994FF;
 	color: white;
 	font-size: 1.6vw;
