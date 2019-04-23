@@ -2,7 +2,7 @@ const logoutURL = "../logout";
 const loadUserInfoURL = "../api/getUserInfo";
 const saveChangesURL = "../api/editUser";
 const getPlaneSeatsURL = "/api/getPlaneSeats";
-const getUsersURL = "/api/getUsers";
+const searchUsersURL = "/api/searchUsers";
 const friendInvitationURL = "/sendInvitation";
 
 const tokenKey = "jwtToken";
@@ -77,7 +77,7 @@ $(document).ready(function(){
 		  let lastName = $("#userLastName").val();
 		  $.ajax({
 				type : 'GET',
-				url : getUsersURL,
+				url : searchUsersURL,
 				headers: createAuthorizationTokenHeader(tokenKey),
 				contentType : 'application/json',
 				data : {"firstName" : firstName, "lastName" : lastName, "email" : userMail},
@@ -163,8 +163,8 @@ function friendInvitation(e, idx) {
 		contentType : 'application/json',
 		data : {"invitedUser" : invitedUser},
 		success: function(data){
-			if(data.header == "success") {
-				toastr[data.header](data.message);
+			if(data.toastType == "success") {
+				toastr[data.toastType](data.message);
 				$("#status" + idx).html("<b>Invitation sent</b>");
 				var table = $('#friendsTable').DataTable();
 				var userTable = $('#usersTable').DataTable();
@@ -172,7 +172,7 @@ function friendInvitation(e, idx) {
 				table.row.add([ row[0], row[1], row[2], "<b>Invitation sent</b>"]).draw(false);
 			}
 			else {
-				toastr[data.header](data.message);
+				toastr[data.toastType](data.message);
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {

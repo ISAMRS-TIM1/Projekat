@@ -919,7 +919,7 @@ function addFlight(e) {
 		data : flightToJSON(startDestination, endDestination, departureTime, landingTime, flightDistance, connections, pricePerBag,
 				firstPrice, businessPrice, economyPrice),
 		success : function(data) {
-			if (data.header == "success") {
+			if (data.toastType == "success") {
 				var table = $('#flightsTable').DataTable();
 				var date1 = moment(departureTime);
 				var date2 = moment(landingTime);
@@ -934,7 +934,7 @@ function addFlight(e) {
 							moment(new Date(landingTime)).format("DD.MM.YYYY HH:mm"), diff + " min", flightDistance,
 								connections.length, conn, firstPrice, businessPrice, economyPrice,
 								pricePerBag]).draw(false);
-				toastr[data.header](data.message);
+				toastr[data.toastType](data.message);
 			}
 		}
 	});
@@ -984,7 +984,7 @@ function addDestination(e) {
 			"airlineName": airlineName
 		}),
 		success : function(data) {
-			if (data.header == "success") {
+			if (data.toastType == "success") {
 				var table = $('#destinationsTable').DataTable();
 				table.row.add([ nameOfDest ]).draw(false);
 				var start = $("#startDestination");
@@ -993,7 +993,7 @@ function addDestination(e) {
 				start.append("<option value=" + nameOfDest + ">" + nameOfDest + "</option>");
 				end.append("<option value=" + nameOfDest + ">" + nameOfDest + "</option>");
 				con.append("<option value=" + nameOfDest + ">" + nameOfDest + "</option>");
-				toastr[data.header](data.message);
+				toastr[data.toastType](data.message);
 			}
 			else {
 				toastr["error"](data.message);
