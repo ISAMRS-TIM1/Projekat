@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim1.dto.DetailedServiceDTO;
 import isamrs.tim1.dto.HotelDTO;
+import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.ServiceDTO;
+import isamrs.tim1.dto.ServiceViewDTO;
 import isamrs.tim1.model.Hotel;
 import isamrs.tim1.model.HotelAdmin;
 import isamrs.tim1.service.HotelService;
@@ -27,10 +29,10 @@ public class HotelController {
 	@Autowired
 	private HotelService hotelService;
 
-	@PreAuthorize("hasRole('HOTELADMIN')")
+	@PreAuthorize("hasRole('SYSADMIN')")
 	@RequestMapping(value = "/api/addHotel", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> addHotel(@RequestBody Hotel hotel) {
-		return new ResponseEntity<String>(hotelService.addHotel(hotel), HttpStatus.OK);
+	public ResponseEntity<MessageDTO> addHotel(@RequestBody ServiceDTO hotel) {
+		return new ResponseEntity<MessageDTO>(hotelService.addHotel(new Hotel(hotel)), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasRole('HOTELADMIN')")
@@ -51,16 +53,16 @@ public class HotelController {
 				HttpStatus.OK);
 	}
 	
-	//@PreAuthorize("hasRole('SYSADMIN')")
+	@PreAuthorize("hasRole('SYSADMIN')")
 	@RequestMapping(value = "/api/getHotels", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ArrayList<ServiceDTO>> getHotels() {
-		return new ResponseEntity<ArrayList<ServiceDTO>>(
+	public ResponseEntity<ArrayList<ServiceViewDTO>> getHotels() {
+		return new ResponseEntity<ArrayList<ServiceViewDTO>>(
 				hotelService.getHotels(),
 				HttpStatus.OK);
 	}
 	
 
-	//@PreAuthorize("hasRole('SYSADMIN')")
+	@PreAuthorize("hasRole('SYSADMIN')")
 	@RequestMapping(value = "/api/getHotel", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DetailedServiceDTO> getHotel(@RequestParam String name) {
 		return new ResponseEntity<DetailedServiceDTO>(

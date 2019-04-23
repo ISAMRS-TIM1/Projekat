@@ -11,7 +11,8 @@ import org.springframework.stereotype.Service;
 
 import isamrs.tim1.dto.AirlineDTO;
 import isamrs.tim1.dto.DetailedServiceDTO;
-import isamrs.tim1.dto.ServiceDTO;
+import isamrs.tim1.dto.ServiceViewDTO;
+import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.PlaneSeatsDTO;
 import isamrs.tim1.model.Airline;
@@ -21,68 +22,70 @@ import isamrs.tim1.model.PlaneSegment;
 import isamrs.tim1.model.Seat;
 import isamrs.tim1.repository.AirlineRepository;
 import isamrs.tim1.repository.SeatRepository;
+import isamrs.tim1.repository.ServiceRepository;
 
 @Service
 public class AirlineService {
-	
+
 	@Autowired
 	private AirlineRepository airlineRepository;
-	
+
 	@Autowired
 	private SeatRepository seatRepository;
-	
+
+	@Autowired
+	private ServiceRepository serviceRepository;
+
 	public String editProfile(Airline airline, String oldName) {
 		Airline airlineToEdit = airlineRepository.findOneByName(oldName);
-        if (airlineToEdit == null) {
-            return "Airline with given name does not exist.";
-        }
-        
-        String newName = airline.getName();
-		if (airlineRepository.findOneByName(newName) != null)
-			return "Name is already in use by some other airline.";
-		
+		if (airlineToEdit == null) {
+			return "Airline with given name does not exist.";
+		}
+
+		String newName = airline.getName();
+		if (serviceRepository.findOneByName(newName) != null)
+			return "Name is already in use by some other service.";
+
 		if (newName != null) {
 			airlineToEdit.setName(newName);
 		}
-		
+
 		String newDescription = airline.getDescription();
 		if (newDescription != null) {
 			airlineToEdit.setDescription(newDescription);
 		}
-		
+
 		Location newLocation = airline.getLocation();
 		if (newLocation != null) {
 			airlineToEdit.getLocation().setLatitude(airline.getLocation().getLatitude());
 			airlineToEdit.getLocation().setLongitude(airline.getLocation().getLongitude());
 		}
-		
-        try {
-        	airlineRepository.save(airlineToEdit);
-        }
-        catch(Exception e) {
-        	System.out.println(e.getMessage());
+
+		try {
+			airlineRepository.save(airlineToEdit);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return "Database error.";
-        }
-        
-        return null;
+		}
+
+		return null;
 	}
 
 	public AirlineDTO getAirlineOfAdmin(AirlineAdmin admin) {
 		return new AirlineDTO(admin.getAirline());
 	}
 
-	public ArrayList<ServiceDTO> getAirlines() {
-		ArrayList<ServiceDTO> retval = new ArrayList<ServiceDTO>();
-		for(Airline a : airlineRepository.findAll())
-			retval.add(new ServiceDTO(a));
+	public ArrayList<ServiceViewDTO> getAirlines() {
+		ArrayList<ServiceViewDTO> retval = new ArrayList<ServiceViewDTO>();
+		for (Airline a : airlineRepository.findAll())
+			retval.add(new ServiceViewDTO(a));
 		return retval;
 	}
 
 	public DetailedServiceDTO getAirline(String name) {
 		return new DetailedServiceDTO(airlineRepository.findOneByName(name));
 	}
-	
-	
+
 	public MessageDTO saveSeats(String[] savedSeats, AirlineAdmin a) {
 		Set<PlaneSegment> planeSegments = a.getAirline().getPlaneSegments();
 		for (PlaneSegment p : planeSegments) {
@@ -120,7 +123,8 @@ public class AirlineService {
 			while (it.hasNext()) {
 				Seat s = it.next();
 				List<String> st = Arrays.asList(savedSeats);
-				String ste = s.getRow() + "_" + s.getColumn() + "_" + p.getSegmentClass().toString().toLowerCase().charAt(0);
+				String ste = s.getRow() + "_" + s.getColumn() + "_"
+						+ p.getSegmentClass().toString().toLowerCase().charAt(0);
 				if (!(st.contains(ste))) {
 					seatForDelete.add(s);
 					it.remove();
@@ -138,5 +142,13 @@ public class AirlineService {
 	public PlaneSeatsDTO getPlaneSeats() {
 		Airline a = airlineRepository.findOneByName("AirSerbia");
 		return new PlaneSeatsDTO(a);
+	}
+
+	public MessageDTO addAirline(Airline airline) {
+		if (serviceRepository.findOneByName(airline.getName()) != null)
+			return new MessageDTO("Service with the same name already exists.", ToasterType.ERROR.toString());
+		airline.setId(null); // to ensure INSERT command
+		airlineRepository.save(airline);
+		return new MessageDTO("Airline successfully added", ToasterType.SUCCESS.toString());
 	}
 }

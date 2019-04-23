@@ -3,8 +3,6 @@ package isamrs.tim1.service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,9 +24,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-
-	@Autowired
-	private AuthenticationManager authenticationManager;
 
 	public boolean saveUser(User ru) {
 		try {
@@ -66,7 +61,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 	public void changePassword(String newPassword) {
 		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
 		String username = currentUser.getName();
-		
+
 		User user = (User) loadUserByUsername(username);
 		user.setPassword(passwordEncoder.encode(newPassword));
 		user.setPasswordChanged(true);

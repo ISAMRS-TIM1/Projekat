@@ -10,6 +10,8 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import isamrs.tim1.dto.ServiceDTO;
+
 @Entity
 @Table(name = "RentACars")
 public class RentACar extends Service implements Serializable {
@@ -25,7 +27,7 @@ public class RentACar extends Service implements Serializable {
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<VehicleReservation> normalReservations;
-	
+
 	@OneToMany(mappedBy = "rentACar", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<RentACarAdmin> admins;
 
@@ -57,6 +59,15 @@ public class RentACar extends Service implements Serializable {
 
 	}
 
+	public RentACar(ServiceDTO rentACar) {
+		super(rentACar);
+		branchOffices = new HashSet<BranchOffice>();
+		admins = new HashSet<RentACarAdmin>();
+		vehicles = new HashSet<Vehicle>();
+		quickReservations = new HashSet<QuickVehicleReservation>();
+		normalReservations = new HashSet<VehicleReservation>();
+	}
+
 	public Set<QuickVehicleReservation> getQuickReservations() {
 		return quickReservations;
 	}
@@ -73,7 +84,6 @@ public class RentACar extends Service implements Serializable {
 		this.admins = admins;
 	}
 
-	
 	public Set<VehicleReservation> getNormalReservations() {
 		return normalReservations;
 	}

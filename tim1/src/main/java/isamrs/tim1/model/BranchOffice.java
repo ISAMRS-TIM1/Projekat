@@ -38,6 +38,9 @@ public class BranchOffice implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "rentACar")
 	private RentACar rentACar;
+	
+	@Column(name = "deleted", unique = false, nullable = false)
+	private boolean deleted;
 
 	public Long getId() {
 		return id;
@@ -65,6 +68,7 @@ public class BranchOffice implements Serializable {
 
 	public BranchOffice() {
 		super();
+		this.deleted = false;
 	}
 
 	public RentACar getRentACar() {
@@ -73,6 +77,14 @@ public class BranchOffice implements Serializable {
 
 	public void setRentACar(RentACar rentACar) {
 		this.rentACar = rentACar;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 
 }

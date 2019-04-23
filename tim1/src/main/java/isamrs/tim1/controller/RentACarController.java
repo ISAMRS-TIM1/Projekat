@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim1.dto.BranchOfficeDTO;
 import isamrs.tim1.dto.DetailedServiceDTO;
+import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.RentACarDTO;
 import isamrs.tim1.dto.ServiceDTO;
+import isamrs.tim1.dto.ServiceViewDTO;
 import isamrs.tim1.model.BranchOffice;
 import isamrs.tim1.model.RentACar;
 import isamrs.tim1.model.RentACarAdmin;
@@ -29,6 +31,13 @@ public class RentACarController {
 	@Autowired
 	private RentACarService rentACarService;
 
+	
+	@PreAuthorize("hasRole('SYSADMIN')")
+	@RequestMapping(value = "/api/addRentACar", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MessageDTO> addRentACar(@RequestBody ServiceDTO rentACar) {
+		return new ResponseEntity<MessageDTO>(rentACarService.addRentACar(new RentACar(rentACar)), HttpStatus.OK);
+	}
+	
 	@PreAuthorize("hasRole('RENTADMIN')")
 	@RequestMapping(value = "/api/editRentACar", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> editRentACarProfile(@RequestBody RentACar rentACar,
@@ -51,8 +60,8 @@ public class RentACarController {
 
 	@PreAuthorize("hasRole('SYSADMIN')")
 	@RequestMapping(value = "/api/getRentACars", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ArrayList<ServiceDTO>> getRentACars() {
-		return new ResponseEntity<ArrayList<ServiceDTO>>(rentACarService.getRentACars(), HttpStatus.OK);
+	public ResponseEntity<ArrayList<ServiceViewDTO>> getRentACars() {
+		return new ResponseEntity<ArrayList<ServiceViewDTO>>(rentACarService.getRentACars(), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasRole('SYSADMIN') or hasRole('RENTADMIN')")
@@ -68,7 +77,9 @@ public class RentACarController {
 		ArrayList<BranchOfficeDTO> branchOffices = new ArrayList<BranchOfficeDTO>();
 
 		for (BranchOffice bo : admin.getRentACar().getBranchOffices()) {
-			branchOffices.add(new BranchOfficeDTO(bo));
+			if(!bo.isDeleted()) {
+				branchOffices.add(new BranchOfficeDTO(bo));				
+			}
 		}
 
 		return new ResponseEntity<ArrayList<BranchOfficeDTO>>(branchOffices, HttpStatus.OK);

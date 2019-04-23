@@ -69,9 +69,10 @@ a[data-toggle="tab"] {
 	text-align: center;
 }
 
-#airlinesTableDiv, #hotelsTableDiv, #rentACarsTableDiv {
+#airlinesTableDiv, #hotelsTableDiv, #rentACarsTableDiv, #discountsDiv {
 	width: 70%;
-	height: 30vw; margin-left : 13%;
+	height: 30vw;
+	margin-left: 13%;
 	margin-top: 5%;
 	background: #5994FF;
 	border: 0.24vw solid #B27A00;
@@ -80,60 +81,77 @@ a[data-toggle="tab"] {
 	padding: 2vw;
 }
 
-#serviceDiv {
+#serviceDiv, #addServiceDiv {
 	margin: 0;
 	background: #5994FF;
 	border: 0.24vw solid #B27A00;
-  	border-radius: 4vw 1.6vw;
+	border-radius: 4vw 1.6vw;
 }
 
 #mapDiv {
-	width: 21vw; 
+	width: 21vw;
 	height: 21vh;
 }
 
-#serviceName{
+#serviceName {
 	background-color: #5994FF;
 }
 
-#serviceDescription{
+#serviceDescription {
 	background-color: #5994FF;
 }
 
-#serviceTable td{
+#serviceTable td, #addServiceTable td {
 	padding: 30px;
 	text-align: center;
 }
 
-#serviceTable table{
-	margin:auto;
+#serviceTable table, #addServiceTable table {
+	margin: auto;
 }
 
-.textInput{
+.textInput {
 	border: none;
 	resize: none;
 }
-.textInput:focus{
+
+.textInput:focus {
 	border: 1px solid black;
 	resize: none;
 }
 
-.modal-content{
-    max-height: calc(100vh - 200px);
-    overflow-y: auto;
+.modal-content {
+	max-height: calc(100vh - 200px);
+	overflow-y: auto;
 }
 
+#serviceName, #newServiceName {
+	font-size: 1.6vw;
+}
 
+/* Discounts tab */
+#editDiscountInfoTable {
+	width: 100%;
+}
+
+#kmsNeededForPoint, #discountPercentagePerPoint {
+	font-size: 1.6vw;
+	margin-left: 3vw;
+}
+
+label[for=kmsNeededForPoint], label[for=discountPercentagePerPoint] {
+	font-size: 1.6vw;
+	margin-left: 10vw;
+}
 
 /*
 * New admin registration
 */
-
 #formDiv {
 	margin: 0;
 	background: #5994FF;
 	border: 0.24vw solid #B27A00;
-  	border-radius: 4vw 1.6vw;
+	border-radius: 4vw 1.6vw;
 }
 
 #registrationForm {
@@ -162,5 +180,36 @@ a[data-toggle="tab"] {
 	margin-right: 25%;
 	background: #0D63FF;
 	color: white;
-  	border: 0.16vw solid #B27A00;
+	border: 0.16vw solid #B27A00;
+	border-radius: 2vw 2vw 2vw 2vw;
+}
+
+/* New service registration */
+.addServiceButton {
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 2vh;
+	display: block;
+	background: #5994FF;
+	color: white;
+	font-size: 1.6vw;
+	border: 0.16vw solid #B27A00;
+	border-radius: 2vw 2vw 2vw 2vw;
+}
+
+#newServiceName {
+	background-color: #77a7ff;
+}
+
+#newServiceDescription {
+	background-color: #77a7ff;
+}
+
+#addServiceTable {
+	width: 100%
+}
+
+#newServiceMapDiv {
+	width: 25vw;
+	height: 21.5vh;
 }

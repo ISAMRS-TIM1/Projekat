@@ -11,6 +11,7 @@ const logoutURL = "../logout";
 const loadBranchOfficesURL = "/api/getBranchOffices";
 const addBranchOfficeURL = "/api/addBranchOffice";
 const editBranchOfficeURL = "/api/editBranchOffice/";
+const deleteBranchOfficeURL = "/api/deleteBranchOffice/";
 const editUserInfoURL = "../api/editUser";
 
 $(document).ready(function() {
@@ -83,6 +84,11 @@ $(document).ready(function() {
 		e.preventDefault();
 		let newName = $("#editBranchOfficeForm input[name='name']").val();
 		editBranchOffice(oldName, newName, 14, 14/* latitude, longitude*/);
+	});
+	
+	$(document).on('click', '#deleteBranch', function(e) {
+		e.preventDefault();
+		deleteBranchOffice(oldName);
 	});
 });
 
@@ -189,7 +195,7 @@ function addBranchOffice() {
 		data: branchOfficeFormToJSON(name, 14, 14/*latitude, longitude*/),
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
-			toastr[data.header](data.message);
+			toastr[data.toastType](data.message);
 			loadBranchOffices();
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
@@ -208,7 +214,24 @@ function editBranchOffice(oldName, name, latitude, longitude) {
 		data: branchOfficeFormToJSON(name, latitude, longitude),
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
-			toastr[data.header](data.message);
+			toastr[data.toastType](data.message);
+			loadBranchOffices();
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
+function deleteBranchOffice(name) {
+	let token = getJwtToken("jwtToken");
+	$.ajax({
+		type : 'DELETE',
+		url : deleteBranchOfficeURL + name,
+		contentType: "application/json",
+		headers: createAuthorizationTokenHeader(TOKEN_KEY),
+		success: function(data){
+			toastr[data.toastType](data.message);
 			loadBranchOffices();
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {

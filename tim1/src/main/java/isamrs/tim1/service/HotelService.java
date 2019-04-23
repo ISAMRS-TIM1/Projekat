@@ -7,29 +7,30 @@ import org.springframework.stereotype.Service;
 
 import isamrs.tim1.dto.DetailedServiceDTO;
 import isamrs.tim1.dto.HotelDTO;
-import isamrs.tim1.dto.ServiceDTO;
+import isamrs.tim1.dto.MessageDTO;
+import isamrs.tim1.dto.ServiceViewDTO;
+import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.model.Hotel;
 import isamrs.tim1.model.HotelAdmin;
 import isamrs.tim1.model.Location;
 import isamrs.tim1.repository.HotelRepository;
+import isamrs.tim1.repository.ServiceRepository;
 
 @Service
 public class HotelService {
 
 	@Autowired
 	private HotelRepository hotelRepository;
+	
+	@Autowired
+	private ServiceRepository serviceRepository;
 
-	public String addHotel(Hotel hotel) {
-		if (hotelRepository.findOneByName(hotel.getName()) != null)
-			return "Hotel with the same name already exists.";
-
-		// HotelAdmin admin = new HotelAdmin(); // current user
-		// admin.setHotel(hotel);
-		// hotel.getAdmins().add(admin);
-
+	public MessageDTO addHotel(Hotel hotel) {
+		if (serviceRepository.findOneByName(hotel.getName()) != null)
+			return new MessageDTO("Service with the same name already exists.", ToasterType.ERROR.toString());
 		hotel.setId(null); // to ensure INSERT command
 		hotelRepository.save(hotel);
-		return null;
+		return new MessageDTO("Hotel successfully added", ToasterType.SUCCESS.toString());
 	}
 
 	public String editHotel(Hotel hotel, String oldName) {
@@ -39,8 +40,8 @@ public class HotelService {
 		}
 
 		String newName = hotel.getName();
-		if (hotelRepository.findOneByName(newName) != null)
-			return "Name is already in use by some other hotel.";
+		if (serviceRepository.findOneByName(newName) != null)
+			return "Name is already in use by some other service.";
 		if (newName != null) {
 			hotelToEdit.setName(newName);
 		}
@@ -69,10 +70,10 @@ public class HotelService {
 		return new HotelDTO(admin.getHotel());
 	}
 
-	public ArrayList<ServiceDTO> getHotels() {
-		ArrayList<ServiceDTO> retval = new ArrayList<ServiceDTO>();
+	public ArrayList<ServiceViewDTO> getHotels() {
+		ArrayList<ServiceViewDTO> retval = new ArrayList<ServiceViewDTO>();
 		for (Hotel h : hotelRepository.findAll())
-			retval.add(new ServiceDTO(h));
+			retval.add(new ServiceViewDTO(h));
 		return retval;
 	}
 
