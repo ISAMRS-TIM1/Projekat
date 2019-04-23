@@ -63,7 +63,7 @@ public class ProjekatApplication implements CommandLineRunner {
 			sysadmin.setVerified(true);
 			List<Authority> authorities = new ArrayList<Authority>();
 			Authority a = new Authority();
-			a.setType(UserType.ROLE_REGISTEREDUSER);
+			a.setType(UserType.ROLE_SYSADMIN);
 			authorities.add(a);
 			sysadmin.setAuthorities(authorities);
 			userRepository.save(sysadmin);

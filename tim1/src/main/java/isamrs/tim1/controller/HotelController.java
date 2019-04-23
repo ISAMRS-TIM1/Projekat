@@ -29,7 +29,7 @@ public class HotelController {
 	@Autowired
 	private HotelService hotelService;
 
-	//@PreAuthorize("hasRole('SYSADMIN')")
+	@PreAuthorize("hasRole('SYSADMIN')")
 	@RequestMapping(value = "/api/addHotel", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MessageDTO> addHotel(@RequestBody ServiceDTO hotel) {
 		return new ResponseEntity<MessageDTO>(hotelService.addHotel(new Hotel(hotel)), HttpStatus.OK);
@@ -53,7 +53,7 @@ public class HotelController {
 				HttpStatus.OK);
 	}
 	
-	//@PreAuthorize("hasRole('SYSADMIN')")
+	@PreAuthorize("hasRole('SYSADMIN')")
 	@RequestMapping(value = "/api/getHotels", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArrayList<ServiceViewDTO>> getHotels() {
 		return new ResponseEntity<ArrayList<ServiceViewDTO>>(
@@ -62,7 +62,7 @@ public class HotelController {
 	}
 	
 
-	//@PreAuthorize("hasRole('SYSADMIN')")
+	@PreAuthorize("hasRole('SYSADMIN')")
 	@RequestMapping(value = "/api/getHotel", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DetailedServiceDTO> getHotel(@RequestParam String name) {
 		return new ResponseEntity<DetailedServiceDTO>(

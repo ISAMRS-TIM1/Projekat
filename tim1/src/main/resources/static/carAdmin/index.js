@@ -195,7 +195,7 @@ function addBranchOffice() {
 		data: branchOfficeFormToJSON(name, 14, 14/*latitude, longitude*/),
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
-			toastr[data.header](data.message);
+			toastr[data.toastType](data.message);
 			loadBranchOffices();
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
@@ -214,7 +214,7 @@ function editBranchOffice(oldName, name, latitude, longitude) {
 		data: branchOfficeFormToJSON(name, latitude, longitude),
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
-			toastr[data.header](data.message);
+			toastr[data.toastType](data.message);
 			loadBranchOffices();
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
@@ -231,7 +231,7 @@ function deleteBranchOffice(name) {
 		contentType: "application/json",
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
-			toastr[data.header](data.message);
+			toastr[data.toastType](data.message);
 			loadBranchOffices();
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {

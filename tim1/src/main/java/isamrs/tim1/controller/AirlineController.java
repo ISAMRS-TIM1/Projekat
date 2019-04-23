@@ -30,7 +30,7 @@ public class AirlineController {
 	@Autowired
 	private AirlineService airlineService;
 
-	//@PreAuthorize("hasRole('SYSADMIN')")
+	@PreAuthorize("hasRole('SYSADMIN')")
 	@RequestMapping(value = "/api/addAirline", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MessageDTO> addAirline(@RequestBody ServiceDTO airline) {
 		return new ResponseEntity<MessageDTO>(airlineService.addAirline(new Airline(airline)), HttpStatus.OK);
@@ -51,13 +51,13 @@ public class AirlineController {
 				HttpStatus.OK);
 	}
 
-	// @PreAuthorize("hasRole('SYSADMIN')")
+	@PreAuthorize("hasRole('SYSADMIN')")
 	@RequestMapping(value = "/api/getAirlines", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArrayList<ServiceViewDTO>> getAirlines() {
 		return new ResponseEntity<ArrayList<ServiceViewDTO>>(airlineService.getAirlines(), HttpStatus.OK);
 	}
 
-	// @PreAuthorize("hasRole('SYSADMIN')")
+	@PreAuthorize("hasRole('SYSADMIN')")
 	@RequestMapping(value = "/api/getAirline", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DetailedServiceDTO> getAirline(@RequestParam String name) {
 		return new ResponseEntity<DetailedServiceDTO>(airlineService.getAirline(name), HttpStatus.OK);

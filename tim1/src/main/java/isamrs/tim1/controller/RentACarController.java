@@ -22,7 +22,6 @@ import isamrs.tim1.dto.RentACarDTO;
 import isamrs.tim1.dto.ServiceDTO;
 import isamrs.tim1.dto.ServiceViewDTO;
 import isamrs.tim1.model.BranchOffice;
-import isamrs.tim1.model.Hotel;
 import isamrs.tim1.model.RentACar;
 import isamrs.tim1.model.RentACarAdmin;
 import isamrs.tim1.service.RentACarService;
@@ -33,7 +32,7 @@ public class RentACarController {
 	private RentACarService rentACarService;
 
 	
-	//@PreAuthorize("hasRole('SYSADMIN')")
+	@PreAuthorize("hasRole('SYSADMIN')")
 	@RequestMapping(value = "/api/addRentACar", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MessageDTO> addRentACar(@RequestBody ServiceDTO rentACar) {
 		return new ResponseEntity<MessageDTO>(rentACarService.addRentACar(new RentACar(rentACar)), HttpStatus.OK);
