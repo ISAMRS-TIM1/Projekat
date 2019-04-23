@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 
 import isamrs.tim1.dto.AirlineDTO;
 import isamrs.tim1.dto.DetailedServiceDTO;
-import isamrs.tim1.dto.ServiceViewDTO;
-import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.dto.MessageDTO;
+import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.dto.PlaneSeatsDTO;
+import isamrs.tim1.dto.ServiceViewDTO;
 import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.AirlineAdmin;
 import isamrs.tim1.model.Location;
@@ -136,7 +136,7 @@ public class AirlineService {
 		for (Seat s : seatForDelete) {
 			seatRepository.delete(s);
 		}
-		return new MessageDTO("Seats saved successfully", "");
+		return new MessageDTO("Seats saved successfully", ToasterType.SUCCESS.toString());
 	}
 
 	public PlaneSeatsDTO getPlaneSeats() {

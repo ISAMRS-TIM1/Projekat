@@ -234,9 +234,9 @@ div.seatCharts-container {
 }
 div.seatCharts-legend {
 	padding-left: 0px;
-	position: relative;
-	margin-top : 0 px;
-	left: 0 px;;
+	position: absolute;
+	bottom:100px;
+	left: 225px;
 	width: 200px;
 	color: white;
 }

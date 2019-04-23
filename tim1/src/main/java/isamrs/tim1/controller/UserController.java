@@ -1,5 +1,6 @@
 package isamrs.tim1.controller;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,7 +30,7 @@ public class UserController {
 	public ResponseEntity<UserDTO> getUserData() {
 		User u = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		return new ResponseEntity<UserDTO>(
-				new UserDTO(u.getFirstName(), u.getLastName(), u.getPhoneNumber(), u.getAddress(), u.getEmail()),
+				new UserDTO(u),
 				HttpStatus.OK);
 	}
 }

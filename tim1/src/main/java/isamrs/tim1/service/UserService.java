@@ -1,8 +1,13 @@
 package isamrs.tim1.service;
 
+import java.util.ArrayList;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import isamrs.tim1.dto.UserDTO;
+import isamrs.tim1.model.RegisteredUser;
 import isamrs.tim1.model.User;
 import isamrs.tim1.repository.UserRepository;
 

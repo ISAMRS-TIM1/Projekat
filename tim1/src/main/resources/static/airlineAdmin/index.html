@@ -123,7 +123,9 @@
 								<th>Flight distance</th>
 								<th>Number of connections</th>
 								<th>Locations of connections</th>
-								<th>Ticket price</th>
+								<th>First class price</th>
+								<th>Business class price</th>
+								<th>Economy class price</th>
 								<th>Price per bag</th>
 							</tr>
 						</thead>
@@ -139,7 +141,6 @@
 				<div id="planeSeatsTable">
 					<div id="seat-map">
 						<div class="front-indicator">Front</div>
-						<div id="legend"></div>
 					</div>
 					<div class="booking-details">
 						<h2>Configure seats</h2>
@@ -169,21 +170,14 @@
 							<button class="btn btn-default configure-button"
 								id="deleteButton" onclick="deleteSeats(event, 3)">Delete</button>
 						</div>
-						<div id="price">
-							<h3>First class seat price</h3>
-							<input type="number" id="firstPrice">
-							<h3>Business class seat price</h3>
-							<input type="number" id="businessPrice">
-							<h3>Economy class seat price</h3>
-							<input type="number" id="economyPrice">
-							<div id="seatDiv">
-								<button class="btn btn-default configure-button" id="addButton"
-									onclick="addSeatsIndividually(event)">Add seat</button>
-								<button class="btn btn-default configure-button"
-									id="deleteButton" onclick="deleteSeatsIndividually(event)">Delete
-									seat</button>
-							</div>
+						<div id="seatDiv">
+							<button class="btn btn-default configure-button" id="addButton"
+								onclick="addSeatsIndividually(event)">Add seat</button>
+							<button class="btn btn-default configure-button"
+								id="deleteButton" onclick="deleteSeatsIndividually(event)">Delete
+								seat</button>
 						</div>
+						<div id="legend"></div>
 						<button id="saveSeatButton"
 							class="btn btn-default configure-button"
 							onclick="saveSeatsChanges(event)">Save changes</button>
@@ -312,10 +306,10 @@
 						<input type="number" id="flightDistance"/>
 					</td>
 					<td>
-						Ticket price
+						Price per bag
 					</td>
 					<td>
-						<input type="number" id="ticketPrice"/>
+						<input type="number" id="pricePerBag"/>
 					</td>
 				</tr>
 				<tr>
@@ -326,10 +320,24 @@
 						<select multiple id="connections"></select>
 					</td>
 					<td>
-						Price per bag
+						First class seat price
 					</td>
 					<td>
-						<input type="number" id="pricePerBag"/>
+						<input type="number" id="firstPrice"/>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Business class seat price
+					</td>
+					<td>
+						<input type="number" id="businessPrice"/>
+					</td>
+					<td>
+						Economy class seat price
+					</td>
+					<td>
+						<input type="number" id="economyPrice"/>
 					</td>
 				</tr>
 				<tr><td colspan="4"></td></tr>

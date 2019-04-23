@@ -11,7 +11,9 @@ public class FlightDTO implements Serializable {
 	private String landingTime;
 	private Integer flightDistance;
 	private String[] connections;
-	private Double ticketPrice;
+	private Double firstClassPrice;
+	private Double businessClassPrice;
+	private Double economyClassPrice;
 	private Double pricePerBag;
 	private String airlineName;
 	private String startDestination;
@@ -26,7 +28,9 @@ public class FlightDTO implements Serializable {
 		this.endDestination = f.getEndDestination().getName();
 		this.airlineName = f.getAirline().getName();
 		this.pricePerBag = f.getPricePerBag();
-		this.ticketPrice = f.getTicketPrice();
+		this.firstClassPrice = f.getFirstClassPrice();
+		this.businessClassPrice = f.getBusinessClassPrice();
+		this.economyClassPrice = f.getEconomyClassPrice();
 		this.flightDistance = f.getFlightLength();
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 		this.landingTime = sdf.format(f.getLandingTime());
@@ -74,16 +78,29 @@ public class FlightDTO implements Serializable {
 		this.connections = connections;
 	}
 
-
-	public Double getTicketPrice() {
-		return ticketPrice;
+	public Double getFirstClassPrice() {
+		return firstClassPrice;
 	}
 
-
-	public void setTicketPrice(Double ticketPrice) {
-		this.ticketPrice = ticketPrice;
+	public void setFirstClassPrice(Double firstClassPrice) {
+		this.firstClassPrice = firstClassPrice;
 	}
 
+	public Double getBusinessClassPrice() {
+		return businessClassPrice;
+	}
+
+	public void setBusinessClassPrice(Double businessClassPrice) {
+		this.businessClassPrice = businessClassPrice;
+	}
+
+	public Double getEconomyClassPrice() {
+		return economyClassPrice;
+	}
+
+	public void setEconomyClassPrice(Double economyClassPrice) {
+		this.economyClassPrice = economyClassPrice;
+	}
 
 	public Double getPricePerBag() {
 		return pricePerBag;
