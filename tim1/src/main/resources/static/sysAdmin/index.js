@@ -148,6 +148,7 @@ function loadDiscountInfo(){
 	$.ajax({
 		type : 'GET',
 		url : getDiscountInfoURL,
+		headers: createAuthorizationTokenHeader(tokenKey),
 		contentType : 'application/json',
 		dataType : "json",
 		headers : createAuthorizationTokenHeader(tokenKey),
@@ -168,6 +169,7 @@ function loadProfile() {
 		type : 'GET',
 		url : loadUserInfoURL,
 		contentType : 'application/json',
+		headers: createAuthorizationTokenHeader(tokenKey),
 		dataType : "json",
 		headers : createAuthorizationTokenHeader(tokenKey),
 		success : function(data) {
@@ -200,12 +202,13 @@ function setUpEditForm() {
 					type : 'PUT',
 					url : saveChangesURL,
 					contentType : 'application/json',
+					headers: createAuthorizationTokenHeader(tokenKey),
 					dataType : "json",
 					data : userEditFormToJSON(firstName, lastName, phone,
 							address, email),
 					success : function(data) {
 						if (data != "") {
-							toastr["error"](data);
+							toastr[data.toastType](data.message);
 						}
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown) {
@@ -241,6 +244,7 @@ function setUpAddServiceForm() {
 					type : 'POST',
 					url : url,
 					contentType : 'application/json',
+					headers: createAuthorizationTokenHeader(tokenKey),
 					dataType : 'json',
 					data : JSON.stringify({"name":name, "description":description, "latitude":lat, "longitude":long}),
 					success : function(data) {
@@ -273,6 +277,7 @@ function setUpRegistrationForm(){
 					type : 'POST',
 					url : registerAdminURL + $('#serviceName').val(),
 					contentType : 'application/json',
+					headers: createAuthorizationTokenHeader(tokenKey),
 					dataType : "json",
 					data : registerAdminFormToJSON(email, password, firstName,
 							lastName, phone, address),
@@ -306,6 +311,7 @@ function setUpEditDiscountInfoForm(){
 				let kmsNeededForPoint = $('#kmsNeededForPoint').val();
 				$.ajax({
 					type : 'PUT',
+					headers: createAuthorizationTokenHeader(tokenKey),
 					url : editDiscountInfoURL,
 					contentType : 'application/json',
 					dataType : 'json',

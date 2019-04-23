@@ -46,9 +46,15 @@ public class Airline extends Service implements Serializable {
 		destinations = new HashSet<Destination>();
 		quickReservations = new HashSet<QuickFlightReservation>();
 		planeSegments = new HashSet<PlaneSegment>();
-		planeSegments.add(new PlaneSegment(PlaneSegmentClass.FIRST));
-		planeSegments.add(new PlaneSegment(PlaneSegmentClass.BUSINESS));
-		planeSegments.add(new PlaneSegment(PlaneSegmentClass.ECONOMY));
+		PlaneSegment f = new PlaneSegment(PlaneSegmentClass.FIRST);
+		PlaneSegment b = new PlaneSegment(PlaneSegmentClass.BUSINESS);
+		PlaneSegment e = new PlaneSegment(PlaneSegmentClass.ECONOMY);
+		f.setAirline(this);
+		b.setAirline(this);
+		e.setAirline(this);
+		planeSegments.add(f);
+		planeSegments.add(b);
+		planeSegments.add(e);
 		normalReservations = new HashSet<FlightReservation>();
 	}
 
@@ -59,9 +65,15 @@ public class Airline extends Service implements Serializable {
 		destinations = new HashSet<Destination>();
 		quickReservations = new HashSet<QuickFlightReservation>();
 		planeSegments = new HashSet<PlaneSegment>();
-		planeSegments.add(new PlaneSegment(PlaneSegmentClass.FIRST));
-		planeSegments.add(new PlaneSegment(PlaneSegmentClass.BUSINESS));
-		planeSegments.add(new PlaneSegment(PlaneSegmentClass.ECONOMY));
+		PlaneSegment f = new PlaneSegment(PlaneSegmentClass.FIRST);
+		PlaneSegment b = new PlaneSegment(PlaneSegmentClass.BUSINESS);
+		PlaneSegment e = new PlaneSegment(PlaneSegmentClass.ECONOMY);
+		f.setAirline(this);
+		b.setAirline(this);
+		e.setAirline(this);
+		planeSegments.add(f);
+		planeSegments.add(b);
+		planeSegments.add(e);
 		normalReservations = new HashSet<FlightReservation>();
 	}
 

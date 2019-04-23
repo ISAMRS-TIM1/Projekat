@@ -6,7 +6,9 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.UserDTO;
+import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.model.RegisteredUser;
 import isamrs.tim1.model.User;
 import isamrs.tim1.repository.UserRepository;
@@ -21,10 +23,10 @@ public class UserService {
 		return userRepository.findByToken(token);
 	}
 
-	public String editProfile(User user) throws Exception {
+	public MessageDTO editProfile(User user) throws Exception {
 		User userToEdit = userRepository.findOneByEmail(user.getEmail());
 		if (userToEdit == null) {
-			return "User with given email address does not exist.";
+			return new MessageDTO("User with given email address does not exist.", ToasterType.ERROR.toString());
 		}
 
 		String firstName = user.getFirstName();
@@ -51,10 +53,10 @@ public class UserService {
 			userRepository.save(userToEdit);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
-			return "Database error.";
+			return new MessageDTO("Database error.", ToasterType.ERROR.toString());
 		}
 
-		return null;
+		return new MessageDTO("Profile changes saved successfully", ToasterType.SUCCESS.toString());
 	}
 
 }
