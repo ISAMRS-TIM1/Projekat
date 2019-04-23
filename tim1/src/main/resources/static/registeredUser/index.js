@@ -11,7 +11,7 @@ var userMail = "";
 
 $(document).ready(function(){
 	loadData();
-	
+	setUpToastr();
 	var socket = new SockJS('/friendsEndpoint');
 	var stompClient = Stomp.over(socket);
 	stompClient.connect({}, function(frame) {
@@ -113,23 +113,6 @@ $(document).ready(function(){
 			data : formToJSON(firstName, lastName, phone, address, email),
 			success: function(data){
 				if(data != ""){
-					toastr.options = {
-							  "closeButton": true,
-							  "debug": false,
-							  "newestOnTop": false,
-							  "progressBar": false,
-							  "positionClass": "toast-top-center",
-							  "preventDuplicates": false,
-							  "onclick": null,
-							  "showDuration": "300",
-							  "hideDuration": "1000",
-							  "timeOut": "3000",
-							  "extendedTimeOut": "1000",
-							  "showEasing": "swing",
-							  "hideEasing": "linear",
-							  "showMethod": "fadeIn",
-							  "hideMethod": "fadeOut"
-							}
 					toastr["error"](data);
 				}
 			},
@@ -150,6 +133,26 @@ $(document).ready(function(){
 	getPlaneSeats();
 });
 
+function setUpToastr() {
+	toastr.options = {
+			  "closeButton": true,
+			  "debug": false,
+			  "newestOnTop": false,
+			  "progressBar": false,
+			  "positionClass": "toast-top-center",
+			  "preventDuplicates": false,
+			  "onclick": null,
+			  "showDuration": "300",
+			  "hideDuration": "1000",
+			  "timeOut": "3000",
+			  "extendedTimeOut": "1000",
+			  "showEasing": "swing",
+			  "hideEasing": "linear",
+			  "showMethod": "fadeIn",
+			  "hideMethod": "fadeOut"
+			}
+}
+
 function friendInvitation(e, idx) {
 	e.preventDefault();
 	let invitedUser = $("#hiddenEmail").val();
@@ -161,29 +164,15 @@ function friendInvitation(e, idx) {
 		data : {"invitedUser" : invitedUser},
 		success: function(data){
 			if(data.header == "success") {
-				toastr.options = {
-						  "closeButton": true,
-						  "debug": false,
-						  "newestOnTop": false,
-						  "progressBar": false,
-						  "positionClass": "toast-top-center",
-						  "preventDuplicates": false,
-						  "onclick": null,
-						  "showDuration": "300",
-						  "hideDuration": "1000",
-						  "timeOut": "3000",
-						  "extendedTimeOut": "1000",
-						  "showEasing": "swing",
-						  "hideEasing": "linear",
-						  "showMethod": "fadeIn",
-						  "hideMethod": "fadeOut"
-						}
-				toastr["success"](data.message);
+				toastr[data.header](data.message);
 				$("#status" + idx).html("<b>Invitation sent</b>");
 				var table = $('#friendsTable').DataTable();
 				var userTable = $('#usersTable').DataTable();
 				var row = userTable.row(idx).data();
 				table.row.add([ row[0], row[1], row[2], "<b>Invitation sent</b>"]).draw(false);
+			}
+			else {
+				toastr[data.header](data.message);
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {

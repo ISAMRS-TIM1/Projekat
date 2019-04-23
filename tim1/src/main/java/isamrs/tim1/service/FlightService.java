@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import isamrs.tim1.dto.FlightDTO;
 import isamrs.tim1.dto.MessageDTO;
+import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.Flight;
 import isamrs.tim1.repository.DestinationRepository;
@@ -34,7 +35,7 @@ public class FlightService {
 	public ResponseEntity<MessageDTO> addFlight(FlightDTO flightDTO) {
 		Airline a = (Airline) serviceRepository.findOneByName(flightDTO.getAirlineName());
 		if (a == null)
-			return new ResponseEntity<MessageDTO>(new MessageDTO("Airline does not exist.", ""), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<MessageDTO>(new MessageDTO("Airline does not exist.", ToasterType.ERROR.toString()), HttpStatus.BAD_REQUEST);
 		Flight flight = new Flight();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
 		try {
@@ -58,7 +59,7 @@ public class FlightService {
 		flight.setAirline(a);
 		a.getFlights().add(flight);
 		flightRepository.save(flight);
-		return new ResponseEntity<MessageDTO>(new MessageDTO("success", ""), HttpStatus.OK);
+		return new ResponseEntity<MessageDTO>(new MessageDTO("Flight added successfully.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
 	}
 
 }
