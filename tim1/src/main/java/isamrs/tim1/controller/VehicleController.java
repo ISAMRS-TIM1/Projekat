@@ -88,7 +88,7 @@ public class VehicleController {
 		v.setAvailable(quantity);
 		v.setAverageGrade(0.0);
 		v.setFuelType(vehicle.getFuelType());
-		v.setModel(v.getModel());
+		v.setModel(vehicle.getModel());
 		v.setNormalReservations(new HashSet<VehicleReservation>());
 		v.setNumberOfSeats(vehicle.getNumberOfSeats());
 		v.setPricePerDay(vehicle.getPricePerDay());

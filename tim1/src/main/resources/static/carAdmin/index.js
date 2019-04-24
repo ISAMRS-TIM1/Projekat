@@ -92,7 +92,7 @@ $(document).ready(function() {
 	$(document).on('click', '#editBranch', function(e) {
 		e.preventDefault();
 		let newName = $("#editBranchOfficeForm input[name='name']").val();
-		editBranchOffice(oldName, newName, 14, 14/* latitude, longitude*/);
+		editBranchOffice(oldName, newName, 14, 14/* latitude, longitude */);
 	});
 	
 	$(document).on('click', '#deleteBranch', function(e) {
@@ -103,6 +103,11 @@ $(document).ready(function() {
 	$(document).on('click', '#addVehicle', function(e) {
 		loadVehicleTypes();
 		loadFuelTypes();
+	});
+	
+	$(document).on('click', '#saveVehicle', function(e) {
+		e.preventDefault();
+		addVehicle();
 	});
 });
 
@@ -254,7 +259,7 @@ function addBranchOffice() {
 		url : addBranchOfficeURL,
 		contentType: "application/json",
 		dataType : "json",
-		data: branchOfficeFormToJSON(name, 14, 14/*latitude, longitude*/),
+		data: branchOfficeFormToJSON(name, 14, 14/* latitude, longitude */),
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
 			toastr[data.toastType](data.message);
@@ -332,6 +337,34 @@ function loadVehicles() {
 	});
 }
 
+function addVehicle() {
+	let token = getJwtToken("jwtToken");
+	let producer = $('input[name="producer"]').val();
+	let model = $('input[name="model"]').val();
+	let year = $('input[name="year"]').val();
+	let seats = $('input[name="seats"]').val();
+	let price = $('input[name="price"]').val();
+	let vehicleType = $('#vehicleType').val();
+	let fuelType = $('#fuelType').val();
+	let quantity = $('input[name="quantity"]').val();
+	
+	$.ajax({
+		type : 'POST',
+		url : addVehicleURL + quantity,
+		contentType: "application/json",
+		dataType : "json",
+		data: vehicleFormToJSON(producer, model, year, seats,fuelType, vehicleType, price),
+		headers: createAuthorizationTokenHeader(TOKEN_KEY),
+		success: function(data){
+			toastr[data.toastType](data.message);
+			loadVehicles();
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
 function userFormToJSON(firstName, lastName, phone, address, email){
 	return JSON.stringify({
 		"firstName": firstName,
@@ -349,6 +382,18 @@ function branchOfficeFormToJSON(name, latitude, longitude){
 			"latitude": latitude,
 			"longitude": longitude
 		}
+	});
+}
+
+function vehicleFormToJSON(producer, model, yearOfProduction, numberOfSeats, fuelType, vehicleType, pricePerDay) {
+	return JSON.stringify({
+		"producer": producer,
+		"model": model,
+		"yearOfProduction": yearOfProduction,
+		"numberOfSeats": numberOfSeats,
+		"fuelType": fuelType,
+		"vehicleType": vehicleType,
+		"pricePerDay": pricePerDay
 	});
 }
 

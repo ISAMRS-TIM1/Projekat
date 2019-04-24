@@ -2,6 +2,8 @@ package isamrs.tim1.dto;
 
 import java.io.Serializable;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -29,20 +31,18 @@ public class VehicleDTO implements Serializable {
 	@NotNull
 	private String yearOfProduction;
 
-	@NotBlank
 	@NotNull
 	@Min(1)
 	private Integer numberOfSeats;
 
-	@NotBlank
 	@NotNull
+	@Enumerated(EnumType.STRING)
 	private FuelType fuelType;
 
-	@NotBlank
 	@NotNull
+	@Enumerated(EnumType.STRING)
 	private VehicleType vehicleType;
 
-	@NotBlank
 	@NotNull
 	@Min(1)
 	private Integer pricePerDay;
