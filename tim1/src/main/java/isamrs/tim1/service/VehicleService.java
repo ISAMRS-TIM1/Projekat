@@ -69,4 +69,8 @@ public class VehicleService {
 
 		return toBeReturned;
 	}
+
+	public boolean alreadyExists(String model, String producer) {
+		return vehicleRepository.findOneByModelAndProducer(model, producer) != null;
+	}
 }

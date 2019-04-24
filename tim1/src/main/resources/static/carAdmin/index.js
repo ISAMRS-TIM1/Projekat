@@ -13,12 +13,17 @@ const addBranchOfficeURL = "/api/addBranchOffice";
 const editBranchOfficeURL = "/api/editBranchOffice/";
 const deleteBranchOfficeURL = "/api/deleteBranchOffice/";
 const editUserInfoURL = "../api/editUser";
+const loadVehiclesURL = "/api/getVehicles";
+const addVehicleURL = "/api/addVehicle/";
+const loadVehicleTypesURL = "/api/getVehicleTypes";
+const loadFuelTypesURL = "/api/getFuelTypes";
+
 
 $(document).ready(function() {
 	setUpToastr();
 	loadBasicData();
 	loadProfileData();
-	setUpTable();
+	setUpTables();
 	setUpMap(45.267136, 19.833549, 'basicMapDiv');
 	setUpMap(45.267136, 19.833549, 'branchMapDiv');
 	
@@ -32,6 +37,10 @@ $(document).ready(function() {
 	
 	$('a[href="#branch"]').click(function(){
 		loadBranchOffices();
+	});
+	
+	$('a[href="#vehicle"]').click(function(){
+		loadVehicles();
 	});
 	
 	$('#userEditForm').on('submit', function(e){
@@ -83,17 +92,35 @@ $(document).ready(function() {
 	$(document).on('click', '#editBranch', function(e) {
 		e.preventDefault();
 		let newName = $("#editBranchOfficeForm input[name='name']").val();
-		editBranchOffice(oldName, newName, 14, 14/* latitude, longitude*/);
+		editBranchOffice(oldName, newName, 14, 14/* latitude, longitude */);
 	});
 	
 	$(document).on('click', '#deleteBranch', function(e) {
 		e.preventDefault();
 		deleteBranchOffice(oldName);
 	});
+	
+	$(document).on('click', '#addVehicle', function(e) {
+		loadVehicleTypes();
+		loadFuelTypes();
+	});
+	
+	$(document).on('click', '#saveVehicle', function(e) {
+		e.preventDefault();
+		addVehicle();
+	});
 });
 
-function setUpTable() {
+function setUpTables() {
 	$('#branchTable').DataTable({
+        "paging": false,
+        "info": false,
+        "scrollY": "17vw",
+        "scrollCollapse": true,
+        "retrieve": true,
+    });
+	
+	$('#vehicleTable').DataTable({
         "paging": false,
         "info": false,
         "scrollY": "17vw",
@@ -111,6 +138,46 @@ function setUpMap(latitude, longitude, div) {
 	var marker = L.marker([ latitude, longitude ], {
 		draggable : true
 	}).addTo(branchOfficeMap);
+}
+
+function loadVehicleTypes() {
+	$.ajax({
+		type : 'GET',
+		url : loadVehicleTypesURL,
+		dataType : "json",
+		headers: createAuthorizationTokenHeader(TOKEN_KEY),
+		success: function(data){
+			if(data != null){
+				let types = $('#vehicleType');
+				for(let vehicleType of data) {
+					types.append('<option value="' + vehicleType + '">' + vehicleType + '</option');
+				}
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
+function loadFuelTypes() {
+	$.ajax({
+		type : 'GET',
+		url : loadFuelTypesURL,
+		dataType : "json",
+		headers: createAuthorizationTokenHeader(TOKEN_KEY),
+		success: function(data){
+			if(data != null){
+				let types = $('#fuelType');
+				for(let fuelType of data) {
+					types.append('<option value="' + fuelType + '">' + fuelType + '</option');
+				}
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
 }
 
 function loadBasicData() {
@@ -192,7 +259,7 @@ function addBranchOffice() {
 		url : addBranchOfficeURL,
 		contentType: "application/json",
 		dataType : "json",
-		data: branchOfficeFormToJSON(name, 14, 14/*latitude, longitude*/),
+		data: branchOfficeFormToJSON(name, 14, 14/* latitude, longitude */),
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
 			toastr[data.toastType](data.message);
@@ -240,6 +307,64 @@ function deleteBranchOffice(name) {
 	});
 }
 
+function loadVehicles() {
+	let token = getJwtToken("jwtToken");
+	$.ajax({
+		type : 'GET',
+		url : loadVehiclesURL,
+		dataType : "json",
+		headers: createAuthorizationTokenHeader(TOKEN_KEY),
+		success: function(data){
+			if(data != null){
+				let table = $("#vehicleTable").DataTable();
+				table.clear();
+				for(let vehicle of data) {
+					table.row.add([
+					               vehicle.producer,
+					               vehicle.model,
+					               vehicle.yearOfProduction,
+					               vehicle.numberOfSeats,
+					               vehicle.fuelType,
+					               vehicle.vehicleType,
+					               vehicle.pricePerDay
+					               ]).draw(false);
+				}
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
+function addVehicle() {
+	let token = getJwtToken("jwtToken");
+	let producer = $('input[name="producer"]').val();
+	let model = $('input[name="model"]').val();
+	let year = $('input[name="year"]').val();
+	let seats = $('input[name="seats"]').val();
+	let price = $('input[name="price"]').val();
+	let vehicleType = $('#vehicleType').val();
+	let fuelType = $('#fuelType').val();
+	let quantity = $('input[name="quantity"]').val();
+	
+	$.ajax({
+		type : 'POST',
+		url : addVehicleURL + quantity,
+		contentType: "application/json",
+		dataType : "json",
+		data: vehicleFormToJSON(producer, model, year, seats,fuelType, vehicleType, price),
+		headers: createAuthorizationTokenHeader(TOKEN_KEY),
+		success: function(data){
+			toastr[data.toastType](data.message);
+			loadVehicles();
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
 function userFormToJSON(firstName, lastName, phone, address, email){
 	return JSON.stringify({
 		"firstName": firstName,
@@ -257,6 +382,18 @@ function branchOfficeFormToJSON(name, latitude, longitude){
 			"latitude": latitude,
 			"longitude": longitude
 		}
+	});
+}
+
+function vehicleFormToJSON(producer, model, yearOfProduction, numberOfSeats, fuelType, vehicleType, pricePerDay) {
+	return JSON.stringify({
+		"producer": producer,
+		"model": model,
+		"yearOfProduction": yearOfProduction,
+		"numberOfSeats": numberOfSeats,
+		"fuelType": fuelType,
+		"vehicleType": vehicleType,
+		"pricePerDay": pricePerDay
 	});
 }
 
