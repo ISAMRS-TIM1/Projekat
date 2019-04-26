@@ -47,6 +47,8 @@ public class VehicleDTO implements Serializable {
 	@Min(1)
 	private Integer pricePerDay;
 
+	private Double averageGrade;
+
 	public VehicleDTO(Vehicle v) {
 		this.model = v.getModel();
 		this.producer = v.getProducer();
@@ -55,6 +57,7 @@ public class VehicleDTO implements Serializable {
 		this.fuelType = v.getFuelType();
 		this.vehicleType = v.getVehicleType();
 		this.pricePerDay = v.getPricePerDay();
+		this.setAverageGrade(v.getAverageGrade());
 	}
 
 	public VehicleDTO() {
@@ -64,7 +67,7 @@ public class VehicleDTO implements Serializable {
 	public VehicleDTO(@NotBlank @NotNull String model, @NotBlank @NotNull String producer,
 			@NotBlank @NotNull String yearOfProduction, @NotBlank @NotNull Integer numberOfSeats,
 			@NotBlank @NotNull FuelType fuelType, @NotBlank @NotNull VehicleType vehicleType,
-			@NotBlank @NotNull Integer pricePerDay) {
+			@NotBlank @NotNull Integer pricePerDay, Double averageGrade) {
 		super();
 		this.model = model;
 		this.producer = producer;
@@ -73,6 +76,7 @@ public class VehicleDTO implements Serializable {
 		this.fuelType = fuelType;
 		this.vehicleType = vehicleType;
 		this.pricePerDay = pricePerDay;
+		this.averageGrade = averageGrade;
 	}
 
 	public String getModel() {
@@ -133,6 +137,14 @@ public class VehicleDTO implements Serializable {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public Double getAverageGrade() {
+		return averageGrade;
+	}
+
+	public void setAverageGrade(Double averageGrade) {
+		this.averageGrade = averageGrade;
 	}
 
 }

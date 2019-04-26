@@ -188,8 +188,9 @@ function loadBasicData() {
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
 			if(data != null){
-				$("#basicInfo h2").text(data.name);
-				$("#basicInfo h4").text(data.description);
+				$("#rentACarName").val(data.name);
+				$("#rentACarDescription").text(data.description);
+				$("#rentACarGrade").text(data.averageGrade);
 				// average grade for reports
 				// latitude and longitude for basic info map
 			}

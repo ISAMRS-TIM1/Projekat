@@ -95,6 +95,7 @@ public class BranchOfficeController {
 		bo.setName(branch.getName());
 
 		branchOfficeService.save(bo);
+		rentACarRepository.save(rentACar);
 		return new ResponseEntity<MessageDTO>(new MessageDTO("Branch office saved.", "success"), HttpStatus.OK);
 	}
 
@@ -146,6 +147,7 @@ public class BranchOfficeController {
 
 		branch.setDeleted(true);
 		branchOfficeService.save(branch);
+		rentACarRepository.save(rentACar);
 		return new ResponseEntity<MessageDTO>(new MessageDTO("Branch office deleted.", ToasterType.SUCCESS.toString()),
 				HttpStatus.OK);
 	}
