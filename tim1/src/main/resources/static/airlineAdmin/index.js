@@ -170,7 +170,7 @@ function renderFlights(data) {
 				[ val.startDestination, val.endDestination, val.departureTime,
 					val.landingTime, diff + " min", val.flightDistance,
 						val.connections.length, conn, val.firstClassPrice, val.businessClassPrice, val.economyClassPrice,
-						val.pricePerBag]).draw(false);
+						val.pricePerBag, val.averageGrade]).draw(false);
 	});
 }
 
@@ -933,7 +933,7 @@ function addFlight(e) {
 						[ startDestination, endDestination, moment(new Date(departureTime)).format("DD.MM.YYYY HH:mm"),
 							moment(new Date(landingTime)).format("DD.MM.YYYY HH:mm"), diff + " min", flightDistance,
 								connections.length, conn, firstPrice, businessPrice, economyPrice,
-								pricePerBag]).draw(false);
+								pricePerBag, 0]).draw(false);
 				toastr[data.toastType](data.message);
 			}
 		}

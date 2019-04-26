@@ -26,7 +26,10 @@ public class Flight {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "flight_id", unique = true, nullable = false)
 	private Long id;
-
+	
+	@Column(name = "averageGrade", unique = false, nullable = false)
+	private Double averageGrade;
+	
 	@Column(name = "departureTime", unique = false, nullable = false)
 	private Date departureTime;
 
@@ -181,5 +184,11 @@ public class Flight {
 		this.locationsOfConnecting = locationsOfConnecting;
 	}
 
-	
+	public Double getAverageGrade() {
+		return averageGrade;
+	}
+
+	public void setAverageGrade(Double averageGrade) {
+		this.averageGrade = averageGrade;
+	}
 }
