@@ -18,6 +18,7 @@ public class FlightDTO implements Serializable {
 	private String airlineName;
 	private String startDestination;
 	private String endDestination;
+	private Double averageGrade;
 	
 	public FlightDTO() {
 		super();
@@ -37,6 +38,7 @@ public class FlightDTO implements Serializable {
 		this.departureTime = sdf.format(f.getDepartureTime());
 		this.connections = new String[f.getLocationsOfConnecting().size()];
 		this.connections = f.getLocationsOfConnecting().toArray(this.connections);
+		this.averageGrade = f.getAverageGrade();
 	}
 
 	public String getDepartureTime() {
@@ -145,6 +147,15 @@ public class FlightDTO implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+
+	public Double getAverageGrade() {
+		return averageGrade;
+	}
+
+	public void setAverageGrade(Double averageGrade) {
+		this.averageGrade = averageGrade;
+	}
+
 
 
 	private static final long serialVersionUID = 3798933624021732767L;

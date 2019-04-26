@@ -56,6 +56,7 @@ public class FlightService {
 		flight.setPricePerBag(flightDTO.getPricePerBag());
 		flight.setNumberOfFlightConnections(flightDTO.getConnections().length);
 		flight.setLocationsOfConnecting(new ArrayList<String>(Arrays.asList(flightDTO.getConnections())));
+		flight.setAverageGrade(0.0);
 		flight.setAirline(a);
 		a.getFlights().add(flight);
 		flightRepository.save(flight);
