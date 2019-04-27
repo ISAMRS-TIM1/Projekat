@@ -3,15 +3,19 @@ package isamrs.tim1.service;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import isamrs.tim1.dto.BranchOfficeDTO;
 import isamrs.tim1.dto.DetailedServiceDTO;
 import isamrs.tim1.dto.MessageDTO;
+import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.dto.RentACarDTO;
 import isamrs.tim1.dto.ServiceViewDTO;
-import isamrs.tim1.dto.MessageDTO.ToasterType;
+import isamrs.tim1.model.BranchOffice;
 import isamrs.tim1.model.Location;
 import isamrs.tim1.model.RentACar;
+import isamrs.tim1.model.RentACarAdmin;
 import isamrs.tim1.repository.RentACarRepository;
 import isamrs.tim1.repository.ServiceRepository;
 
@@ -19,7 +23,7 @@ import isamrs.tim1.repository.ServiceRepository;
 public class RentACarService {
 	@Autowired
 	private RentACarRepository rentACarRepository;
-	
+
 	@Autowired
 	private ServiceRepository serviceRepository;
 
@@ -86,5 +90,17 @@ public class RentACarService {
 		rentACar.setId(null); // to ensure INSERT command
 		rentACarRepository.save(rentACar);
 		return new MessageDTO("Rent a car service successfully added", ToasterType.SUCCESS.toString());
+	}
+
+	public ArrayList<BranchOfficeDTO> getBranchOffices() {
+		RentACarAdmin admin = (RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		ArrayList<BranchOfficeDTO> branchOffices = new ArrayList<>();
+
+		for (BranchOffice bo : admin.getRentACar().getBranchOffices()) {
+			branchOffices.add(new BranchOfficeDTO(bo));
+		}
+
+		return branchOffices;
 	}
 }

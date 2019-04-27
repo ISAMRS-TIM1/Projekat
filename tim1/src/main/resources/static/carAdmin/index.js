@@ -93,6 +93,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		let newName = $("#editBranchOfficeForm input[name='name']").val();
 		editBranchOffice(oldName, newName, 14, 14/* latitude, longitude */);
+		oldName = newName;
 	});
 	
 	$(document).on('click', '#deleteBranch', function(e) {
@@ -239,7 +240,8 @@ function loadBranchOffices() {
 					               branchOffice.id,
 					               branchOffice.name,
 					               branchOffice.location.latitude,
-					               branchOffice.location.longitude
+					               branchOffice.location.longitude,
+					               branchOffice.deleted
 					               ]).draw(false);
 					// make map marker based on location
 				}

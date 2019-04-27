@@ -21,7 +21,6 @@ import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.RentACarDTO;
 import isamrs.tim1.dto.ServiceDTO;
 import isamrs.tim1.dto.ServiceViewDTO;
-import isamrs.tim1.model.BranchOffice;
 import isamrs.tim1.model.RentACar;
 import isamrs.tim1.model.RentACarAdmin;
 import isamrs.tim1.service.RentACarService;
@@ -73,15 +72,6 @@ public class RentACarController {
 	@PreAuthorize("hasRole('RENTADMIN')")
 	@RequestMapping(value = "/api/getBranchOffices", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArrayList<BranchOfficeDTO>> getBranchOffices() {
-		RentACarAdmin admin = (RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		ArrayList<BranchOfficeDTO> branchOffices = new ArrayList<BranchOfficeDTO>();
-
-		for (BranchOffice bo : admin.getRentACar().getBranchOffices()) {
-			if(!bo.isDeleted()) {
-				branchOffices.add(new BranchOfficeDTO(bo));				
-			}
-		}
-
-		return new ResponseEntity<ArrayList<BranchOfficeDTO>>(branchOffices, HttpStatus.OK);
+		return new ResponseEntity<ArrayList<BranchOfficeDTO>>(rentACarService.getBranchOffices(), HttpStatus.OK);
 	}
 }
