@@ -27,7 +27,7 @@ public class FriendDTO implements Serializable {
 		super();
 		this.firstName = u.getFirstName();
 		this.lastName = u.getLastName();
-		this.email = u.getLastName();
+		this.email = u.getEmail();
 		this.status = status;
 	}
 	

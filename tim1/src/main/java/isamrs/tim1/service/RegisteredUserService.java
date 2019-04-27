@@ -1,6 +1,9 @@
 package isamrs.tim1.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +13,12 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import isamrs.tim1.dto.FriendDTO;
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.dto.UserDTO;
 import isamrs.tim1.model.RegisteredUser;
+import isamrs.tim1.model.Seat;
 import isamrs.tim1.model.User;
 import isamrs.tim1.repository.RegisteredUserRepository;
 
@@ -72,5 +77,76 @@ public class RegisteredUserService {
 		inviter.getInvitedUsers().add(invited);
 		registeredUserRepository.save(inviter);
 		return new ResponseEntity<MessageDTO>(new MessageDTO("Friend invitation is sent.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
+	}
+
+	public ResponseEntity<MessageDTO> acceptInvitation(String acceptedUser) {
+		RegisteredUser currUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		RegisteredUser accepted = registeredUserRepository.findOneByEmail(acceptedUser);
+		if (accepted == null)
+			return new ResponseEntity<MessageDTO>(new MessageDTO("User does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
+		this.template.convertAndSend("/friendsInvitation/" + acceptedUser, "Accepted-" + currUser.getEmail());
+		Iterator<RegisteredUser> it = currUser.getInviters().iterator();
+		while (it.hasNext()) {
+			RegisteredUser ru = it.next();
+			if (ru.getEmail().equals(accepted.getEmail())) {
+				it.remove();
+				break;
+			}
+		}
+		currUser.getFriends().add(accepted);
+		Iterator<RegisteredUser> iter = accepted.getInvitedUsers().iterator();
+		while (iter.hasNext()) {
+			RegisteredUser ru = iter.next();
+			if (ru.getEmail().equals(currUser.getEmail())) {
+				iter.remove();
+				break;
+			}
+		}
+		accepted.getFriends().add(currUser);
+		registeredUserRepository.save(accepted);
+		registeredUserRepository.save(currUser);
+		return new ResponseEntity<MessageDTO>(new MessageDTO("Friend invitation accepted.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
+	}
+	
+	public ResponseEntity<MessageDTO> declineInvitation(String declinedUser) {
+		RegisteredUser currUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		RegisteredUser declined = registeredUserRepository.findOneByEmail(declinedUser);
+		if (declined == null)
+			return new ResponseEntity<MessageDTO>(new MessageDTO("User does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
+		this.template.convertAndSend("/friendsInvitation/" + declinedUser, "Declined-" + currUser.getEmail());
+		Iterator<RegisteredUser> it = currUser.getInviters().iterator();
+		while (it.hasNext()) {
+			RegisteredUser ru = it.next();
+			if (ru.getEmail().equals(declined.getEmail())) {
+				it.remove();
+				break;
+			}
+		}
+		Iterator<RegisteredUser> iter = declined.getInvitedUsers().iterator();
+		while (iter.hasNext()) {
+			RegisteredUser ru = iter.next();
+			if (ru.getEmail().equals(currUser.getEmail())) {
+				iter.remove();
+				break;
+			}
+		}
+		registeredUserRepository.save(declined);
+		registeredUserRepository.save(currUser);
+		return new ResponseEntity<MessageDTO>(new MessageDTO("Friend invitation declined.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
+	}
+
+	public ResponseEntity<ArrayList<FriendDTO>> getFriends() {
+		ArrayList<FriendDTO> friends = new ArrayList<FriendDTO>();
+		RegisteredUser currUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		for (User us : currUser.getFriends()) {
+			friends.add(new FriendDTO(us, "Accepted"));
+		}
+		for (User us : currUser.getInvitedUsers()) {
+			friends.add(new FriendDTO(us, "Invitation sent"));
+		}
+		for (User us : currUser.getInviters()) {
+			friends.add(new FriendDTO(us, "Invitation pending"));
+		}
+		return new ResponseEntity<ArrayList<FriendDTO>>(friends, HttpStatus.OK);
 	}
 }
