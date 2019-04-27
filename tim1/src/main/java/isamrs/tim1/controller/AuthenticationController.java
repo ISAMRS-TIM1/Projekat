@@ -128,10 +128,10 @@ public class AuthenticationController {
 		}
 		User user = (User) authentication.getPrincipal();
 
-		if (!user.isVerified()) {
+		/*if (!user.isVerified()) {
 			return new ResponseEntity<MessageDTO>(new MessageDTO("Account is not verified. Check your email.", "Error"),
 					HttpStatus.OK);
-		}
+		}*/
 		// Ubaci username + password u kontext
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 

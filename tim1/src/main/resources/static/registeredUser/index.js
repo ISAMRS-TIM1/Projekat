@@ -4,6 +4,9 @@ const saveChangesURL = "../api/editUser";
 const getPlaneSeatsURL = "/api/getPlaneSeats";
 const searchUsersURL = "/api/searchUsers";
 const friendInvitationURL = "/sendInvitation";
+const acceptInvitationURL = "/api/acceptInvitation";
+const declineInvitationURL = "/api/declineInvitation";
+const getFriendsURL = "/api/getFriends";
 
 const tokenKey = "jwtToken";
 
@@ -17,10 +20,16 @@ $(document).ready(function(){
 	stompClient.connect({}, function(frame) {
 		stompClient.subscribe("/friendsInvitation/" + userMail, function(data) {
 			var table = $('#friendsTable').DataTable();
-			dataJSON = JSON.parse(data.body);
-			var sendInv = "<div id='invFriendStatus'><button id='sendInvButton' class='btn btn-default'>Accept</button>";
-			sendInv += "<button id='sendInvButton' class='btn btn-default'>Decline</button></div>";
-			table.row.add([ dataJSON.email, dataJSON.firstName, dataJSON.lastName, sendInv ]).draw(false);
+			try {
+				var dataJSON = JSON.parse(data.body);
+				var sendInv = "<div id='invFriendStatus'><button id='sendInvButton' class='btn btn-default'>Accept</button>";
+				sendInv += "<button id='sendInvButton' class='btn btn-default'>Decline</button></div>";
+				table.row.add([ dataJSON.email, dataJSON.firstName, dataJSON.lastName, sendInv ]).draw(false);
+			}
+			catch(err) {
+				table.clear().draw();
+				getFriends();
+			}
 		});
 	});
 	
@@ -172,14 +181,40 @@ function setUpToastr() {
 			}
 }
 
+function getFriends() {
+	$.ajax({
+		type : 'GET',
+		url : getFriendsURL,
+		headers: createAuthorizationTokenHeader(tokenKey),
+		success: function(data){
+			if (data != null) {
+				var table = $('#friendsTable').DataTable();
+				table.clear().draw();
+				$.each(data, function(i, val) {
+					if (val.status == "Invitation pending") {
+						var sendInv = "<div id='invFriendStatus'><button id='sendInvButton' class='btn btn-default'>Accept</button>";
+						sendInv += "<button id='sendInvButton' class='btn btn-default'>Decline</button></div>";
+						table.row.add([ val.email, val.firstName, val.lastName, sendInv ]).draw(false);
+					}
+					else {
+						table.row.add([ val.email, val.firstName, val.lastName, "<b>" + val.status + "</b>" ]).draw(false);
+					}
+				});
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
 function friendInvitation(invitedUser, idx) {
 	idx = idx.substring(6);
 	$.ajax({
-		type : 'GET',
+		type : 'POST',
 		url : friendInvitationURL,
 		headers: createAuthorizationTokenHeader(tokenKey),
-		contentType : 'application/json',
-		data : {"invitedUser" : invitedUser},
+		data : invitedUser,
 		success: function(data){
 			if(data.toastType == "success") {
 				toastr[data.toastType](data.message);
@@ -200,20 +235,17 @@ function friendInvitation(invitedUser, idx) {
 }
 
 function acceptInvitation(acceptedUser, idx) {
-	alert("Accepted" + acceptedUser + " id: " + idx);
-	return;
 	$.ajax({
 		type : 'POST',
 		url : acceptInvitationURL,
 		headers: createAuthorizationTokenHeader(tokenKey),
-		contentType : 'application/json',
-		data : {"acceptedUser" : acceptedUser},
+		data :  acceptedUser,
 		success: function(data){
 			if(data.toastType == "success") {
 				toastr[data.toastType](data.message);
 				var table = $('#friendsTable').DataTable();
-				var row = table.row(idx).data();
-				row[3] = "<b>Accepted</b>";
+				var row = table.row(idx);
+				table.cell({ row: idx, column: 3 }).data("<b>Accepted</b>").draw();
 			}
 			else {
 				toastr[data.toastType](data.message);
@@ -226,20 +258,18 @@ function acceptInvitation(acceptedUser, idx) {
 }
 
 function declineInvitation(declinedUser, idx) {
-	alert("Declined" + declinedUser + " id: " + idx);
-	return;
 	$.ajax({
 		type : 'POST',
 		url : declineInvitationURL,
 		headers: createAuthorizationTokenHeader(tokenKey),
 		contentType : 'application/json',
-		data : {"declinedUser" : declinedUser},
+		data :  declinedUser,
 		success: function(data){
 			if(data.toastType == "success") {
 				toastr[data.toastType](data.message);
 				var table = $('#friendsTable').DataTable();
 				var rowForDelete = table.row(idx);
-				table.row(idx).remove();
+				table.row(rowForDelete).remove().draw(false);
 			}
 			else {
 				toastr[data.toastType](data.message);

@@ -10,6 +10,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import isamrs.tim1.dto.FriendDTO;
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.dto.UserDTO;
@@ -72,5 +73,46 @@ public class RegisteredUserService {
 		inviter.getInvitedUsers().add(invited);
 		registeredUserRepository.save(inviter);
 		return new ResponseEntity<MessageDTO>(new MessageDTO("Friend invitation is sent.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
+	}
+
+	public ResponseEntity<MessageDTO> acceptInvitation(String acceptedUser) {
+		RegisteredUser currUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		RegisteredUser accepted = registeredUserRepository.findOneByEmail(acceptedUser);
+		if (accepted == null)
+			return new ResponseEntity<MessageDTO>(new MessageDTO("User does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
+		this.template.convertAndSend("/friendsInvitation/" + acceptedUser, "Accepted-" + currUser.getEmail());
+		accepted.getInviters().remove(currUser);
+		currUser.getInvitedUsers().remove(accepted);
+		accepted.getFriends().add(currUser);
+		currUser.getFriends().add(accepted);
+		registeredUserRepository.save(currUser);
+		return new ResponseEntity<MessageDTO>(new MessageDTO("Friend invitation accepted.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
+	}
+	
+	public ResponseEntity<MessageDTO> declineInvitation(String declinedUser) {
+		RegisteredUser currUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		RegisteredUser declined = registeredUserRepository.findOneByEmail(declinedUser);
+		if (declined == null)
+			return new ResponseEntity<MessageDTO>(new MessageDTO("User does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
+		this.template.convertAndSend("/friendsInvitation/" + declinedUser, "Declined-" + currUser.getEmail());
+		declined.getInviters().remove(currUser);
+		currUser.getInvitedUsers().remove(declined);
+		registeredUserRepository.save(currUser);
+		return new ResponseEntity<MessageDTO>(new MessageDTO("Friend invitation declined.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
+	}
+
+	public ResponseEntity<ArrayList<FriendDTO>> getFriends() {
+		ArrayList<FriendDTO> friends = new ArrayList<FriendDTO>();
+		RegisteredUser currUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		for (User us : currUser.getFriends()) {
+			friends.add(new FriendDTO(us, "Accepted"));
+		}
+		for (User us : currUser.getInvitedUsers()) {
+			friends.add(new FriendDTO(us, "Invitation sent"));
+		}
+		for (User us : currUser.getInviters()) {
+			friends.add(new FriendDTO(us, "Invitation pending"));
+		}
+		return new ResponseEntity<ArrayList<FriendDTO>>(friends, HttpStatus.OK);
 	}
 }
