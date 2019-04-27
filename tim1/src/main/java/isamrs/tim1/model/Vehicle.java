@@ -71,6 +71,9 @@ public class Vehicle implements Serializable {
 	@Column(name = "available", unique = false, nullable = false)
 	private Integer available;
 
+	@Column(name = "deleted", unique = false, nullable = false)
+	private boolean deleted;
+
 	public Vehicle() {
 		super();
 		quickReservations = new HashSet<QuickVehicleReservation>();
@@ -216,6 +219,14 @@ public class Vehicle implements Serializable {
 
 	public void setAvailable(Integer available) {
 		this.available = available;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 
 }
