@@ -57,7 +57,7 @@ public class VehicleDTO implements Serializable {
 		this.fuelType = v.getFuelType();
 		this.vehicleType = v.getVehicleType();
 		this.pricePerDay = v.getPricePerDay();
-		this.setAverageGrade(v.getAverageGrade());
+		this.averageGrade = v.getAverageGrade();
 	}
 
 	public VehicleDTO() {

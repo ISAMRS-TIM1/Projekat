@@ -329,7 +329,8 @@ function loadVehicles() {
 					               vehicle.numberOfSeats,
 					               vehicle.fuelType,
 					               vehicle.vehicleType,
-					               vehicle.pricePerDay
+					               vehicle.pricePerDay,
+					               vehicle.averageGrade
 					               ]).draw(false);
 				}
 			}
