@@ -13,22 +13,25 @@ public class BranchOfficeDTO implements Serializable {
 	private Long id;
 	private String name;
 	private Location location;
+	private boolean deleted;
 
 	public BranchOfficeDTO(BranchOffice bo) {
 		this.id = bo.getId();
 		this.name = bo.getName();
 		this.location = bo.getLocation();
+		this.setDeleted(bo.isDeleted());
 	}
 
 	public BranchOfficeDTO() {
 		super();
 	}
 
-	public BranchOfficeDTO(Long id, String name, Location location) {
+	public BranchOfficeDTO(Long id, String name, Location location, boolean deleted) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.location = location;
+		this.setDeleted(deleted);
 	}
 
 	public Long getId() {
@@ -53,6 +56,14 @@ public class BranchOfficeDTO implements Serializable {
 
 	public void setLocation(Location location) {
 		this.location = location;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 
 }

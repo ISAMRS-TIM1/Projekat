@@ -1,20 +1,33 @@
 package isamrs.tim1.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.VehicleDTO;
+import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.model.FuelType;
+import isamrs.tim1.model.QuickVehicleReservation;
+import isamrs.tim1.model.RentACar;
+import isamrs.tim1.model.RentACarAdmin;
 import isamrs.tim1.model.Vehicle;
+import isamrs.tim1.model.VehicleReservation;
 import isamrs.tim1.model.VehicleType;
+import isamrs.tim1.repository.RentACarRepository;
 import isamrs.tim1.repository.VehicleRepository;
 
 @Service
 public class VehicleService {
 	@Autowired
 	private VehicleRepository vehicleRepository;
+
+	@Autowired
+	private RentACarRepository rentACarRepository;
 
 	public ArrayList<VehicleDTO> searchVehicles(Vehicle vehicle) {
 		String model = vehicle.getModel();
@@ -72,5 +85,53 @@ public class VehicleService {
 
 	public boolean alreadyExists(String model, String producer) {
 		return vehicleRepository.findOneByModelAndProducer(model, producer) != null;
+	}
+
+	public ArrayList<VehicleDTO> getAllVehicles() {
+		Set<Vehicle> vehicles = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+				.getRentACar().getVehicles();
+
+		ArrayList<VehicleDTO> returnValues = new ArrayList<VehicleDTO>();
+
+		for (Vehicle v : vehicles) {
+			returnValues.add(new VehicleDTO(v));
+		}
+
+		return returnValues;
+	}
+
+	public MessageDTO addVehicle(VehicleDTO vehicle, int quantity) {
+		if (this.alreadyExists(vehicle.getModel(), vehicle.getProducer())) {
+			return new MessageDTO("Vehicle already exists", ToasterType.ERROR.toString());
+		}
+
+		if (quantity <= 0) {
+			return new MessageDTO("Quantity must be greater than zero", ToasterType.ERROR.toString());
+		}
+
+		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+				.getRentACar();
+
+		Vehicle v = new Vehicle();
+		v.setId(null);
+		v.setAvailable(quantity);
+		v.setAverageGrade(0.0);
+		v.setFuelType(vehicle.getFuelType());
+		v.setModel(vehicle.getModel());
+		v.setNormalReservations(new HashSet<VehicleReservation>());
+		v.setNumberOfSeats(vehicle.getNumberOfSeats());
+		v.setPricePerDay(vehicle.getPricePerDay());
+		v.setProducer(vehicle.getProducer());
+		v.setQuantity(quantity);
+		v.setQuickReservations(new HashSet<QuickVehicleReservation>());
+		v.setVehicleType(vehicle.getVehicleType());
+		v.setYearOfProduction(vehicle.getYearOfProduction());
+		v.setRentACar(rentACar);
+
+		rentACar.getVehicles().add(v);
+
+		rentACarRepository.save(rentACar);
+
+		return new MessageDTO("Vehicle successfully added.", ToasterType.SUCCESS.toString());
 	}
 }

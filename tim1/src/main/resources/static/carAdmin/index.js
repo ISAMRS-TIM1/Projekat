@@ -93,6 +93,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		let newName = $("#editBranchOfficeForm input[name='name']").val();
 		editBranchOffice(oldName, newName, 14, 14/* latitude, longitude */);
+		oldName = newName;
 	});
 	
 	$(document).on('click', '#deleteBranch', function(e) {
@@ -188,8 +189,9 @@ function loadBasicData() {
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
 			if(data != null){
-				$("#basicInfo h2").text(data.name);
-				$("#basicInfo h4").text(data.description);
+				$("#rentACarName").val(data.name);
+				$("#rentACarDescription").text(data.description);
+				$("#rentACarGrade").text(data.averageGrade);
 				// average grade for reports
 				// latitude and longitude for basic info map
 			}
@@ -238,7 +240,8 @@ function loadBranchOffices() {
 					               branchOffice.id,
 					               branchOffice.name,
 					               branchOffice.location.latitude,
-					               branchOffice.location.longitude
+					               branchOffice.location.longitude,
+					               branchOffice.deleted
 					               ]).draw(false);
 					// make map marker based on location
 				}
@@ -326,7 +329,8 @@ function loadVehicles() {
 					               vehicle.numberOfSeats,
 					               vehicle.fuelType,
 					               vehicle.vehicleType,
-					               vehicle.pricePerDay
+					               vehicle.pricePerDay,
+					               vehicle.averageGrade
 					               ]).draw(false);
 				}
 			}
