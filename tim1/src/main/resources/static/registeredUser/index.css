@@ -246,3 +246,6 @@ input, button {
 	border: 0.16vw solid #B27A00;
 	border-radius: 2vw 2vw 2vw 2vw;
 }
+#invFriendStatus {
+	display: flex;
+}

@@ -18,10 +18,8 @@ $(document).ready(function(){
 		stompClient.subscribe("/friendsInvitation/" + userMail, function(data) {
 			var table = $('#friendsTable').DataTable();
 			dataJSON = JSON.parse(data.body);
-			var sendInv = "<div id='invFriendStatus'><form id='accInv' onsubmit='acceptInvitation(event)' " +
-			"style='text-align:center;'>" +
-			"<input type='hidden' value='" + dataJSON.email + "' id='hiddenEmail'/>" +
-			"<input type='submit' id='sendInvButton' class='btn btn-default' value='Accept'/></form></div>";
+			var sendInv = "<div id='invFriendStatus'><button id='sendInvButton' class='btn btn-default'>Accept</button>";
+			sendInv += "<button id='sendInvButton' class='btn btn-default'>Decline</button></div>";
 			table.row.add([ dataJSON.email, dataJSON.firstName, dataJSON.lastName, sendInv ]).draw(false);
 		});
 	});
@@ -70,6 +68,28 @@ $(document).ready(function(){
 		}
 	});
 	
+	$('#friendsTable tbody').on( 'click', 'td', function (event) {
+		var tgt = $(event.target);
+		if (tgt[0].innerHTML == "Accept") {
+			var table = $("#friendsTable").DataTable();
+			var rowData = table.cell(this).row().data();
+			acceptInvitation(rowData[0], table.cell(this).row().index());
+		}
+		else if (tgt[0].innerHTML == "Decline") {
+			var table = $("#friendsTable").DataTable();
+			var rowData = table.cell(this).row().data();
+			declineInvitation(rowData[0], table.cell(this).row().index());
+		}
+	});
+	
+	$('#usersTable tbody').on( 'click', 'td', function (event) {
+		var tgt = $(event.target);
+		if (tgt[0].id == "sendInvButton") {
+			var table = $("#usersTable").DataTable();
+			var rowData = table.cell(this).row().data();
+			friendInvitation(rowData[0], tgt[0].parentElement.id);
+		}
+	});
 	
 	$("#searchUserForm").submit(function(e) {
 		  e.preventDefault();
@@ -85,9 +105,8 @@ $(document).ready(function(){
 					var table = $('#usersTable').DataTable();
 					table.clear().draw();
 					$.each(data, function(i, val) {
-						var sendInv = "<div id='status" + i + "'><form id='sendInv' onsubmit='friendInvitation(event," + i + ")' style='text-align:center;'>" +
-								"<input type='hidden' value='" + val.email + "' id='hiddenEmail'/>" +
-								"<input type='submit' id='sendInvButton' class='btn btn-default' value='Send invitation'/></form></div>";
+						var sendInv = "<div id='status" + i + "'><button id='sendInvButton'" +
+								" class='btn btn-default'>Send invitation</button></div>";
 						table.row.add([ val.email, val.firstName, val.lastName, sendInv ]).draw(false);
 					});
 				},
@@ -153,9 +172,8 @@ function setUpToastr() {
 			}
 }
 
-function friendInvitation(e, idx) {
-	e.preventDefault();
-	let invitedUser = $("#hiddenEmail").val();
+function friendInvitation(invitedUser, idx) {
+	idx = idx.substring(6);
 	$.ajax({
 		type : 'GET',
 		url : friendInvitationURL,
@@ -170,6 +188,58 @@ function friendInvitation(e, idx) {
 				var userTable = $('#usersTable').DataTable();
 				var row = userTable.row(idx).data();
 				table.row.add([ row[0], row[1], row[2], "<b>Invitation sent</b>"]).draw(false);
+			}
+			else {
+				toastr[data.toastType](data.message);
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
+function acceptInvitation(acceptedUser, idx) {
+	alert("Accepted" + acceptedUser + " id: " + idx);
+	return;
+	$.ajax({
+		type : 'POST',
+		url : acceptInvitationURL,
+		headers: createAuthorizationTokenHeader(tokenKey),
+		contentType : 'application/json',
+		data : {"acceptedUser" : acceptedUser},
+		success: function(data){
+			if(data.toastType == "success") {
+				toastr[data.toastType](data.message);
+				var table = $('#friendsTable').DataTable();
+				var row = table.row(idx).data();
+				row[3] = "<b>Accepted</b>";
+			}
+			else {
+				toastr[data.toastType](data.message);
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
+function declineInvitation(declinedUser, idx) {
+	alert("Declined" + declinedUser + " id: " + idx);
+	return;
+	$.ajax({
+		type : 'POST',
+		url : declineInvitationURL,
+		headers: createAuthorizationTokenHeader(tokenKey),
+		contentType : 'application/json',
+		data : {"declinedUser" : declinedUser},
+		success: function(data){
+			if(data.toastType == "success") {
+				toastr[data.toastType](data.message);
+				var table = $('#friendsTable').DataTable();
+				var rowForDelete = table.row(idx);
+				table.row(idx).remove();
 			}
 			else {
 				toastr[data.toastType](data.message);
@@ -217,10 +287,8 @@ function loadData(){
 				table.clear().draw();
 				$.each(data.friends, function(i, val) {
 					if (val.status == "Invitation pending") {
-						var sendInv = "<div id='invFriendStatus'><form id='accInv' onsubmit='acceptInvitation(event)' " +
-								"style='text-align:center;'>" +
-						"<input type='hidden' value='" + val.email + "' id='hiddenEmail'/>" +
-						"<input type='submit' id='sendInvButton' class='btn btn-default' value='Accept'/></form></div>";
+						var sendInv = "<div id='invFriendStatus'><button id='sendInvButton' class='btn btn-default'>Accept</button>";
+						sendInv += "<button id='sendInvButton' class='btn btn-default'>Decline</button></div>";
 						table.row.add([ val.email, val.firstName, val.lastName, sendInv ]).draw(false);
 					}
 					else {
