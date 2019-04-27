@@ -1,6 +1,9 @@
 package isamrs.tim1.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.dto.UserDTO;
 import isamrs.tim1.model.RegisteredUser;
+import isamrs.tim1.model.Seat;
 import isamrs.tim1.model.User;
 import isamrs.tim1.repository.RegisteredUserRepository;
 
@@ -81,10 +85,25 @@ public class RegisteredUserService {
 		if (accepted == null)
 			return new ResponseEntity<MessageDTO>(new MessageDTO("User does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
 		this.template.convertAndSend("/friendsInvitation/" + acceptedUser, "Accepted-" + currUser.getEmail());
-		accepted.getInviters().remove(currUser);
-		currUser.getInvitedUsers().remove(accepted);
-		accepted.getFriends().add(currUser);
+		Iterator<RegisteredUser> it = currUser.getInviters().iterator();
+		while (it.hasNext()) {
+			RegisteredUser ru = it.next();
+			if (ru.getEmail().equals(accepted.getEmail())) {
+				it.remove();
+				break;
+			}
+		}
 		currUser.getFriends().add(accepted);
+		Iterator<RegisteredUser> iter = accepted.getInvitedUsers().iterator();
+		while (iter.hasNext()) {
+			RegisteredUser ru = iter.next();
+			if (ru.getEmail().equals(currUser.getEmail())) {
+				iter.remove();
+				break;
+			}
+		}
+		accepted.getFriends().add(currUser);
+		registeredUserRepository.save(accepted);
 		registeredUserRepository.save(currUser);
 		return new ResponseEntity<MessageDTO>(new MessageDTO("Friend invitation accepted.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
 	}
@@ -95,8 +114,23 @@ public class RegisteredUserService {
 		if (declined == null)
 			return new ResponseEntity<MessageDTO>(new MessageDTO("User does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
 		this.template.convertAndSend("/friendsInvitation/" + declinedUser, "Declined-" + currUser.getEmail());
-		declined.getInviters().remove(currUser);
-		currUser.getInvitedUsers().remove(declined);
+		Iterator<RegisteredUser> it = currUser.getInviters().iterator();
+		while (it.hasNext()) {
+			RegisteredUser ru = it.next();
+			if (ru.getEmail().equals(declined.getEmail())) {
+				it.remove();
+				break;
+			}
+		}
+		Iterator<RegisteredUser> iter = declined.getInvitedUsers().iterator();
+		while (iter.hasNext()) {
+			RegisteredUser ru = iter.next();
+			if (ru.getEmail().equals(currUser.getEmail())) {
+				iter.remove();
+				break;
+			}
+		}
+		registeredUserRepository.save(declined);
 		registeredUserRepository.save(currUser);
 		return new ResponseEntity<MessageDTO>(new MessageDTO("Friend invitation declined.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
 	}

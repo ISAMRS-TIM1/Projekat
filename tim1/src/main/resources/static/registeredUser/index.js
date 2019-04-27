@@ -3,7 +3,7 @@ const loadUserInfoURL = "../api/getUserInfo";
 const saveChangesURL = "../api/editUser";
 const getPlaneSeatsURL = "/api/getPlaneSeats";
 const searchUsersURL = "/api/searchUsers";
-const friendInvitationURL = "/sendInvitation";
+const friendInvitationURL = "/api/sendInvitation";
 const acceptInvitationURL = "/api/acceptInvitation";
 const declineInvitationURL = "/api/declineInvitation";
 const getFriendsURL = "/api/getFriends";
@@ -19,17 +19,7 @@ $(document).ready(function(){
 	var stompClient = Stomp.over(socket);
 	stompClient.connect({}, function(frame) {
 		stompClient.subscribe("/friendsInvitation/" + userMail, function(data) {
-			var table = $('#friendsTable').DataTable();
-			try {
-				var dataJSON = JSON.parse(data.body);
-				var sendInv = "<div id='invFriendStatus'><button id='sendInvButton' class='btn btn-default'>Accept</button>";
-				sendInv += "<button id='sendInvButton' class='btn btn-default'>Decline</button></div>";
-				table.row.add([ dataJSON.email, dataJSON.firstName, dataJSON.lastName, sendInv ]).draw(false);
-			}
-			catch(err) {
-				table.clear().draw();
-				getFriends();
-			}
+			getFriends();
 		});
 	});
 	
@@ -219,10 +209,7 @@ function friendInvitation(invitedUser, idx) {
 			if(data.toastType == "success") {
 				toastr[data.toastType](data.message);
 				$("#status" + idx).html("<b>Invitation sent</b>");
-				var table = $('#friendsTable').DataTable();
-				var userTable = $('#usersTable').DataTable();
-				var row = userTable.row(idx).data();
-				table.row.add([ row[0], row[1], row[2], "<b>Invitation sent</b>"]).draw(false);
+				getFriends();
 			}
 			else {
 				toastr[data.toastType](data.message);
@@ -243,9 +230,7 @@ function acceptInvitation(acceptedUser, idx) {
 		success: function(data){
 			if(data.toastType == "success") {
 				toastr[data.toastType](data.message);
-				var table = $('#friendsTable').DataTable();
-				var row = table.row(idx);
-				table.cell({ row: idx, column: 3 }).data("<b>Accepted</b>").draw();
+				getFriends();
 			}
 			else {
 				toastr[data.toastType](data.message);
@@ -267,9 +252,7 @@ function declineInvitation(declinedUser, idx) {
 		success: function(data){
 			if(data.toastType == "success") {
 				toastr[data.toastType](data.message);
-				var table = $('#friendsTable').DataTable();
-				var rowForDelete = table.row(idx);
-				table.row(rowForDelete).remove().draw(false);
+				getFriends();
 			}
 			else {
 				toastr[data.toastType](data.message);

@@ -15,7 +15,7 @@ import javax.persistence.OneToMany;
 @Entity
 public class RegisteredUser extends User {
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "friends", joinColumns = @JoinColumn(name = "user", referencedColumnName = "user_id"), inverseJoinColumns = @JoinColumn(name = "friend", referencedColumnName = "user_id"))
 	private Set<RegisteredUser> friends;
 	
@@ -94,8 +94,6 @@ public class RegisteredUser extends User {
 	public void setInviters(Set<RegisteredUser> inviters) {
 		this.inviters = inviters;
 	}
-
-
 
 	private static final long serialVersionUID = 4453092532257405053L;
 }
