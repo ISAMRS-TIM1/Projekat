@@ -117,8 +117,8 @@ function renderAdditionalServices(data) {
 	});
 }
 
-function renderFlights(data) {
-	var table = $('#flightsTable').DataTable();
+function renderRooms(data) {
+	var table = $('#roomsTable').DataTable();
 	$.each(data, function(i, val) {
 		table.row.add(
 				[ val.roomNumber, val.defaultPriceOneNight, val.numberOfPeople,

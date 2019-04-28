@@ -91,6 +91,7 @@ a[data-toggle="tab"] {
 #mapDiv {
 	width: 21vw;
 	height: 21vh;
+	border-radius: 2vw 2vw 2vw 2vw;
 }
 
 #serviceName {
@@ -212,4 +213,5 @@ label[for=kmsNeededForPoint], label[for=discountPercentagePerPoint] {
 #newServiceMapDiv {
 	width: 25vw;
 	height: 21.5vh;
+	border-radius: 2vw 2vw 2vw 2vw;
 }
