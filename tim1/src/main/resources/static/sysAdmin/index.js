@@ -33,8 +33,10 @@ var destMap = null;
 
 $(document).ready(function() {
 	setUpToastr();
-	loadData();
 	setUpTabView();
+	setUpTables();
+	loadData();
+	
 	
 	$("#logout").click(function() {
 		document.location.href = logoutURL;
@@ -52,48 +54,6 @@ $(document).ready(function() {
 	setUpAddServiceForm();
 	setUpRegistrationForm();
 	setUpEditDiscountInfoForm();
-
-	var airlinesTable = $('#airlinesTable').DataTable({
-		"paging" : false,
-		"info" : false,
-	});
-
-	var hotelsTable = $('#hotelsTable').DataTable({
-		"paging" : false,
-		"info" : false,
-	});
-
-	var rentACarsTable = $('#rentACarsTable').DataTable({
-		"paging" : false,
-		"info" : false,
-	});
-
-	$('#airlinesTable tbody').on('click', 'tr', function() {
-		airlinesTable.$('tr.selected').removeClass('selected');
-		$(this).addClass('selected');
-		currentService = airlinesTable.row(this).data()[0];
-		currentServiceURL = getAirlineURL;
-		loadService(currentService, currentServiceURL);
-		$("#modalDialog").modal();
-	});
-
-	$('#hotelsTable tbody').on('click', 'tr', function() {
-		hotelsTable.$('tr.selected').removeClass('selected');
-		$(this).addClass('selected');
-		currentService = hotelsTable.row(this).data()[0];
-		currentServiceURL = getHotelURL;
-		loadService(currentService, currentServiceURL);
-		$("#modalDialog").modal();
-	});
-
-	$('#rentACarsTable tbody').on('click', 'tr', function() {
-		rentACarsTable.$('tr.selected').removeClass('selected');
-		$(this).addClass('selected');
-		currentService = rentACarsTable.row(this).data()[0];
-		currentServiceURL = getRentACarURL;
-		loadService(currentService, currentServiceURL);
-		$("#modalDialog").modal();
-	});
 
 	$('#modalDialog').on('hidden.bs.modal', function() {
 		airlinesTable.$('tr.selected').removeClass('selected');
@@ -205,6 +165,50 @@ function setUpTabView(){
 	});
 	$('a[href="#profile"]').click(function(){
 		loadProfile();
+	});
+}
+
+function setUpTables(){
+	var airlinesTable = $('#airlinesTable').DataTable({
+		"paging" : false,
+		"info" : false,
+	});
+
+	var hotelsTable = $('#hotelsTable').DataTable({
+		"paging" : false,
+		"info" : false,
+	});
+
+	var rentACarsTable = $('#rentACarsTable').DataTable({
+		"paging" : false,
+		"info" : false,
+	});
+
+	$('#airlinesTable tbody').on('click', 'tr', function() {
+		airlinesTable.$('tr.selected').removeClass('selected');
+		$(this).addClass('selected');
+		currentService = airlinesTable.row(this).data()[0];
+		currentServiceURL = getAirlineURL;
+		loadService(currentService, currentServiceURL);
+		$("#modalDialog").modal();
+	});
+
+	$('#hotelsTable tbody').on('click', 'tr', function() {
+		hotelsTable.$('tr.selected').removeClass('selected');
+		$(this).addClass('selected');
+		currentService = hotelsTable.row(this).data()[0];
+		currentServiceURL = getHotelURL;
+		loadService(currentService, currentServiceURL);
+		$("#modalDialog").modal();
+	});
+
+	$('#rentACarsTable tbody').on('click', 'tr', function() {
+		rentACarsTable.$('tr.selected').removeClass('selected');
+		$(this).addClass('selected');
+		currentService = rentACarsTable.row(this).data()[0];
+		currentServiceURL = getRentACarURL;
+		loadService(currentService, currentServiceURL);
+		$("#modalDialog").modal();
 	});
 }
 

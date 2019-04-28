@@ -22,7 +22,7 @@ public class HotelRoom implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "service_id", unique = true, nullable = false)
+	@Column(name = "hotelroom_id", unique = true, nullable = false)
 	private Integer id;
 
 	@Column(name = "averageGrade", unique = false, nullable = false)

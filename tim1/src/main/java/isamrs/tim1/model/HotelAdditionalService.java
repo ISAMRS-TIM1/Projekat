@@ -16,7 +16,7 @@ public class HotelAdditionalService {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "service_id", unique = true, nullable = false)
+	@Column(name = "additionalservice_id", unique = true, nullable = false)
 	private Integer id;
 
 	@Column(name = "name", unique = true, nullable = false)

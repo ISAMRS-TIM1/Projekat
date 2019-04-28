@@ -1,4 +1,4 @@
-const TOKEN_KEY = 'jwtToken';
+const tokenKey = "jwtToken";
 
 const tileLayerURL = "https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw";
 const MAP_ZOOM = 12;
@@ -15,12 +15,16 @@ const loadUserInfoURL = "../api/getUserInfo";
 const editUserInfoURL = "../api/editUser";
 const changePasswordURL = "../changePassword";
 
-$(document).ready(function() {
-	loadHotel();
-	loadProfileData();
-	setUpTables();
+var destMap = null
 
-	userEditFormSetUp();
+$(document).ready(function() {
+	setUpToastr();
+	setUpTabView();
+	setUpTables();
+	loadData();
+
+	setUpEditForm();
+	
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
 		$($.fn.dataTable.tables(true)).DataTable().columns.adjust();
 	});
@@ -38,6 +42,12 @@ $(document).ready(function() {
 	});
 })
 
+
+function loadData() {
+	loadHotel();
+	loadProfileData();
+}
+
 function setUpTables() {
 	$('#roomsTable').DataTable({
 		"paging" : false,
@@ -46,7 +56,7 @@ function setUpTables() {
 		"scrollCollapse" : true,
 		"retrieve" : true,
 	});
-	$('#additionalServices').DataTable({
+	$('#additionalServicesTable').DataTable({
 		"paging" : false,
 		"info" : false,
 		"scrollY" : "17vw",
@@ -62,8 +72,29 @@ function setUpTables() {
 	});
 }
 
+function setUpTabView(){
+	$(".nav li").click(function() {
+		$(this).addClass("active");
+		$(this).siblings().removeClass("active");
+	});
+	$('.nav-tabs a').click(function() {
+		$(this).tab('show');
+	});
+	$('a[href="#basicTab"], a[href="#roomsTab"], a[href="#additionalServicesTab"], a[href="#quickResevationsTab"]').click(function(){
+		loadHotel();
+	});
+	$('a[href="#profile"]').click(function(){
+		loadProfileData();
+	});
+	$('a[href="#basicTab"]').on('shown.bs.tab', function () { if(destMap!=null) destMap.invalidateSize(); })
+}
+
 function setUpMap(latitude, longitude, div) {
-	var destMap = L.map(div).setView([ latitude, longitude ], MAP_ZOOM);
+	if(destMap != null){
+		destMap.off();
+		destMap.remove();
+	}
+	destMap = L.map(div).setView([ latitude, longitude ], MAP_ZOOM);
 	L.tileLayer(tileLayerURL, {
 		maxZoom : MAX_MAP_ZOOM,
 		id : MAP_ID
@@ -97,7 +128,7 @@ function loadHotel() {
 	$.ajax({
 		dataType : "json",
 		url : getHotelOfAdminURL,
-		headers : createAuthorizationTokenHeader(TOKEN_KEY),
+		headers : createAuthorizationTokenHeader(tokenKey),
 		success : function(data) {
 			$("#hotelName").val(data["name"]);
 			$("#hotelGrade").text(data["averageGrade"]);
@@ -111,7 +142,8 @@ function loadHotel() {
 }
 
 function renderAdditionalServices(data) {
-	var table = $('#destinationsTable').DataTable();
+	var table = $('#additionalServicesTable').DataTable();
+	table.clear();
 	$.each(data, function(i, val) {
 		table.row.add([ val.name, val.price ]).draw(false);
 	});
@@ -119,9 +151,10 @@ function renderAdditionalServices(data) {
 
 function renderRooms(data) {
 	var table = $('#roomsTable').DataTable();
+	table.clear();
 	$.each(data, function(i, val) {
 		table.row.add(
-				[ val.roomNumber, val.defaultPriceOneNight, val.numberOfPeople,
+				[ val.roomNumber, val.price, val.numberOfPeople,
 						val.averageGrade ]).draw(false);
 	});
 }
@@ -134,7 +167,7 @@ function loadProfileData() {
 		type : 'GET',
 		url : loadUserInfoURL,
 		dataType : "json",
-		headers : createAuthorizationTokenHeader(TOKEN_KEY),
+		headers : createAuthorizationTokenHeader(tokenKey),
 		success : function(data) {
 			if (data != null) {
 				$('input[name="fname"]').val(data.firstName);
@@ -155,7 +188,7 @@ $(document).on("click", "#changePasswordButton", function(e) {
 	document.location.href = changePasswordURL;
 });
 
-function userFormToJSON(firstName, lastName, phone, address, email) {
+function userEditFormToJSON(firstName, lastName, phone, address, email) {
 	return JSON.stringify({
 		"firstName" : firstName,
 		"lastName" : lastName,
@@ -165,46 +198,55 @@ function userFormToJSON(firstName, lastName, phone, address, email) {
 	});
 }
 
-function userEditFormSetUp() {
-	$('#userEditForm').on('submit', function(e) {
-		e.preventDefault();
-		let firstName = $('input[name="fname"]').val();
-		let lastName = $('input[name="lname"]').val();
-		let phone = $('input[name="phone"]').val();
-		let address = $('input[name="address"]').val();
-		let email = $('#email').text();
+function setUpEditForm() {
+	$('#userEditForm').on(
+			'submit',
+			function(e) {
+				e.preventDefault();
+				let firstName = $('input[name="fname"]').val();
+				let lastName = $('input[name="lname"]').val();
+				let phone = $('input[name="phone"]').val();
+				let address = $('input[name="address"]').val();
+				let email = $('#email').text();
 
-		$.ajax({
-			type : 'PUT',
-			url : editUserInfoURL,
-			contentType : 'application/json',
-			dataType : "html",
-			data : userFormToJSON(firstName, lastName, phone, address, email),
-			success : function(data) {
-				if (data != "") {
-					toastr.options = {
-						"closeButton" : true,
-						"debug" : false,
-						"newestOnTop" : false,
-						"progressBar" : false,
-						"positionClass" : "toast-top-center",
-						"preventDuplicates" : false,
-						"onclick" : null,
-						"showDuration" : "300",
-						"hideDuration" : "1000",
-						"timeOut" : "3000",
-						"extendedTimeOut" : "1000",
-						"showEasing" : "swing",
-						"hideEasing" : "linear",
-						"showMethod" : "fadeIn",
-						"hideMethod" : "fadeOut"
+				$.ajax({
+					type : 'PUT',
+					url : editUserInfoURL,
+					contentType : 'application/json',
+					headers: createAuthorizationTokenHeader(tokenKey),
+					dataType : "json",
+					data : userEditFormToJSON(firstName, lastName, phone,
+							address, email),
+					success : function(data) {
+						if (data != "") {
+							toastr[data.toastType](data.message);
+						}
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown) {
+						alert("AJAX ERROR: " + textStatus);
 					}
-					toastr["error"](data);
-				}
-			},
-			error : function(XMLHttpRequest, textStatus, errorThrown) {
-				alert("AJAX ERROR: " + textStatus);
-			}
-		});
-	});
+				});
+			});
+}
+
+
+
+function setUpToastr() {
+	toastr.options = {
+		"closeButton" : true,
+		"debug" : false,
+		"newestOnTop" : false,
+		"progressBar" : false,
+		"positionClass" : "toast-top-center",
+		"preventDuplicates" : false,
+		"onclick" : null,
+		"showDuration" : "300",
+		"hideDuration" : "1000",
+		"timeOut" : "3000",
+		"extendedTimeOut" : "1000",
+		"showEasing" : "swing",
+		"hideEasing" : "linear",
+		"showMethod" : "fadeIn",
+		"hideMethod" : "fadeOut"
+	}
 }

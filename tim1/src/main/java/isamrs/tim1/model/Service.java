@@ -33,7 +33,7 @@ public abstract class Service implements Serializable {
 	@Column(name = "name", unique = true, nullable = false)
 	private String name;
 
-	@Column(name = "description", unique = false, nullable = false)
+	@Column(name = "description", unique = false, nullable = false, length=1000)
 	private String description;
 
 	@Column(name = "averageGrade", unique = false, nullable = true)
