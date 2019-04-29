@@ -77,11 +77,6 @@ $(document).ready(function() {
 	$('#addServiceModal').on('hidden.bs.modal', function(){
 		$('#addServiceForm').trigger('reset');
 	});
-	
-	adminsTable = $("#adminsTable").DataTable({
-		"paging" : false,
-		"info" : false
-	});
 
 	newServiceMap = setUpMap(45, 0, 'newServiceMapDiv', true);
 	$('#addServiceModal').on('shown.bs.modal', function() {
@@ -169,20 +164,27 @@ function setUpTabView(){
 }
 
 function setUpTables(){
-	var airlinesTable = $('#airlinesTable').DataTable({
+	airlinesTable = $('#airlinesTable').DataTable({
 		"paging" : false,
 		"info" : false,
 	});
 
-	var hotelsTable = $('#hotelsTable').DataTable({
+	hotelsTable = $('#hotelsTable').DataTable({
 		"paging" : false,
 		"info" : false,
 	});
 
-	var rentACarsTable = $('#rentACarsTable').DataTable({
+	rentACarsTable = $('#rentACarsTable').DataTable({
 		"paging" : false,
 		"info" : false,
 	});
+	
+	
+	adminsTable = $("#adminsTable").DataTable({
+		"paging" : false,
+		"info" : false
+	});
+
 
 	$('#airlinesTable tbody').on('click', 'tr', function() {
 		airlinesTable.$('tr.selected').removeClass('selected');

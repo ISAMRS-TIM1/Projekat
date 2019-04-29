@@ -185,3 +185,18 @@ a[data-toggle="tab"] {
 	margin-right: auto;
 	display: block;
 }
+
+/* HOTEL ROOM MODAL */
+#showHotelRoomDiv{
+	margin: 0;
+	background: #5994FF;
+	border: 0.24vw solid #B27A00;
+	border-radius: 4vw 1.6vw;
+}
+#showHotelRoomTable{
+	margin:auto;	
+}
+#showHotelRoomTable td {
+	padding: 30px;
+	text-align: center;
+}

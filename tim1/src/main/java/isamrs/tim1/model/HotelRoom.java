@@ -31,8 +31,8 @@ public class HotelRoom implements Serializable {
 	@Column(name = "numberOfPeople", unique = false, nullable = false)
 	private Integer numberOfPeople;
 
-	@Column(name = "roomNumber", unique = true, nullable = false)
-	private Integer roomNumber;
+	@Column(name = "roomNumber", unique = false, nullable = false)
+	private String roomNumber;
 
 	@Column(name = "defaultPriceOneNight", unique = false, nullable = false)
 	private Double defaultPriceOneNight;
@@ -73,11 +73,11 @@ public class HotelRoom implements Serializable {
 		this.numberOfPeople = numberOfPeople;
 	}
 
-	public Integer getRoomNumber() {
+	public String getRoomNumber() {
 		return roomNumber;
 	}
 
-	public void setRoomNumber(Integer roomNumber) {
+	public void setRoomNumber(String roomNumber) {
 		this.roomNumber = roomNumber;
 	}
 

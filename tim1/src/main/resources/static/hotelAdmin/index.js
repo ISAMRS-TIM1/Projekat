@@ -9,6 +9,7 @@ const editHotelURL = "/api/editHotel";
 const getAdditionalServicesURL = "/api/getAdditionalServicesURL";
 const getRoomsURL = "/api/getRooms";
 const getHotelOfAdminURL = "/api/getHotelOfAdmin";
+const getHotelRoomURL = "/api/getHotelRoom";
 
 const logoutURL = "../logout";
 const loadUserInfoURL = "../api/getUserInfo";
@@ -24,7 +25,7 @@ $(document).ready(function() {
 	loadData();
 
 	setUpEditForm();
-	
+
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
 		$($.fn.dataTable.tables(true)).DataTable().columns.adjust();
 	});
@@ -42,37 +43,39 @@ $(document).ready(function() {
 	});
 })
 
-
 function loadData() {
 	loadHotel();
 	loadProfileData();
 }
 
 function setUpTables() {
-	$('#roomsTable').DataTable({
+	roomsTable = $('#roomsTable').DataTable({
 		"paging" : false,
 		"info" : false,
-		"scrollY" : "17vw",
-		"scrollCollapse" : true,
-		"retrieve" : true,
 	});
 	$('#additionalServicesTable').DataTable({
 		"paging" : false,
 		"info" : false,
-		"scrollY" : "17vw",
-		"scrollCollapse" : true,
-		"retrieve" : true,
 	});
 	$('#quickReservationsTable').DataTable({
 		"paging" : false,
 		"info" : false,
-		"scrollY" : "17vw",
-		"scrollCollapse" : true,
-		"retrieve" : true,
 	});
+	seasonalPricesTable = $('#seasonalPricesTable').DataTable({
+		"paging" : false,
+		"info" : false
+	});
+
+	$('#roomsTable tbody').on('click', 'tr', function() {
+		roomsTable.$('tr.selected').removeClass('selected');
+		$(this).addClass('selected');
+		loadHotelRoom(roomsTable.row(this).data()[0]);
+		$("#showHotelRoomModal").modal();
+	});
+
 }
 
-function setUpTabView(){
+function setUpTabView() {
 	$(".nav li").click(function() {
 		$(this).addClass("active");
 		$(this).siblings().removeClass("active");
@@ -80,17 +83,22 @@ function setUpTabView(){
 	$('.nav-tabs a').click(function() {
 		$(this).tab('show');
 	});
-	$('a[href="#basicTab"], a[href="#roomsTab"], a[href="#additionalServicesTab"], a[href="#quickResevationsTab"]').click(function(){
-		loadHotel();
-	});
-	$('a[href="#profile"]').click(function(){
+	$(
+			'a[href="#basicTab"], a[href="#roomsTab"], a[href="#additionalServicesTab"], a[href="#quickResevationsTab"]')
+			.click(function() {
+				loadHotel();
+			});
+	$('a[href="#profile"]').click(function() {
 		loadProfileData();
 	});
-	$('a[href="#basicTab"]').on('shown.bs.tab', function () { if(destMap!=null) destMap.invalidateSize(); })
+	$('a[href="#basicTab"]').on('shown.bs.tab', function() {
+		if (destMap != null)
+			destMap.invalidateSize();
+	})
 }
 
 function setUpMap(latitude, longitude, div) {
-	if(destMap != null){
+	if (destMap != null) {
 		destMap.off();
 		destMap.remove();
 	}
@@ -127,6 +135,7 @@ function editHotel(e) {
 function loadHotel() {
 	$.ajax({
 		dataType : "json",
+		type : "GET",
 		url : getHotelOfAdminURL,
 		headers : createAuthorizationTokenHeader(tokenKey),
 		success : function(data) {
@@ -141,6 +150,27 @@ function loadHotel() {
 	});
 }
 
+function loadHotelRoom(roomNumber) {
+	$.ajax({
+		type : 'GET',
+		contentType : "application/json",
+		data : {
+			'roomNumber' : roomNumber
+		},
+		dataType : "json",
+		url : getHotelRoomURL,
+		headers : createAuthorizationTokenHeader(tokenKey),
+		success : function(data) {
+			$("#shownRoomNumber").val(data["roomNumber"]);
+			$("#shownRoomAverageGrade").val(data["averageGrade"]);
+			$("#shownRoomDefaultPrice").val(data["defaultPrice"]);
+			$("#shownRoomNumberOfPeople").val(data["numberOfPeople"]);
+			renderSeasonalPrices(data["seasonalPrices"]);
+		}
+	});
+
+}
+
 function renderAdditionalServices(data) {
 	var table = $('#additionalServicesTable').DataTable();
 	table.clear();
@@ -150,13 +180,21 @@ function renderAdditionalServices(data) {
 }
 
 function renderRooms(data) {
-	var table = $('#roomsTable').DataTable();
-	table.clear();
+	roomsTable.clear();
 	$.each(data, function(i, val) {
-		table.row.add(
+		roomsTable.row.add(
 				[ val.roomNumber, val.price, val.numberOfPeople,
 						val.averageGrade ]).draw(false);
 	});
+}
+
+function renderSeasonalPrices(data) {
+	seasonalPricesTable.clear();
+	$.each(data, function(i, val) {
+		seasonalPricesTable.row.add([ val.price, val.fromDate, val.toDate ])
+				.draw(false);
+	});
+
 }
 
 /* USER PROFILE JS */
@@ -213,7 +251,7 @@ function setUpEditForm() {
 					type : 'PUT',
 					url : editUserInfoURL,
 					contentType : 'application/json',
-					headers: createAuthorizationTokenHeader(tokenKey),
+					headers : createAuthorizationTokenHeader(tokenKey),
 					dataType : "json",
 					data : userEditFormToJSON(firstName, lastName, phone,
 							address, email),
@@ -228,8 +266,6 @@ function setUpEditForm() {
 				});
 			});
 }
-
-
 
 function setUpToastr() {
 	toastr.options = {

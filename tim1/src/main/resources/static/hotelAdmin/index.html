@@ -200,5 +200,47 @@
 			</div>
 		</div>
 	</div>
+	<!-- Show hotel room modal -->
+	<div class="modal fade" id="showHotelRoomModal" tabindex="-1"
+		role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content" id="showHotelRoomDiv">
+				<table id="showHotelRoomTable">
+					<tr>
+						<td><label for="shownRoomNumber">Room number</label><input
+							id="shownRoomNumber" class="textInput"></td>
+					</tr>
+					<tr>
+						<td><label for="shownRoomAverageGrade">AverageGrade</label><input
+							id="shownRoomAverageGrade" class="textInput" readonly></td>
+					</tr>
+					<tr>
+						<td><label for="shownRoomDefaultPrice">Default price
+								per night</label><input type="number" id="shownRoomDefaultPrice"
+							class="textInput" step='0.01'></td>
+					</tr>
+					<tr>
+						<td><label for="shownRoomNumberOfPeople">Number of
+								people</label><input type="number" id="shownRoomNumberOfPeople"
+							class="textInput"></td>
+					</tr>
+					<tr>
+						<td colspan='2'><table id="seasonalPricesTable"
+								class="table display table-bordered">
+								<thead>
+									<tr>
+										<th>Price</th>
+										<th>From date</th>
+										<th>To date</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
 </body>
 </html>
