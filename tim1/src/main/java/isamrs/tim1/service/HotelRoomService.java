@@ -21,8 +21,8 @@ public class HotelRoomService {
 	@Autowired
 	HotelRepository hotelRepository;
 
-	public HotelRoomDetailedDTO getHotelRoom(String roomNumber, Integer hotelID) {
-		return new HotelRoomDetailedDTO(hotelRoomRepository.findOneByNumberAndHotel(roomNumber, hotelID));
+	public HotelRoomDetailedDTO getHotelRoom(String roomNumber, Hotel hotel) {
+		return new HotelRoomDetailedDTO(hotelRoomRepository.findOneByNumberAndHotel(roomNumber, hotel.getId()));
 	}
 
 	public MessageDTO addHotelRoom(HotelRoomDTO hotelRoom, Hotel hotel) {
@@ -31,6 +31,16 @@ public class HotelRoomService {
 		hotel.getRooms().add(new HotelRoom(hotelRoom, hotel));
 		hotelRepository.save(hotel);
 		return new MessageDTO("Hotel room added successfully", ToasterType.SUCCESS.toString());
+	}
+
+	public MessageDTO deleteHotelRoom(String roomNumber, Hotel hotel) {
+		HotelRoom hr = hotelRoomRepository.findOneByNumberAndHotel(roomNumber, hotel.getId()); 
+		if (hr == null)
+			return new MessageDTO("Hotel room with this number does not exist", ToasterType.ERROR.toString());
+		if(!hr.getNormalReservations().isEmpty() || !hr.getQuickReservations().isEmpty())
+			return new MessageDTO("Hotel room has reservations bound to it", ToasterType.ERROR.toString());
+		hotelRoomRepository.delete(hr);
+		return new MessageDTO("Hotel room deleted successfully", ToasterType.SUCCESS.toString());
 	}
 
 }

@@ -79,7 +79,8 @@
 				<div class="tableWrapper">
 					<div class="tableButtons">
 						<button type="button" id="addRoomButton" class="btn btn-default"
-							data-toggle="modal" data-target="#newHotelRoomModal">Add room</button>
+							data-toggle="modal" data-target="#newHotelRoomModal">Add
+							room</button>
 					</div>
 					<div class="tableDiv">
 						<table id="roomsTable" class="table display table-bordered">
@@ -223,6 +224,12 @@
 					<tr>
 						<td><label for="shownRoomAverageGrade">AverageGrade</label><input
 							id="shownRoomAverageGrade" class="textInput" readonly></td>
+					</tr>
+					<tr>
+						<td><button type="submit" id="editHotelRoomButton"
+								class="btn btn-default">Save changes</button></td>
+						<td><button id="deleteHotelRoomButton" onclick="deleteRoom()"
+								class="btn btn-default">Delete room</button></td>
 					</tr>
 					<tr>
 						<td colspan='2'><table id="seasonalPricesTable"

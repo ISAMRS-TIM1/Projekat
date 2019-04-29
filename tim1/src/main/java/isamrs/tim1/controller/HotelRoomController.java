@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,7 +33,7 @@ public class HotelRoomController {
 	public ResponseEntity<HotelRoomDetailedDTO> getHotelRoom(@RequestParam String roomNumber) {
 		return new ResponseEntity<HotelRoomDetailedDTO>(
 				hotelRoomService
-						.getHotelRoom(roomNumber, ((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel().getId()),
+						.getHotelRoom(roomNumber, ((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel()),
 				HttpStatus.OK);
 	}
 	
@@ -45,6 +46,18 @@ public class HotelRoomController {
 		return new ResponseEntity<MessageDTO>(
 				hotelRoomService
 						.addHotelRoom(hotelRoom, ((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel()),
+				HttpStatus.OK);
+	}
+	
+	@PreAuthorize("hasRole('HOTELADMIN')")
+	@RequestMapping(
+			value = "/api/deleteHotelRoom/{roomNumber}",
+			method = RequestMethod.DELETE,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MessageDTO> deleteHotelRoom(@PathVariable("roomNumber") String roomNumber) {
+		return new ResponseEntity<MessageDTO>(
+				hotelRoomService
+						.deleteHotelRoom(roomNumber, ((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel()),
 				HttpStatus.OK);
 	}
 }

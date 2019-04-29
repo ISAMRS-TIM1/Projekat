@@ -11,13 +11,15 @@ const getRoomsURL = "/api/getRooms";
 const getHotelOfAdminURL = "/api/getHotelOfAdmin";
 const getHotelRoomURL = "/api/getHotelRoom";
 const addHotelRoomURL = "/api/addHotelRoom";
+const deleteHotelRoomURL = "/api/deleteHotelRoom/";
 
 const logoutURL = "../logout";
 const loadUserInfoURL = "../api/getUserInfo";
 const editUserInfoURL = "../api/editUser";
 const changePasswordURL = "../changePassword";
 
-var destMap = null
+var destMap = null;
+var shownRoom = null;
 
 $(document).ready(function() {
 	setUpToastr();
@@ -42,6 +44,11 @@ $(document).ready(function() {
 		} else {
 			$(this).siblings().first().prop('readonly', 'true');
 		}
+	});
+
+	$('#showHotelRoomModal').on('hidden.bs.modal', function() {
+		roomsTable.$('tr.selected').removeClass('selected');
+		shownRoom = null;
 	});
 })
 
@@ -72,6 +79,7 @@ function setUpTables() {
 		roomsTable.$('tr.selected').removeClass('selected');
 		$(this).addClass('selected');
 		loadHotelRoom(roomsTable.row(this).data()[0]);
+		shownRoom = roomsTable.row(this).data()[0];
 		$("#showHotelRoomModal").modal();
 	});
 
@@ -238,35 +246,32 @@ function userEditFormToJSON(firstName, lastName, phone, address, email) {
 	});
 }
 
-function setUpNewHotelRoomForm(){
-	$('#newHotelRoomForm').on(
-			'submit',
-			function(e) {
-				e.preventDefault();
-				$.ajax({
-					type : 'POST',
-					url : addHotelRoomURL,
-					contentType : 'application/json',
-					headers : createAuthorizationTokenHeader(tokenKey),
-					dataType : "json",
-					data : JSON.stringify({
-						"roomNumber": $("#newRoomNumber").val(),
-						"price": $("#newRoomDefaultPrice").val(),
-						"numberOfPeople": $("#newRoomNumberOfPeople").val(),
-					}),
-					success : function(data) {
-						loadHotel();
-						if (data != "") {
-							toastr[data.toastType](data.message);
-						}
-					},
-					error : function(XMLHttpRequest, textStatus, errorThrown) {
-						alert("AJAX ERROR: " + textStatus);
-					}
-				});
-			});
-	
-	
+function setUpNewHotelRoomForm() {
+	$('#newHotelRoomForm').on('submit', function(e) {
+		e.preventDefault();
+		$.ajax({
+			type : 'POST',
+			url : addHotelRoomURL,
+			contentType : 'application/json',
+			headers : createAuthorizationTokenHeader(tokenKey),
+			dataType : "json",
+			data : JSON.stringify({
+				"roomNumber" : $("#newRoomNumber").val(),
+				"price" : $("#newRoomDefaultPrice").val(),
+				"numberOfPeople" : $("#newRoomNumberOfPeople").val(),
+			}),
+			success : function(data) {
+				loadHotel();
+				if (data != "") {
+					toastr[data.toastType](data.message);
+				}
+			},
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+				alert("AJAX ERROR: " + textStatus);
+			}
+		});
+	});
+
 }
 
 function setUpEditForm() {
@@ -318,4 +323,20 @@ function setUpToastr() {
 		"showMethod" : "fadeIn",
 		"hideMethod" : "fadeOut"
 	}
+}
+
+function deleteRoom() {
+	$.ajax({
+		type : 'DELETE',
+		dataType : "json",
+		url : deleteHotelRoomURL + shownRoom,
+		headers : createAuthorizationTokenHeader(tokenKey),
+		success : function(data) {
+			loadHotel();
+			if (data != "") {
+				toastr[data.toastType](data.message);
+			}
+		}
+	});
+
 }
