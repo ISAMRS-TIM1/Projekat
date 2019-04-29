@@ -10,6 +10,7 @@ const getAdditionalServicesURL = "/api/getAdditionalServicesURL";
 const getRoomsURL = "/api/getRooms";
 const getHotelOfAdminURL = "/api/getHotelOfAdmin";
 const getHotelRoomURL = "/api/getHotelRoom";
+const addHotelRoomURL = "/api/addHotelRoom";
 
 const logoutURL = "../logout";
 const loadUserInfoURL = "../api/getUserInfo";
@@ -24,6 +25,7 @@ $(document).ready(function() {
 	setUpTables();
 	loadData();
 
+	setUpNewHotelRoomForm();
 	setUpEditForm();
 
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
@@ -173,14 +175,14 @@ function loadHotelRoom(roomNumber) {
 
 function renderAdditionalServices(data) {
 	var table = $('#additionalServicesTable').DataTable();
-	table.clear();
+	table.clear().draw();
 	$.each(data, function(i, val) {
 		table.row.add([ val.name, val.price ]).draw(false);
 	});
 }
 
 function renderRooms(data) {
-	roomsTable.clear();
+	roomsTable.clear().draw();
 	$.each(data, function(i, val) {
 		roomsTable.row.add(
 				[ val.roomNumber, val.price, val.numberOfPeople,
@@ -189,7 +191,7 @@ function renderRooms(data) {
 }
 
 function renderSeasonalPrices(data) {
-	seasonalPricesTable.clear();
+	seasonalPricesTable.clear().draw();
 	$.each(data, function(i, val) {
 		seasonalPricesTable.row.add([ val.price, val.fromDate, val.toDate ])
 				.draw(false);
@@ -234,6 +236,37 @@ function userEditFormToJSON(firstName, lastName, phone, address, email) {
 		"address" : address,
 		"email" : email
 	});
+}
+
+function setUpNewHotelRoomForm(){
+	$('#newHotelRoomForm').on(
+			'submit',
+			function(e) {
+				e.preventDefault();
+				$.ajax({
+					type : 'POST',
+					url : addHotelRoomURL,
+					contentType : 'application/json',
+					headers : createAuthorizationTokenHeader(tokenKey),
+					dataType : "json",
+					data : JSON.stringify({
+						"roomNumber": $("#newRoomNumber").val(),
+						"price": $("#newRoomDefaultPrice").val(),
+						"numberOfPeople": $("#newRoomNumberOfPeople").val(),
+					}),
+					success : function(data) {
+						loadHotel();
+						if (data != "") {
+							toastr[data.toastType](data.message);
+						}
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown) {
+						alert("AJAX ERROR: " + textStatus);
+					}
+				});
+			});
+	
+	
 }
 
 function setUpEditForm() {

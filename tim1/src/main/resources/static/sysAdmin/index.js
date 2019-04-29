@@ -366,7 +366,7 @@ function loadServices(url, tableID) {
 		success : function(data) {
 			if (data != null) {
 				var table = $(tableID).DataTable();
-				table.clear();
+				table.clear().draw();
 				$.each(data, function(i, val) {
 					table.row.add(
 							[ val.name, val.averageGrade, val.numberOfAdmins ])
@@ -402,7 +402,7 @@ function loadService(name, url) {
 				}
 				destMap = setUpMap(data["latitude"], data["longitude"],
 						'mapDiv', false);
-				adminsTable.clear();
+				adminsTable.clear().draw();
 				$.each(data.admins, function(i, val) {
 					adminsTable.row.add(
 							[ val.email, val.firstName, val.lastName,

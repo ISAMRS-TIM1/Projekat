@@ -16,6 +16,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import isamrs.tim1.dto.HotelRoomDTO;
+
 @Entity
 @Table(name = "HotelRooms")
 public class HotelRoom implements Serializable {
@@ -55,6 +57,18 @@ public class HotelRoom implements Serializable {
 		quickReservations = new HashSet<QuickHotelReservation>();
 		normalReservations = new HashSet<HotelReservation>();
 		seasonalPrices = new HashSet<SeasonalHotelRoomPrice>();
+	}
+
+	public HotelRoom(HotelRoomDTO hotelRoom, Hotel hotel) {
+		this.id = null;
+		this.averageGrade = 0.0;
+		this.numberOfPeople = hotelRoom.getNumberOfPeople();
+		this.defaultPriceOneNight = hotelRoom.getPrice();
+		this.roomNumber = hotelRoom.getRoomNumber();
+		this.hotel = hotel;
+		this.quickReservations = new HashSet<QuickHotelReservation>();
+		this.normalReservations = new HashSet<HotelReservation>();
+		this.seasonalPrices = new HashSet<SeasonalHotelRoomPrice>();
 	}
 
 	public Double getAverageGrade() {

@@ -200,3 +200,29 @@ a[data-toggle="tab"] {
 	padding: 30px;
 	text-align: center;
 }
+
+/* NEW ROOM MODAL */
+#newHotelRoomDiv{
+	margin: 0;
+	background: #5994FF;
+	border: 0.24vw solid #B27A00;
+	border-radius: 4vw 1.6vw;
+}
+#newHotelRoomTable{
+	margin:auto;	
+}
+#newHotelRoomTable td {
+	padding: 30px;
+	text-align: center;
+}
+#addHotelRoomButton {
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 2vh;
+	display: block;
+	background: #5994FF;
+	color: white;
+	font-size: 1.6vw;
+	border: 0.16vw solid #B27A00;
+	border-radius: 2vw 2vw 2vw 2vw;
+}

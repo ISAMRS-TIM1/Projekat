@@ -79,7 +79,7 @@
 				<div class="tableWrapper">
 					<div class="tableButtons">
 						<button type="button" id="addRoomButton" class="btn btn-default"
-							data-toggle="modal" data-target="addRoomModal">Add room</button>
+							data-toggle="modal" data-target="#newHotelRoomModal">Add room</button>
 					</div>
 					<div class="tableDiv">
 						<table id="roomsTable" class="table display table-bordered">
@@ -211,10 +211,6 @@
 							id="shownRoomNumber" class="textInput"></td>
 					</tr>
 					<tr>
-						<td><label for="shownRoomAverageGrade">AverageGrade</label><input
-							id="shownRoomAverageGrade" class="textInput" readonly></td>
-					</tr>
-					<tr>
 						<td><label for="shownRoomDefaultPrice">Default price
 								per night</label><input type="number" id="shownRoomDefaultPrice"
 							class="textInput" step='0.01'></td>
@@ -223,6 +219,10 @@
 						<td><label for="shownRoomNumberOfPeople">Number of
 								people</label><input type="number" id="shownRoomNumberOfPeople"
 							class="textInput"></td>
+					</tr>
+					<tr>
+						<td><label for="shownRoomAverageGrade">AverageGrade</label><input
+							id="shownRoomAverageGrade" class="textInput" readonly></td>
 					</tr>
 					<tr>
 						<td colspan='2'><table id="seasonalPricesTable"
@@ -239,6 +239,38 @@
 							</table></td>
 					</tr>
 				</table>
+			</div>
+		</div>
+	</div>
+	<!-- Add new hotel room modal -->
+	<div class="modal fade" id="newHotelRoomModal" tabindex="-1"
+		role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content" id="newHotelRoomDiv">
+				<form id="newHotelRoomForm">
+					<table id="newHotelRoomTable">
+						<tr>
+							<td><label for="newRoomNumber">Room number</label><input
+								id="newRoomNumber" class="textInput"></td>
+						</tr>
+						<tr>
+							<td><label for="newRoomDefaultPrice">Default price
+									per night</label><input type="number" id="newRoomDefaultPrice"
+								class="textInput" step='0.01'></td>
+						</tr>
+						<tr>
+							<td><label for="newRoomNumberOfPeople">Number of
+									people</label><input type="number" id="newRoomNumberOfPeople"
+								class="textInput"></td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<button type="submit" id="addHotelRoomButton"
+									class="btn btn-default">Add</button>
+							</td>
+						</tr>
+					</table>
+				</form>
 			</div>
 		</div>
 	</div>
