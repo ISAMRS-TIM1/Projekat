@@ -12,6 +12,7 @@
 <link rel="stylesheet" type="text/css" href="registeredUser/jquery.seat-charts.css">
 <link rel="stylesheet" href="registeredUser/index.css">
 <link rel="stylesheet" href="tableStyle.css">
+<script src="registeredUser/moment.min.js"></script>
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="auth/auth.js"></script>
@@ -58,19 +59,74 @@
 		</div>
 		<div class="tab-content">
 			<div id="flights" class="tab-pane fade in active" style="text-align:center;">
-				<div id="planeSeats">
-					<div id="seat-map">
-				      <div class="front-indicator">Front</div>
-				    </div>
-				    <div class="booking-details">
-				      <h2>Booking Details</h2>
-				      <h3> Selected Seats (<span id="counter">0</span>):</h3>
-				      <ul id="selected-seats">
-				      </ul>
-				      Total: <b>$<span id="total">0</span></b>
-				      <button class="checkout-button">Checkout &raquo;</button>
-				      <div id="legend"></div>
-				    </div>
+				<div id="flightsTableWrapper">
+					<div id="searchFlightsDiv">
+						<table id="serviceTable">
+							<tr>
+								<td>
+									Start destination
+								</td>
+								<td>
+									<select id="startDestination">
+									</select>
+								</td>
+								<td>
+									End destination
+								</td>
+								<td>
+									<select id="endDestination">
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									Departure time
+								</td>
+								<td>
+									<input type="datetime-local" id="departureTime"/>
+								</td>
+								<td>
+									Landing time
+								</td>
+								<td>
+									<input type="datetime-local" id="landingTime"/>
+								</td>
+							</tr>
+						</table><br>
+						<button class="btn btn-default" id="searchFlights">Search</button>	
+						<br>
+						<div id="flightsDiv">
+							<table id="flightsTable" class="table display table-bordered">
+								<thead>
+			            			<tr>
+			            				<th>Departure time</th>
+						                <th>Landing time</th>
+						               	<th>Airline</th>
+						                <th>Number of connections</th>
+						                <th>Flight duration</th>
+						                <th>First class price</th>
+										<th>Business class price</th>
+										<th>Economy class price</th>
+			            			</tr>
+			        			</thead>
+			        			<tbody>
+			        			</tbody>
+							</table>
+						</div>
+					</div>
+					<!--<div id="planeSeats">
+						<div id="seat-map">
+					      <div class="front-indicator">Front</div>
+					    </div>
+					    <div class="booking-details">
+					      <h2>Booking Details</h2>
+					      <h3> Selected Seats (<span id="counter">0</span>):</h3>
+					      <ul id="selected-seats">
+					      </ul>
+					      Total: <b>$<span id="total">0</span></b>
+					      <button class="checkout-button">Checkout &raquo;</button>
+					      <div id="legend"></div>
+					    </div>-->
 				</div>
 			</div>
 			<div id="hotels" class="tab-pane fade">

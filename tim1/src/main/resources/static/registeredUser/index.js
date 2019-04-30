@@ -7,14 +7,13 @@ const friendInvitationURL = "/api/sendInvitation";
 const acceptInvitationURL = "/api/acceptInvitation";
 const declineInvitationURL = "/api/declineInvitation";
 const getFriendsURL = "/api/getFriends";
+const getDestinationsURL = "/api/getDestinations";
 
 const tokenKey = "jwtToken";
 
 var userMail = "";
 
-$(document).ready(function(){
-	loadData();
-	setUpToastr();
+$(document).ready(function(){	
 	var socket = new SockJS('/friendsEndpoint');
 	var stompClient = Stomp.over(socket);
 	stompClient.connect({}, function(frame) {
@@ -22,6 +21,11 @@ $(document).ready(function(){
 			getFriends();
 		});
 	});
+	
+	loadData();
+	setUpToastr();
+	getDestinations();
+	getPlaneSeats();
 	
 	$('#friendsTable').DataTable({
         "paging": false,
@@ -35,6 +39,13 @@ $(document).ready(function(){
         "paging": false,
         "info": false,
         "scrollY": "17vw",
+        "scrollCollapse": true,
+        "retrieve": true,
+    });
+	
+	$('#flightsTable').DataTable({
+        "paging": false,
+        "info": false,
         "scrollCollapse": true,
         "retrieve": true,
     });
@@ -147,9 +158,8 @@ $(document).ready(function(){
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
 		$($.fn.dataTable.tables(true)).DataTable().columns.adjust();
 	});
-	
-	getPlaneSeats();
 });
+
 
 function setUpToastr() {
 	toastr.options = {
@@ -169,6 +179,74 @@ function setUpToastr() {
 			  "showMethod": "fadeIn",
 			  "hideMethod": "fadeOut"
 			}
+}
+
+function getDestinations() {
+	$.ajax({
+		type : 'GET',
+		url : getDestinationsURL,
+		headers: createAuthorizationTokenHeader(tokenKey),
+		success: function(data){
+			if (data != null) {
+				var start = $("#startDestination");
+				var end = $("#endDestination");
+				$.each(data, function(i, val) {
+					start.append("<option value=" + val.name + ">" + val.name + "</option>");
+					end.append("<option value=" + val.name + ">" + val.name + "</option>");
+				});
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
+function searchFlights(e) {
+	e.preventDefault();
+	var startDestination = $( "#startDestination option:selected" ).text();
+	var endDestination = $( "#endDestination  option:selected" ).text();
+	if (startDestination == endDestination) {
+		toastr["error"]("Start destination and end destination must not be the same.");
+		return;
+	}
+	var departureTime = $("#departureTime").val();
+	if (departureTime == null || departureTime == "") {
+		toastr["error"]("Departure time is not valid.")
+		return;
+	}
+	var landingTime = $("#landingTime").val();
+	if (landingTime == null || landingTime == "") {
+		toastr["error"]("Landing time is not valid.")
+		return;
+	}
+	if (moment(landingTime).isBefore(departureTime) || moment(landingTime).isSame(departureTime)) {
+		toastr["error"]("Landing time must be after the departure time.");
+		return;
+	}
+	$.ajax({
+		type : 'GET',
+		url : searchFlightsURL,
+		headers: createAuthorizationTokenHeader(tokenKey),
+		contentType : "application/json",
+		data : J,
+		success: function(data){
+			if (data != null) {
+				var table = $('#flightsTable').DataTable();
+				$.each(data, function(i, val) {
+					var date1 = moment(val.departureTime);
+					var date2 = moment(val.landingTime);
+					var diff = date2.diff(date1, 'minutes');
+					table.row.add(
+							[ val.departureTime, val.landingTime, val.airline, val.numberOfConnections, diff + " min",
+								val.firstClassPrice, val.businessClassPrice, val.economyClassPrice]).draw(false);
+				});
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
 }
 
 function getFriends() {
