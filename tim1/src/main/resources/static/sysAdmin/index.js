@@ -77,11 +77,6 @@ $(document).ready(function() {
 	$('#addServiceModal').on('hidden.bs.modal', function(){
 		$('#addServiceForm').trigger('reset');
 	});
-	
-	adminsTable = $("#adminsTable").DataTable({
-		"paging" : false,
-		"info" : false
-	});
 
 	newServiceMap = setUpMap(45, 0, 'newServiceMapDiv', true);
 	$('#addServiceModal').on('shown.bs.modal', function() {
@@ -169,20 +164,27 @@ function setUpTabView(){
 }
 
 function setUpTables(){
-	var airlinesTable = $('#airlinesTable').DataTable({
+	airlinesTable = $('#airlinesTable').DataTable({
 		"paging" : false,
 		"info" : false,
 	});
 
-	var hotelsTable = $('#hotelsTable').DataTable({
+	hotelsTable = $('#hotelsTable').DataTable({
 		"paging" : false,
 		"info" : false,
 	});
 
-	var rentACarsTable = $('#rentACarsTable').DataTable({
+	rentACarsTable = $('#rentACarsTable').DataTable({
 		"paging" : false,
 		"info" : false,
 	});
+	
+	
+	adminsTable = $("#adminsTable").DataTable({
+		"paging" : false,
+		"info" : false
+	});
+
 
 	$('#airlinesTable tbody').on('click', 'tr', function() {
 		airlinesTable.$('tr.selected').removeClass('selected');
@@ -364,7 +366,7 @@ function loadServices(url, tableID) {
 		success : function(data) {
 			if (data != null) {
 				var table = $(tableID).DataTable();
-				table.clear();
+				table.clear().draw();
 				$.each(data, function(i, val) {
 					table.row.add(
 							[ val.name, val.averageGrade, val.numberOfAdmins ])
@@ -400,7 +402,7 @@ function loadService(name, url) {
 				}
 				destMap = setUpMap(data["latitude"], data["longitude"],
 						'mapDiv', false);
-				adminsTable.clear();
+				adminsTable.clear().draw();
 				$.each(data.admins, function(i, val) {
 					adminsTable.row.add(
 							[ val.email, val.firstName, val.lastName,

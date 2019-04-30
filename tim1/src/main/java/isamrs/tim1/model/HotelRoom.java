@@ -16,6 +16,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import isamrs.tim1.dto.HotelRoomDTO;
+
 @Entity
 @Table(name = "HotelRooms")
 public class HotelRoom implements Serializable {
@@ -31,8 +33,8 @@ public class HotelRoom implements Serializable {
 	@Column(name = "numberOfPeople", unique = false, nullable = false)
 	private Integer numberOfPeople;
 
-	@Column(name = "roomNumber", unique = true, nullable = false)
-	private Integer roomNumber;
+	@Column(name = "roomNumber", unique = false, nullable = false)
+	private String roomNumber;
 
 	@Column(name = "defaultPriceOneNight", unique = false, nullable = false)
 	private Double defaultPriceOneNight;
@@ -57,6 +59,18 @@ public class HotelRoom implements Serializable {
 		seasonalPrices = new HashSet<SeasonalHotelRoomPrice>();
 	}
 
+	public HotelRoom(HotelRoomDTO hotelRoom, Hotel hotel) {
+		this.id = null;
+		this.averageGrade = 0.0;
+		this.numberOfPeople = hotelRoom.getNumberOfPeople();
+		this.defaultPriceOneNight = hotelRoom.getPrice();
+		this.roomNumber = hotelRoom.getRoomNumber();
+		this.hotel = hotel;
+		this.quickReservations = new HashSet<QuickHotelReservation>();
+		this.normalReservations = new HashSet<HotelReservation>();
+		this.seasonalPrices = new HashSet<SeasonalHotelRoomPrice>();
+	}
+
 	public Double getAverageGrade() {
 		return averageGrade;
 	}
@@ -73,11 +87,11 @@ public class HotelRoom implements Serializable {
 		this.numberOfPeople = numberOfPeople;
 	}
 
-	public Integer getRoomNumber() {
+	public String getRoomNumber() {
 		return roomNumber;
 	}
 
-	public void setRoomNumber(Integer roomNumber) {
+	public void setRoomNumber(String roomNumber) {
 		this.roomNumber = roomNumber;
 	}
 

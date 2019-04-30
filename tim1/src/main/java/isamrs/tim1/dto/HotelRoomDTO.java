@@ -6,7 +6,7 @@ import isamrs.tim1.model.HotelRoom;
 import isamrs.tim1.model.SeasonalHotelRoomPrice;
 
 public class HotelRoomDTO {
-	private int roomNumber;
+	private String roomNumber;
 	private double averageGrade;
 	private double price;
 	private int numberOfPeople;
@@ -31,13 +31,12 @@ public class HotelRoomDTO {
 		}
 	}
 
-
-	public int getRoomNumber() {
+	public String getRoomNumber() {
 		return roomNumber;
 	}
 
 
-	public void setRoomNumber(int roomNumber) {
+	public void setRoomNumber(String roomNumber) {
 		this.roomNumber = roomNumber;
 	}
 
