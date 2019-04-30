@@ -99,6 +99,13 @@ a[data-toggle="tab"] {
 	margin-bottom: 2vw;
 }
 
+/* MODAL */
+
+.modal-content {
+	max-height: calc(100vh - 200px);
+	overflow-y: auto;
+}
+
 /* PROFILE */
 
 #profileContent {
@@ -188,17 +195,25 @@ a[data-toggle="tab"] {
 
 /* HOTEL ROOM MODAL */
 #showHotelRoomDiv{
-	margin: 0;
 	background: #5994FF;
 	border: 0.24vw solid #B27A00;
 	border-radius: 4vw 1.6vw;
 }
-#showHotelRoomTable{
-	margin:auto;	
+.showHotelRoomInnerDiv{
+	margin: 2vw;
+	padding: 2vw;
+	border: 0.18vw solid #B27A00;
+	border-radius: 4vw 1.6vw;
 }
-#showHotelRoomTable td {
-	padding: 30px;
+.showHotelRoomTable {
+	margin:auto;
+}
+.showHotelRoomTable td {
+	padding: 2vw;
 	text-align: center;
+}
+.showHotelRoomTable label{
+	margin: 2vw;
 }
 
 /* NEW ROOM MODAL */

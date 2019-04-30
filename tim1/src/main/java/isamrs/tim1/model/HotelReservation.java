@@ -25,4 +25,32 @@ public class HotelReservation extends Reservation {
 	
 	private static final long serialVersionUID = 4087468028517776623L;
 
+	public Date getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public Date getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(Date toDate) {
+		this.toDate = toDate;
+	}
+
+	public HotelRoom getHotelRoom() {
+		return hotelRoom;
+	}
+
+	public void setHotelRoom(HotelRoom hotelRoom) {
+		this.hotelRoom = hotelRoom;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
 }

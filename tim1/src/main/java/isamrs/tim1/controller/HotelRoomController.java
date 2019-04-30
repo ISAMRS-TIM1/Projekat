@@ -16,48 +16,46 @@ import org.springframework.web.bind.annotation.RestController;
 import isamrs.tim1.dto.HotelRoomDTO;
 import isamrs.tim1.dto.HotelRoomDetailedDTO;
 import isamrs.tim1.dto.MessageDTO;
+import isamrs.tim1.dto.SeasonalPriceDTO;
 import isamrs.tim1.model.HotelAdmin;
 import isamrs.tim1.service.HotelRoomService;
 
 @RestController
 public class HotelRoomController {
-	
+
 	@Autowired
 	private HotelRoomService hotelRoomService;
-	
+
 	@PreAuthorize("hasRole('HOTELADMIN')")
-	@RequestMapping(
-			value = "/api/getHotelRoom",
-			method = RequestMethod.GET,
-			produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/api/getHotelRoom", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<HotelRoomDetailedDTO> getHotelRoom(@RequestParam String roomNumber) {
-		return new ResponseEntity<HotelRoomDetailedDTO>(
-				hotelRoomService
-						.getHotelRoom(roomNumber, ((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel()),
+		return new ResponseEntity<HotelRoomDetailedDTO>(hotelRoomService.getHotelRoom(roomNumber,
+				((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel()),
 				HttpStatus.OK);
 	}
-	
+
 	@PreAuthorize("hasRole('HOTELADMIN')")
-	@RequestMapping(
-			value = "/api/addHotelRoom",
-			method = RequestMethod.POST,
-			produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/api/addHotelRoom", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MessageDTO> addHotelRoom(@RequestBody HotelRoomDTO hotelRoom) {
-		return new ResponseEntity<MessageDTO>(
-				hotelRoomService
-						.addHotelRoom(hotelRoom, ((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel()),
+		return new ResponseEntity<MessageDTO>(hotelRoomService.addHotelRoom(hotelRoom,
+				((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel()),
 				HttpStatus.OK);
 	}
-	
+
 	@PreAuthorize("hasRole('HOTELADMIN')")
-	@RequestMapping(
-			value = "/api/deleteHotelRoom/{roomNumber}",
-			method = RequestMethod.DELETE,
-			produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/api/addSeasonalPrice/{roomNumber}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MessageDTO> addSeasonalPrice(@RequestBody SeasonalPriceDTO seasonalPrice,
+			@PathVariable("roomNumber") String roomNumber) {
+		return new ResponseEntity<MessageDTO>(hotelRoomService.addSeasonalPrice(seasonalPrice, roomNumber,
+				((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel()),
+				HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasRole('HOTELADMIN')")
+	@RequestMapping(value = "/api/deleteHotelRoom/{roomNumber}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MessageDTO> deleteHotelRoom(@PathVariable("roomNumber") String roomNumber) {
-		return new ResponseEntity<MessageDTO>(
-				hotelRoomService
-						.deleteHotelRoom(roomNumber, ((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel()),
+		return new ResponseEntity<MessageDTO>(hotelRoomService.deleteHotelRoom(roomNumber,
+				((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel()),
 				HttpStatus.OK);
 	}
 }
