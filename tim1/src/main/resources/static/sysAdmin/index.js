@@ -33,21 +33,15 @@ var destMap = null;
 
 $(document).ready(function() {
 	setUpToastr();
+	setUpTabView();
+	setUpTables();
 	loadData();
-
-	$(".nav li").click(function() {
-		$(this).addClass("active");
-		$(this).siblings().removeClass("active");
-	});
-
+	
+	
 	$("#logout").click(function() {
 		document.location.href = logoutURL;
 	});
-
-	$('.nav-tabs a').click(function() {
-		$(this).tab('show');
-	});
-
+	
 	$('.edit').click(function() {
 		if ($(this).siblings().first().is('[readonly]')) {
 			$(this).siblings().first().removeAttr('readonly');
@@ -61,48 +55,6 @@ $(document).ready(function() {
 	setUpRegistrationForm();
 	setUpEditDiscountInfoForm();
 
-	var airlinesTable = $('#airlinesTable').DataTable({
-		"paging" : false,
-		"info" : false,
-	});
-
-	var hotelsTable = $('#hotelsTable').DataTable({
-		"paging" : false,
-		"info" : false,
-	});
-
-	var rentACarsTable = $('#rentACarsTable').DataTable({
-		"paging" : false,
-		"info" : false,
-	});
-
-	$('#airlinesTable tbody').on('click', 'tr', function() {
-		airlinesTable.$('tr.selected').removeClass('selected');
-		$(this).addClass('selected');
-		currentService = airlinesTable.row(this).data()[0];
-		currentServiceURL = getAirlineURL;
-		loadService(currentService, currentServiceURL);
-		$("#modalDialog").modal();
-	});
-
-	$('#hotelsTable tbody').on('click', 'tr', function() {
-		hotelsTable.$('tr.selected').removeClass('selected');
-		$(this).addClass('selected');
-		currentService = hotelsTable.row(this).data()[0];
-		currentServiceURL = getHotelURL;
-		loadService(currentService, currentServiceURL);
-		$("#modalDialog").modal();
-	});
-
-	$('#rentACarsTable tbody').on('click', 'tr', function() {
-		rentACarsTable.$('tr.selected').removeClass('selected');
-		$(this).addClass('selected');
-		currentService = rentACarsTable.row(this).data()[0];
-		currentServiceURL = getRentACarURL;
-		loadService(currentService, currentServiceURL);
-		$("#modalDialog").modal();
-	});
-
 	$('#modalDialog').on('hidden.bs.modal', function() {
 		airlinesTable.$('tr.selected').removeClass('selected');
 		hotelsTable.$('tr.selected').removeClass('selected');
@@ -111,7 +63,7 @@ $(document).ready(function() {
 		destMap.remove();
 		destMap = null;
 		adminsTable.clear().draw();
-	})
+	});
 
 	$('#modalDialog').on('shown.bs.modal', function() {
 		setTimeout(function() {
@@ -122,6 +74,10 @@ $(document).ready(function() {
 		}, 1000);
 	});
 
+	$('#addServiceModal').on('hidden.bs.modal', function(){
+		$('#addServiceForm').trigger('reset');
+	});
+	
 	adminsTable = $("#adminsTable").DataTable({
 		"paging" : false,
 		"info" : false
@@ -184,6 +140,75 @@ function loadProfile() {
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
 			alert("AJAX ERROR: " + textStatus);
 		}
+	});
+}
+
+function setUpTabView(){
+	$(".nav li").click(function() {
+		$(this).addClass("active");
+		$(this).siblings().removeClass("active");
+	});
+	$('.nav-tabs a').click(function() {
+		$(this).tab('show');
+	});
+	$('a[href="#airlines"]').click(function(){
+		loadServices(getAirlinesURL, "#airlinesTable");
+	});
+	$('a[href="#hotels"]').click(function(){
+		loadServices(getHotelsURL, "#hotelsTable");
+	});
+	$('a[href="#rentACars"]').click(function(){
+		loadServices(getRentACarsURL, "#rentACarsTable");
+	});
+	$('a[href="#discounts"]').click(function(){
+		loadDiscountInfo();
+	});
+	$('a[href="#profile"]').click(function(){
+		loadProfile();
+	});
+}
+
+function setUpTables(){
+	var airlinesTable = $('#airlinesTable').DataTable({
+		"paging" : false,
+		"info" : false,
+	});
+
+	var hotelsTable = $('#hotelsTable').DataTable({
+		"paging" : false,
+		"info" : false,
+	});
+
+	var rentACarsTable = $('#rentACarsTable').DataTable({
+		"paging" : false,
+		"info" : false,
+	});
+
+	$('#airlinesTable tbody').on('click', 'tr', function() {
+		airlinesTable.$('tr.selected').removeClass('selected');
+		$(this).addClass('selected');
+		currentService = airlinesTable.row(this).data()[0];
+		currentServiceURL = getAirlineURL;
+		loadService(currentService, currentServiceURL);
+		$("#modalDialog").modal();
+	});
+
+	$('#hotelsTable tbody').on('click', 'tr', function() {
+		hotelsTable.$('tr.selected').removeClass('selected');
+		$(this).addClass('selected');
+		currentService = hotelsTable.row(this).data()[0];
+		currentServiceURL = getHotelURL;
+		loadService(currentService, currentServiceURL);
+		$("#modalDialog").modal();
+	});
+
+	$('#rentACarsTable tbody').on('click', 'tr', function() {
+		rentACarsTable.$('tr.selected').removeClass('selected');
+		$(this).addClass('selected');
+		currentService = rentACarsTable.row(this).data()[0];
+		currentServiceURL = getRentACarURL;
+		loadService(currentService, currentServiceURL);
+		$("#modalDialog").modal();
 	});
 }
 

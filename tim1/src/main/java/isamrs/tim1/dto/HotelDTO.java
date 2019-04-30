@@ -14,10 +14,9 @@ public class HotelDTO implements Serializable {
 	private double averageGrade;
 	private double latitude;
 	private double longitude;
-	private ArrayList<HotelAdditionalService> additionalServices;
+	private ArrayList<HotelAdditionalServiceDTO> additionalServices;
 	private ArrayList<HotelRoomDTO> rooms;
 
-	
 	public HotelDTO(Hotel hotel) {
 		super();
 		this.name = hotel.getName();
@@ -25,9 +24,12 @@ public class HotelDTO implements Serializable {
 		this.averageGrade = hotel.getAverageGrade();
 		this.latitude = hotel.getLocation().getLatitude();
 		this.longitude = hotel.getLocation().getLongitude();
-		this.additionalServices = new ArrayList<HotelAdditionalService>(hotel.getAdditionalServices());
+		this.additionalServices = new ArrayList<HotelAdditionalServiceDTO>();
 		this.rooms = new ArrayList<HotelRoomDTO>();
-		for(HotelRoom room : hotel.getRooms()) {
+		for (HotelAdditionalService has : hotel.getAdditionalServices()) {
+			this.additionalServices.add(new HotelAdditionalServiceDTO(has));
+		}
+		for (HotelRoom room : hotel.getRooms()) {
 			this.rooms.add(new HotelRoomDTO(room));
 		}
 	}
@@ -76,11 +78,11 @@ public class HotelDTO implements Serializable {
 		this.longitude = longitude;
 	}
 
-	public ArrayList<HotelAdditionalService> getAdditionalServices() {
+	public ArrayList<HotelAdditionalServiceDTO> getAdditionalServices() {
 		return additionalServices;
 	}
 
-	public void setAdditionalServices(ArrayList<HotelAdditionalService> additionalServices) {
+	public void setAdditionalServices(ArrayList<HotelAdditionalServiceDTO> additionalServices) {
 		this.additionalServices = additionalServices;
 	}
 

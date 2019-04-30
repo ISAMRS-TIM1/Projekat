@@ -15,11 +15,16 @@
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="auth/auth.js"></script>
 <script type="text/javascript" src="carAdmin/index.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+<script type="text/javascript"
+	src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript"
+	src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
 <link rel="stylesheet"
 	href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
 	integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
@@ -27,47 +32,45 @@
 <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
 	integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
 	crossorigin=""></script>
-<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
+<script type="text/javascript"
+	src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript"
+	src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
 </head>
 <body>
 	<div class="container-fluid">
 		<div id="topMenu">
 			<div id="tabsDiv">
 				<ul class="nav nav-tabs nav-justified">
-					<li class="active">
-						<a data-toggle="tab" href="#basic">Basic info</a>
+					<li class="active"><a data-toggle="tab" href="#basic">Basic
+							info</a></li>
+					<li><a data-toggle="tab" href="#branch">Branch offices</a></li>
+					<li><a data-toggle="tab" href="#report">Reports</a></li>
+					<li><a data-toggle="tab" href="#vehicle">Vehicles</a></li>
+					<li><a data-toggle="tab" href="#quick">Quick reservations</a>
 					</li>
-					<li>
-						<a data-toggle="tab" href="#branch">Branch offices</a>
-					</li>
-					<li>
-						<a data-toggle="tab" href="#report">Reports</a>
-					</li>
-					<li>
-						<a data-toggle="tab" href="#vehicle">Vehicles</a>
-					</li>
-					<li>
-						<a data-toggle="tab" href="#quick">Quick reservations</a>
-					</li>
-					<li>
-						<a data-toggle="tab" href="#profile">Profile</a>
-					</li>
+					<li><a data-toggle="tab" href="#profile">Profile</a></li>
 				</ul>
-			</div>		
+			</div>
 			<button type="button" class="btn .btn-link" id="logout">Logout</button>
 		</div>
 		<div class="tab-content">
 			<div id="basic" class="tab-pane fade in active">
 				<div id="basicInfo">
-					<input type="text" id="rentACarName" class="textInput"/>
-					<span id="averageGrade">Average grade: <span id="rentACarGrade"></span></span><br><br>
-					<div id="descriptionDiv"><textarea id="rentACarDescription"
-							class="textInput"></textarea></div>
+					<input type="text" id="rentACarName" class="textInput" /> <span
+						id="averageGrade">Average grade: <span id="rentACarGrade"></span></span><br>
+					<br>
+					<div id="descriptionDiv">
+						<textarea id="rentACarDescription" class="textInput"></textarea>
+					</div>
 				</div>
 				<div id="basicMapDiv" class="map leaflet-container"></div>
-				<button type="button" id="saveChangesBasic" class="btn btn-default">Save changes</button>
+				<input type="hidden" id="latitude" value="45"required"> <input
+					type="hidden" id="longitude" value="0"required">
+				<button type="button" id="saveChangesBasic" class="btn btn-default">Save
+					changes</button>
 			</div>
 			<div id="branch" class="tab-pane fade in">
 				<div id="branchMapDiv" class="map"></div>
@@ -75,56 +78,61 @@
 					<div id="branchTableDiv">
 						<table id="branchTable" class="table display table-bordered">
 							<thead>
-		            			<tr>
-		            				<th>ID</th>
-					                <th>Name</th>
-					                <th>Latitude</th>
-					                <th>Longitude</th>
-					                <th>Deleted</th>
-		            			</tr>
-		        			</thead>
-		        			<tbody>
-		        			</tbody>
+								<tr>
+									<th>ID</th>
+									<th>Name</th>
+									<th>Latitude</th>
+									<th>Longitude</th>
+									<th>Deleted</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
 						</table>
 					</div>
 				</div>
 				<div id="branchButtons">
-					<button type="button" id="addBranchOffice" class="btn btn-default" data-toggle="modal" data-target="#addBranchModalDialog">Add branch office</button>
-					<button type="button" id="saveChangesBranch" class="btn btn-default">Save changes</button>
+					<button type="button" id="addBranchOffice" class="btn btn-default"
+						data-toggle="modal" data-target="#addBranchModalDialog">Add
+						branch office</button>
+					<button type="button" id="saveChangesBranch"
+						class="btn btn-default">Save changes</button>
 				</div>
 			</div>
 			<div id="report" class="tab-pane fade">
 				<h3>Reports</h3>
-    			<p>Some content.</p>
+				<p>Some content.</p>
 			</div>
 			<div id="vehicle" class="tab-pane fade">
 				<div id="vehicleTableWrapper">
 					<div id="vehicleTableDiv">
 						<table id="vehicleTable" class="table display table-bordered">
 							<thead>
-		            			<tr>
-					                <th>Producer</th>
-		            				<th>Model</th>
-					                <th>Year of Production</th>
-					                <th>Number of Seats</th>
-					                <th>Fuel Type</th>
-					                <th>Vehicle Type</th>
-					                <th>Price Per Day</th>
-					                <th>Average grade</th>
-		            			</tr>
-		        			</thead>
-		        			<tbody>
-		        			</tbody>
+								<tr>
+									<th>Producer</th>
+									<th>Model</th>
+									<th>Year of Production</th>
+									<th>Number of Seats</th>
+									<th>Fuel Type</th>
+									<th>Vehicle Type</th>
+									<th>Price Per Day</th>
+									<th>Average grade</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
 						</table>
 					</div>
 					<div id="vehicleButtons">
-						<button type="button" id="addVehicle" class="btn btn-default" data-toggle="modal" data-target="#addVehicleModalDialog">Add vehicle</button>
+						<button type="button" id="addVehicle" class="btn btn-default"
+							data-toggle="modal" data-target="#addVehicleModalDialog">Add
+							vehicle</button>
 					</div>
 				</div>
 			</div>
 			<div id="quick" class="tab-pane fade">
 				<h3>Quick reservations</h3>
-    			<p>Some content.</p>
+				<p>Some content.</p>
 			</div>
 			<div id="profile" class="tab-pane fade">
 				<div id="profileContent">
@@ -137,32 +145,41 @@
 							<div class="form-group">
 								<label for="fname">First name:</label>
 								<div class="input-group">
-									<input class="form-control" type="text" name="fname" pattern="[A-Z][a-z]*" title="Must start with a capital letter" readonly>
-									<span class="input-group-addon edit"><i class="glyphicon glyphicon-edit"></i></span>
+									<input class="form-control" type="text" name="fname"
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
+										readonly> <span class="input-group-addon edit"><i
+										class="glyphicon glyphicon-edit"></i></span>
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="lname">Last name:</label>
 								<div class="input-group">
-									<input class="form-control" type="text" name="lname" pattern="[A-Z][a-z]*" title="Must start with a capital letter" readonly>
-									<span class="input-group-addon edit"><i class="glyphicon glyphicon-edit"></i></span>
+									<input class="form-control" type="text" name="lname"
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
+										readonly> <span class="input-group-addon edit"><i
+										class="glyphicon glyphicon-edit"></i></span>
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="phone">Phone:</label>
 								<div class="input-group">
-									<input class="form-control" type="tel" name="phone" pattern="\+[0-9]{12}" title="12 digits starting with +" readonly>
-									<span class="input-group-addon edit"><i class="glyphicon glyphicon-edit"></i></span>
+									<input class="form-control" type="tel" name="phone"
+										pattern="\+[0-9]{12}" title="12 digits starting with +"
+										readonly> <span class="input-group-addon edit"><i
+										class="glyphicon glyphicon-edit"></i></span>
 								</div>
-							</div>		
+							</div>
 							<div class="form-group">
 								<label for="address">Address:</label>
 								<div class="input-group">
-									<input class="form-control" type="text" name="address" pattern="[A-Z][a-z]*" title="Must start with a capital letter" readonly>
-									<span class="input-group-addon edit"><i class="glyphicon glyphicon-edit"></i></span>
+									<input class="form-control" type="text" name="address"
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
+										readonly> <span class="input-group-addon edit"><i
+										class="glyphicon glyphicon-edit"></i></span>
 								</div>
 							</div>
-							<button type="submit" class="btn btn-default" id="saveChanges">Save changes</button>	
+							<button type="submit" class="btn btn-default" id="saveChanges">Save
+								changes</button>
 						</form>
 					</div>
 				</div>
@@ -182,7 +199,8 @@
 							<form id="addBranchOfficeForm">
 								<div class="form-group">
 									<div class="input-group">
-										<input class="form-control" type="text" name="name" placeholder="Name" required autofocus>
+										<input class="form-control" type="text" name="name"
+											placeholder="Name" required autofocus>
 									</div>
 								</div>
 								<button class="btn btn-default" id="addBranch">Add</button>
@@ -206,8 +224,11 @@
 							<form id="editBranchOfficeForm">
 								<div class="form-group">
 									<div class="input-group">
-										<input class="form-control" type="text" name="name" pattern="[A-z0-9a-z]+" title="Must contain only letters and numbers" readonly>
-										<span class="input-group-addon edit"><i class="glyphicon glyphicon-edit"></i></span>
+										<input class="form-control" type="text" name="name"
+											pattern="[A-z0-9a-z]+"
+											title="Must contain only letters and numbers" readonly>
+										<span class="input-group-addon edit"><i
+											class="glyphicon glyphicon-edit"></i></span>
 									</div>
 								</div>
 								<button class="btn btn-default" id="editBranch">Save</button>
@@ -231,30 +252,40 @@
 							<form id="addVehicleForm">
 								<div class="form-group">
 									<div class="input-group">
-										<input class="form-control" type="text" name="producer" placeholder="Producer" required autofocus>
+										<input class="form-control" type="text" name="producer"
+											placeholder="Producer" required autofocus>
 									</div>
 									<div class="input-group">
-										<input class="form-control" type="text" name="model" placeholder="Model" required>
+										<input class="form-control" type="text" name="model"
+											placeholder="Model" required>
 									</div>
 									<div class="input-group">
-										<input class="form-control" type="number" name="year" placeholder="Year of production" min="1908" title="Year must be after year 1908." required>
+										<input class="form-control" type="number" name="year"
+											placeholder="Year of production" min="1908"
+											title="Year must be after year 1908." required>
 									</div>
 									<div class="input-group">
-										<input class="form-control" type="number" name="seats" placeholder="Number of seats" min="1" max="9" title="Number of seats must be between 1 and 9" required>
+										<input class="form-control" type="number" name="seats"
+											placeholder="Number of seats" min="1" max="9"
+											title="Number of seats must be between 1 and 9" required>
 									</div>
 									<div class="input-group">
-										<input class="form-control" type="number" name="price" placeholder="Price per day" min="1" title="Price per day at least must be 1" required>
+										<input class="form-control" type="number" name="price"
+											placeholder="Price per day" min="1"
+											title="Price per day at least must be 1" required>
 									</div>
 									<div class="form-group">
-  										<select class="form-control" id="vehicleType">
-  										</select>
+										<select class="form-control" id="vehicleType">
+										</select>
 									</div>
 									<div class="form-group">
-  										<select class="form-control" id="fuelType">
-  										</select>
+										<select class="form-control" id="fuelType">
+										</select>
 									</div>
 									<div class="input-group">
-										<input class="form-control" type="number" name="quantity" placeholder="Quantity" min="1" title="Quantity must be greater than 0" required>
+										<input class="form-control" type="number" name="quantity"
+											placeholder="Quantity" min="1"
+											title="Quantity must be greater than 0" required>
 									</div>
 								</div>
 								<button class="btn btn-default" id="saveVehicle">Add</button>
