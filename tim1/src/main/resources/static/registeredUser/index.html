@@ -83,17 +83,17 @@
 									Departure time
 								</td>
 								<td>
-									<input type="datetime-local" id="departureTime"/>
+									<input type="date" id="departureTime"/>
 								</td>
 								<td>
 									Landing time
 								</td>
 								<td>
-									<input type="datetime-local" id="landingTime"/>
+									<input type="date" id="landingTime"/>
 								</td>
 							</tr>
 						</table><br>
-						<button class="btn btn-default" id="searchFlights">Search</button>	
+						<button class="btn btn-default" id="searchFlights" onclick="searchFlights(event)">Search</button>	
 						<br>
 						<div id="flightsDiv">
 							<table id="flightsTable" class="table display table-bordered">

@@ -8,6 +8,7 @@ const acceptInvitationURL = "/api/acceptInvitation";
 const declineInvitationURL = "/api/declineInvitation";
 const getFriendsURL = "/api/getFriends";
 const getDestinationsURL = "/api/getDestinations";
+const searchFlightsURL = "/api/searchFlights";
 
 const tokenKey = "jwtToken";
 
@@ -191,8 +192,8 @@ function getDestinations() {
 				var start = $("#startDestination");
 				var end = $("#endDestination");
 				$.each(data, function(i, val) {
-					start.append("<option value=" + val.name + ">" + val.name + "</option>");
-					end.append("<option value=" + val.name + ">" + val.name + "</option>");
+					start.append("<option value=" + val + ">" + val + "</option>");
+					end.append("<option value=" + val + ">" + val + "</option>");
 				});
 			}
 		},
@@ -220,22 +221,28 @@ function searchFlights(e) {
 		toastr["error"]("Landing time is not valid.")
 		return;
 	}
-	if (moment(landingTime).isBefore(departureTime) || moment(landingTime).isSame(departureTime)) {
-		toastr["error"]("Landing time must be after the departure time.");
+	if (moment(landingTime).isBefore(departureTime)) {
+		toastr["error"]("Landing time must be after or same as the departure time.");
 		return;
 	}
 	$.ajax({
-		type : 'GET',
+		type : 'POST',
 		url : searchFlightsURL,
 		headers: createAuthorizationTokenHeader(tokenKey),
 		contentType : "application/json",
-		data : J,
+		data : JSON.stringify({
+			"startDestination": startDestination,
+			"endDestination": endDestination,
+			"departureTime": departureTime,
+			"landingTime": landingTime
+		}),
 		success: function(data){
 			if (data != null) {
 				var table = $('#flightsTable').DataTable();
+				table.clear().draw();
 				$.each(data, function(i, val) {
-					var date1 = moment(val.departureTime);
-					var date2 = moment(val.landingTime);
+					var date1 = moment(val.departureTime, 'DD.MM.YYYY hh:mm');
+					var date2 = moment(val.landingTime, 'DD.MM.YYYY hh:mm');
 					var diff = date2.diff(date1, 'minutes');
 					table.row.add(
 							[ val.departureTime, val.landingTime, val.airline, val.numberOfConnections, diff + " min",

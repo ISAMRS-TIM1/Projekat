@@ -1,5 +1,7 @@
 package isamrs.tim1.service;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,5 +47,16 @@ public class DestinationService {
 		locationRepository.save(l);
 		destinationRepository.save(d);
 		return new ResponseEntity<MessageDTO>(new MessageDTO("Destination added successfully", ToasterType.SUCCESS.toString()), HttpStatus.OK);
+	}
+
+	public ArrayList<String> getDestinations() {
+		ArrayList<Destination> destinations = (ArrayList<Destination>) destinationRepository.findAll();
+		ArrayList<String> destList = new ArrayList<String>();
+		for (Destination d : destinations) {
+			if (!destList.contains(d.getName())) {
+				destList.add(d.getName());
+			}
+		}
+		return destList;
 	}
 }

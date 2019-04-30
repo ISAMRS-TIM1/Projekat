@@ -162,8 +162,8 @@ function renderDestinations(data) {
 function renderFlights(data) {
 	var table = $('#flightsTable').DataTable();
 	$.each(data, function(i, val) {
-		var date1 = moment(val.departureTime);
-		var date2 = moment(val.landingTime);
+		var date1 = moment(val.departureTime, 'DD.MM.YYYY hh:mm');
+		var date2 = moment(val.landingTime, 'DD.MM.YYYY hh:mm');
 		var diff = date2.diff(date1, 'minutes');
 		var conn = "<select>";
 		$.each(val.connections, function(i, val) {
@@ -925,8 +925,8 @@ function addFlight(e) {
 		success : function(data) {
 			if (data.toastType == "success") {
 				var table = $('#flightsTable').DataTable();
-				var date1 = moment(departureTime);
-				var date2 = moment(landingTime);
+				var date1 = moment(departureTime, 'DD.MM.YYYY hh:mm');
+				var date2 = moment(landingTime, 'DD.MM.YYYY hh:mm');
 				var diff = date2.diff(date1, 'minutes');
 				var conn = "<select>";
 				$.each(connections, function(i, val) {
