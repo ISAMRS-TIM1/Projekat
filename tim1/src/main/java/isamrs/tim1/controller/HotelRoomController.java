@@ -43,6 +43,15 @@ public class HotelRoomController {
 	}
 
 	@PreAuthorize("hasRole('HOTELADMIN')")
+	@RequestMapping(value = "/api/deleteHotelRoom/{roomNumber}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MessageDTO> deleteHotelRoom(@PathVariable("roomNumber") String roomNumber) {
+		return new ResponseEntity<MessageDTO>(hotelRoomService.deleteHotelRoom(roomNumber,
+				((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel()),
+				HttpStatus.OK);
+	}
+	
+
+	@PreAuthorize("hasRole('HOTELADMIN')")
 	@RequestMapping(value = "/api/addSeasonalPrice/{roomNumber}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MessageDTO> addSeasonalPrice(@RequestBody SeasonalPriceDTO seasonalPrice,
 			@PathVariable("roomNumber") String roomNumber) {
@@ -50,11 +59,13 @@ public class HotelRoomController {
 				((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel()),
 				HttpStatus.OK);
 	}
+	
 
 	@PreAuthorize("hasRole('HOTELADMIN')")
-	@RequestMapping(value = "/api/deleteHotelRoom/{roomNumber}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MessageDTO> deleteHotelRoom(@PathVariable("roomNumber") String roomNumber) {
-		return new ResponseEntity<MessageDTO>(hotelRoomService.deleteHotelRoom(roomNumber,
+	@RequestMapping(value = "/api/deleteSeasonalPrice/{roomNumber}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MessageDTO> deleteSeasonalPrice(@RequestBody SeasonalPriceDTO seasonalPrice,
+			@PathVariable("roomNumber") String roomNumber) {
+		return new ResponseEntity<MessageDTO>(hotelRoomService.deleteSeasonalPrice(seasonalPrice, roomNumber,
 				((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel()),
 				HttpStatus.OK);
 	}

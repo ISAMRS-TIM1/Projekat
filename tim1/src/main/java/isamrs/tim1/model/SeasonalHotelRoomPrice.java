@@ -21,7 +21,7 @@ public class SeasonalHotelRoomPrice implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "service_id", unique = true, nullable = false)
+	@Column(name = "id", unique = true, nullable = false)
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
