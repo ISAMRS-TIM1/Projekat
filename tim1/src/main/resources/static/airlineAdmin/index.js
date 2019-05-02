@@ -12,6 +12,7 @@ const getAirlineOfAdminURL = "/api/getAirlineOfAdmin";
 const saveSeatsChangesURL = "/api/saveSeats";
 const addFlightURL = "/api/addFlight";
 const addDestinationURL = "/api/addDestination";
+const getIncomeOfAirlineURL = "/api/getIncomeOfAirline";
 
 const logoutURL = "../logout";
 const loadUserInfoURL = "../api/getUserInfo";
@@ -241,6 +242,38 @@ function userEditFormSetUp() {
 				alert("AJAX ERROR: " + textStatus);
 			}
 		});
+	});
+}
+
+function showIncome(e) {
+	e.preventDefault();
+	var startDate = $("#startDateIncome").val();
+	if (startDate == null || startDate == "") {
+		toastr["error"]("Start date is not valid.")
+		return;
+	}
+	var endDate = $("#endDateIncome").val();
+	if (endDate == null || endDate == "") {
+		toastr["error"]("End date is not valid.")
+		return;
+	}
+	if (moment(endDate).isBefore(startDate)) {
+		toastr["error"]("End date must be after start date.");
+		return;
+	}
+	$.ajax({
+		type : 'GET',
+		url : getIncomeOfAirlineURL,
+		contentType : 'application/json',
+		data : {"fromDate" : startDate, "toDate" : endDate},
+		success : function(data) {
+			if (data != null) {
+				$("#income").html("Income of airline: " + data + "EUR");
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
 	});
 }
 
