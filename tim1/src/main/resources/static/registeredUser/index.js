@@ -58,6 +58,28 @@ $(document).ready(function(){
         "retrieve": true,
     });
 	
+	$('#flightsTable thead tr').clone(true).appendTo('#flightsTable thead');
+    $('#flightsTable thead tr:eq(1) th').each(function (i) {
+        var title = $(this).text();
+        $(this).html('<input type="text" placeholder="Filter by '+title+'" />');
+ 
+        $('input', this).on( 'keyup change', function () {
+            if (table.column(i).search() !== this.value) {
+                table.column(i).search(this.value).draw();
+            }
+        });
+    });
+    
+	var table = $('#flightsTable').DataTable({
+        "paging": false,
+        "info": false,
+        "scrollY": "17vw",
+        "scrollX": true,
+        "scrollCollapse": true,
+        "retrieve": true,
+        "orderCellsTop": true
+    });
+	
 	$(".nav li").click(function(){
         $(this).addClass("active");
         $(this).siblings().removeClass("active");
