@@ -73,4 +73,9 @@ public class AirlineController {
 	public ResponseEntity<PlaneSeatsDTO> getPlaneSeats() {
 		return new ResponseEntity<PlaneSeatsDTO>(airlineService.getPlaneSeats(), HttpStatus.OK);
 	}
+	
+	@RequestMapping(value = "/api/getIncomeOfAirline", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Double> searchUsers(@RequestParam String fromDate, @RequestParam String toDate) {
+		return airlineService.getIncomeOfAirline(fromDate, toDate);
+	}
 }

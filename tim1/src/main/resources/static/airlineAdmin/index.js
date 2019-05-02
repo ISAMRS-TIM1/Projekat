@@ -264,11 +264,13 @@ function showIncome(e) {
 	$.ajax({
 		type : 'GET',
 		url : getIncomeOfAirlineURL,
+		headers : createAuthorizationTokenHeader(TOKEN_KEY),
 		contentType : 'application/json',
 		data : {"fromDate" : startDate, "toDate" : endDate},
 		success : function(data) {
 			if (data != null) {
 				$("#income").html("Income of airline: " + data + "EUR");
+				$("#income").show();
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {

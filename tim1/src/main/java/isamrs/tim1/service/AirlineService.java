@@ -1,12 +1,18 @@
 package isamrs.tim1.service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import isamrs.tim1.dto.AirlineDTO;
@@ -19,6 +25,7 @@ import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.AirlineAdmin;
 import isamrs.tim1.model.Location;
 import isamrs.tim1.model.PlaneSegment;
+import isamrs.tim1.model.Reservation;
 import isamrs.tim1.model.Seat;
 import isamrs.tim1.repository.AirlineRepository;
 import isamrs.tim1.repository.SeatRepository;
@@ -150,5 +157,30 @@ public class AirlineService {
 		airline.setId(null); // to ensure INSERT command
 		airlineRepository.save(airline);
 		return new MessageDTO("Airline successfully added", ToasterType.SUCCESS.toString());
+	}
+
+	public ResponseEntity<Double> getIncomeOfAirline(String fromDate, String toDate) {
+		Airline airline = ((AirlineAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getAirline();
+		Double income = 0.0;
+		Date startDate = null;
+		Date endDate = null;
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		try {
+			startDate = sdf.parse(fromDate);
+			endDate = sdf.parse(toDate);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		for (Reservation r : airline.getNormalReservations()) {
+			if (!(r.getDateOfReservation().before(startDate)) && !(r.getDateOfReservation().after(endDate)) && r.isDone()) {
+				income += r.getPrice();
+			}
+		}
+		for (Reservation r : airline.getQuickReservations()) {
+			if (!(r.getDateOfReservation().before(startDate)) && !(r.getDateOfReservation().after(endDate)) && r.isDone()) {
+				income += r.getPrice();
+			}
+		}
+		return new ResponseEntity<Double>(income, HttpStatus.OK);
 	}
 }
