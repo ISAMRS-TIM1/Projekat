@@ -143,12 +143,33 @@ a[data-toggle="tab"] {
 	resize: none;
 }
 
+.reportsDiv {
+	width: 70%;
+	height: 30vw; 
+	margin-left : 13%;
+	margin-top: 5%;
+	background: #5994FF;
+	border: 0.24vw solid #B27A00;
+	border-radius: 4vw 1.6vw;
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	padding: 2vw;
+	text-align:center;
+	color:white;
+}
+#income {
+	font-size: 1.5vw;
+	display: none;
+}
+
 /* TABLES*/
 
 
 .tableDiv {
 	width: 70%;
-	height: 30vw; margin-left : 13%;
+	height: 30vw; 
+	margin-left : 13%;
 	margin-top: 5%;
 	background: #5994FF;
 	border: 0.24vw solid #B27A00;
@@ -307,7 +328,7 @@ span.seatCharts-legendDescription {
 input, select {
 	color: black;
 }
-#addFlightButton {
+#addFlightButton, #showIncomeButton {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
@@ -330,12 +351,9 @@ input, select {
   	height: 50vh;
 }
 #serviceTable {
+	text-align:left;
 	color:white;
-	position: absolute;
-  	left: 50%;
-  	top: 50%;
-  	transform: translate(-50%, -50%);
-  	padding: 5px;
+	margin: 0 auto;
 }
 #serviceTable tbody {
 	overflow-y : auto;
