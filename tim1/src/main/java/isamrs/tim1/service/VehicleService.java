@@ -1,6 +1,7 @@
 package isamrs.tim1.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -133,5 +134,53 @@ public class VehicleService {
 		rentACarRepository.save(rentACar);
 
 		return new MessageDTO("Vehicle successfully added.", ToasterType.SUCCESS.toString());
+	}
+
+	public MessageDTO deleteVehicle(String producer, String model) {
+		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+				.getRentACar();
+
+		boolean vehicleExists = false;
+		Vehicle vehicle = null;
+		for (Vehicle v : rentACar.getVehicles()) {
+			if (v.getModel().equals(model) && v.getProducer().equals(producer)) {
+				vehicleExists = true;
+				vehicle = v;
+				break;
+			}
+		}
+
+		if (!vehicleExists) {
+			return new MessageDTO("Vehicle requested for deletion does not exist.", ToasterType.ERROR.toString());
+		} else if (vehicle.isDeleted()) {
+			return new MessageDTO("Vehicle is already deleted.", ToasterType.ERROR.toString());
+		}
+
+		Date now = new Date();
+		boolean activeReservations = false;
+		for (VehicleReservation vr : rentACar.getNormalReservations()) {
+			if (vr.getVehicle().getId().equals(vehicle.getId()) && vr.getToDate().compareTo(now) > 0) {
+				activeReservations = true;
+				break;
+			}
+		}
+
+		if (!activeReservations) {
+			for (QuickVehicleReservation qr : rentACar.getQuickReservations()) {
+				if (qr.getVehicle().getId().equals(vehicle.getId()) && qr.getToDate().compareTo(now) > 0) {
+					activeReservations = true;
+					break;
+				}
+			}
+		}
+
+		if (activeReservations) {
+			return new MessageDTO("Vehicle requested for deletion has active reservations.",
+					ToasterType.ERROR.toString());
+		}
+
+		vehicle.setDeleted(true);
+		vehicleRepository.save(vehicle);
+		return new MessageDTO("Vehicle deleted.", ToasterType.SUCCESS.toString());
 	}
 }

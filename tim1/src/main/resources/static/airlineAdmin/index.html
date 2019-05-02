@@ -99,16 +99,27 @@
 				</div>
 			</div>
 			<div id="reportsTab" class="tab-pane fade">
-				<h3>Reports</h3>
-				<p>Some content.</p>
-				<button type="submit" class="btn btn-default">Daily sold
-					tickets</button>
-				<button type="submit" class="btn btn-default">Weekly sold
-					tickets</button>
-				<button type="submit" class="btn btn-default">Monthly sold
-					tickets</button>
-				<button type="submit" class="btn btn-default">Airline
-					income</button>
+				<div class="reportsDiv">
+					<table id="serviceTable">
+						<tr>
+							<td>
+								From date
+							</td>
+							<td>
+								<input type="date" id="startDateIncome"/>
+							</td>
+							<td>
+								To date
+							</td>
+							<td>
+								<input type="date" id="endDateIncome"/>
+							</td>
+						</tr>
+					</table><br>
+					<button class="btn btn-default" id="showIncomeButton" onclick='showIncome(event)'>Show income</button>	
+					<br>
+					<span id="income"></span>
+				</div>
 			</div>
 			<div id="flightsTab" class="tab-pane fade">
 				<div class="tableDiv">

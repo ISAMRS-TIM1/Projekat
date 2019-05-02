@@ -12,6 +12,7 @@ const getAirlineOfAdminURL = "/api/getAirlineOfAdmin";
 const saveSeatsChangesURL = "/api/saveSeats";
 const addFlightURL = "/api/addFlight";
 const addDestinationURL = "/api/addDestination";
+const getIncomeOfAirlineURL = "/api/getIncomeOfAirline";
 
 const logoutURL = "../logout";
 const loadUserInfoURL = "../api/getUserInfo";
@@ -162,8 +163,8 @@ function renderDestinations(data) {
 function renderFlights(data) {
 	var table = $('#flightsTable').DataTable();
 	$.each(data, function(i, val) {
-		var date1 = moment(val.departureTime);
-		var date2 = moment(val.landingTime);
+		var date1 = moment(val.departureTime, 'DD.MM.YYYY hh:mm');
+		var date2 = moment(val.landingTime, 'DD.MM.YYYY hh:mm');
 		var diff = date2.diff(date1, 'minutes');
 		var conn = "<select>";
 		$.each(val.connections, function(i, val) {
@@ -241,6 +242,40 @@ function userEditFormSetUp() {
 				alert("AJAX ERROR: " + textStatus);
 			}
 		});
+	});
+}
+
+function showIncome(e) {
+	e.preventDefault();
+	var startDate = $("#startDateIncome").val();
+	if (startDate == null || startDate == "") {
+		toastr["error"]("Start date is not valid.")
+		return;
+	}
+	var endDate = $("#endDateIncome").val();
+	if (endDate == null || endDate == "") {
+		toastr["error"]("End date is not valid.")
+		return;
+	}
+	if (moment(endDate).isBefore(startDate)) {
+		toastr["error"]("End date must be after start date.");
+		return;
+	}
+	$.ajax({
+		type : 'GET',
+		url : getIncomeOfAirlineURL,
+		headers : createAuthorizationTokenHeader(TOKEN_KEY),
+		contentType : 'application/json',
+		data : {"fromDate" : startDate, "toDate" : endDate},
+		success : function(data) {
+			if (data != null) {
+				$("#income").html("Income of airline: " + data + "EUR");
+				$("#income").show();
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
 	});
 }
 
@@ -925,8 +960,8 @@ function addFlight(e) {
 		success : function(data) {
 			if (data.toastType == "success") {
 				var table = $('#flightsTable').DataTable();
-				var date1 = moment(departureTime);
-				var date2 = moment(landingTime);
+				var date1 = moment(departureTime, 'DD.MM.YYYY hh:mm');
+				var date2 = moment(landingTime, 'DD.MM.YYYY hh:mm');
 				var diff = date2.diff(date1, 'minutes');
 				var conn = "<select>";
 				$.each(connections, function(i, val) {

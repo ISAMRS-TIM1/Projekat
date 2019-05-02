@@ -49,6 +49,8 @@ public class VehicleDTO implements Serializable {
 
 	private Double averageGrade;
 
+	private boolean deleted;
+
 	public VehicleDTO(Vehicle v) {
 		this.model = v.getModel();
 		this.producer = v.getProducer();
@@ -58,6 +60,7 @@ public class VehicleDTO implements Serializable {
 		this.vehicleType = v.getVehicleType();
 		this.pricePerDay = v.getPricePerDay();
 		this.averageGrade = v.getAverageGrade();
+		this.deleted = v.isDeleted();
 	}
 
 	public VehicleDTO() {
@@ -67,7 +70,7 @@ public class VehicleDTO implements Serializable {
 	public VehicleDTO(@NotBlank @NotNull String model, @NotBlank @NotNull String producer,
 			@NotBlank @NotNull String yearOfProduction, @NotBlank @NotNull Integer numberOfSeats,
 			@NotBlank @NotNull FuelType fuelType, @NotBlank @NotNull VehicleType vehicleType,
-			@NotBlank @NotNull Integer pricePerDay, Double averageGrade) {
+			@NotBlank @NotNull Integer pricePerDay, Double averageGrade, boolean deleted) {
 		super();
 		this.model = model;
 		this.producer = producer;
@@ -77,6 +80,7 @@ public class VehicleDTO implements Serializable {
 		this.vehicleType = vehicleType;
 		this.pricePerDay = pricePerDay;
 		this.averageGrade = averageGrade;
+		this.deleted = deleted;
 	}
 
 	public String getModel() {
@@ -145,6 +149,14 @@ public class VehicleDTO implements Serializable {
 
 	public void setAverageGrade(Double averageGrade) {
 		this.averageGrade = averageGrade;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 
 }

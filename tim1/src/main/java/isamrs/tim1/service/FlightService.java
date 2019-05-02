@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import isamrs.tim1.dto.FlightDTO;
+import isamrs.tim1.dto.FlightUserViewDTO;
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.model.Airline;
@@ -61,6 +63,21 @@ public class FlightService {
 		a.getFlights().add(flight);
 		flightRepository.save(flight);
 		return new ResponseEntity<MessageDTO>(new MessageDTO("Flight added successfully.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
+	}
+
+	public ArrayList<FlightUserViewDTO> searchFlights(FlightDTO flight) {
+		Long startID = destinationRepository.findOneByName(flight.getStartDestination()).getId();
+		Long endID = destinationRepository.findOneByName(flight.getEndDestination()).getId();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Set<Flight> flights = flightRepository.searchFlightsByDestinations(startID, endID);
+		ArrayList<FlightUserViewDTO> flightsList = new ArrayList<FlightUserViewDTO>();
+		for (Flight f : flights) {
+			if (flight.getDepartureTime().equals(sdf.format(f.getDepartureTime())) && 
+					flight.getLandingTime().equals(sdf.format(f.getLandingTime()))) {
+				flightsList.add(new FlightUserViewDTO(f));
+			}
+		}
+		return flightsList;
 	}
 
 }

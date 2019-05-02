@@ -50,4 +50,10 @@ public class VehicleController {
 			@PathVariable("quantity") int quantity) {
 		return new ResponseEntity<MessageDTO>(vehicleService.addVehicle(vehicle, quantity), HttpStatus.OK);
 	}
+
+	@RequestMapping(value = "/api/deleteVehicle/{producer}/{model}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MessageDTO> deleteVehicle(@PathVariable("producer") String producer,
+			@PathVariable("model") String model) {
+		return new ResponseEntity<MessageDTO>(vehicleService.deleteVehicle(producer, model), HttpStatus.OK);
+	}
 }
