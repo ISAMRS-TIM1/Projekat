@@ -111,6 +111,7 @@
 					                <th>Vehicle Type</th>
 					                <th>Price Per Day</th>
 					                <th>Average grade</th>
+					                <th>Deleted</th>
 		            			</tr>
 		        			</thead>
 		        			<tbody>
@@ -258,6 +259,53 @@
 									</div>
 								</div>
 								<button class="btn btn-default" id="saveVehicle">Add</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Edit and delete vehicle modal -->
+		<div class="modal fade" id="editVehicleModalDialog" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content dialogStyle">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h2 class="modal-title">Edit vehicle</h2>
+					</div>
+					<div class="modal-body">
+						<div id="editVehicleFormDiv">
+							<form id="editVehicleForm">
+								<div class="form-group">
+									<div class="input-group">
+										<input class="form-control" type="text" name="producer" placeholder="Producer" required autofocus>
+									</div>
+									<div class="input-group">
+										<input class="form-control" type="text" name="model" placeholder="Model" required>
+									</div>
+									<div class="input-group">
+										<input class="form-control" type="number" name="year" placeholder="Year of production" min="1908" title="Year must be after year 1908." required>
+									</div>
+									<div class="input-group">
+										<input class="form-control" type="number" name="seats" placeholder="Number of seats" min="1" max="9" title="Number of seats must be between 1 and 9" required>
+									</div>
+									<div class="input-group">
+										<input class="form-control" type="number" name="price" placeholder="Price per day" min="1" title="Price per day at least must be 1" required>
+									</div>
+									<div class="form-group">
+  										<select class="form-control" id="vehicleType">
+  										</select>
+									</div>
+									<div class="form-group">
+  										<select class="form-control" id="fuelType">
+  										</select>
+									</div>
+									<div class="input-group">
+										<input class="form-control" type="number" name="quantity" placeholder="Quantity" min="1" title="Quantity must be greater than 0" required>
+									</div>
+								</div>
+								<button class="btn btn-default" id="saveVehicle">Save</button>
+								<button class="btn btn-default" id="deleteVehicle">Delete</button>
 							</form>
 						</div>
 					</div>

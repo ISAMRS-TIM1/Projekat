@@ -17,6 +17,7 @@ const loadVehiclesURL = "/api/getVehicles";
 const addVehicleURL = "/api/addVehicle/";
 const loadVehicleTypesURL = "/api/getVehicleTypes";
 const loadFuelTypesURL = "/api/getFuelTypes";
+const deleteVehicleURL = "/api/deleteVehicle/"
 
 
 $(document).ready(function() {
@@ -96,9 +97,24 @@ $(document).ready(function() {
 		oldName = newName;
 	});
 	
+	var oldProducer;
+	var oldModel;
+	$(document).on('click', '#vehicleTable tbody tr', function(e) {
+		oldProducer = e.target.parentNode.childNodes[0].innerText;
+		oldModel = e.target.parentNode.childNodes[1].innerText;
+		//$("#editBranchOfficeForm input[name='name']").val(oldName);
+		// add branch location to map
+		$('#editVehicleModalDialog').modal('show');
+	});
+	
 	$(document).on('click', '#deleteBranch', function(e) {
 		e.preventDefault();
 		deleteBranchOffice(oldName);
+	});
+	
+	$(document).on('click', '#deleteVehicle', function(e) {
+		e.preventDefault();
+		deleteVehicle(oldProducer, oldModel);
 	});
 	
 	$(document).on('click', '#addVehicle', function(e) {
@@ -330,7 +346,8 @@ function loadVehicles() {
 					               vehicle.fuelType,
 					               vehicle.vehicleType,
 					               vehicle.pricePerDay,
-					               vehicle.averageGrade
+					               vehicle.averageGrade,
+					               vehicle.deleted
 					               ]).draw(false);
 				}
 			}
@@ -358,6 +375,24 @@ function addVehicle() {
 		contentType: "application/json",
 		dataType : "json",
 		data: vehicleFormToJSON(producer, model, year, seats,fuelType, vehicleType, price),
+		headers: createAuthorizationTokenHeader(TOKEN_KEY),
+		success: function(data){
+			toastr[data.toastType](data.message);
+			loadVehicles();
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
+function deleteVehicle(producer, model) {
+	let token = getJwtToken("jwtToken");
+	
+	$.ajax({
+		type : 'DELETE',
+		url : deleteVehicleURL + producer + "/" + model,
+		contentType: "application/json",
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
 			toastr[data.toastType](data.message);
