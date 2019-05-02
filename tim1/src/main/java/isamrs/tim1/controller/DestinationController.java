@@ -1,5 +1,7 @@
 package isamrs.tim1.controller;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,5 +22,10 @@ public class DestinationController {
 	@RequestMapping(value = "/api/addDestination", method = RequestMethod.POST)
 	public ResponseEntity<MessageDTO> addDestination(@RequestBody DestinationDTO d) {
 		return destinationService.addDestination(d);
+	}
+	
+	@RequestMapping(value = "/api/getDestinations", method = RequestMethod.GET)
+	public ArrayList<String> getDestinations() {
+		return destinationService.getDestinations();
 	}
 }
