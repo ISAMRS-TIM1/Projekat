@@ -4,7 +4,6 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim1.dto.HotelRoomDTO;
 import isamrs.tim1.dto.HotelRoomDetailedDTO;
@@ -12,7 +11,6 @@ import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.dto.SeasonalPriceDTO;
 import isamrs.tim1.model.Hotel;
-import isamrs.tim1.model.HotelReservation;
 import isamrs.tim1.model.HotelRoom;
 import isamrs.tim1.model.SeasonalHotelRoomPrice;
 import isamrs.tim1.repository.HotelRepository;

@@ -23,6 +23,7 @@ const changePasswordURL = "../changePassword";
 
 var destMap = null;
 var shownRoom = null;
+var hotelName = null;
 
 $(document).ready(function() {
 	setUpToastr();
@@ -30,6 +31,7 @@ $(document).ready(function() {
 	setUpTables();
 	loadData();
 
+	setUpEditHotelForm();
 	setUpNewHotelRoomForm();
 	setUpNewSeasonalPriceForm();
 	setUpShownHotelRoomForm();
@@ -135,22 +137,6 @@ function setUpMap(latitude, longitude, div) {
 	});
 }
 
-function editHotel(e) {
-	e.preventDefault();
-	$.ajax({
-		type : 'POST',
-		url : editHotelURL,
-		contentType : "application/json",
-		data : JSON.stringify({
-		// TODO
-		}),
-		dataType : "json",
-		success : function(data) {
-			alert(data);
-		}
-	});
-}
-
 function loadHotel() {
 	$.ajax({
 		dataType : "json",
@@ -204,7 +190,7 @@ function renderRooms(data) {
 		rowNode = roomsTable.row.add(
 				[ val.roomNumber, val.price, val.numberOfPeople,
 						val.averageGrade ]).draw(false).node();
-		if(val.roomNumber == shownRoom)
+		if (val.roomNumber == shownRoom)
 			$(rowNode).addClass('selected');
 	});
 }
@@ -293,6 +279,31 @@ function userEditFormToJSON(firstName, lastName, phone, address, email) {
 	});
 }
 
+function setUpEditHotelForm() {
+	$('#editHotelForm').on('submit', function(e) {
+		e.preventDefault();
+		$.ajax({
+			type : 'PUT',
+			url : editHotelURL,
+			headers : createAuthorizationTokenHeader(tokenKey),
+			contentType : "application/json",
+			data : JSON.stringify({
+				"name" : $("#hotelName").val(),
+				"description" : $("#hotelDescription").val(),
+				"latitude" : $("#latitude").val(),
+				"longitude" : $("#longitude").val(),
+			}),
+			dataType : "json",
+			success : function(data) {
+				loadHotel();
+				if (data != "") {
+					toastr[data.toastType](data.message);
+				}
+			}
+		});
+	});
+}
+
 function setUpNewHotelRoomForm() {
 	$('#newHotelRoomForm').on('submit', function(e) {
 		e.preventDefault();
@@ -365,8 +376,8 @@ function setUpShownHotelRoomForm() {
 				"numberOfPeople" : $("#shownRoomNumberOfPeople").val(),
 			}),
 			success : function(data) {
-				if(data.toastType == "success"){
-					shownRoom =  newRoomNumber;
+				if (data.toastType == "success") {
+					shownRoom = newRoomNumber;
 				}
 				loadHotel();
 				loadHotelRoom(shownRoom);

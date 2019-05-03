@@ -61,19 +61,21 @@
 		</div>
 		<div class="tab-content">
 			<div id="basicTab" class="tab-pane fade in active">
-				<div id="basicInfo">
-					<input type="text" id="hotelName" class="textInput" /> <span
-						id="averageGrade">Average grade: <span id="hotelGrade"></span></span><br>
-					<br>
-					<div id="descriptionDiv">
-						<textarea id="hotelDescription" class="textInput"></textarea>
+				<form id="editHotelForm">
+					<div id="basicInfo">
+						<input type="text" id="hotelName" class="textInput" required> <span
+							id="averageGrade">Average grade: <span id="hotelGrade"></span></span><br>
+						<br>
+						<div id="descriptionDiv">
+							<textarea id="hotelDescription" class="textInput" required></textarea>
+						</div>
 					</div>
-				</div>
-				<div id="basicMapDiv" class="map leaflet-container"></div>
-				<input type="hidden" id="latitude" value="45"required"> <input
-					type="hidden" id="longitude" value="0"required">
-				<button type="button" id="saveChangesBasic" class="btn btn-default">Save
-					changes</button>
+					<div id="basicMapDiv" class="map leaflet-container"></div>
+					<input type="hidden" id="latitude" value="45" required> <input
+						type="hidden" id="longitude" value="0" required>
+					<button type="submit" id="saveChangesBasic" class="btn btn-default">Save
+						changes</button>
+				</form>
 			</div>
 			<div id="roomsTab" class="tab-pane fade in">
 				<div class="tableWrapper">

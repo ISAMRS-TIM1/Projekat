@@ -8,11 +8,11 @@ import org.springframework.stereotype.Service;
 import isamrs.tim1.dto.DetailedServiceDTO;
 import isamrs.tim1.dto.HotelDTO;
 import isamrs.tim1.dto.MessageDTO;
-import isamrs.tim1.dto.ServiceViewDTO;
 import isamrs.tim1.dto.MessageDTO.ToasterType;
+import isamrs.tim1.dto.ServiceDTO;
+import isamrs.tim1.dto.ServiceViewDTO;
 import isamrs.tim1.model.Hotel;
 import isamrs.tim1.model.HotelAdmin;
-import isamrs.tim1.model.Location;
 import isamrs.tim1.repository.HotelRepository;
 import isamrs.tim1.repository.ServiceRepository;
 
@@ -21,7 +21,7 @@ public class HotelService {
 
 	@Autowired
 	private HotelRepository hotelRepository;
-	
+
 	@Autowired
 	private ServiceRepository serviceRepository;
 
@@ -33,37 +33,23 @@ public class HotelService {
 		return new MessageDTO("Hotel successfully added", ToasterType.SUCCESS.toString());
 	}
 
-	public String editHotel(Hotel hotel, String oldName) {
-		Hotel hotelToEdit = hotelRepository.findOneByName(oldName);
-		if (hotelToEdit == null) {
-			return "Edited hotel does not exist.";
-		}
-
+	public MessageDTO editHotel(ServiceDTO hotel, Hotel hotelToEdit) {
 		String newName = hotel.getName();
-		if (serviceRepository.findOneByName(newName) != null)
-			return "Name is already in use by some other service.";
-		if (newName != null) {
-			hotelToEdit.setName(newName);
-		}
-
-		String newDescription = hotel.getDescription();
-		if (newDescription != null) {
-			hotelToEdit.setDescription(newDescription);
-		}
-
-		Location newLocation = hotel.getLocation();
-		if (newLocation != null) {
-			hotelToEdit.getLocation().setLatitude(hotel.getLocation().getLatitude());
-			hotelToEdit.getLocation().setLongitude(hotel.getLocation().getLongitude());
-		}
+		if(!newName.equals(hotelToEdit.getName())) // if hotel name was changed, check if new one is taken
+			if (serviceRepository.findOneByName(newName) != null)
+				return new MessageDTO("Name is already in use by some other service.", ToasterType.ERROR.toString());
+		hotelToEdit.setName(newName);
+		hotelToEdit.setDescription(hotel.getDescription());
+		hotelToEdit.getLocation().setLatitude(hotel.getLatitude());
+		hotelToEdit.getLocation().setLongitude(hotel.getLongitude());
 
 		try {
 			hotelRepository.save(hotelToEdit);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
-			return "Database error.";
+			return new MessageDTO("Database error.", ToasterType.ERROR.toString());
 		}
-		return null;
+		return new MessageDTO("Hotel edited successfully", ToasterType.SUCCESS.toString());
 	}
 
 	public HotelDTO getHotel(HotelAdmin admin) {
