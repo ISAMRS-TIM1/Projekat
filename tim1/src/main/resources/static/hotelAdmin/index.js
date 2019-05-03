@@ -11,10 +11,11 @@ const getRoomsURL = "/api/getRooms";
 const getHotelOfAdminURL = "/api/getHotelOfAdmin";
 const getHotelRoomURL = "/api/getHotelRoom";
 const addHotelRoomURL = "/api/addHotelRoom";
+const editHotelRoomURL = "/api/editHotelRoom/";
 const deleteHotelRoomURL = "/api/deleteHotelRoom/";
 const addSeasonalPriceURL = "/api/addSeasonalPrice/"
 const deleteSeasonalPriceURL = "/api/deleteSeasonalPrice/"
-	
+
 const logoutURL = "../logout";
 const loadUserInfoURL = "../api/getUserInfo";
 const editUserInfoURL = "../api/editUser";
@@ -31,6 +32,7 @@ $(document).ready(function() {
 
 	setUpNewHotelRoomForm();
 	setUpNewSeasonalPriceForm();
+	setUpShownHotelRoomForm();
 	setUpEditForm();
 
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
@@ -76,9 +78,10 @@ function setUpTables() {
 	seasonalPricesTable = $('#seasonalPricesTable').DataTable({
 		"paging" : false,
 		"info" : false,
-		"columnDefs": [
-			{ "orderable": false, "targets": 3 }
-		]
+		"columnDefs" : [ {
+			"orderable" : false,
+			"targets" : 3
+		} ]
 	});
 
 	$('#roomsTable tbody').on('click', 'tr', function() {
@@ -198,23 +201,33 @@ function renderAdditionalServices(data) {
 function renderRooms(data) {
 	roomsTable.clear().draw();
 	$.each(data, function(i, val) {
-		roomsTable.row.add(
+		rowNode = roomsTable.row.add(
 				[ val.roomNumber, val.price, val.numberOfPeople,
-						val.averageGrade ]).draw(false);
+						val.averageGrade ]).draw(false).node();
+		if(val.roomNumber == shownRoom)
+			$(rowNode).addClass('selected');
 	});
 }
 
 function renderSeasonalPrices(data) {
 	seasonalPricesTable.clear().draw();
-	$.each(data, function(i, val) {
-		seasonalPricesTable.row.add([ val.price, val.fromDate, val.toDate,
-			`<a href="javascript:deleteSeasonalPrice('${val.fromDate}', '${val.toDate}')">Delete</a>` ])
-				.draw(false);
-	});
+	$
+			.each(
+					data,
+					function(i, val) {
+						seasonalPricesTable.row
+								.add(
+										[
+												val.price,
+												val.fromDate,
+												val.toDate,
+												`<a href="javascript:deleteSeasonalPrice('${val.fromDate}', '${val.toDate}')">Delete</a>` ])
+								.draw(false);
+					});
 
 }
 
-function deleteSeasonalPrice(fromDate, toDate){
+function deleteSeasonalPrice(fromDate, toDate) {
 	fromDate = new Date(fromDate);
 	toDate = new Date(toDate);
 	$.ajax({
@@ -224,8 +237,8 @@ function deleteSeasonalPrice(fromDate, toDate){
 		headers : createAuthorizationTokenHeader(tokenKey),
 		dataType : "json",
 		data : JSON.stringify({
-			"fromDate":fromDate,
-			"toDate":toDate
+			"fromDate" : fromDate,
+			"toDate" : toDate
 		}),
 		success : function(data) {
 			loadHotel();
@@ -233,7 +246,7 @@ function deleteSeasonalPrice(fromDate, toDate){
 			if (data != "") {
 				toastr[data.toastType](data.message);
 			}
-			
+
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
 			alert("AJAX ERROR: " + textStatus);
@@ -308,7 +321,7 @@ function setUpNewHotelRoomForm() {
 
 }
 
-function setUpNewSeasonalPriceForm(){
+function setUpNewSeasonalPriceForm() {
 	$('#newSeasonalPriceForm').on('submit', function(e) {
 		e.preventDefault();
 		$.ajax({
@@ -334,7 +347,38 @@ function setUpNewSeasonalPriceForm(){
 			}
 		});
 	});
+}
 
+function setUpShownHotelRoomForm() {
+	$('#shownHotelRoomForm').on('submit', function(e) {
+		e.preventDefault();
+		newRoomNumber = $("#shownRoomNumber").val();
+		$.ajax({
+			type : 'PUT',
+			url : editHotelRoomURL + shownRoom,
+			contentType : 'application/json',
+			headers : createAuthorizationTokenHeader(tokenKey),
+			dataType : "json",
+			data : JSON.stringify({
+				"roomNumber" : newRoomNumber,
+				"price" : $("#shownRoomDefaultPrice").val(),
+				"numberOfPeople" : $("#shownRoomNumberOfPeople").val(),
+			}),
+			success : function(data) {
+				if(data.toastType == "success"){
+					shownRoom =  newRoomNumber;
+				}
+				loadHotel();
+				loadHotelRoom(shownRoom);
+				if (data != "") {
+					toastr[data.toastType](data.message);
+				}
+			},
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+				alert("AJAX ERROR: " + textStatus);
+			}
+		});
+	});
 }
 
 function setUpEditForm() {
@@ -396,6 +440,7 @@ function deleteRoom() {
 		headers : createAuthorizationTokenHeader(tokenKey),
 		success : function(data) {
 			loadHotel();
+			$("#showHotelRoomModal").modal('hide');
 			if (data != "") {
 				toastr[data.toastType](data.message);
 			}

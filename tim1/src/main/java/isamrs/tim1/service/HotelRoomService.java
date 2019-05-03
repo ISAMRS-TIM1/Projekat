@@ -94,4 +94,18 @@ public class HotelRoomService {
 
 	}
 
+	public MessageDTO editHotelRoom(HotelRoomDTO hotelRoom, String roomNumber, Hotel hotel) {
+		HotelRoom hr = hotelRoomRepository.findOneByNumberAndHotel(roomNumber, hotel.getId());
+		if (hr == null)
+			return new MessageDTO("Hotel room with this number does not exist", ToasterType.ERROR.toString());
+		if (!hr.getNormalReservations().isEmpty() || !hr.getQuickReservations().isEmpty())
+			return new MessageDTO("Hotel room has reservations bound to it", ToasterType.ERROR.toString());
+		if (!hotelRoom.getRoomNumber().equals(roomNumber)) // if room number was changed, check if new one is taken
+			if (hotelRoomRepository.findOneByNumberAndHotel(hotelRoom.getRoomNumber(), hotel.getId()) != null)
+				return new MessageDTO("Hotel room with same number already exists", ToasterType.ERROR.toString());
+		hr.update(hotelRoom);
+		hotelRoomRepository.save(hr);
+		return new MessageDTO("Hotel room edited successfully", ToasterType.SUCCESS.toString());
+	}
+
 }

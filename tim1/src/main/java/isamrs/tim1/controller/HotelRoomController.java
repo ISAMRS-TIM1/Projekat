@@ -50,7 +50,14 @@ public class HotelRoomController {
 				HttpStatus.OK);
 	}
 	
-
+	@PreAuthorize("hasRole('HOTELADMIN')")
+	@RequestMapping(value = "/api/editHotelRoom/{roomNumber}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MessageDTO> editHotelRoom(@PathVariable("roomNumber") String roomNumber, @RequestBody HotelRoomDTO hotelRoom) {
+		return new ResponseEntity<MessageDTO>(hotelRoomService.editHotelRoom(hotelRoom, roomNumber,
+				((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel()),
+				HttpStatus.OK);
+	}
+	
 	@PreAuthorize("hasRole('HOTELADMIN')")
 	@RequestMapping(value = "/api/addSeasonalPrice/{roomNumber}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MessageDTO> addSeasonalPrice(@RequestBody SeasonalPriceDTO seasonalPrice,

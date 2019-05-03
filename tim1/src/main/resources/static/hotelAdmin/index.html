@@ -207,50 +207,52 @@
 		<div class="modal-dialog modal-lg" role="document">
 			<div class="modal-content" id="showHotelRoomDiv">
 				<div class="showHotelRoomInnerDiv">
-					<table class="showHotelRoomTable">
-						<tr>
-							<td><label for="shownRoomNumber">Room number</label></td>
-							<td><input id="shownRoomNumber" class="textInput"></td>
-						</tr>
-						<tr>
-							<td><label for="shownRoomDefaultPrice">Default price
-									per night</label></td>
-							<td><input type="number" id="shownRoomDefaultPrice"
-								class="textInput" step='0.01'></td>
-						</tr>
-						<tr>
-							<td><label for="shownRoomNumberOfPeople">Number of
-									people</label></td>
-							<td><input type="number" id="shownRoomNumberOfPeople"
-								class="textInput"></td>
-						</tr>
-						<tr>
-							<td><label for="shownRoomAverageGrade">AverageGrade</label></td>
-							<td><input id="shownRoomAverageGrade" class="textInput"
-								readonly></td>
-						</tr>
-						<tr>
-							<td><button type="submit" id="editHotelRoomButton"
-									class="btn btn-default">Save changes</button></td>
-							<td><button id="deleteHotelRoomButton"
-									onclick="deleteRoom()" class="btn btn-default">Delete
-									room</button></td>
-						</tr>
-					</table>
+					<form id="shownHotelRoomForm">
+						<table class="showHotelRoomTable">
+							<tr>
+								<td><label for="shownRoomNumber">Room number</label></td>
+								<td><input id="shownRoomNumber" class="textInput" required></td>
+							</tr>
+							<tr>
+								<td><label for="shownRoomDefaultPrice">Default
+										price per night</label></td>
+								<td><input type="number" id="shownRoomDefaultPrice"
+									class="textInput" step='0.01' required></td>
+							</tr>
+							<tr>
+								<td><label for="shownRoomNumberOfPeople">Number of
+										people</label></td>
+								<td><input type="number" id="shownRoomNumberOfPeople"
+									class="textInput" required></td>
+							</tr>
+							<tr>
+								<td><label for="shownRoomAverageGrade">AverageGrade</label></td>
+								<td><input id="shownRoomAverageGrade" class="textInput"
+									readonly></td>
+							</tr>
+							<tr>
+								<td><button type="submit" id="editHotelRoomButton"
+										class="btn btn-default">Save changes</button></td>
+								<td><button type="button" id="deleteHotelRoomButton"
+										onclick="deleteRoom()" class="btn btn-default">Delete
+										room</button></td>
+							</tr>
+						</table>
+					</form>
 				</div>
 				<div class="showHotelRoomInnerDiv">
 					<form id="newSeasonalPriceForm">
 						<table class="showHotelRoomTable">
 							<tr>
 								<td><labeL for="newSeasonalPriceFrom">From</labeL><input
-									type="date" id="newSeasonalPriceFrom"></td>
+									type="date" id="newSeasonalPriceFrom" required></td>
 								<td><labeL for="newSeasonalPriceTo">To</labeL><input
-									type="date" id="newSeasonalPriceTo"></td>
+									type="date" id="newSeasonalPriceTo" required></td>
 							</tr>
 							<tr>
 								<td><label for="newSeasonalPricePrice">Price</label><input
 									id="newSeasonalPricePrice" type="number" step="0.01"
-									oninput="validity.valid||(value='');"></td>
+									oninput="validity.valid||(value='');" required></td>
 								<td><button type="submit" id="addSeasonalPriceButton"
 										class="btn btn-default">Add seasonal price</button></td>
 							</tr>
@@ -285,19 +287,19 @@
 					<table id="newHotelRoomTable">
 						<tr>
 							<td><label for="newRoomNumber">Room number</label></td>
-							<td><input id="newRoomNumber" class="textInput"></td>
+							<td><input id="newRoomNumber" class="textInput" required></td>
 						</tr>
 						<tr>
 							<td><label for="newRoomDefaultPrice">Default price
 									per night</label></td>
 							<td><input type="number" id="newRoomDefaultPrice"
-								class="textInput" step='0.01'></td>
+								class="textInput" step='0.01' required></td>
 						</tr>
 						<tr>
 							<td><label for="newRoomNumberOfPeople">Number of
 									people</label></td>
 							<td><input type="number" id="newRoomNumberOfPeople"
-								class="textInput"></td>
+								class="textInput" required></td>
 						</tr>
 						<tr>
 							<td colspan="2">
