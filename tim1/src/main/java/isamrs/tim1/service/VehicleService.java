@@ -140,12 +140,17 @@ public class VehicleService {
 		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
 				.getRentACar();
 
+		boolean producerModelChanged = false;
+		if (!producer.equals(editedVehicle.getProducer()) || !model.equals(editedVehicle.getModel())) {
+			producerModelChanged = true;
+		}
+
 		boolean vehicleExists = false;
 		Vehicle vehicle = null;
 		for (Vehicle v : rentACar.getVehicles()) {
-			if (v.getModel().equals(editedVehicle.getModel()) && v.getProducer().equals(editedVehicle.getProducer())) {
-				return new MessageDTO("Vehicle model and producer pair is already taken.",
-						ToasterType.ERROR.toString());
+			if (producerModelChanged && v.getModel().equals(editedVehicle.getModel())
+					&& v.getProducer().equals(editedVehicle.getProducer())) {
+				return new MessageDTO("Producer model pair is already in use.", ToasterType.ERROR.toString());
 			}
 
 			if (v.getModel().equals(model) && v.getProducer().equals(producer)) {
@@ -158,7 +163,7 @@ public class VehicleService {
 		if (!vehicleExists) {
 			return new MessageDTO("Vehicle requested for deletion does not exist.", ToasterType.ERROR.toString());
 		} else if (vehicle.isDeleted()) {
-			return new MessageDTO("Vehicle is already deleted.", ToasterType.ERROR.toString());
+			return new MessageDTO("Vehicle is deleted.", ToasterType.ERROR.toString());
 		}
 
 		Date now = new Date();
