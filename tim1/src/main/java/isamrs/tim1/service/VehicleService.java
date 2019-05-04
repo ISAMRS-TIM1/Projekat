@@ -136,6 +136,70 @@ public class VehicleService {
 		return new MessageDTO("Vehicle successfully added.", ToasterType.SUCCESS.toString());
 	}
 
+	public MessageDTO editVehicle(String producer, String model, VehicleDTO editedVehicle) {
+		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+				.getRentACar();
+
+		boolean producerModelChanged = false;
+		if (!producer.equals(editedVehicle.getProducer()) || !model.equals(editedVehicle.getModel())) {
+			producerModelChanged = true;
+		}
+
+		boolean vehicleExists = false;
+		Vehicle vehicle = null;
+		for (Vehicle v : rentACar.getVehicles()) {
+			if (producerModelChanged && v.getModel().equals(editedVehicle.getModel())
+					&& v.getProducer().equals(editedVehicle.getProducer())) {
+				return new MessageDTO("Producer model pair is already in use.", ToasterType.ERROR.toString());
+			}
+
+			if (v.getModel().equals(model) && v.getProducer().equals(producer)) {
+				vehicleExists = true;
+				vehicle = v;
+				break;
+			}
+		}
+
+		if (!vehicleExists) {
+			return new MessageDTO("Vehicle requested for editing does not exist.", ToasterType.ERROR.toString());
+		} else if (vehicle.isDeleted()) {
+			return new MessageDTO("Vehicle is deleted.", ToasterType.ERROR.toString());
+		}
+
+		Date now = new Date();
+		boolean activeReservations = false;
+		for (VehicleReservation vr : rentACar.getNormalReservations()) {
+			if (vr.getVehicle().getId().equals(vehicle.getId()) && vr.getToDate().compareTo(now) > 0) {
+				activeReservations = true;
+				break;
+			}
+		}
+
+		if (!activeReservations) {
+			for (QuickVehicleReservation qr : rentACar.getQuickReservations()) {
+				if (qr.getVehicle().getId().equals(vehicle.getId()) && qr.getToDate().compareTo(now) > 0) {
+					activeReservations = true;
+					break;
+				}
+			}
+		}
+
+		if (activeReservations) {
+			return new MessageDTO("Vehicle cannot be edited due to active reservations.", ToasterType.ERROR.toString());
+		}
+
+		vehicle.setModel(editedVehicle.getModel());
+		vehicle.setProducer(editedVehicle.getProducer());
+		vehicle.setYearOfProduction(editedVehicle.getYearOfProduction());
+		vehicle.setNumberOfSeats(editedVehicle.getNumberOfSeats());
+		vehicle.setFuelType(editedVehicle.getFuelType());
+		vehicle.setVehicleType(editedVehicle.getVehicleType());
+		vehicle.setPricePerDay(editedVehicle.getPricePerDay());
+		vehicleRepository.save(vehicle);
+
+		return new MessageDTO("Vehicle successfully edited.", ToasterType.SUCCESS.toString());
+	}
+
 	public MessageDTO deleteVehicle(String producer, String model) {
 		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
 				.getRentACar();

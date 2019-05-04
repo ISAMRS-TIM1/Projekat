@@ -17,7 +17,8 @@ const loadVehiclesURL = "/api/getVehicles";
 const addVehicleURL = "/api/addVehicle/";
 const loadVehicleTypesURL = "/api/getVehicleTypes";
 const loadFuelTypesURL = "/api/getFuelTypes";
-const deleteVehicleURL = "/api/deleteVehicle/"
+const deleteVehicleURL = "/api/deleteVehicle/";
+const editVehicleURL = "/api/editVehicle/";
 
 
 $(document).ready(function() {
@@ -102,9 +103,32 @@ $(document).ready(function() {
 	$(document).on('click', '#vehicleTable tbody tr', function(e) {
 		oldProducer = e.target.parentNode.childNodes[0].innerText;
 		oldModel = e.target.parentNode.childNodes[1].innerText;
-		//$("#editBranchOfficeForm input[name='name']").val(oldName);
-		// add branch location to map
+		$('#editVehicleForm input[name="producer"]').val(oldProducer);
+		$('#editVehicleForm input[name="model"]').val(oldModel);
+		$('#editVehicleForm input[name="year"]').val(e.target.parentNode.childNodes[2].innerText);
+		$('#editVehicleForm input[name="seats"]').val(e.target.parentNode.childNodes[3].innerText);
+		$('#editVehicleForm input[name="price"]').val(e.target.parentNode.childNodes[6].innerText);
+		
+		loadVehicleTypes('#vehicleTypeEdit', selected=e.target.parentNode.childNodes[5].innerText);
+		loadFuelTypes('#fuelTypeEdit', selected=e.target.parentNode.childNodes[4].innerText);
+		
 		$('#editVehicleModalDialog').modal('show');
+	});
+	
+	$(document).on('click', '#editVehicle', function(e) {
+		e.preventDefault();
+		let newProducer = $('#editVehicleForm input[name="producer"]').val();
+		let newModel = $('#editVehicleForm input[name="model"]').val();
+		let newYear = $('#editVehicleForm input[name="year"]').val();
+		let newSeats = $('#editVehicleForm input[name="seats"]').val();
+		let newPrice = $('#editVehicleForm input[name="price"]').val();
+		let newFuel = $('#fuelTypeEdit').val();
+		let newType = $('#vehicleTypeEdit').val();
+		
+		editVehicle(oldModel, oldProducer, newProducer, newModel, newYear, newSeats, newPrice, newType, newFuel);
+		
+		oldProducer = newProducer;
+		oldModel = newModel;
 	});
 	
 	$(document).on('click', '#deleteBranch', function(e) {
@@ -118,8 +142,8 @@ $(document).ready(function() {
 	});
 	
 	$(document).on('click', '#addVehicle', function(e) {
-		loadVehicleTypes();
-		loadFuelTypes();
+		loadVehicleTypes('#vehicleTypeAdd');
+		loadFuelTypes('#fuelTypeAdd');
 	});
 	
 	$(document).on('click', '#saveVehicle', function(e) {
@@ -157,7 +181,7 @@ function setUpMap(latitude, longitude, div) {
 	}).addTo(branchOfficeMap);
 }
 
-function loadVehicleTypes() {
+function loadVehicleTypes(id, selected=undefined) {
 	$.ajax({
 		type : 'GET',
 		url : loadVehicleTypesURL,
@@ -165,9 +189,14 @@ function loadVehicleTypes() {
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
 			if(data != null){
-				let types = $('#vehicleType');
+				let types = $(id);
+				types.empty();
 				for(let vehicleType of data) {
-					types.append('<option value="' + vehicleType + '">' + vehicleType + '</option');
+					if (selected != undefined && selected === vehicleType) {
+						types.append('<option value="' + vehicleType + '"selected>' + vehicleType + '</option');
+					} else {
+						types.append('<option value="' + vehicleType + '">' + vehicleType + '</option');
+					}
 				}
 			}
 		},
@@ -177,7 +206,7 @@ function loadVehicleTypes() {
 	});
 }
 
-function loadFuelTypes() {
+function loadFuelTypes(id, selected=undefined) {
 	$.ajax({
 		type : 'GET',
 		url : loadFuelTypesURL,
@@ -185,9 +214,14 @@ function loadFuelTypes() {
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
 			if(data != null){
-				let types = $('#fuelType');
+				let types = $(id);
+				types.empty();
 				for(let fuelType of data) {
-					types.append('<option value="' + fuelType + '">' + fuelType + '</option');
+					if (selected != undefined && selected === fuelType) {
+						types.append('<option value="' + fuelType + '" selected>' + fuelType + '</option>');
+					} else {						
+						types.append('<option value="' + fuelType + '">' + fuelType + '</option>');
+					}
 				}
 			}
 		},
@@ -365,8 +399,8 @@ function addVehicle() {
 	let year = $('input[name="year"]').val();
 	let seats = $('input[name="seats"]').val();
 	let price = $('input[name="price"]').val();
-	let vehicleType = $('#vehicleType').val();
-	let fuelType = $('#fuelType').val();
+	let vehicleType = $('#vehicleTypeAdd').val();
+	let fuelType = $('#fuelTypeAdd').val();
 	let quantity = $('input[name="quantity"]').val();
 	
 	$.ajax({
@@ -375,6 +409,26 @@ function addVehicle() {
 		contentType: "application/json",
 		dataType : "json",
 		data: vehicleFormToJSON(producer, model, year, seats,fuelType, vehicleType, price),
+		headers: createAuthorizationTokenHeader(TOKEN_KEY),
+		success: function(data){
+			toastr[data.toastType](data.message);
+			loadVehicles();
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
+function editVehicle(oldModel, oldProducer, producer, model, year, seats, price, vehicleType, fuelType) {
+	let token = getJwtToken("jwtToken");
+	
+	$.ajax({
+		type : 'PUT',
+		url : editVehicleURL + oldProducer + "/" + oldModel,
+		contentType: "application/json",
+		dataType : "json",
+		data: vehicleFormToJSON(producer, model, year, seats, fuelType, vehicleType, price),
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
 			toastr[data.toastType](data.message);
