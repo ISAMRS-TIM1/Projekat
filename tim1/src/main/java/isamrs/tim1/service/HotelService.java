@@ -35,7 +35,7 @@ public class HotelService {
 
 	public MessageDTO editHotel(ServiceDTO hotel, Hotel hotelToEdit) {
 		String newName = hotel.getName();
-		if(!newName.equals(hotelToEdit.getName())) // if hotel name was changed, check if new one is taken
+		if (!newName.equals(hotelToEdit.getName())) // if hotel name was changed, check if new one is taken
 			if (serviceRepository.findOneByName(newName) != null)
 				return new MessageDTO("Name is already in use by some other service.", ToasterType.ERROR.toString());
 		hotelToEdit.setName(newName);
@@ -65,6 +65,14 @@ public class HotelService {
 
 	public DetailedServiceDTO getHotel(String name) {
 		return new DetailedServiceDTO(hotelRepository.findOneByName(name));
+	}
+
+	public ArrayList<ServiceViewDTO> searchHotels(String name, double fromGrade, double toGrade) {
+		ArrayList<ServiceViewDTO> retval = new ArrayList<ServiceViewDTO>();
+		for (Hotel h : hotelRepository.findByNameGrade(name, fromGrade, toGrade)) {
+			retval.add(new ServiceViewDTO(h));
+		}
+		return retval;
 	}
 
 }
