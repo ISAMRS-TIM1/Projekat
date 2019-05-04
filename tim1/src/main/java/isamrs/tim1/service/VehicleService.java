@@ -161,7 +161,7 @@ public class VehicleService {
 		}
 
 		if (!vehicleExists) {
-			return new MessageDTO("Vehicle requested for deletion does not exist.", ToasterType.ERROR.toString());
+			return new MessageDTO("Vehicle requested for editing does not exist.", ToasterType.ERROR.toString());
 		} else if (vehicle.isDeleted()) {
 			return new MessageDTO("Vehicle is deleted.", ToasterType.ERROR.toString());
 		}
