@@ -11,7 +11,10 @@ const getRoomsURL = "/api/getRooms";
 const getHotelOfAdminURL = "/api/getHotelOfAdmin";
 const getHotelRoomURL = "/api/getHotelRoom";
 const addHotelRoomURL = "/api/addHotelRoom";
+const editHotelRoomURL = "/api/editHotelRoom/";
 const deleteHotelRoomURL = "/api/deleteHotelRoom/";
+const addSeasonalPriceURL = "/api/addSeasonalPrice/"
+const deleteSeasonalPriceURL = "/api/deleteSeasonalPrice/"
 
 const logoutURL = "../logout";
 const loadUserInfoURL = "../api/getUserInfo";
@@ -20,6 +23,7 @@ const changePasswordURL = "../changePassword";
 
 var destMap = null;
 var shownRoom = null;
+var hotelName = null;
 
 $(document).ready(function() {
 	setUpToastr();
@@ -27,7 +31,10 @@ $(document).ready(function() {
 	setUpTables();
 	loadData();
 
+	setUpEditHotelForm();
 	setUpNewHotelRoomForm();
+	setUpNewSeasonalPriceForm();
+	setUpShownHotelRoomForm();
 	setUpEditForm();
 
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
@@ -72,7 +79,11 @@ function setUpTables() {
 	});
 	seasonalPricesTable = $('#seasonalPricesTable').DataTable({
 		"paging" : false,
-		"info" : false
+		"info" : false,
+		"columnDefs" : [ {
+			"orderable" : false,
+			"targets" : 3
+		} ]
 	});
 
 	$('#roomsTable tbody').on('click', 'tr', function() {
@@ -126,22 +137,6 @@ function setUpMap(latitude, longitude, div) {
 	});
 }
 
-function editHotel(e) {
-	e.preventDefault();
-	$.ajax({
-		type : 'POST',
-		url : editHotelURL,
-		contentType : "application/json",
-		data : JSON.stringify({
-		// TODO
-		}),
-		dataType : "json",
-		success : function(data) {
-			alert(data);
-		}
-	});
-}
-
 function loadHotel() {
 	$.ajax({
 		dataType : "json",
@@ -192,19 +187,57 @@ function renderAdditionalServices(data) {
 function renderRooms(data) {
 	roomsTable.clear().draw();
 	$.each(data, function(i, val) {
-		roomsTable.row.add(
+		rowNode = roomsTable.row.add(
 				[ val.roomNumber, val.price, val.numberOfPeople,
-						val.averageGrade ]).draw(false);
+						val.averageGrade ]).draw(false).node();
+		if (val.roomNumber == shownRoom)
+			$(rowNode).addClass('selected');
 	});
 }
 
 function renderSeasonalPrices(data) {
 	seasonalPricesTable.clear().draw();
-	$.each(data, function(i, val) {
-		seasonalPricesTable.row.add([ val.price, val.fromDate, val.toDate ])
-				.draw(false);
-	});
+	$
+			.each(
+					data,
+					function(i, val) {
+						seasonalPricesTable.row
+								.add(
+										[
+												val.price,
+												val.fromDate,
+												val.toDate,
+												`<a href="javascript:deleteSeasonalPrice('${val.fromDate}', '${val.toDate}')">Delete</a>` ])
+								.draw(false);
+					});
 
+}
+
+function deleteSeasonalPrice(fromDate, toDate) {
+	fromDate = new Date(fromDate);
+	toDate = new Date(toDate);
+	$.ajax({
+		type : 'DELETE',
+		url : deleteSeasonalPriceURL + shownRoom,
+		contentType : 'application/json',
+		headers : createAuthorizationTokenHeader(tokenKey),
+		dataType : "json",
+		data : JSON.stringify({
+			"fromDate" : fromDate,
+			"toDate" : toDate
+		}),
+		success : function(data) {
+			loadHotel();
+			loadHotelRoom(shownRoom);
+			if (data != "") {
+				toastr[data.toastType](data.message);
+			}
+
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
 }
 
 /* USER PROFILE JS */
@@ -246,6 +279,31 @@ function userEditFormToJSON(firstName, lastName, phone, address, email) {
 	});
 }
 
+function setUpEditHotelForm() {
+	$('#editHotelForm').on('submit', function(e) {
+		e.preventDefault();
+		$.ajax({
+			type : 'PUT',
+			url : editHotelURL,
+			headers : createAuthorizationTokenHeader(tokenKey),
+			contentType : "application/json",
+			data : JSON.stringify({
+				"name" : $("#hotelName").val(),
+				"description" : $("#hotelDescription").val(),
+				"latitude" : $("#latitude").val(),
+				"longitude" : $("#longitude").val(),
+			}),
+			dataType : "json",
+			success : function(data) {
+				loadHotel();
+				if (data != "") {
+					toastr[data.toastType](data.message);
+				}
+			}
+		});
+	});
+}
+
 function setUpNewHotelRoomForm() {
 	$('#newHotelRoomForm').on('submit', function(e) {
 		e.preventDefault();
@@ -272,6 +330,66 @@ function setUpNewHotelRoomForm() {
 		});
 	});
 
+}
+
+function setUpNewSeasonalPriceForm() {
+	$('#newSeasonalPriceForm').on('submit', function(e) {
+		e.preventDefault();
+		$.ajax({
+			type : 'POST',
+			url : addSeasonalPriceURL + shownRoom,
+			contentType : 'application/json',
+			headers : createAuthorizationTokenHeader(tokenKey),
+			dataType : "json",
+			data : JSON.stringify({
+				"price" : $("#newSeasonalPricePrice").val(),
+				"fromDate" : $("#newSeasonalPriceFrom").val(),
+				"toDate" : $("#newSeasonalPriceTo").val(),
+			}),
+			success : function(data) {
+				loadHotel();
+				loadHotelRoom(shownRoom);
+				if (data != "") {
+					toastr[data.toastType](data.message);
+				}
+			},
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+				alert("AJAX ERROR: " + textStatus);
+			}
+		});
+	});
+}
+
+function setUpShownHotelRoomForm() {
+	$('#shownHotelRoomForm').on('submit', function(e) {
+		e.preventDefault();
+		newRoomNumber = $("#shownRoomNumber").val();
+		$.ajax({
+			type : 'PUT',
+			url : editHotelRoomURL + shownRoom,
+			contentType : 'application/json',
+			headers : createAuthorizationTokenHeader(tokenKey),
+			dataType : "json",
+			data : JSON.stringify({
+				"roomNumber" : newRoomNumber,
+				"price" : $("#shownRoomDefaultPrice").val(),
+				"numberOfPeople" : $("#shownRoomNumberOfPeople").val(),
+			}),
+			success : function(data) {
+				if (data.toastType == "success") {
+					shownRoom = newRoomNumber;
+				}
+				loadHotel();
+				loadHotelRoom(shownRoom);
+				if (data != "") {
+					toastr[data.toastType](data.message);
+				}
+			},
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+				alert("AJAX ERROR: " + textStatus);
+			}
+		});
+	});
 }
 
 function setUpEditForm() {
@@ -333,6 +451,7 @@ function deleteRoom() {
 		headers : createAuthorizationTokenHeader(tokenKey),
 		success : function(data) {
 			loadHotel();
+			$("#showHotelRoomModal").modal('hide');
 			if (data != "") {
 				toastr[data.toastType](data.message);
 			}

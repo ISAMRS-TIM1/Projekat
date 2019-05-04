@@ -13,13 +13,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import isamrs.tim1.dto.SeasonalPriceDTO;
+
 @Entity
 @Table(name = "SeasonalHotelRoomPrices")
 public class SeasonalHotelRoomPrice implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "service_id", unique = true, nullable = false)
+	@Column(name = "id", unique = true, nullable = false)
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -37,6 +39,14 @@ public class SeasonalHotelRoomPrice implements Serializable {
 
 	public SeasonalHotelRoomPrice() {
 		super();
+	}
+
+	public SeasonalHotelRoomPrice(SeasonalPriceDTO seasonalPrice, HotelRoom hr) {
+		this.id = null;
+		this.hotelRoom = hr;
+		this.fromDate = seasonalPrice.getFromDate();
+		this.toDate = seasonalPrice.getToDate();
+		this.price = seasonalPrice.getPrice();
 	}
 
 	public Integer getId() {

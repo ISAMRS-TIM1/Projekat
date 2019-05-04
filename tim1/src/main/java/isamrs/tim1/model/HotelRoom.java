@@ -70,7 +70,11 @@ public class HotelRoom implements Serializable {
 		this.normalReservations = new HashSet<HotelReservation>();
 		this.seasonalPrices = new HashSet<SeasonalHotelRoomPrice>();
 	}
-
+	public void update(HotelRoomDTO hotelRoom) {
+		this.numberOfPeople = hotelRoom.getNumberOfPeople();
+		this.defaultPriceOneNight = hotelRoom.getPrice();
+		this.roomNumber = hotelRoom.getRoomNumber();
+	}
 	public Double getAverageGrade() {
 		return averageGrade;
 	}
@@ -148,4 +152,5 @@ public class HotelRoom implements Serializable {
 	}
 
 	private static final long serialVersionUID = 1359942200118829407L;
+
 }
