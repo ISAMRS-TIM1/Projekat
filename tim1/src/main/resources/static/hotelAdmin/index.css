@@ -3,7 +3,6 @@ body {
 }
 
 /* MENU */
-
 #topMenu {
 	display: flex;
 }
@@ -34,45 +33,45 @@ a[data-toggle="tab"] {
 }
 
 /* BASIC INFO */
-
 #basicInfo {
 	text-align: center;
 	padding-bottom: 3vw;
 	width: 50%;
-    margin-left: 25%;
+	margin-left: 25%;
 }
 
-#hotelName{
+#hotelName {
 	background-color: #0D63FF;
-    color: white;
-    text-align: center;
-    font-size: 4.5vw;
-    width: 100%;
+	color: white;
+	text-align: center;
+	font-size: 4.5vw;
+	width: 100%;
 }
 
-.textInput{
+.textInput {
 	border: none;
 	resize: none;
 }
-.textInput:focus{
+
+.textInput:focus {
 	border: 1px solid black;
 	resize: none;
 }
 
 #averageGrade {
-	color:white;
+	color: white;
 	font-size: 1.5vw;
 }
 
 #descriptionDiv {
 	width: 100%;
 	height: 75%;
-	text-align:center;
+	text-align: center;
 }
 
 #hotelDescription {
 	background-color: #0D63FF;
-	color:white;
+	color: white;
 	font-size: 1.5vw;
 	width: 100%;
 }
@@ -100,14 +99,12 @@ a[data-toggle="tab"] {
 }
 
 /* MODAL */
-
 .modal-content {
 	max-height: calc(100vh - 200px);
 	overflow-y: auto;
 }
 
 /* PROFILE */
-
 #profileContent {
 	width: 86%;
 	margin-left: 5%;
@@ -151,29 +148,59 @@ a[data-toggle="tab"] {
 	text-align: center;
 }
 
-#airlineName{
+#airlineName {
 	background-color: #0D63FF;
 }
 
-#airlineDescription{
+#airlineDescription {
 	background-color: #0D63FF;
 }
 
-.textInput{
+.textInput {
 	border: none;
 	resize: none;
 }
-.textInput:focus{
+
+.textInput:focus {
 	border: 1px solid black;
 	resize: none;
 }
 
+/* REPORTS */
+.reportsDiv {
+	width: 70%;
+	height: 30vw;
+	margin-left: 13%;
+	margin-top: 5%;
+	background: #5994FF;
+	border: 0.24vw solid #B27A00;
+	border-radius: 4vw 1.6vw;
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	padding: 2vw;
+	text-align: center;
+}
+
+#income {
+	font-size: 1.5vw;
+	display: none;
+}
+
+#reportsTable {
+	margin: auto
+}
+
+#reportsTable td {
+	padding: 2vw;
+	text-align: center;
+}
+
 /* TABLES */
-
-
 .tableDiv {
 	width: 70%;
-	height: 30vw; margin-left : 13%;
+	height: 30vw;
+	margin-left: 13%;
 	margin-top: 5%;
 	background: #5994FF;
 	border: 0.24vw solid #B27A00;
@@ -194,42 +221,49 @@ a[data-toggle="tab"] {
 }
 
 /* HOTEL ROOM MODAL */
-#showHotelRoomDiv{
+#showHotelRoomDiv {
 	background: #5994FF;
 	border: 0.24vw solid #B27A00;
 	border-radius: 4vw 1.6vw;
 }
-.showHotelRoomInnerDiv{
+
+.showHotelRoomInnerDiv {
 	margin: 2vw;
 	padding: 2vw;
 	border: 0.18vw solid #B27A00;
 	border-radius: 4vw 1.6vw;
 }
+
 .showHotelRoomTable {
-	margin:auto;
+	margin: auto;
 }
+
 .showHotelRoomTable td {
 	padding: 2vw;
 	text-align: center;
 }
-.showHotelRoomTable label{
+
+.showHotelRoomTable label {
 	margin: 2vw;
 }
 
 /* NEW ROOM MODAL */
-#newHotelRoomDiv{
+#newHotelRoomDiv {
 	margin: 0;
 	background: #5994FF;
 	border: 0.24vw solid #B27A00;
 	border-radius: 4vw 1.6vw;
 }
-#newHotelRoomTable{
-	margin:auto;	
+
+#newHotelRoomTable {
+	margin: auto;
 }
+
 #newHotelRoomTable td {
 	padding: 30px;
 	text-align: center;
 }
+
 #addHotelRoomButton {
 	margin-left: auto;
 	margin-right: auto;

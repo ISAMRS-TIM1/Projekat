@@ -28,7 +28,11 @@
 <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
 	integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
 	crossorigin=""></script>
-
+<script src="registeredUser/moment.min.js"></script>
+<script type="text/javascript"
+	src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css"
+	href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <script type="text/javascript"
 	src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript"
@@ -63,9 +67,9 @@
 			<div id="basicTab" class="tab-pane fade in active">
 				<form id="editHotelForm">
 					<div id="basicInfo">
-						<input type="text" id="hotelName" class="textInput" required> <span
-							id="averageGrade">Average grade: <span id="hotelGrade"></span></span><br>
-						<br>
+						<input type="text" id="hotelName" class="textInput" required>
+						<span id="averageGrade">Average grade: <span
+							id="hotelGrade"></span></span><br> <br>
 						<div id="descriptionDiv">
 							<textarea id="hotelDescription" class="textInput" required></textarea>
 						</div>
@@ -76,6 +80,20 @@
 					<button type="submit" id="saveChangesBasic" class="btn btn-default">Save
 						changes</button>
 				</form>
+			</div>
+			<div id="reportsTab" class="tab-pane fade">
+				<div class="reportsDiv">
+					<table id=reportsTable>
+						<tr>
+							<td>Period:</td>
+							<td><input type="text" id="showIncomeDateRange"></td>
+						</tr>
+					</table>
+					<br>
+					<button class="btn btn-default" id="showIncomeButton"
+						onclick='showIncome(event)'>Show income</button>
+					<br> <span id="income"></span>
+				</div>
 			</div>
 			<div id="roomsTab" class="tab-pane fade in">
 				<div class="tableWrapper">
@@ -99,17 +117,6 @@
 						</table>
 					</div>
 				</div>
-			</div>
-			<div id="reportsTab" class="tab-pane fade">
-				<h3>Reports</h3>
-				<p>Some content.</p>
-				<button type="submit" class="btn btn-default">Daily sold
-					tickets</button>
-				<button type="submit" class="btn btn-default">Weekly sold
-					tickets</button>
-				<button type="submit" class="btn btn-default">Monthly sold
-					tickets</button>
-				<button type="submit" class="btn btn-default">Hotel income</button>
 			</div>
 			<div id="additionalServicesTab" class="tab-pane fade">
 				<div class="tableDiv">
