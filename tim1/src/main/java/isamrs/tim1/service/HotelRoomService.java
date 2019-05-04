@@ -1,5 +1,6 @@
 package isamrs.tim1.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +11,11 @@ import isamrs.tim1.dto.HotelRoomDetailedDTO;
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.dto.SeasonalPriceDTO;
+import isamrs.tim1.dto.ServiceViewDTO;
 import isamrs.tim1.model.Hotel;
+import isamrs.tim1.model.HotelReservation;
 import isamrs.tim1.model.HotelRoom;
+import isamrs.tim1.model.QuickHotelReservation;
 import isamrs.tim1.model.SeasonalHotelRoomPrice;
 import isamrs.tim1.repository.HotelRepository;
 import isamrs.tim1.repository.HotelRoomRepository;
@@ -104,6 +108,37 @@ public class HotelRoomService {
 		hr.update(hotelRoom);
 		hotelRoomRepository.save(hr);
 		return new MessageDTO("Hotel room edited successfully", ToasterType.SUCCESS.toString());
+	}
+
+	public ArrayList<HotelRoomDTO> searchRooms(String hotelName, Date fromDate, Date toDate, int forPeople,
+			double fromPrice, double toPrice, double fromGrade, double toGrade) {
+		ArrayList<HotelRoomDTO> retval = new ArrayList<HotelRoomDTO>();
+		Hotel hotel = hotelRepository.findOneByName(hotelName);
+		for (HotelRoom hr : hotelRoomRepository.findByHotelPeopleGrade(hotel.getId(), forPeople, fromGrade, toGrade)) {
+			boolean hasReservations = false;
+			for (HotelReservation res : hr.getNormalReservations()) {
+				// (StartA < EndB) and (EndA > StartB)
+				if (res.getFromDate().before(toDate) && res.getToDate().after(fromDate)) {
+					hasReservations = true;
+					break;
+				}
+			}
+			if (!hasReservations)
+				for (QuickHotelReservation res : hr.getQuickReservations()) {
+					// (StartA < EndB) and (EndA > StartB)
+					if (res.getFromDate().before(toDate) && res.getToDate().after(fromDate)) {
+						hasReservations = true;
+						break;
+					}
+				}
+			if (!hasReservations) {
+				HotelRoomDTO hrDTO = new HotelRoomDTO(hr);
+				if (hrDTO.getPrice() <= toPrice && hrDTO.getPrice() >= fromPrice) {
+					retval.add(hrDTO);
+				}
+			}
+		}
+		return retval;
 	}
 
 }

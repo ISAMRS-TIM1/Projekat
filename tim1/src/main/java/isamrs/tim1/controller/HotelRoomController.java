@@ -1,5 +1,8 @@
 package isamrs.tim1.controller;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,6 +20,7 @@ import isamrs.tim1.dto.HotelRoomDTO;
 import isamrs.tim1.dto.HotelRoomDetailedDTO;
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.SeasonalPriceDTO;
+import isamrs.tim1.dto.ServiceViewDTO;
 import isamrs.tim1.model.HotelAdmin;
 import isamrs.tim1.service.HotelRoomService;
 
@@ -49,15 +53,16 @@ public class HotelRoomController {
 				((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel()),
 				HttpStatus.OK);
 	}
-	
+
 	@PreAuthorize("hasRole('HOTELADMIN')")
 	@RequestMapping(value = "/api/editHotelRoom/{roomNumber}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MessageDTO> editHotelRoom(@PathVariable("roomNumber") String roomNumber, @RequestBody HotelRoomDTO hotelRoom) {
+	public ResponseEntity<MessageDTO> editHotelRoom(@PathVariable("roomNumber") String roomNumber,
+			@RequestBody HotelRoomDTO hotelRoom) {
 		return new ResponseEntity<MessageDTO>(hotelRoomService.editHotelRoom(hotelRoom, roomNumber,
 				((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel()),
 				HttpStatus.OK);
 	}
-	
+
 	@PreAuthorize("hasRole('HOTELADMIN')")
 	@RequestMapping(value = "/api/addSeasonalPrice/{roomNumber}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MessageDTO> addSeasonalPrice(@RequestBody SeasonalPriceDTO seasonalPrice,
@@ -66,7 +71,6 @@ public class HotelRoomController {
 				((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel()),
 				HttpStatus.OK);
 	}
-	
 
 	@PreAuthorize("hasRole('HOTELADMIN')")
 	@RequestMapping(value = "/api/deleteSeasonalPrice/{roomNumber}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -76,4 +80,12 @@ public class HotelRoomController {
 				((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel()),
 				HttpStatus.OK);
 	}
+
+	@PreAuthorize("hasRole('REGISTEREDUSER')")
+	@RequestMapping(value = "api/searchRooms/{hotel}", method = RequestMethod.GET)
+	public ArrayList<HotelRoomDTO> searchRooms(@PathVariable("hotel") String hotel, Date fromDate, Date toDate,
+			int forPeople, double fromPrice, double toPrice, double fromGrade, double toGrade) {
+		return hotelRoomService.searchRooms(hotel, fromDate, toDate, forPeople, fromPrice, toPrice, fromGrade, toGrade);
+	}
+
 }
