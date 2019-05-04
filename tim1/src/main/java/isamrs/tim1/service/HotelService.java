@@ -75,4 +75,8 @@ public class HotelService {
 		return retval;
 	}
 
+	public HotelDTO getDetailedHotel(String name) {
+		return new HotelDTO(hotelRepository.findOneByName(name));
+	}
+
 }

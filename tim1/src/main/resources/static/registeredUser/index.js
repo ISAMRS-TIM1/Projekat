@@ -9,11 +9,19 @@ const declineInvitationURL = "/api/declineInvitation";
 const getFriendsURL = "/api/getFriends";
 const getDestinationsURL = "/api/getDestinations";
 const searchFlightsURL = "/api/searchFlights";
+
 const searchHotelsURL = "/api/searchHotels";
+const getHotelURL = "../api/getHotel";
+const getDetailedHotelURL = "../api/getDetailedHotel";
 
 const tokenKey = "jwtToken";
+const tileLayerURL = "https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw";
+const MAP_ZOOM = 8;
+const MAX_MAP_ZOOM = 19;
+const MAP_ID = 'mapbox.streets';
 
 var userMail = "";
+var hotelMap = null;
 
 $(document)
 		.ready(
@@ -754,7 +762,27 @@ function setUpHotelsTab() {
 	$("#searchHotelGrade").slider({});
 
 	setUpTablesHotelsTab();
+	setUpShowHotelModal();
 
+}
+
+function setUpShowHotelModal() {
+	$('#showHotelModal').on('shown.bs.modal', function() {
+		setTimeout(function() {
+			hotelMap.invalidateSize()
+		}, 100);
+		setTimeout(function() {
+			hotelMap.invalidateSize()
+		}, 1000);
+	});
+
+	$('#showHotelModal').on('hidden.bs.modal', function() {
+		hotelsTable.$('tr.selected').removeClass('selected');
+		hotelMap.off();
+		hotelMap.remove();
+		hotelMap = null;
+		adminsTable.clear().draw();
+	});	
 }
 
 function setUpTablesHotelsTab() {
@@ -763,7 +791,7 @@ function setUpTablesHotelsTab() {
 			function(i) {
 				var title = $(this).text();
 				$(this).html(
-						'<input type="text" placeholder="Search ' + title
+						'<input type="text" placeholder="Filter by ' + title
 								+ '" />');
 
 				$('input', this).on('keyup change', function() {
@@ -772,11 +800,32 @@ function setUpTablesHotelsTab() {
 					}
 				});
 			});
-	var hotelsTable = $('#hotelsTable').DataTable({
+	hotelsTable = $('#hotelsTable').DataTable({
 		"paging" : false,
 		"info" : false,
 		"orderCellsTop" : true,
 		"fixedHeader" : true
+	});
+
+	roomsTable = $('#roomsTable').DataTable({
+		"paging" : false,
+		"info" : false,
+		"orderCellsTop" : true,
+		"fixedHeader" : true
+	});
+
+	additionalServicesTable = $('#additionalServicesTable').DataTable({
+		"paging" : false,
+		"info" : false,
+		"orderCellsTop" : true,
+		"fixedHeader" : true
+	});
+
+	$('#hotelsTable tbody').on('click', 'tr', function() {
+		hotelsTable.$('tr.selected').removeClass('selected');
+		$(this).addClass('selected');
+		loadHotel(hotelsTable.row(this).data()[0]);
+		$("#showHotelModal").modal();
 	});
 }
 
@@ -810,4 +859,69 @@ function renderHotels(data) {
 			table.row.add([ val.name, val.averageGrade ]).draw(false);
 		});
 	}
+}
+
+function loadHotel(name) {
+	$.ajax({
+		type : 'GET',
+		url : getDetailedHotelURL,
+		contentType : "application/json",
+		data : {
+			'name' : name
+		},
+		dataType : "json",
+		headers : createAuthorizationTokenHeader(tokenKey),
+		success : function(data) {
+			if (data != null) {
+				$("#hotelName").val(data["name"]);
+				$("#hotelGrade").text(data["averageGrade"]);
+				$("#hotelDescription").text(data["description"]);
+				if (hotelMap != null) {
+					hotelMap.off();
+					hotelMap.remove();
+					hotelMap = null;
+				}
+				hotelMap = setUpMap(data["latitude"], data["longitude"],
+						'hotelMapDiv', false);
+				renderRooms(data["rooms"]);
+				renderAdditionalServices(data["additionalServices"]);
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
+function renderRooms(data) {
+	roomsTable.clear().draw();
+	$.each(data, function(i, val) {
+		rowNode = roomsTable.row.add(
+				[ val.roomNumber, val.price, val.numberOfPeople,
+						val.averageGrade ]).draw(false).node();
+	});
+}
+function renderAdditionalServices(data) {
+	additionalServicesTable.clear().draw();
+	$.each(data, function(i, val) {
+		additionalServicesTable.row.add([ val.name, val.price ]).draw(false);
+	});
+}
+
+function setUpMap(latitude, longitude, div, draggable) {
+	var retval = L.map(div).setView([ latitude, longitude ], MAP_ZOOM);
+	L.tileLayer(tileLayerURL, {
+		maxZoom : MAX_MAP_ZOOM,
+		id : MAP_ID
+	}).addTo(retval);
+	var marker = L.marker([ latitude, longitude ], {
+		draggable : draggable
+	}).addTo(retval);
+	if (draggable) {
+		marker.on('dragend', function(e) {
+			$("#latitude").val(marker.getLatLng().lat);
+			$("#longitude").val(marker.getLatLng().lng);
+		});
+	}
+	return retval
 }
