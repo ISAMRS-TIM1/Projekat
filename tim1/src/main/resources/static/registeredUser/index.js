@@ -566,13 +566,13 @@ function showPlaneSeats(seats) {
 							f : {
 								price : firstPrice,
 								classes : 'first-class', // your custom CSS
-															// class
+								// class
 								category : 'First Class'
 							},
 							e : {
 								price : economyPrice,
 								classes : 'economy-class', // your custom CSS
-															// class
+								// class
 								category : 'Economy Class'
 							},
 							b : {
@@ -752,10 +752,31 @@ function initializeSeats(number, seatClass, planeSegment, label, cat) {
 
 function setUpHotelsTab() {
 	$("#searchHotelGrade").slider({});
-	
-	$('#hotelsTable').DataTable({
+
+	setUpTablesHotelsTab();
+
+}
+
+function setUpTablesHotelsTab() {
+	$('#hotelsTable thead tr').clone(true).appendTo('#hotelsTable thead');
+	$('#hotelsTable thead tr:eq(1) th').each(
+			function(i) {
+				var title = $(this).text();
+				$(this).html(
+						'<input type="text" placeholder="Search ' + title
+								+ '" />');
+
+				$('input', this).on('keyup change', function() {
+					if (hotelsTable.column(i).search() !== this.value) {
+						hotelsTable.column(i).search(this.value).draw();
+					}
+				});
+			});
+	var hotelsTable = $('#hotelsTable').DataTable({
 		"paging" : false,
 		"info" : false,
+		"orderCellsTop" : true,
+		"fixedHeader" : true
 	});
 }
 
