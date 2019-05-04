@@ -13,6 +13,7 @@ const searchFlightsURL = "/api/searchFlights";
 const searchHotelsURL = "/api/searchHotels";
 const getHotelURL = "../api/getHotel";
 const getDetailedHotelURL = "../api/getDetailedHotel";
+const searchRoomsURL = '/api/searchRooms/'
 
 const tokenKey = "jwtToken";
 const tileLayerURL = "https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw";
@@ -22,6 +23,8 @@ const MAP_ID = 'mapbox.streets';
 
 var userMail = "";
 var hotelMap = null;
+
+var shownHotel = null;
 
 $(document)
 		.ready(
@@ -70,31 +73,7 @@ $(document)
 						"retrieve" : true,
 					});
 
-					$('#flightsTable thead tr').clone(true).appendTo(
-							'#flightsTable thead');
-					$('#flightsTable thead tr:eq(1) th')
-							.each(
-									function(i) {
-										var title = $(this).text();
-										$(this).html(
-												'<input type="text" placeholder="Filter by '
-														+ title + '" />');
-
-										$('input', this)
-												.on(
-														'keyup change',
-														function() {
-															if (table.column(i)
-																	.search() !== this.value) {
-																table
-																		.column(
-																				i)
-																		.search(
-																				this.value)
-																		.draw();
-															}
-														});
-									});
+					setUpTableFilter("#flightsTable");
 
 					var table = $('#flightsTable').DataTable({
 						"paging" : false,
@@ -760,7 +739,15 @@ function initializeSeats(number, seatClass, planeSegment, label, cat) {
 
 function setUpHotelsTab() {
 	$("#searchHotelGrade").slider({});
-
+	$('#searchRoomsDateRange').daterangepicker({
+		minDate:new Date(),
+		locale: {
+		      format: 'DD/MM/YYYY'
+		    }
+	});
+	$("#searchRoomsPrice").slider({});
+	$("#searchRoomsGrade").slider({});
+	
 	setUpTablesHotelsTab();
 	setUpShowHotelModal();
 
@@ -781,31 +768,18 @@ function setUpShowHotelModal() {
 		hotelMap.off();
 		hotelMap.remove();
 		hotelMap = null;
-		adminsTable.clear().draw();
 	});	
 }
 
 function setUpTablesHotelsTab() {
-	$('#hotelsTable thead tr').clone(true).appendTo('#hotelsTable thead');
-	$('#hotelsTable thead tr:eq(1) th').each(
-			function(i) {
-				var title = $(this).text();
-				$(this).html(
-						'<input type="text" placeholder="Filter by ' + title
-								+ '" />');
 
-				$('input', this).on('keyup change', function() {
-					if (hotelsTable.column(i).search() !== this.value) {
-						hotelsTable.column(i).search(this.value).draw();
-					}
-				});
-			});
 	hotelsTable = $('#hotelsTable').DataTable({
 		"paging" : false,
 		"info" : false,
 		"orderCellsTop" : true,
 		"fixedHeader" : true
 	});
+	setUpTableFilter("#hotelsTable");
 
 	roomsTable = $('#roomsTable').DataTable({
 		"paging" : false,
@@ -813,6 +787,7 @@ function setUpTablesHotelsTab() {
 		"orderCellsTop" : true,
 		"fixedHeader" : true
 	});
+	setUpTableFilter("#roomsTable");
 
 	additionalServicesTable = $('#additionalServicesTable').DataTable({
 		"paging" : false,
@@ -820,11 +795,13 @@ function setUpTablesHotelsTab() {
 		"orderCellsTop" : true,
 		"fixedHeader" : true
 	});
+	setUpTableFilter("#additionalServicesTable");
 
 	$('#hotelsTable tbody').on('click', 'tr', function() {
 		hotelsTable.$('tr.selected').removeClass('selected');
 		$(this).addClass('selected');
-		loadHotel(hotelsTable.row(this).data()[0]);
+		shownHotel = hotelsTable.row(this).data()[0];
+		loadHotel(shownHotel);
 		$("#showHotelModal").modal();
 	});
 }
@@ -908,6 +885,35 @@ function renderAdditionalServices(data) {
 	});
 }
 
+function searchRooms(e){
+	e.preventDefault();
+	var drp = $('#searchRoomsDateRange').data('daterangepicker');
+	$.ajax({
+		type : "GET",
+		url : searchRoomsURL + shownHotel,
+		contentType : "application/json",
+		data : {
+			'fromDate' : drp.startDate.toDate(),
+			'toDate' : drp.endDate.toDate(),
+			'forPeople' : $('#searchRoomsForPeople').val(),
+			'fromPrice' : $("#searchRoomsPrice").slider('getValue')[0],
+			'toPrice' : $("#searchRoomsPrice").slider('getValue')[1],
+			'fromGrade' : $("#searchRoomsGrade").slider('getValue')[0],
+			'toGrade' : $("#searchRoomsGrade").slider('getValue')[1]
+		},
+		dataType : "json",
+		headers : createAuthorizationTokenHeader(tokenKey),
+		success : function(data) {
+			renderRooms(data);
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
+/* UTILITY */
+
 function setUpMap(latitude, longitude, div, draggable) {
 	var retval = L.map(div).setView([ latitude, longitude ], MAP_ZOOM);
 	L.tileLayer(tileLayerURL, {
@@ -924,4 +930,22 @@ function setUpMap(latitude, longitude, div, draggable) {
 		});
 	}
 	return retval
+}
+
+function setUpTableFilter(tableID){
+	$(tableID + ' thead tr').clone(true).appendTo(tableID + ' thead');
+	$(tableID + ' thead tr:eq(1) th').each(
+			function(i) {
+				var title = $(this).text();
+				$(this).html(
+						'<input type="text" placeholder="Filter by ' + title
+								+ '" />');
+
+				$('input', this).on('keyup change', function() {
+					table = $(tableID).DataTable();
+					if (table.column(i).search() !== this.value) {
+						table.column(i).search(this.value).draw();
+					}
+				});
+			});
 }

@@ -54,7 +54,7 @@ a[data-toggle="tab"] {
 	margin-top: -6%;
 }
 
-#saveChanges, #searchFlights, #searchHotelsButton {
+#saveChanges, #searchFlights, #searchHotelsButton, #searchRoomsButton {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;

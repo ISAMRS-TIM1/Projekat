@@ -25,6 +25,10 @@
 	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.1/bootstrap-slider.min.js"></script>
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.1/css/bootstrap-slider.min.css" />
+<script type="text/javascript"
+	src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css"
+	href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="auth/auth.js"></script>
@@ -355,6 +359,44 @@
 						<td><div id="hotelMapDiv"></div></td>
 					</tr>
 					<tr>
+						<td colspan="2"><table id="additionalServicesTable"
+								class="table display table-bordered">
+								<thead>
+									<tr>
+										<th>Additional service</th>
+										<th>Price</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table></td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<table id="hotelRoomsSearchTable">
+								<tr>
+									<td>Date</td>
+									<td><input type="text" id="searchRoomsDateRange" /></td>
+									<td>For people</td>
+									<td><input id="searchRoomsForPeople" type="number" min="1"
+										oninput="validity.valid||(value='');" value="1"></td>
+								</tr>
+								<tr>
+									<td>Price</td>
+									<td><input id="searchRoomsPrice" type="text" class="span2"
+										value="" data-slider-min="0" data-slider-max="10000"
+										data-slider-step="10" data-slider-value="[0,10000]" /></td>
+									<td>Grade</td>
+									<td><input id="searchRoomsGrade" type="text" class="span2"
+										value="" data-slider-min="0" data-slider-max="5"
+										data-slider-step="0.1" data-slider-value="[0,5]" /></td>
+								</tr>
+							</table> <br>
+							<button class="btn btn-default" id="searchRoomsButton"
+								onclick="searchRooms(event)">Search</button> <br>
+						</td>
+					</tr>
+					<tr>
 						<td colspan="2">
 							<table id="roomsTable" class="table display table-bordered">
 								<thead>
@@ -369,19 +411,6 @@
 								</tbody>
 							</table>
 						</td>
-					</tr>
-					<tr>
-						<td colspan="2"><table id="additionalServicesTable"
-								class="table display table-bordered">
-								<thead>
-									<tr>
-										<th>Additional service</th>
-										<th>Price</th>
-									</tr>
-								</thead>
-								<tbody>
-								</tbody>
-							</table></td>
 					</tr>
 				</table>
 			</div>
