@@ -1,6 +1,11 @@
 package isamrs.tim1.service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -102,5 +107,20 @@ public class RentACarService {
 		}
 
 		return branchOffices;
+	}
+
+	public Map<LocalDate, Long> getDailyGraphData() {
+		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+				.getRentACar();
+
+		Map<LocalDate, Long> normalCounts = rentACar.getNormalReservations().stream().collect(Collectors.groupingBy(
+				r -> r.getFromDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), Collectors.counting()));
+		Map<LocalDate, Long> quickCounts = rentACar.getQuickReservations().stream().collect(Collectors.groupingBy(
+				r -> r.getFromDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), Collectors.counting()));
+
+		Map<LocalDate, Long> returnValue = new HashMap<LocalDate, Long>(normalCounts);
+		quickCounts.forEach((key, value) -> returnValue.merge(key, value, (v1, v2) -> v1 + v2));
+
+		return returnValue;
 	}
 }

@@ -1,9 +1,7 @@
 package isamrs.tim1.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +16,6 @@ import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.dto.UserDTO;
 import isamrs.tim1.model.RegisteredUser;
-import isamrs.tim1.model.Seat;
 import isamrs.tim1.model.User;
 import isamrs.tim1.repository.RegisteredUserRepository;
 
