@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim1.dto.DetailedServiceDTO;
+import isamrs.tim1.dto.FlightDTO;
+import isamrs.tim1.dto.FlightUserViewDTO;
 import isamrs.tim1.dto.HotelDTO;
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.ServiceDTO;
@@ -52,6 +54,12 @@ public class HotelController {
 				HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasRole('REGISTEREDUSER')")
+	@RequestMapping(value = "/api/getDetailedHotel", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<HotelDTO> getDetailedHotel(@RequestParam String name) {
+		return new ResponseEntity<HotelDTO>(hotelService.getDetailedHotel(name), HttpStatus.OK);
+	}
+
 	@PreAuthorize("hasRole('SYSADMIN')")
 	@RequestMapping(value = "/api/getHotels", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArrayList<ServiceViewDTO>> getHotels() {
@@ -63,4 +71,11 @@ public class HotelController {
 	public ResponseEntity<DetailedServiceDTO> getHotel(@RequestParam String name) {
 		return new ResponseEntity<DetailedServiceDTO>(hotelService.getHotel(name), HttpStatus.OK);
 	}
+
+	@RequestMapping(value = "api/searchHotels", method = RequestMethod.GET)
+	public ArrayList<ServiceViewDTO> searchHotels(@RequestParam String name, @RequestParam double fromGrade,
+			@RequestParam double toGrade) {
+		return hotelService.searchHotels(name, fromGrade, toGrade);
+	}
+
 }

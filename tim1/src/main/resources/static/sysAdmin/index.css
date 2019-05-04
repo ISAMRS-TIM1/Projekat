@@ -107,7 +107,7 @@ a[data-toggle="tab"] {
 	text-align: center;
 }
 
-#serviceTable table, #addServiceTable table {
+#serviceTable, #addServiceTable {
 	margin: auto;
 }
 
