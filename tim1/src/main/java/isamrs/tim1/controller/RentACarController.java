@@ -1,6 +1,5 @@
 package isamrs.tim1.controller;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -78,8 +77,20 @@ public class RentACarController {
 
 	@PreAuthorize("hasRole('RENTADMIN')")
 	@RequestMapping(value = "/api/getDailyGraphData", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Map<LocalDate, Long>> getDailyGraphData() {
-		return new ResponseEntity<Map<LocalDate, Long>>(rentACarService.getDailyGraphData(), HttpStatus.OK);
+	public ResponseEntity<Map<String, Long>> getDailyGraphData() {
+		return new ResponseEntity<Map<String, Long>>(rentACarService.getDailyGraphData(), HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasRole('RENTADMIN')")
+	@RequestMapping(value = "/api/getWeeklyGraphData", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, Long>> getWeeklyGraphData() {
+		return new ResponseEntity<Map<String, Long>>(rentACarService.getWeeklyGraphData(), HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasRole('RENTADMIN')")
+	@RequestMapping(value = "/api/getMonthlyGraphData", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, Long>> getMonthlyGraphData() {
+		return new ResponseEntity<Map<String, Long>>(rentACarService.getMonthlyGraphData(), HttpStatus.OK);
 	}
 
 }

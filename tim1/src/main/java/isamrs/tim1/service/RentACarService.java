@@ -1,7 +1,6 @@
 package isamrs.tim1.service;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,8 +18,10 @@ import isamrs.tim1.dto.RentACarDTO;
 import isamrs.tim1.dto.ServiceViewDTO;
 import isamrs.tim1.model.BranchOffice;
 import isamrs.tim1.model.Location;
+import isamrs.tim1.model.QuickVehicleReservation;
 import isamrs.tim1.model.RentACar;
 import isamrs.tim1.model.RentACarAdmin;
+import isamrs.tim1.model.VehicleReservation;
 import isamrs.tim1.repository.RentACarRepository;
 import isamrs.tim1.repository.ServiceRepository;
 
@@ -109,18 +110,103 @@ public class RentACarService {
 		return branchOffices;
 	}
 
-	public Map<LocalDate, Long> getDailyGraphData() {
+	public Map<String, Long> getDailyGraphData() {
 		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
 				.getRentACar();
 
-		Map<LocalDate, Long> normalCounts = rentACar.getNormalReservations().stream().collect(Collectors.groupingBy(
-				r -> r.getFromDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), Collectors.counting()));
-		Map<LocalDate, Long> quickCounts = rentACar.getQuickReservations().stream().collect(Collectors.groupingBy(
-				r -> r.getFromDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), Collectors.counting()));
+		ArrayList<VehicleReservation> doneNormalReservations = new ArrayList<VehicleReservation>();
 
-		Map<LocalDate, Long> returnValue = new HashMap<LocalDate, Long>(normalCounts);
+		for (VehicleReservation vr : rentACar.getNormalReservations()) {
+			if (vr.isDone()) {
+				doneNormalReservations.add(vr);
+			}
+		}
+
+		ArrayList<QuickVehicleReservation> doneQuickReservations = new ArrayList<QuickVehicleReservation>();
+
+		for (QuickVehicleReservation qr : rentACar.getQuickReservations()) {
+			if (qr.isDone()) {
+				doneQuickReservations.add(qr);
+			}
+		}
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+		Map<String, Long> normalCounts = doneNormalReservations.stream()
+				.collect(Collectors.groupingBy(r -> sdf.format(r.getDateOfReservation()), Collectors.counting()));
+		Map<String, Long> quickCounts = doneQuickReservations.stream()
+				.collect(Collectors.groupingBy(r -> sdf.format(r.getDateOfReservation()), Collectors.counting()));
+
+		Map<String, Long> returnValue = new HashMap<String, Long>(normalCounts);
 		quickCounts.forEach((key, value) -> returnValue.merge(key, value, (v1, v2) -> v1 + v2));
 
 		return returnValue;
+	}
+
+	public Map<String, Long> getWeeklyGraphData() {
+		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+				.getRentACar();
+
+		ArrayList<VehicleReservation> doneNormalReservations = new ArrayList<VehicleReservation>();
+
+		for (VehicleReservation vr : rentACar.getNormalReservations()) {
+			if (vr.isDone()) {
+				doneNormalReservations.add(vr);
+			}
+		}
+
+		ArrayList<QuickVehicleReservation> doneQuickReservations = new ArrayList<QuickVehicleReservation>();
+
+		for (QuickVehicleReservation qr : rentACar.getQuickReservations()) {
+			if (qr.isDone()) {
+				doneQuickReservations.add(qr);
+			}
+		}
+
+		SimpleDateFormat sdf = new SimpleDateFormat("MM/yyyy 'week: 'W");
+
+		Map<String, Long> normalCounts = doneNormalReservations.stream()
+				.collect(Collectors.groupingBy(r -> sdf.format(r.getDateOfReservation()), Collectors.counting()));
+		Map<String, Long> quickCounts = doneQuickReservations.stream()
+				.collect(Collectors.groupingBy(r -> sdf.format(r.getDateOfReservation()), Collectors.counting()));
+
+		Map<String, Long> returnValue = new HashMap<String, Long>(normalCounts);
+		quickCounts.forEach((key, value) -> returnValue.merge(key, value, (v1, v2) -> v1 + v2));
+
+		return returnValue;
+	}
+
+	public Map<String, Long> getMonthlyGraphData() {
+		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+				.getRentACar();
+
+		ArrayList<VehicleReservation> doneNormalReservations = new ArrayList<VehicleReservation>();
+
+		for (VehicleReservation vr : rentACar.getNormalReservations()) {
+			if (vr.isDone()) {
+				doneNormalReservations.add(vr);
+			}
+		}
+
+		ArrayList<QuickVehicleReservation> doneQuickReservations = new ArrayList<QuickVehicleReservation>();
+
+		for (QuickVehicleReservation qr : rentACar.getQuickReservations()) {
+			if (qr.isDone()) {
+				doneQuickReservations.add(qr);
+			}
+		}
+
+		SimpleDateFormat sdf = new SimpleDateFormat("MM/yyyy");
+
+		Map<String, Long> normalCounts = doneNormalReservations.stream()
+				.collect(Collectors.groupingBy(r -> sdf.format(r.getDateOfReservation()), Collectors.counting()));
+		Map<String, Long> quickCounts = doneQuickReservations.stream()
+				.collect(Collectors.groupingBy(r -> sdf.format(r.getDateOfReservation()), Collectors.counting()));
+
+		Map<String, Long> returnValue = new HashMap<String, Long>(normalCounts);
+		quickCounts.forEach((key, value) -> returnValue.merge(key, value, (v1, v2) -> v1 + v2));
+
+		return returnValue;
+
 	}
 }
