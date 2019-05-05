@@ -38,6 +38,7 @@
 	src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
 <link rel="stylesheet"
 	href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 </head>
 <body>
 	<div class="container-fluid">
@@ -100,8 +101,9 @@
 				</div>
 			</div>
 			<div id="report" class="tab-pane fade">
-				<h3>Reports</h3>
-				<p>Some content.</p>
+				<div id="chartDiv">
+					<canvas id="chart"></canvas>
+				</div>
 			</div>
 			<div id="vehicle" class="tab-pane fade">
 				<div id="vehicleTableWrapper">

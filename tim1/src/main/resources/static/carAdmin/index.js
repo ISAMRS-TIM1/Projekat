@@ -17,8 +17,10 @@ const loadVehiclesURL = "/api/getVehicles";
 const addVehicleURL = "/api/addVehicle/";
 const loadVehicleTypesURL = "/api/getVehicleTypes";
 const loadFuelTypesURL = "/api/getFuelTypes";
-const deleteVehicleURL = "/api/deleteVehicle/"
-
+const deleteVehicleURL = "/api/deleteVehicle/";
+const loadDailyChartDataURL = "/api/getDailyGraphData";
+const loadWeeklyChartDataURL = "/api/getWeeklyGraphData";
+const loadMonthlyChartDataURL = "/api/getMonthlyGraphData";
 
 $(document).ready(function() {
 	setUpToastr();
@@ -126,7 +128,180 @@ $(document).ready(function() {
 		e.preventDefault();
 		addVehicle();
 	});
+	
+	$('a[href="#report"]').click(function(){
+		getDailyChartData();
+	});
 });
+
+function dayComparator(a, b) {
+	let aTokens = a.split("/");
+	let bTokens = b.split("/");
+	
+	let aYear = parseInt(aTokens[2]);
+	let bYear = parseInt(bTokens[2]);
+	let aMonth = parseInt(aTokens[1]);
+	let bMonth = parseInt(bTokens[1]);
+	let aDay = parseInt(aTokens[0]);
+	let bDay = parseInt(bTokens[0]);
+	
+	if(aYear > bYear) {
+		return 1;
+	} else if(aYear < bYear) {
+		return -1;
+	} else {
+		if(aMonth > bMonth) {
+			return 1;
+		} else if(aMonth < bMonth) {
+			return -1;
+		} else {
+			if(aDay > bDay) {
+				return 1;
+			} else if(aDay < bDay) {
+				return -1;
+			} else {
+				return 0;
+			}
+		}
+	}
+}
+
+function weekComparator(a, b) {
+	//date week: num
+	let aTokens = a.split(" ");
+	let aDate = aTokens[0].split("/");
+	
+	let aWeek = aTokens[2];
+	let aMonth = parseInt(aDate[0]);
+	let aYear = parseInt(aDate[1]);
+	
+	let bTokens = b.split(" ");
+	let bDate = bTokens[0].split("/");
+	
+	let bWeek = bTokens[2];
+	let bMonth = parseInt(bDate[0]);
+	let bYear = parseInt(bDate[1]);
+	
+	if(aYear > bYear) {
+		return 1;
+	} else if(aYear < bYear) {
+		return -1;
+	} else {
+		if(aMonth > bMonth) {
+			return 1;
+		} else if(aMonth < bMonth) {
+			return -1;
+		} else {
+			if(aWeek > bWeek) {
+				return 1;
+			} else if(aWeek < bWeek) {
+				return -1;
+			} else {
+				return 0;
+			}
+		}
+	}
+}
+
+function monthComparator(a, b) {
+	let aDate = a.split("/");
+	let aMonth = parseInt(aDate[0]);
+	let aYear = parseInt(aDate[1]);
+	
+	let bDate = b.split("/");
+	let bMonth = parseInt(bDate[0]);
+	let bYear = parseInt(bDate[1]);
+	
+	if(aYear > bYear) {
+		return 1;
+	} else if(aYear < bYear) {
+		return -1;
+	} else {
+		if(aMonth > bMonth) {
+			return 1;
+		} else if(aMonth < bMonth) {
+			return -1
+		} else {
+			return 0;
+		}
+	}
+}
+
+function getDailyChartData() {
+	$.ajax({
+		type : 'GET',
+		url : loadDailyChartDataURL,
+		dataType : "json",
+		headers: createAuthorizationTokenHeader(TOKEN_KEY),
+		success: function(data){
+			makeChart(data, dayComparator);
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
+function getWeeklyChartData() {
+	$.ajax({
+		type : 'GET',
+		url : loadWeeklyChartDataURL,
+		dataType : "json",
+		headers: createAuthorizationTokenHeader(TOKEN_KEY),
+		success: function(data){
+			makeChart(data, weekComparator);
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
+function getMonthlyChartData() {
+	$.ajax({
+		type : 'GET',
+		url : loadMonthlyChartDataURL,
+		dataType : "json",
+		headers: createAuthorizationTokenHeader(TOKEN_KEY),
+		success: function(data){
+			makeChart(data, monthComparator);
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
+function makeChart(data, comparator) {
+	let labels = (Object.keys(data)).sort(comparator);
+	let values = [];
+	
+	for(let label of labels) {
+		values.push(data[label]);
+	}
+	
+	let chart = new Chart($('#chart'), {
+	    type: 'line',
+	    data: {
+	        labels: labels,
+	        datasets: [{
+	            label: 'Number of reservations',
+	            backgroundColor: 'rgb(255, 99, 132)',
+	            borderColor: 'rgb(255, 99, 132)',
+	            data: values
+	        }]
+	    },
+	    options: {
+	        scales: {
+	            yAxes: [{
+	                ticks: {
+	                	beginAtZero: true
+	                }
+	            }]
+	        }
+	    }
+	});
+}
 
 function setUpTables() {
 	$('#branchTable').DataTable({

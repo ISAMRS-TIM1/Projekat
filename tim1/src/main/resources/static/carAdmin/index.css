@@ -175,3 +175,13 @@ a[data-toggle="tab"] {
 	border: 0.16vw solid #B27A00;
 	border-radius: 2vw 2vw 2vw 2vw;
 }
+
+#chartDiv {
+	background: white;
+	position: relative;
+	width: 60%;
+	height: 20%;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 5%;
+}
