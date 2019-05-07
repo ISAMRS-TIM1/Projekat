@@ -44,6 +44,10 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.0"></script>
+<script type="text/javascript"
+	src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css"
+	href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 </head>
 <body>
 	<div class="container-fluid">
@@ -107,6 +111,14 @@
 			</div>
 			<div id="report" class="tab-pane fade">
 				<div id="reportsDiv">
+					<table id=reportsTable>
+						<tr>
+							<td>Period:</td>
+							<td><input type="text" id="showIncomeDateRange"></td>
+						</tr>
+					</table>
+					<button class="btn btn-default" id="showIncomeButton">Show income</button>	
+					<br>
 					<span id="income"></span><br><br>
 					<select id="graphicLevel">
 						<option value="daily">Daily</option>

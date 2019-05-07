@@ -2,6 +2,7 @@ package isamrs.tim1.service;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -208,5 +209,24 @@ public class RentACarService {
 
 		return returnValue;
 
+	}
+
+	public double getIncomeOfRentACar(Date fromDate, Date toDate) {
+		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+				.getRentACar();
+		double income = 0;
+
+		for (VehicleReservation vr : rentACar.getNormalReservations()) {
+			if (vr.isDone() && vr.getFromDate().after(fromDate) && vr.getToDate().before(toDate)) {
+				income += vr.getPrice();
+			}
+		}
+
+		for (QuickVehicleReservation qr : rentACar.getQuickReservations()) {
+			if (qr.isDone() && qr.getFromDate().after(fromDate) && qr.getToDate().before(toDate)) {
+				income += qr.getPrice();
+			}
+		}
+		return income;
 	}
 }
