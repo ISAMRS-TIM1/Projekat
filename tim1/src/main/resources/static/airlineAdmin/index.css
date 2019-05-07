@@ -388,7 +388,7 @@ input, select {
 }
 #chartDiv {
 	background: white;
-    position: absolute;
+    position: relative;
     width: 62.5%;
     height: 65%;
     margin-left: auto;

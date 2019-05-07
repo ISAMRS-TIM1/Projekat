@@ -1220,7 +1220,7 @@ function makeDailyChart(data, comparator) {
 	        	xAxes: [{
                     type: "time",
                     time: {
-                        format: timeFormat,
+                        parse: timeFormat,
                         unit: 'day',                    
                         unitStepSize: 1,
                         minUnit: 'day',
@@ -1245,7 +1245,7 @@ function makeDailyChart(data, comparator) {
 	        },
 	        pan: {
 	            enabled: true,
-	            mode: 'x',
+	            mode: 'x'
 	        }
 	    }
 	});
@@ -1280,7 +1280,7 @@ function makeWeeklyChart(data, comparator) {
 	        },
 	        pan: {
 	            enabled: true,
-	            mode: 'x',
+	            mode: 'x'
 	        }
 	    }
 	});
@@ -1315,7 +1315,7 @@ function makeMonthlyChart(data, comparator) {
 	        	xAxes: [{
                     type: "time",
                     time: {
-                        format: timeFormat,
+                        parse: timeFormat,
                         unit: 'month',                    
                         minUnit: 'month',
                         min: startDate,
@@ -1339,7 +1339,7 @@ function makeMonthlyChart(data, comparator) {
 	        },
 	        pan: {
 	            enabled: true,
-	            mode: 'x',
+	            mode: 'x'
 	        }
 	    }
 	});

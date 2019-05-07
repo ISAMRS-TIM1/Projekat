@@ -194,8 +194,7 @@ public class AirlineService {
 				.getAirline();
 
 		ArrayList<FlightReservation> doneNormalReservations = new ArrayList<FlightReservation>();
-		
-		
+
 		for (FlightReservation fr : airline.getNormalReservations()) {
 			if (fr.isDone()) {
 				doneNormalReservations.add(fr);
