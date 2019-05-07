@@ -386,6 +386,10 @@ function makeDailyChart(data, comparator) {
                     scaleLabel: {
                         display:     true,
                         labelString: 'Date'
+                    },
+                    ticks: {
+                    	autoSkip: true,
+                        maxTicksLimit: 30
                     }
                 }],
                 yAxes: [{
@@ -401,6 +405,10 @@ function makeDailyChart(data, comparator) {
 	        pan: {
 	            enabled: true,
 	            mode: 'x',
+	        },
+	        zoom: {
+	        	enabled: true,
+	        	mode: 'x'
 	        }
 	    }
 	});
@@ -480,6 +488,10 @@ function makeMonthlyChart(data, comparator) {
                     scaleLabel: {
                         display:     true,
                         labelString: 'Date'
+                    },
+                    ticks: {
+                    	autoSkip: true,
+                        maxTicksLimit: 30
                     }
                 }],
                 yAxes: [{
@@ -495,6 +507,10 @@ function makeMonthlyChart(data, comparator) {
 	        pan: {
 	            enabled: true,
 	            mode: 'x',
+	        },
+	        zoom: {
+	        	enabled: true,
+	        	mode: 'x'
 	        }
 	    }
 	});

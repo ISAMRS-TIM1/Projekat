@@ -217,13 +217,13 @@ public class RentACarService {
 		double income = 0;
 
 		for (VehicleReservation vr : rentACar.getNormalReservations()) {
-			if (vr.isDone() && vr.getFromDate().after(fromDate) && vr.getToDate().before(toDate)) {
+			if (vr.isDone() && vr.getDateOfReservation().after(fromDate) && vr.getDateOfReservation().before(toDate)) {
 				income += vr.getPrice();
 			}
 		}
 
 		for (QuickVehicleReservation qr : rentACar.getQuickReservations()) {
-			if (qr.isDone() && qr.getFromDate().after(fromDate) && qr.getToDate().before(toDate)) {
+			if (qr.isDone() && qr.getDateOfReservation().after(fromDate) && qr.getDateOfReservation().before(toDate)) {
 				income += qr.getPrice();
 			}
 		}
