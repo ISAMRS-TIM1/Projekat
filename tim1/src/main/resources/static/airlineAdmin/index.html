@@ -14,6 +14,9 @@
 <script src="airlineAdmin/moment.min.js"></script>
 <link rel="stylesheet" type="text/css"
 	href="airlineAdmin/jquery.seat-charts.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.0"></script>
 
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
@@ -118,7 +121,15 @@
 					</table><br>
 					<button class="btn btn-default" id="showIncomeButton" onclick='showIncome(event)'>Show income</button>	
 					<br>
-					<span id="income"></span>
+					<span id="income"></span><br><br>
+					<select id="graphicLevel">
+						<option value="daily">Daily</option>
+						<option value="weekly">Weekly</option>
+						<option value="monthly">Monthly</option>
+					</select><br><br>
+					<div id="chartDiv">
+						<canvas id="chart"></canvas>
+					</div>
 				</div>
 			</div>
 			<div id="flightsTab" class="tab-pane fade">
