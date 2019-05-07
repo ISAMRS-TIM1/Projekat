@@ -1200,8 +1200,8 @@ function makeDailyChart(data, comparator) {
 	}
 	
 	var timeFormat = "DD/MM/YYYY";
-	var startDate = moment(moment(labels[0], timeFormat).subtract(3, 'days')).format(timeFormat);
-	var endDate = moment(moment(labels[labels.length - 1], timeFormat).add(3, 'days')).format(timeFormat);
+	var startDate = moment(moment(labels[0], timeFormat).subtract('days', 3)).format(timeFormat);
+	var endDate = moment(moment(labels[labels.length - 1], timeFormat).add('days', 3)).format(timeFormat);
 	
 	let chart = new Chart($('#chart'), {
 	    type: 'bar',
@@ -1220,7 +1220,7 @@ function makeDailyChart(data, comparator) {
 	        	xAxes: [{
                     type: "time",
                     time: {
-                        parse: timeFormat,
+                    	format: timeFormat,
                         unit: 'day',                    
                         unitStepSize: 1,
                         minUnit: 'day',
@@ -1231,6 +1231,10 @@ function makeDailyChart(data, comparator) {
                     scaleLabel: {
                         display:     true,
                         labelString: 'Date'
+                    },
+                    ticks: {
+                    	autoSkip: true,
+                        maxTicksLimit: 30
                     }
                 }],
                 yAxes: [{
@@ -1246,6 +1250,10 @@ function makeDailyChart(data, comparator) {
 	        pan: {
 	            enabled: true,
 	            mode: 'x'
+	        },
+	        zoom: {
+	        	enabled: true,
+	        	mode: 'x'
 	        }
 	    }
 	});
@@ -1281,6 +1289,10 @@ function makeWeeklyChart(data, comparator) {
 	        pan: {
 	            enabled: true,
 	            mode: 'x'
+	        },
+	        zoom: {
+	        	enabled: true,
+	        	mode: 'x'
 	        }
 	    }
 	});
@@ -1315,7 +1327,7 @@ function makeMonthlyChart(data, comparator) {
 	        	xAxes: [{
                     type: "time",
                     time: {
-                        parse: timeFormat,
+                        format: timeFormat,
                         unit: 'month',                    
                         minUnit: 'month',
                         min: startDate,
@@ -1325,6 +1337,10 @@ function makeMonthlyChart(data, comparator) {
                     scaleLabel: {
                         display:     true,
                         labelString: 'Date'
+                    },
+                    ticks: {
+                    	autoSkip: true,
+                        maxTicksLimit: 30
                     }
                 }],
                 yAxes: [{
@@ -1340,6 +1356,10 @@ function makeMonthlyChart(data, comparator) {
 	        pan: {
 	            enabled: true,
 	            mode: 'x'
+	        },
+	        zoom: {
+	        	enabled: true,
+	        	mode: 'x'
 	        }
 	    }
 	});
