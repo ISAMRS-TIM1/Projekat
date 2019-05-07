@@ -145,7 +145,7 @@ a[data-toggle="tab"] {
 
 .reportsDiv {
 	width: 70%;
-	height: 30vw; 
+	height: 53vw; 
 	margin-left : 13%;
 	margin-top: 5%;
 	background: #5994FF;
@@ -385,4 +385,12 @@ input, select {
   	top: 50%;
   	transform: translate(-50%, -50%);
   	text-align:center;
+}
+#chartDiv {
+	background: white;
+    position: absolute;
+    width: 62.5%;
+    height: 65%;
+    margin-left: auto;
+    margin-right: auto;
 }
