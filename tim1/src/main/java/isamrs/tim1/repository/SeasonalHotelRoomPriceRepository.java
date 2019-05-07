@@ -3,10 +3,7 @@ package isamrs.tim1.repository;
 import java.util.Date;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.transaction.annotation.Transactional;
-
 import isamrs.tim1.model.SeasonalHotelRoomPrice;
 
 public interface SeasonalHotelRoomPriceRepository extends JpaRepository<SeasonalHotelRoomPrice, Integer> {

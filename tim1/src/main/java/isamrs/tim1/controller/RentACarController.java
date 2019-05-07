@@ -1,6 +1,7 @@
 package isamrs.tim1.controller;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,13 +31,12 @@ public class RentACarController {
 	@Autowired
 	private RentACarService rentACarService;
 
-	
 	@PreAuthorize("hasRole('SYSADMIN')")
 	@RequestMapping(value = "/api/addRentACar", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MessageDTO> addRentACar(@RequestBody ServiceDTO rentACar) {
 		return new ResponseEntity<MessageDTO>(rentACarService.addRentACar(new RentACar(rentACar)), HttpStatus.OK);
 	}
-	
+
 	@PreAuthorize("hasRole('RENTADMIN')")
 	@RequestMapping(value = "/api/editRentACar", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> editRentACarProfile(@RequestBody RentACar rentACar,
@@ -74,4 +74,23 @@ public class RentACarController {
 	public ResponseEntity<ArrayList<BranchOfficeDTO>> getBranchOffices() {
 		return new ResponseEntity<ArrayList<BranchOfficeDTO>>(rentACarService.getBranchOffices(), HttpStatus.OK);
 	}
+
+	@PreAuthorize("hasRole('RENTADMIN')")
+	@RequestMapping(value = "/api/getDailyGraphData", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, Long>> getDailyGraphData() {
+		return new ResponseEntity<Map<String, Long>>(rentACarService.getDailyGraphData(), HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasRole('RENTADMIN')")
+	@RequestMapping(value = "/api/getWeeklyGraphData", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, Long>> getWeeklyGraphData() {
+		return new ResponseEntity<Map<String, Long>>(rentACarService.getWeeklyGraphData(), HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasRole('RENTADMIN')")
+	@RequestMapping(value = "/api/getMonthlyGraphData", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, Long>> getMonthlyGraphData() {
+		return new ResponseEntity<Map<String, Long>>(rentACarService.getMonthlyGraphData(), HttpStatus.OK);
+	}
+
 }

@@ -38,6 +38,12 @@
 	src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
 <link rel="stylesheet"
 	href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+<script src="airlineAdmin/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.0"></script>
 </head>
 <body>
 	<div class="container-fluid">
@@ -100,8 +106,17 @@
 				</div>
 			</div>
 			<div id="report" class="tab-pane fade">
-				<h3>Reports</h3>
-				<p>Some content.</p>
+				<div id="reportsDiv">
+					<span id="income"></span><br><br>
+					<select id="graphicLevel">
+						<option value="daily">Daily</option>
+						<option value="weekly">Weekly</option>
+						<option value="monthly">Monthly</option>
+					</select><br><br>
+					<div id="chartDiv">
+						<canvas id="chart"></canvas>
+					</div>
+				</div>
 			</div>
 			<div id="vehicle" class="tab-pane fade">
 				<div id="vehicleTableWrapper">
