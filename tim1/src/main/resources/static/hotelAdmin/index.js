@@ -15,6 +15,7 @@ const editHotelRoomURL = "/api/editHotelRoom/";
 const deleteHotelRoomURL = "/api/deleteHotelRoom/";
 const addSeasonalPriceURL = "/api/addSeasonalPrice/"
 const deleteSeasonalPriceURL = "/api/deleteSeasonalPrice/"
+const getIncomeOfHotelURL = "/api/getIncomeOfHotel"
 
 const logoutURL = "../logout";
 const loadUserInfoURL = "../api/getUserInfo";
@@ -26,6 +27,7 @@ var shownRoom = null;
 var hotelName = null;
 
 $(document).ready(function() {
+
 	setUpToastr();
 	setUpTabView();
 	setUpTables();
@@ -56,6 +58,12 @@ $(document).ready(function() {
 	$('#showHotelRoomModal').on('hidden.bs.modal', function() {
 		roomsTable.$('tr.selected').removeClass('selected');
 		shownRoom = null;
+	});
+
+	$('#showIncomeDateRange').daterangepicker({
+		locale : {
+			format : 'DD/MM/YYYY'
+		}
 	});
 })
 
@@ -457,5 +465,28 @@ function deleteRoom() {
 			}
 		}
 	});
+}
 
+function showIncome(e) {
+	e.preventDefault();
+	var drp = $('#showIncomeDateRange').data('daterangepicker');
+	$.ajax({
+		type : 'GET',
+		url : getIncomeOfHotelURL,
+		headers : createAuthorizationTokenHeader(tokenKey),
+		contentType : 'application/json',
+		data : {
+			'fromDate' : drp.startDate.toDate(),
+			'toDate' : drp.endDate.toDate()
+		},
+		success : function(data) {
+			if (data != null) {
+				$("#income").html("Income of airline: " + data + "EUR");
+				$("#income").show();
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
 }

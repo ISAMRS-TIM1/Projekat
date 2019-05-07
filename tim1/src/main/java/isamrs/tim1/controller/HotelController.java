@@ -1,6 +1,7 @@
 package isamrs.tim1.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim1.dto.DetailedServiceDTO;
-import isamrs.tim1.dto.FlightDTO;
-import isamrs.tim1.dto.FlightUserViewDTO;
 import isamrs.tim1.dto.HotelDTO;
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.ServiceDTO;
@@ -71,12 +70,18 @@ public class HotelController {
 	public ResponseEntity<DetailedServiceDTO> getHotel(@RequestParam String name) {
 		return new ResponseEntity<DetailedServiceDTO>(hotelService.getHotel(name), HttpStatus.OK);
 	}
-	
+
 	@PreAuthorize("hasRole('REGISTEREDUSER')")
 	@RequestMapping(value = "api/searchHotels", method = RequestMethod.GET)
-	public ArrayList<ServiceViewDTO> searchHotels(@RequestParam String name, @RequestParam double fromGrade,
-			@RequestParam double toGrade) {
-		return hotelService.searchHotels(name, fromGrade, toGrade);
+	public ResponseEntity<ArrayList<ServiceViewDTO>> searchHotels(@RequestParam String name,
+			@RequestParam double fromGrade, @RequestParam double toGrade) {
+		return new ResponseEntity<ArrayList<ServiceViewDTO>>(hotelService.searchHotels(name, fromGrade, toGrade),
+				HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasRole('HOTELADMIN')")
+	@RequestMapping(value = "/api/getIncomeOfHotel", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Double> getIncomeOfHotel(@RequestParam Date fromDate, @RequestParam Date toDate) {
+		return new ResponseEntity<Double>(hotelService.getIncomeOfHotel(fromDate, toDate), HttpStatus.OK);
+	}
 }

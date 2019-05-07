@@ -1,8 +1,10 @@
 package isamrs.tim1.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import isamrs.tim1.dto.DetailedServiceDTO;
@@ -13,6 +15,7 @@ import isamrs.tim1.dto.ServiceDTO;
 import isamrs.tim1.dto.ServiceViewDTO;
 import isamrs.tim1.model.Hotel;
 import isamrs.tim1.model.HotelAdmin;
+import isamrs.tim1.model.Reservation;
 import isamrs.tim1.repository.HotelRepository;
 import isamrs.tim1.repository.ServiceRepository;
 
@@ -77,6 +80,24 @@ public class HotelService {
 
 	public HotelDTO getDetailedHotel(String name) {
 		return new HotelDTO(hotelRepository.findOneByName(name));
+	}
+
+	public double getIncomeOfHotel(Date fromDate, Date toDate) {
+		Hotel hotel = ((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel();
+		double income = 0;
+		for (Reservation r : hotel.getNormalReservations()) {
+			if (!(r.getDateOfReservation().before(fromDate)) && !(r.getDateOfReservation().after(toDate))
+					&& r.isDone()) {
+				income += r.getPrice();
+			}
+		}
+		for (Reservation r : hotel.getQuickReservations()) {
+			if (!(r.getDateOfReservation().before(fromDate)) && !(r.getDateOfReservation().after(toDate))
+					&& r.isDone()) {
+				income += r.getPrice();
+			}
+		}
+		return income;
 	}
 
 }
