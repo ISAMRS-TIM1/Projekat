@@ -132,7 +132,25 @@ $(document).ready(function() {
 	$('a[href="#report"]').click(function(){
 		getDailyChartData();
 	});
+	
+	$('#graphicLevel').on('change', function() {
+		changeGraphic(this.value);
+	});
 });
+
+function changeGraphic(level) {
+	$('#chart').remove();
+	$('#chartDiv').append('<canvas id="chart"><canvas>');
+	if (level == "daily") {
+		getDailyChartData();
+	}
+	else if (level == "weekly") {
+		getWeeklyChartData();
+	}
+	else {
+		getMonthlyChartData();
+	}
+}
 
 function dayComparator(a, b) {
 	let aTokens = a.split("/");
@@ -234,7 +252,7 @@ function getDailyChartData() {
 		dataType : "json",
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
-			makeChart(data, dayComparator);
+			makeDailyChart(data, dayComparator);
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
 			alert("AJAX ERROR: " + textStatus);
@@ -249,7 +267,7 @@ function getWeeklyChartData() {
 		dataType : "json",
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
-			makeChart(data, weekComparator);
+			makeWeeklyChart(data, weekComparator);
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
 			alert("AJAX ERROR: " + textStatus);
@@ -264,7 +282,7 @@ function getMonthlyChartData() {
 		dataType : "json",
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
-			makeChart(data, monthComparator);
+			makeMonthlyChart(data, monthComparator);
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
 			alert("AJAX ERROR: " + textStatus);
@@ -272,16 +290,76 @@ function getMonthlyChartData() {
 	});
 }
 
-function makeChart(data, comparator) {
+function makeDailyChart(data, comparator) {
 	let labels = (Object.keys(data)).sort(comparator);
 	let values = [];
-	
+
 	for(let label of labels) {
 		values.push(data[label]);
 	}
-	
+
+	let timeFormat = "DD/MM/YYYY";
+	let startDate = moment(moment(labels[0], timeFormat).subtract(3, 'days')).format(timeFormat);
+	let endDate = moment(moment(labels[labels.length - 1], timeFormat).add(3, 'days')).format(timeFormat);
+
 	let chart = new Chart($('#chart'), {
-	    type: 'line',
+	    type: 'bar',
+	    data: {
+	        labels: labels,
+	        datasets: [{
+	            label: 'Number of reservations',
+	            backgroundColor: 'rgb(255, 99, 132)',
+	            borderColor: 'rgb(255, 99, 132)',
+	            data: values
+	        }]
+	    },
+	    options: {
+	    	responsive:true,
+	        scales: {
+	        	xAxes: [{
+                    type: "time",
+                    time: {
+                        parser: timeFormat,
+                        unit: 'day',                    
+                        unitStepSize: 1,
+                        minUnit: 'day',
+                        min: startDate,
+                        max: endDate,
+                        tooltipFormat: 'll'
+                    },
+                    scaleLabel: {
+                        display:     true,
+                        labelString: 'Date'
+                    }
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                        display:     true,
+                        labelString: 'value'
+                    },
+                    ticks: {
+	                	beginAtZero: true
+	                }
+                }]
+	        },
+	        pan: {
+	            enabled: true,
+	            mode: 'x',
+	        }
+	    }
+	});
+}
+
+function makeWeeklyChart(data, comparator) {
+	let labels = (Object.keys(data)).sort(comparator);
+	let values = [];
+
+	for(let label of labels) {
+		values.push(data[label]);
+	}
+
+	let chart = new Chart($('#chart'), {
+	    type: 'bar',
 	    data: {
 	        labels: labels,
 	        datasets: [{
@@ -298,6 +376,69 @@ function makeChart(data, comparator) {
 	                	beginAtZero: true
 	                }
 	            }]
+	        },
+	        pan: {
+	            enabled: true,
+	            mode: 'x',
+	        }
+	    }
+	});
+}
+
+function makeMonthlyChart(data, comparator) {
+	let labels = (Object.keys(data)).sort(comparator);
+	let values = [];
+
+	for(let label of labels) {
+		values.push(data[label]);
+	}
+
+	let timeFormat = "MM/YYYY";
+	let startDate = moment(moment(labels[0], timeFormat).subtract(1, 'months')).format(timeFormat);
+	let endDate = moment(moment(labels[labels.length - 1], timeFormat).add(1, 'months')).format(timeFormat);
+
+	let chart = new Chart($('#chart'), {
+	    type: 'bar',
+	    data: {
+	        labels: labels,
+	        datasets: [{
+	            label: 'Number of reservations',
+	            backgroundColor: 'rgb(255, 99, 132)',
+	            borderColor: 'rgb(255, 99, 132)',
+	            data: values
+	        }]
+	    },
+	    options: {
+	    	responsive:true,
+	        scales: {
+	        	xAxes: [{
+                    type: "time",
+                    time: {
+                        parser: timeFormat,
+                        unit: 'month',                    
+                        minUnit: 'month',
+                        min: startDate,
+                        max: endDate,
+                        tooltipFormat: 'll'
+                    },
+                    scaleLabel: {
+                        display:     true,
+                        labelString: 'Date'
+                    }
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                        display:     true,
+                        labelString: 'value'
+                    },
+                    ticks: {
+	                	beginAtZero: true
+	                }
+                }]
+	        },
+	        pan: {
+	            enabled: true,
+	            mode: 'x',
 	        }
 	    }
 	});

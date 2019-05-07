@@ -179,9 +179,24 @@ a[data-toggle="tab"] {
 #chartDiv {
 	background: white;
 	position: relative;
-	width: 60%;
-	height: 20%;
+	width: 100%;
+	height: 83%;
+	display: block;
 	margin-left: auto;
 	margin-right: auto;
-	margin-top: 5%;
+}
+
+#reportsDiv {
+	width: 70%;
+	height: 40vw;
+	margin-left : 13%;
+	margin-top: 1%;
+	background: #5994FF;
+	border: 0.24vw solid #B27A00;
+	border-radius: 4vw 1.6vw;
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	padding: 2vw;
+	margin-bottom: 2%;
 }
