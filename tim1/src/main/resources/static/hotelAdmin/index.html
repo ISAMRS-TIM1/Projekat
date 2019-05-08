@@ -29,6 +29,9 @@
 	integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
 	crossorigin=""></script>
 <script src="registeredUser/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.0"></script>
 <script type="text/javascript"
 	src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" type="text/css"
@@ -85,14 +88,22 @@
 				<div class="reportsDiv">
 					<table id=reportsTable>
 						<tr>
-							<td>Period:</td>
+							<td id="shownIncomePeriodText">Period:</td>
 							<td><input type="text" id="showIncomeDateRange"></td>
 						</tr>
 					</table>
 					<br>
 					<button class="btn btn-default" id="showIncomeButton"
 						onclick='showIncome(event)'>Show income</button>
-					<br> <span id="income"></span>
+					<br> <span id="income"></span> <br> <br> <select
+						class="form-control" id="graphicLevel" onchange="changeGraphic(this.value)">
+						<option value="daily">Daily</option>
+						<option value="weekly">Weekly</option>
+						<option value="monthly">Monthly</option>
+					</select><br> <br>
+					<div id="chartDiv">
+						<canvas id="chart"></canvas>
+					</div>
 				</div>
 			</div>
 			<div id="roomsTab" class="tab-pane fade in">

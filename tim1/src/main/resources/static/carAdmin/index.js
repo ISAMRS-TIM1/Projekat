@@ -154,9 +154,7 @@ $(document).ready(function() {
 		addVehicle();
 	});
 	
-	$('a[href="#report"]').click(function(){
-		getDailyChartData();
-	});
+	getDailyChartData();
 	
 	$('#graphicLevel').on('change', function() {
 		changeGraphic(this.value);

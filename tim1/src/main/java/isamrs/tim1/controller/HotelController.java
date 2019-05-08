@@ -2,6 +2,7 @@ package isamrs.tim1.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -84,4 +85,24 @@ public class HotelController {
 	public ResponseEntity<Double> getIncomeOfHotel(@RequestParam Date fromDate, @RequestParam Date toDate) {
 		return new ResponseEntity<Double>(hotelService.getIncomeOfHotel(fromDate, toDate), HttpStatus.OK);
 	}
+	
+	@PreAuthorize("hasRole('HOTELADMIN')")
+	@RequestMapping(value = "/api/getHotelDailyChartData", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, Long>> getHotelChartGraphData() {
+		return new ResponseEntity<Map<String, Long>>(hotelService.getDailyChartData(), HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasRole('HOTELADMIN')")
+	@RequestMapping(value = "/api/getHotelWeeklyChartData", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, Long>> getHotelWeeklyChartData() {
+		return new ResponseEntity<Map<String, Long>>(hotelService.getWeeklyChartData(), HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasRole('HOTELADMIN')")
+	@RequestMapping(value = "/api/getHotelMonthlyChartData", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Map<String, Long>> getHotelMonthlyChartData() {
+		return new ResponseEntity<Map<String, Long>>(hotelService.getMonthlyChartData(), HttpStatus.OK);
+	}
+
+	
 }

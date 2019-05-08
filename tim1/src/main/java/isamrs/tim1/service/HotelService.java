@@ -1,7 +1,11 @@
 package isamrs.tim1.service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,6 +19,8 @@ import isamrs.tim1.dto.ServiceDTO;
 import isamrs.tim1.dto.ServiceViewDTO;
 import isamrs.tim1.model.Hotel;
 import isamrs.tim1.model.HotelAdmin;
+import isamrs.tim1.model.HotelReservation;
+import isamrs.tim1.model.QuickHotelReservation;
 import isamrs.tim1.model.Reservation;
 import isamrs.tim1.repository.HotelRepository;
 import isamrs.tim1.repository.ServiceRepository;
@@ -98,6 +104,49 @@ public class HotelService {
 			}
 		}
 		return income;
+	}
+
+	public Map<String, Long> getDailyChartData() {
+		return getChartData(new SimpleDateFormat("dd/MM/yyyy"));
+	}
+
+	public Map<String, Long> getWeeklyChartData() {
+		return getChartData(new SimpleDateFormat("MM/yyyy 'week: 'W"));
+	}
+
+	public Map<String, Long> getMonthlyChartData() {
+		return getChartData(new SimpleDateFormat("MM/yyyy"));
+	}
+	
+	private Map<String, Long> getChartData(SimpleDateFormat sdf){
+		Hotel hotel = ((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+				.getHotel();
+
+		ArrayList<HotelReservation> doneNormalReservations = new ArrayList<HotelReservation>();
+
+		for (HotelReservation hr : hotel.getNormalReservations()) {
+			if (hr.isDone()) {
+				doneNormalReservations.add(hr);
+			}
+		}
+
+		ArrayList<QuickHotelReservation> doneQuickReservations = new ArrayList<QuickHotelReservation>();
+
+		for (QuickHotelReservation qr : hotel.getQuickReservations()) {
+			if (qr.isDone()) {
+				doneQuickReservations.add(qr);
+			}
+		}
+
+		Map<String, Long> normalCounts = doneNormalReservations.stream()
+				.collect(Collectors.groupingBy(r -> sdf.format(r.getDateOfReservation()), Collectors.counting()));
+		Map<String, Long> quickCounts = doneQuickReservations.stream()
+				.collect(Collectors.groupingBy(r -> sdf.format(r.getDateOfReservation()), Collectors.counting()));
+
+		Map<String, Long> returnValue = new HashMap<String, Long>(normalCounts);
+		quickCounts.forEach((key, value) -> returnValue.merge(key, value, (v1, v2) -> v1 + v2));
+
+		return returnValue;
 	}
 
 }

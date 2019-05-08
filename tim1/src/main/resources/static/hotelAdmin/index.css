@@ -168,23 +168,23 @@ a[data-toggle="tab"] {
 
 /* REPORTS */
 .reportsDiv {
-	width: 70%;
-	height: 30vw;
-	margin-left: 13%;
+	width: 70vw;
+	min-height: 90vh;
 	margin-top: 5%;
+	margin-bottom: 3%;
+	margin-left: auto;
+	margin-right: auto;
 	background: #5994FF;
 	border: 0.24vw solid #B27A00;
 	border-radius: 4vw 1.6vw;
-	margin-left: auto;
-	margin-right: auto;
 	display: block;
 	padding: 2vw;
 	text-align: center;
 }
 
 #income {
-	font-size: 1.5vw;
-	display: none;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 1.6vw;
 }
 
 #reportsTable {
@@ -196,19 +196,41 @@ a[data-toggle="tab"] {
 	text-align: center;
 }
 
+#shownIncomePeriodText {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 1.6vw;
+}
+
+#chartDiv {
+	background: white;
+	position: relative;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	height: 50vh;
+	width: auto;
+}
+
+#graphicLevel {
+	width: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 /* TABLES */
 .tableDiv {
-	width: 70%;
-	height: 30vw;
-	margin-left: 13%;
+	width: 70vw;
+	min-height: 30vh;
 	margin-top: 5%;
+	margin-bottom: 3%;
+	margin-left: auto;
+	margin-right: auto;
 	background: #5994FF;
 	border: 0.24vw solid #B27A00;
 	border-radius: 4vw 1.6vw;
-	margin-left: auto;
-	margin-right: auto;
 	display: block;
 	padding: 2vw;
+	text-align: center;
 }
 
 .tableButtons {
