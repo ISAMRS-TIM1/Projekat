@@ -11,7 +11,6 @@ import isamrs.tim1.dto.HotelRoomDetailedDTO;
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.dto.SeasonalPriceDTO;
-import isamrs.tim1.dto.ServiceViewDTO;
 import isamrs.tim1.model.Hotel;
 import isamrs.tim1.model.HotelReservation;
 import isamrs.tim1.model.HotelRoom;

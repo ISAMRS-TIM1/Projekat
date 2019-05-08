@@ -22,7 +22,7 @@ const editVehicleURL = "/api/editVehicle/";
 const loadDailyChartDataURL = "/api/getDailyGraphData";
 const loadWeeklyChartDataURL = "/api/getWeeklyGraphData";
 const loadMonthlyChartDataURL = "/api/getMonthlyGraphData";
-
+const getIncomeOfRentACarURL = "/api/getIncomeOfRentACar";
 
 $(document).ready(function() {
 	setUpToastr();
@@ -161,7 +161,38 @@ $(document).ready(function() {
 	$('#graphicLevel').on('change', function() {
 		changeGraphic(this.value);
 	});
+	
+	$('#showIncomeDateRange').daterangepicker({
+		locale : {
+			format : 'DD/MM/YYYY'
+		}
+	});
+	
+	$('#showIncomeButton').on('click', function(e) {
+		e.preventDefault();
+		let drp = $('#showIncomeDateRange').data('daterangepicker');
+		showIncome(drp.startDate.toDate(), drp.endDate.toDate());
+	})
 });
+
+function showIncome(startDate, endDate) {
+	$.ajax({
+		type : 'GET',
+		url : getIncomeOfRentACarURL,
+		headers : createAuthorizationTokenHeader(TOKEN_KEY),
+		contentType : 'application/json',
+		data : {"fromDate" : startDate, "toDate" : endDate},
+		success : function(data) {
+			if (data != null) {
+				$("#income").html("Income of airline: " + data + "EUR");
+				$("#income").show();
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
 
 function changeGraphic(level) {
 	$('#chart').remove();
@@ -344,7 +375,7 @@ function makeDailyChart(data, comparator) {
 	        	xAxes: [{
                     type: "time",
                     time: {
-                        parser: timeFormat,
+                        format: timeFormat,
                         unit: 'day',                    
                         unitStepSize: 1,
                         minUnit: 'day',
@@ -355,6 +386,10 @@ function makeDailyChart(data, comparator) {
                     scaleLabel: {
                         display:     true,
                         labelString: 'Date'
+                    },
+                    ticks: {
+                    	autoSkip: true,
+                        maxTicksLimit: 30
                     }
                 }],
                 yAxes: [{
@@ -370,6 +405,10 @@ function makeDailyChart(data, comparator) {
 	        pan: {
 	            enabled: true,
 	            mode: 'x',
+	        },
+	        zoom: {
+	        	enabled: true,
+	        	mode: 'x'
 	        }
 	    }
 	});
@@ -439,7 +478,7 @@ function makeMonthlyChart(data, comparator) {
 	        	xAxes: [{
                     type: "time",
                     time: {
-                        parser: timeFormat,
+                        format: timeFormat,
                         unit: 'month',                    
                         minUnit: 'month',
                         min: startDate,
@@ -449,6 +488,10 @@ function makeMonthlyChart(data, comparator) {
                     scaleLabel: {
                         display:     true,
                         labelString: 'Date'
+                    },
+                    ticks: {
+                    	autoSkip: true,
+                        maxTicksLimit: 30
                     }
                 }],
                 yAxes: [{
@@ -464,6 +507,10 @@ function makeMonthlyChart(data, comparator) {
 	        pan: {
 	            enabled: true,
 	            mode: 'x',
+	        },
+	        zoom: {
+	        	enabled: true,
+	        	mode: 'x'
 	        }
 	    }
 	});

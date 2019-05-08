@@ -20,7 +20,6 @@ import isamrs.tim1.dto.HotelRoomDTO;
 import isamrs.tim1.dto.HotelRoomDetailedDTO;
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.SeasonalPriceDTO;
-import isamrs.tim1.dto.ServiceViewDTO;
 import isamrs.tim1.model.HotelAdmin;
 import isamrs.tim1.service.HotelRoomService;
 

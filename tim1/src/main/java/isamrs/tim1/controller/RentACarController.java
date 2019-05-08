@@ -1,6 +1,7 @@
 package isamrs.tim1.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +92,12 @@ public class RentACarController {
 	@RequestMapping(value = "/api/getMonthlyGraphData", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Map<String, Long>> getMonthlyGraphData() {
 		return new ResponseEntity<Map<String, Long>>(rentACarService.getMonthlyGraphData(), HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasRole('RENTADMIN')")
+	@RequestMapping(value = "/api/getIncomeOfRentACar", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Double> getIncomeOfRentACar(@RequestParam Date fromDate, @RequestParam Date toDate) {
+		return new ResponseEntity<Double>(rentACarService.getIncomeOfRentACar(fromDate, toDate), HttpStatus.OK);
 	}
 
 }
