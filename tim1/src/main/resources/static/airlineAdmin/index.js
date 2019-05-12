@@ -24,6 +24,9 @@ const changePasswordURL = "../changePassword";
 var airlineName = "";
 var timeFormat = 'DD/MM/YYYY';
 
+var airlineMap = null;
+var destMap = null;
+
 $(document).ready(function() {
 	setUpToastr();
 	loadAirline();
@@ -58,6 +61,12 @@ $(document).ready(function() {
 	$('#graphicLevel').on('change', function() {
 		changeGraphic(this.value);
 	});
+	
+	$('#destinationModalDialog').on('shown.bs.modal', function() {
+		setTimeout(function() {
+			destMap = setUpMap(30, 0, 'destMapDiv', true, destMap, '#destMapDivLatitude', '#destMapDivLongitude', 2);
+		}, 10);
+	});
 })
 
 function setUpTables() {
@@ -85,19 +94,26 @@ function setUpTables() {
 	});
 }
 
-function setUpMap(latitude, longitude, div) {
-	var destMap = L.map(div).setView([ latitude, longitude ], MAP_ZOOM);
+function setUpMap(latitude, longitude, div, draggable, destMap, latInput, longInput, zoom=MAP_ZOOM) {
+	if (destMap != null) {
+		destMap.off();
+		destMap.remove();
+	}
+	destMap = L.map(div).setView([ latitude, longitude ], zoom);
 	L.tileLayer(tileLayerURL, {
 		maxZoom : MAX_MAP_ZOOM,
 		id : MAP_ID
 	}).addTo(destMap);
 	var marker = L.marker([ latitude, longitude ], {
-		draggable : true
+		draggable : draggable
 	}).addTo(destMap);
-	marker.on('dragend', function(e) {
-		$("#" + div + "Latitude").val(marker.getLatLng().lat);
-		$("#" + div + "Longitude").val(marker.getLatLng().lng);
-	});
+	if (draggable) {
+		marker.on('dragend', function(e) {
+			$(latInput).val(marker.getLatLng().lat);
+			$(longInput).val(marker.getLatLng().lng);
+		});
+	}
+	return destMap
 }
 
 function setUpToastr() {
@@ -146,7 +162,7 @@ function loadAirline() {
 			airlineName = data["name"];
 			$("#airlineGrade").text(data["averageGrade"]);
 			$("#airlineDescription").text(data["description"]);
-			setUpMap(data["latitude"], data["longitude"], 'basicMapDiv');
+			airlineMap = setUpMap(data["latitude"], data["longitude"], 'basicMapDiv', true, airlineMap, '#basicMapDivLatitude', '#basicMapDivLongitude');
 			renderDestinations(data["destinations"]);
 			renderFlights(data["flights"]);
 			// renderQuickReservations[data["quickReservations"]];
@@ -1009,11 +1025,6 @@ function flightToJSON(startDestination, endDestination, departureTime, landingTi
 	return a;
 }
 
-function setDestMap(e) {
-	e.preventDefault();
-	setUpMap(45, 45, 'destMapDiv');
-}
-
 function addDestination(e) {
 	e.preventDefault();
 	var nameOfDest = $("#destinationName").val();
@@ -1086,7 +1097,7 @@ function dayComparator(a, b) {
 }
 
 function weekComparator(a, b) {
-	//date week: num
+	// date week: num
 	let aTokens = a.split(" ");
 	let aDate = aTokens[0].split("/");
 	

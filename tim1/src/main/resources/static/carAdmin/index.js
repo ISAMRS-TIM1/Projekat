@@ -24,13 +24,15 @@ const loadWeeklyChartDataURL = "/api/getWeeklyGraphData";
 const loadMonthlyChartDataURL = "/api/getMonthlyGraphData";
 const getIncomeOfRentACarURL = "/api/getIncomeOfRentACar";
 
+var racMap = null;
+var branchMap = null;
+
 $(document).ready(function() {
 	setUpToastr();
 	loadBasicData();
 	loadProfileData();
 	setUpTables();
-	setUpMap(45.267136, 19.833549, 'basicMapDiv');
-	setUpMap(45.267136, 19.833549, 'branchMapDiv');
+	
 	
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
 		$($.fn.dataTable.tables(true)).DataTable().columns.adjust();
@@ -90,14 +92,16 @@ $(document).ready(function() {
 	$(document).on('click', '#branchTable tbody tr', function(e) {
 		oldName = e.target.parentNode.childNodes[1].innerText;
 		$("#editBranchOfficeForm input[name='name']").val(oldName);
-		// add branch location to map
+		lat = e.target.parentNode.childNodes[2].innerText;
+		long = e.target.parentNode.childNodes[3].innerText;
+		branchMap = setUpMap(lat, long, 'branchMapDiv', true, branchMap, '#branchLatitude', '#branchLongitude');
 		$('#editBranchModalDialog').modal('show');
 	});
 	
 	$(document).on('click', '#editBranch', function(e) {
 		e.preventDefault();
 		let newName = $("#editBranchOfficeForm input[name='name']").val();
-		editBranchOffice(oldName, newName, 14, 14/* latitude, longitude */);
+		editBranchOffice(oldName, newName, $('#branchLatitude').val(), $('#branchLongitude').val());
 		oldName = newName;
 	});
 	
@@ -171,6 +175,15 @@ $(document).ready(function() {
 		let drp = $('#showIncomeDateRange').data('daterangepicker');
 		showIncome(drp.startDate.toDate(), drp.endDate.toDate());
 	})
+	
+	$('#editBranchModalDialog').on('shown.bs.modal', function() {
+		setTimeout(function() {
+			branchMap.invalidateSize()
+		}, 10);
+		setTimeout(function() {
+			branchMap.invalidateSize()
+		}, 1000);
+	});
 });
 
 function showIncome(startDate, endDate) {
@@ -239,7 +252,7 @@ function dayComparator(a, b) {
 }
 
 function weekComparator(a, b) {
-	//date week: num
+	// date week: num
 	let aTokens = a.split(" ");
 	let aDate = aTokens[0].split("/");
 	
@@ -532,15 +545,26 @@ function setUpTables() {
     });
 }
 
-function setUpMap(latitude, longitude, div) {
-	var branchOfficeMap = L.map(div).setView([ latitude, longitude ], MAP_ZOOM);
+function setUpMap(latitude, longitude, div, draggable, destMap, latInput, longInput) {
+	if (destMap != null) {
+		destMap.off();
+		destMap.remove();
+	}
+	destMap = L.map(div).setView([ latitude, longitude ], MAP_ZOOM);
 	L.tileLayer(tileLayerURL, {
 		maxZoom : MAX_MAP_ZOOM,
 		id : MAP_ID
-	}).addTo(branchOfficeMap);
+	}).addTo(destMap);
 	var marker = L.marker([ latitude, longitude ], {
-		draggable : true
-	}).addTo(branchOfficeMap);
+		draggable : draggable
+	}).addTo(destMap);
+	if (draggable) {
+		marker.on('dragend', function(e) {
+			$(latInput).val(marker.getLatLng().lat);
+			$(longInput).val(marker.getLatLng().lng);
+		});
+	}
+	return destMap
 }
 
 function loadVehicleTypes(id, selected=undefined) {
@@ -604,6 +628,7 @@ function loadBasicData() {
 				$("#rentACarName").val(data.name);
 				$("#rentACarDescription").text(data.description);
 				$("#rentACarGrade").text(data.averageGrade);
+				racMap = setUpMap(data["latitude"], data["longitude"], 'basicMapDiv', true, racMap, '#basicLatitude', '#basicLongitude');
 				// average grade for reports
 				// latitude and longitude for basic info map
 			}

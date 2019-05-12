@@ -78,8 +78,14 @@ a[data-toggle="tab"] {
 	margin-right: auto;
 	display: block;
 	width: 65vw;
-	height: 30vw;
+	height: 60vh;
 	border-radius: 2vw 2vw 2vw 2vw;
+}
+
+#branchMapDiv{
+	width: 35vw;	
+	height: 35vh;
+	margin-bottom: 2vh;
 }
 
 #saveChangesBasic {
