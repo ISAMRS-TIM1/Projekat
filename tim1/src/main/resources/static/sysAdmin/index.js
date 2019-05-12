@@ -68,7 +68,7 @@ $(document).ready(function() {
 	$('#modalDialog').on('shown.bs.modal', function() {
 		setTimeout(function() {
 			destMap.invalidateSize()
-		}, 100);
+		}, 10);
 		setTimeout(function() {
 			destMap.invalidateSize()
 		}, 1000);
