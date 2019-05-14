@@ -1,3 +1,9 @@
+const tokenKey = "jwtToken";
+const tileLayerURL = "https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw";
+const MAP_ZOOM = 8;
+const MAX_MAP_ZOOM = 19;
+const MAP_ID = 'mapbox.streets';
+
 const logoutURL = "../logout";
 const loadUserInfoURL = "../api/getUserInfo";
 const saveChangesURL = "../api/editUser";
@@ -15,11 +21,10 @@ const getHotelURL = "../api/getHotel";
 const getDetailedHotelURL = "../api/getDetailedHotel";
 const searchRoomsURL = '/api/searchRooms/'
 
-const tokenKey = "jwtToken";
-const tileLayerURL = "https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw";
-const MAP_ZOOM = 8;
-const MAX_MAP_ZOOM = 19;
-const MAP_ID = 'mapbox.streets';
+const getVehicleProducersURL = "/api/getVehicleProducers";
+const getModelsForProducerURL = "/api/getModels/";
+const getAllVehicleTypesURL = "/api/getAllVehicleTypes";
+const getAllFuelTypesURL = "/api/getAllFuelTypes";
 
 var userMail = "";
 var hotelMap = null;
@@ -246,7 +251,157 @@ $(document)
 									});
 
 					setUpHotelsTab();
+					
+					$('#yearOfProductionDatepicker').daterangepicker({
+						locale : {
+							format : 'YYYY'
+						}
+					});
+					
+					$('#yearOfProductionDatepicker').val('Choose date range for year of production');
+					
+					$('#selectModel').multiselect({
+						includeSelectAllOption : true,
+						nonSelectedText: 'Select model'
+					});
+					
+					$("#vehicleGrade").slider({});
+					
+					$('#vehicleType').multiselect({
+						includeSelectAllOption : true,
+						nonSelectedText: 'Select car body type'
+					});
+					
+					$('#fuelType').multiselect({
+						includeSelectAllOption : true,
+						nonSelectedText: 'Select fuel type'
+					});
+					
+					$('a[href="#cars"]').click(function() {
+						getVehicleProducers();
+						getAllVehicleTypes();
+						getAllFuelTypes();
+					});
+					
+					$('#selectProducer').change(function() {
+						let value = $('#selectProducer').val();
+						
+						if(value == "all") {
+							$('#selectModel').prop('disabled', 'disabled');
+							$('#selectModel').multiselect('dataprovider', []);
+						} else {
+							getModelsForProducer(value);
+							$('#selectModel').prop('disabled', 'false');
+						}
+					});
+					
+					$('#searchVehiclesButton').click(function(e) {
+						e.preventDefault();
+						
+						let producer = $('#selectProducer').val();
+						let models = $('#selectModel').val();
+						let vehicleTypes = $('#vehicleType').val();
+						let fuelTypes = $('#fuelType').val();
+						let priceTo = $('#priceTo').val();
+						let numberOfSeats = $('#numberOfSeats').val();
+						let startDate = $('#yearOfProductionDatepicker').data('daterangepicker').startDate.toDate();
+						let endDate = $('#yearOfProductionDatepicker').data('daterangepicker').endDate.toDate();
+						let minGrade = $("#vehicleGrade").slider('getValue')[0];
+						let maxGrade = $("#vehicleGrade").slider('getValue')[1];
+						
+						console.log(producer);
+						console.log(models);
+						console.log(vehicleTypes);
+						console.log(fuelTypes);
+						console.log(priceTo);
+						console.log(numberOfSeats);
+						console.log(startDate);
+						console.log(endDate)
+						console.log(minGrade);
+						console.log(maxGrade);
+					});
 				});
+
+function searchVehicle(producer, models, vehicleTypes, fuelTypes, priceMax, numberOfSeats, startDate, endDate, minGrade, maxGrade) {
+	
+}
+
+function getAllVehicleTypes() {
+	$.ajax({
+		type : 'GET',
+		url : getAllVehicleTypesURL,
+		dataType : "json",
+		//headers: createAuthorizationTokenHeader(TOKEN_KEY),
+		success: function(data){
+			let options = [];
+			for(let type of data) {
+				options.push({label: type, value: type});
+			}
+			$('#vehicleType').multiselect('dataprovider', options);
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
+function getAllFuelTypes() {
+	$.ajax({
+		type : 'GET',
+		url : getAllFuelTypesURL,
+		dataType : "json",
+		//headers: createAuthorizationTokenHeader(TOKEN_KEY),
+		success: function(data){
+			let options = [];
+			for(let type of data) {
+				options.push({label: type, value: type});
+			}
+			$('#fuelType').multiselect('dataprovider', options);
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
+function getVehicleProducers() {
+	$.ajax({
+		type : 'GET',
+		url : getVehicleProducersURL,
+		dataType : "json",
+		//headers: createAuthorizationTokenHeader(TOKEN_KEY),
+		success: function(data){
+			let producers = $("#selectProducer");
+			producers.empty();
+			producers.append('<option value="all" selected>All producers</option>');
+			for(let producer of data) {
+				producers.append('<option value="' + producer + '">' + producer + '</option');
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
+function getModelsForProducer(producer) {
+	$.ajax({
+		type : 'GET',
+		url : getModelsForProducerURL + producer,
+		dataType : "json",
+		//headers: createAuthorizationTokenHeader(TOKEN_KEY),
+		success: function(data){
+			let options = [];
+			for(let model of data) {
+				options.push({label: model, value: model});
+			}
+			$('#selectModel').multiselect('dataprovider', options);
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
 
 function setUpToastr() {
 	toastr.options = {

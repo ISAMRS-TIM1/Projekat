@@ -1,7 +1,9 @@
 package isamrs.tim1.service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,8 +12,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import isamrs.tim1.dto.MessageDTO;
-import isamrs.tim1.dto.VehicleDTO;
 import isamrs.tim1.dto.MessageDTO.ToasterType;
+import isamrs.tim1.dto.VehicleDTO;
+import isamrs.tim1.dto.VehicleSearchDTO;
 import isamrs.tim1.model.FuelType;
 import isamrs.tim1.model.QuickVehicleReservation;
 import isamrs.tim1.model.RentACar;
@@ -30,58 +33,78 @@ public class VehicleService {
 	@Autowired
 	private RentACarRepository rentACarRepository;
 
-	public ArrayList<VehicleDTO> searchVehicles(Vehicle vehicle) {
-		String model = vehicle.getModel();
+	public ArrayList<VehicleDTO> searchVehicles(VehicleSearchDTO vehicle) {
+		ArrayList<String> producers;
 
-		if (model == null) {
-			model = "%";
-		}
-
-		String producer = vehicle.getProducer();
-
-		if (producer == null) {
-			producer = "%";
-		}
-
-		String year = vehicle.getYearOfProduction();
-
-		if (year == null) {
-			year = "%";
-		}
-
-		Integer num = vehicle.getNumberOfSeats();
-		String numStr;
-		if (num == null) {
-			numStr = "%";
+		if (vehicle.getProducer().equals("all")) {
+			producers = vehicleRepository.getAllProducers();
 		} else {
-			numStr = num.toString();
+			producers = new ArrayList<String>();
+			producers.add(vehicle.getProducer());
 		}
 
-		FuelType ft = vehicle.getFuelType();
-		String ftStr;
-		if (ft == null) {
-			ftStr = "%";
+		ArrayList<String> models;
+		if (vehicle.getModels().isEmpty()) {
+			models = vehicleRepository.getAllModels();
 		} else {
-			ftStr = ft.toString();
+			models = vehicle.getModels();
 		}
 
-		VehicleType vt = vehicle.getVehicleType();
-		String vtStr;
-		if (vt == null) {
-			vtStr = "%";
+		ArrayList<String> vehicleTypes;
+		if (vehicle.getVehicleTypes().isEmpty()) {
+			vehicleTypes = this.getAllVehicleTypes();
 		} else {
-			vtStr = vt.toString();
+			vehicleTypes = vehicle.getVehicleTypes();
 		}
 
-		ArrayList<Vehicle> searchResults = this.vehicleRepository.findByParameters(vehicle.getRentACar().getId(), model,
-				producer, year, numStr, ftStr, vtStr);
+		ArrayList<String> fuelTypes;
+		if (vehicle.getFuelTypes().isEmpty()) {
+			fuelTypes = this.getAllFuelTypes();
+		} else {
+			fuelTypes = vehicle.getFuelTypes();
+		}
 
-		ArrayList<VehicleDTO> toBeReturned = new ArrayList<VehicleDTO>();
+		int maxPrice;
+		if (vehicle.getPrice() == null) {
+			maxPrice = vehicleRepository.getMaxPricePerDay().intValue();
+		} else {
+			maxPrice = vehicle.getPrice().intValue();
+		}
+
+		int seats;
+		if (vehicle.getSeats() == null) {
+			seats = vehicleRepository.getMaxSeatsForVehicle().intValue();
+		} else {
+			seats = vehicle.getSeats().intValue();
+		}
+
+		Calendar calendar = new GregorianCalendar();
+
+		int minYear;
+		if (vehicle.getStartDate() == null) {
+			minYear = vehicleRepository.getMinYear().intValue();
+		} else {
+			calendar.setTime(vehicle.getStartDate());
+			minYear = calendar.get(Calendar.YEAR);
+		}
+
+		int maxYear;
+		if (vehicle.getEndDate() == null) {
+			maxYear = vehicleRepository.getMaxYear().intValue();
+		} else {
+			calendar.setTime(vehicle.getEndDate());
+			maxYear = calendar.get(Calendar.YEAR);
+		}
+
+		ArrayList<Vehicle> searchResults = vehicleRepository.searchByParameters(producers, models, fuelTypes,
+				vehicleTypes, maxPrice, minYear, maxYear, vehicle.getMinGrade(), vehicle.getMaxGrade(), seats);
+
+		ArrayList<VehicleDTO> returnValue = new ArrayList<VehicleDTO>();
 		for (Vehicle v : searchResults) {
-			toBeReturned.add(new VehicleDTO(v));
+			returnValue.add(new VehicleDTO(v));
 		}
 
-		return toBeReturned;
+		return returnValue;
 	}
 
 	public boolean alreadyExists(String model, String producer) {
@@ -246,5 +269,37 @@ public class VehicleService {
 		vehicle.setDeleted(true);
 		vehicleRepository.save(vehicle);
 		return new MessageDTO("Vehicle deleted.", ToasterType.SUCCESS.toString());
+	}
+
+	public ArrayList<String> getAllProducers() {
+		return vehicleRepository.getAllProducers();
+	}
+
+	public ArrayList<String> getModelsForProducer(String producer) {
+		return vehicleRepository.getModelsForProducer(producer);
+	}
+
+	public ArrayList<String> getAllVehicleTypes() {
+		VehicleType[] types = VehicleType.class.getEnumConstants();
+
+		ArrayList<String> typesAsStrings = new ArrayList<String>();
+
+		for (VehicleType type : types) {
+			typesAsStrings.add(type.toString());
+		}
+
+		return typesAsStrings;
+	}
+
+	public ArrayList<String> getAllFuelTypes() {
+		FuelType[] types = FuelType.class.getEnumConstants();
+
+		ArrayList<String> typesAsStrings = new ArrayList<String>();
+
+		for (FuelType type : types) {
+			typesAsStrings.add(type.toString());
+		}
+
+		return typesAsStrings;
 	}
 }
