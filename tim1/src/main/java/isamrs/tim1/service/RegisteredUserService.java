@@ -132,7 +132,7 @@ public class RegisteredUserService {
 		return new ResponseEntity<MessageDTO>(new MessageDTO("Friend invitation declined.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
 	}
 
-	public ResponseEntity<ArrayList<FriendDTO>> getFriends() {
+	public ResponseEntity<ArrayList<FriendDTO>> getFriendInvitations() {
 		ArrayList<FriendDTO> friends = new ArrayList<FriendDTO>();
 		RegisteredUser currUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		for (User us : currUser.getFriends()) {

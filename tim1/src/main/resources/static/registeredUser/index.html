@@ -416,5 +416,83 @@
 			</div>
 		</div>
 	</div>
+	
+	<!-- SHOW FLIGHT MODAL -->
+	<div class="modal fade" id="showFlightModal" tabindex="-1" role="dialog"
+		aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content" id="showFlightDiv">
+				<div id="reserveDiv">
+					<table id="showFlightTable">
+						<tr>
+							<td>Start destination</td>
+							<td><span id="startDest"></span></td>
+							<td>End destination</td>
+							<td><span id="endDest"></span></td>
+						</tr>
+						<tr>
+							<td>Departure time</td>
+							<td><span id="depTime"></span></td>
+							<td>Landing time</td>
+							<td><span id="landTime"></span></td>
+						</tr>
+						<tr>
+							<td>Airline</td>
+							<td><span id="flightAirline"></span></td>
+							<td>Flight duration</td>
+							<td><span id="flightDuration"></span></td>
+						</tr>
+						<tr>
+							<td>Flight distance</td>
+							<td><span id="flightDistance"></span></td>
+							<td>Locations of connections</td>
+							<td><select id="flightConnections"></select>
+						</tr>
+						<tr>
+							<td>Price per bag</td>
+							<td><span id="pricePerBag"></span></td>
+							<td>Average grade</td>
+							<td><span id="averageGrade"></span>
+						</tr>
+					</table><br><br>
+					<div id="planeSeats">
+						<div id="seat-map">
+					      <div class="front-indicator">Front</div>
+					    </div>
+					    <div class="booking-details">
+					      <h2>Booking Details</h2>
+					      <h3> Selected Seats (<span id="counter">0</span>):</h3>
+					      <ul id="selected-seats">
+					      </ul>
+					      Total: <b>$<span id="total">0</span></b>
+					      <button class="checkout-button">Checkout &raquo;</button>
+					      <div id="legend"></div>
+						</div>
+					</div><br><br>
+					<button class="btn btn-default" id="nextButtonFlights" onclick="showFriendsStep(event)">Next</button>
+				</div>
+				<div id="reserveDivFriends">
+					<table id="inviteFriendsTable" class="table display table-bordered">
+						<thead>
+							<tr>
+								<th>Email</th>
+								<th>First name</th>
+								<th>Last name</th>
+								<th>Invite</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table><br><br>
+					<button class="btn btn-default" id="nextButtonFlights" onclick="showLastStep(event)">Next</button>
+				</div>
+				<div id="reserveDivPassengers">
+					<table id="passengersTable">
+					</table><br><br>
+					<button class="btn btn-default" id="nextButtonFlights" onclick="endReservation(event)">End reservation</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

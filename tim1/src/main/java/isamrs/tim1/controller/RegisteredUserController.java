@@ -28,9 +28,9 @@ public class RegisteredUserController {
 		return registeredUserService.searchUsers(firstName, lastName, email);
 	}
 	
-	@RequestMapping(value = "/api/getFriends", method = RequestMethod.GET)
-	public ResponseEntity<ArrayList<FriendDTO>> getFriends(){
-		return registeredUserService.getFriends();
+	@RequestMapping(value = "/api/getFriendInvitations", method = RequestMethod.GET)
+	public ResponseEntity<ArrayList<FriendDTO>> getFriendInvitations(){
+		return registeredUserService.getFriendInvitations();
 	}
 	
 	@RequestMapping(value = "/api/sendInvitation", method = RequestMethod.POST)
