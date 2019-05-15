@@ -45,10 +45,10 @@ public class FlightService {
 	@Autowired
 	SeatRepository seatRepository;
 	
-	public ResponseEntity<MessageDTO> addFlight(FlightDTO flightDTO) {
+	public ResponseEntity<String> addFlight(FlightDTO flightDTO) {
 		Airline a = (Airline) serviceRepository.findOneByName(flightDTO.getAirlineName());
 		if (a == null)
-			return new ResponseEntity<MessageDTO>(new MessageDTO("Airline does not exist.", ToasterType.ERROR.toString()), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>("Airline does not exist.", HttpStatus.BAD_REQUEST);
 		Flight flight = new Flight();
 		Random rand = new Random();
 		int n;
@@ -94,7 +94,7 @@ public class FlightService {
 		flight.setAirline(a);
 		a.getFlights().add(flight);
 		flightRepository.save(flight);
-		return new ResponseEntity<MessageDTO>(new MessageDTO("Flight added successfully.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
+		return new ResponseEntity<String>(flightCode, HttpStatus.OK);
 	}
 
 	public ArrayList<FlightUserViewDTO> searchFlights(FlightDTO flight) {

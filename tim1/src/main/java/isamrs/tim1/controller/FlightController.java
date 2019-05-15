@@ -24,7 +24,7 @@ public class FlightController {
 	private FlightService flightService;
 	
 	@RequestMapping(value = "api/addFlight", method = RequestMethod.POST)
-	public ResponseEntity<MessageDTO> addFlight(@RequestBody FlightDTO flight) {
+	public ResponseEntity<String> addFlight(@RequestBody FlightDTO flight) {
 		return flightService.addFlight(flight);
 	}
 	

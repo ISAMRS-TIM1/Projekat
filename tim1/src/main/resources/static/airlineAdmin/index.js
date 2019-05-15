@@ -166,9 +166,10 @@ function loadAirline() {
 			renderDestinations(data["destinations"]);
 			renderFlights(data["flights"]);
 			// renderQuickReservations[data["quickReservations"]];
-			reservedSeats = data["reservedSeats"];
+			// Edit flight needs this code
+			/*reservedSeats = data["reservedSeats"];
 			renderPlaneSeats(data["planeSegments"], data["reservedSeats"]);
-			console.log(data["planeSegments"]);
+			console.log(data["planeSegments"]);*/
 		}
 	});
 }
@@ -902,8 +903,7 @@ function showPlaneSeats(seats) {
 			});
 }
 
-function saveSeatsChanges(e) {
-	e.preventDefault();
+function saveSeatsChanges(flightCode) {
 	var seats = firstClass.concat(businessClass).concat(economyClass);
 	var savedSeats = [];
 	for (var i = 0; i < seats.length; i++) {
@@ -923,7 +923,7 @@ function saveSeatsChanges(e) {
 		url : saveSeatsChangesURL,
 		headers : createAuthorizationTokenHeader(TOKEN_KEY),
 		contentType : "application/json",
-		data : JSON.stringify(savedSeats),
+		data : JSON.stringify({ "savedSeats" : savedSeats, "flightCode" : flightCode }),
 		success : function(data) {
 			console.log(data);
 		}
@@ -986,7 +986,6 @@ function addFlight(e) {
 		data : flightToJSON(startDestination, endDestination, departureTime, landingTime, flightDistance, connections, pricePerBag,
 				firstPrice, businessPrice, economyPrice),
 		success : function(data) {
-			if (data.toastType == "success") {
 				var table = $('#flightsTable').DataTable();
 				var date1 = moment(departureTime, 'DD.MM.YYYY hh:mm');
 				var date2 = moment(landingTime, 'DD.MM.YYYY hh:mm');
@@ -997,12 +996,11 @@ function addFlight(e) {
 				});
 				conn += "</select>";
 				table.row.add(
-						[ startDestination, endDestination, moment(new Date(departureTime)).format("DD.MM.YYYY HH:mm"),
+						[ data, startDestination, endDestination, moment(new Date(departureTime)).format("DD.MM.YYYY HH:mm"),
 							moment(new Date(landingTime)).format("DD.MM.YYYY HH:mm"), diff + " min", flightDistance,
 								connections.length, conn, firstPrice, businessPrice, economyPrice,
 								pricePerBag, 0]).draw(false);
-				toastr[data.toastType](data.message);
-			}
+				saveSeatsChanges(data);
 		}
 	});
 }
