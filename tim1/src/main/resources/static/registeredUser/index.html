@@ -54,9 +54,9 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css" type="text/css">
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/js/bootstrap-multiselect.min.js"></script>
 <script type="text/javascript"
-	src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js"></script>
 <link rel="stylesheet" type="text/css"
-	href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css" />
 </head>
 <body>
 	<div class="container-fluid">
@@ -182,6 +182,12 @@
 							<td>
 								<select id="fuelType" multiple></select>
 							</td>
+							<td>
+								<label>Grade:</label>
+							</td>
+							<td>
+								<input id="vehicleGrade" type="text" value="" data-slider-min="0" data-slider-max="5" data-slider-step="0.1" data-slider-value="[0,5]">
+							</td>
 						</tr>
 						<tr>
 							<td>
@@ -191,13 +197,16 @@
 								<input type="number" class="form-control" id="numberOfSeats" min="1" placeholder="Number of seats">
 							</td>
 							<td>
-								<input type="text" id="yearOfProductionDatepicker">
+								<label>Production year from:</label>
 							</td>
 							<td>
-								<label>Grade: </label>
+								<input type="text" class="form-control" id="startYear">
 							</td>
 							<td>
-								<input id="vehicleGrade" type="text" value="" data-slider-min="0" data-slider-max="5" data-slider-step="0.1" data-slider-value="[0,5]">
+								<label>To:</label>
+							</td>
+							<td>
+								<input type="text" class="form-control" id="endYear">
 							</td>
 						</tr>
 						<tr>
@@ -205,6 +214,24 @@
 								<button class="btn btn-default" id="searchVehiclesButton">Search</button>
 							</td>
 						</tr>
+					</table>
+				</div>
+				<div id="vehiclesTableWrapper">
+					<table id="vehiclesTable" class="table display table-bordered">
+						<thead>
+							<tr>
+								<th>Model</th>
+								<th>Producer</th>
+								<th>Year of production</th>
+								<th>Number of seats</th>
+								<th>Fuel type</th>
+								<th>Vehicle type</th>
+								<th>Price per day</th>
+								<th>Average grade</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
 					</table>
 				</div>
 			</div>

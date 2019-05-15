@@ -25,6 +25,7 @@ const getVehicleProducersURL = "/api/getVehicleProducers";
 const getModelsForProducerURL = "/api/getModels/";
 const getAllVehicleTypesURL = "/api/getAllVehicleTypes";
 const getAllFuelTypesURL = "/api/getAllFuelTypes";
+const searchVehiclesURL = "/api/searchVehicles";
 
 var userMail = "";
 var hotelMap = null;
@@ -252,13 +253,20 @@ $(document)
 
 					setUpHotelsTab();
 					
-					$('#yearOfProductionDatepicker').daterangepicker({
-						locale : {
-							format : 'YYYY'
-						}
+					$('#startYear').datepicker({
+						format : 'yyyy',
+						minViewMode: 'years',
+						autoclose: true
+					}).on('changeDate', function(selected) {
+						startDate =  $("#startYear").val();
+				        $('#endYear').datepicker('setStartDate', startDate);
 					});
 					
-					$('#yearOfProductionDatepicker').val('Choose date range for year of production');
+					$('#endYear').datepicker({
+						format : 'yyyy',
+						minViewMode: 'years',
+						autoclose: true
+					});
 					
 					$('#selectModel').multiselect({
 						includeSelectAllOption : true,
@@ -302,28 +310,77 @@ $(document)
 						let models = $('#selectModel').val();
 						let vehicleTypes = $('#vehicleType').val();
 						let fuelTypes = $('#fuelType').val();
-						let priceTo = $('#priceTo').val();
-						let numberOfSeats = $('#numberOfSeats').val();
-						let startDate = $('#yearOfProductionDatepicker').data('daterangepicker').startDate.toDate();
-						let endDate = $('#yearOfProductionDatepicker').data('daterangepicker').endDate.toDate();
+						let priceTo = emptyToNull($('#priceTo').val());
+						let numberOfSeats = emptyToNull($('#numberOfSeats').val());
+						let startDate = emptyToNull($('#startYear').val());
+						let endDate = emptyToNull($('#endYear').val());
 						let minGrade = $("#vehicleGrade").slider('getValue')[0];
 						let maxGrade = $("#vehicleGrade").slider('getValue')[1];
 						
-						console.log(producer);
-						console.log(models);
-						console.log(vehicleTypes);
-						console.log(fuelTypes);
-						console.log(priceTo);
-						console.log(numberOfSeats);
-						console.log(startDate);
-						console.log(endDate)
-						console.log(minGrade);
-						console.log(maxGrade);
+						searchVehicles(producer, models, vehicleTypes, fuelTypes, priceTo, numberOfSeats, startDate, endDate, minGrade, maxGrade);
+					});
+					
+					$('#vehiclesTable').DataTable({
+						"paging" : false,
+						"info" : false,
+						"orderCellsTop" : true,
+						"fixedHeader" : true
 					});
 				});
 
-function searchVehicle(producer, models, vehicleTypes, fuelTypes, priceMax, numberOfSeats, startDate, endDate, minGrade, maxGrade) {
-	
+function emptyToNull(value) {
+	if(value == "") {
+		return null;
+	} else {
+		return value;
+	}
+}
+
+function vehicleSearchFormToJSON(producer, models, vehicleTypes, fuelTypes, priceMax, numberOfSeats, startDate, endDate, minGrade, maxGrade) {
+	return JSON.stringify({
+		"producer" : producer,
+		"models" : models,
+		"vehicleTypes" : vehicleTypes,
+		"fuelTypes" : fuelTypes,
+		"price" : priceMax,
+		"seats": numberOfSeats,
+		"startDate": startDate,
+		"endDate": endDate,
+		"minGrade": minGrade,
+		"maxGrade": maxGrade
+	});
+}
+
+function searchVehicles(producer, models, vehicleTypes, fuelTypes, priceMax, numberOfSeats, startDate, endDate, minGrade, maxGrade) {
+	$.ajax({
+		type : 'POST',
+		url : searchVehiclesURL,
+		//headers : createAuthorizationTokenHeader(tokenKey),
+		contentType : "application/json",
+		data : vehicleSearchFormToJSON(producer, models, vehicleTypes, fuelTypes, priceMax, numberOfSeats, startDate, endDate, minGrade, maxGrade),
+		success : function(data) {
+			if (data != null) {
+				let table = $('#vehiclesTable').DataTable();
+				table.clear().draw();
+				
+				for(let vehicle of data) {
+					table.row.add([
+						vehicle.model,
+						vehicle.producer,
+						vehicle.yearOfProduction,
+						vehicle.numberOfSeats,
+						vehicle.fuelType,
+						vehicle.vehicleType,
+						vehicle.pricePerDay,
+						vehicle.averageGrade
+					]).draw(false);
+				}
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
 }
 
 function getAllVehicleTypes() {
@@ -898,7 +955,7 @@ function setUpHotelsTab() {
 		minDate:new Date(),
 		locale: {
 		      format: 'DD/MM/YYYY'
-		    }
+		    },
 	});
 	$("#searchRoomsPrice").slider({});
 	$("#searchRoomsGrade").slider({});
