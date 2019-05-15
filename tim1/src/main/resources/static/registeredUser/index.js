@@ -916,6 +916,9 @@ function loadFlight(code) {
 		success : function(data) {
 			if (data != null) {
 				localStorage.setItem("flightCode", code);
+				localStorage.setItem("startDest", data["startDestination"]);
+				localStorage.setItem("endDest", data["endDestination"]);
+				localStorage.setItem("flightDate", data["departureTime"]);
 				$("#startDest").text(data["startDestination"]);
 				$("#endDest").text(data["endDestination"]);
 				$("#depTime").text(data["departureTime"]);
@@ -1035,7 +1038,7 @@ function showFriendsStep(e) {
 							  "numberOfPassengers" : numberOfPassengers,
 							  "seatsLeft" : numberOfPassengers - 1,
 							  "invitedFriends" : [],
-							  "passengers" : [] };
+							  "passengers" : []};
 	localStorage.setItem("flightReservation", flightReservation);
 	$.ajax({
 		type : 'GET',
@@ -1076,7 +1079,10 @@ function showLastStep(e) {
 		toastr["success"]("Successfully added flight reservation to cart.");
 		$('#showFlightModal').modal('toggle');
 		localStorage.setItem("flightReservation", flightReservation);
-		////////////////DODAJ REZERVACIJU U KORPU
+		var startDest = localStorage.getItem("startDest");
+		var endDest = localStorage.getItem("endDest");
+		var flightDate = localStorage.getItem("flightDate");
+		$("#flightRes").html(startDest + "-" + endDest + " " + flightDate);
 	}
 	else {
 		var lastStepTable = $("#passengersTable");
@@ -1114,5 +1120,8 @@ function endReservation(e) {
 	toastr["success"]("Successfully added flight reservation to cart.");
 	$('#showFlightModal').modal('toggle');
 	localStorage.setItem("flightReservation", flightReservation);
-	////////////////DODAJ REZERVACIJU U KORPU
+	var startDest = localStorage.getItem("startDest");
+	var endDest = localStorage.getItem("endDest");
+	var flightDate = localStorage.getItem("flightDate");
+	$("#flightRes").html(startDest + "-" + endDest + " " + flightDate);
 }

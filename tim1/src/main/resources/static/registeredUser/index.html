@@ -308,6 +308,27 @@
 				</div>
 			</div>
 		</div>
+		<div id="reservationCart">
+			<table id="cartTable">
+				<tr>
+					<td><img src="airplane.png" width="50%"/></td>
+					<td colspan="2" id="flightRes">No flight reserved</td>
+				</tr>
+				<tr>
+					<td><img src="hotel.png" width="50%"/></td>
+					<td colspan="2" id="hotelRes"></td>
+				</tr>
+				<tr>
+					<td><img src="car.png" width="50%"/></td>
+					<td colspan="2" id="carRes"></td>
+				</tr>
+				<tr><td colspan="3"></td></tr>
+				<tr>
+					<td colspan="3" style="text-align:center;"><button class="btn btn-default" id="reserveButton"
+								onclick="confirmReservation(event)">Confirm reservation</button></td>
+				</tr>
+			</table>
+		</div>
 	</div>
 
 	<!-- MODAL -->

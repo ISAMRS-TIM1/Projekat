@@ -64,6 +64,15 @@ a[data-toggle="tab"] {
 	border-radius: 2vw 2vw 2vw 2vw;
 }
 
+#reserveButton {
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	color: white;
+	border: 0.16vw solid #B27A00;
+	border-radius: 2vw 2vw 2vw 2vw;
+}
+
 #nextButtonFlights {
 	float:right;
 	margin-bottom: 5%;
@@ -71,6 +80,19 @@ a[data-toggle="tab"] {
 
 #email {
 	text-align: center;
+}
+
+#reservationCart {
+	width: 17.5vw;
+    height: 17.5vw;
+    position: fixed;
+    right: 0;
+    top: 9.5vw;
+    background: #5994FF;
+    border: 0.24vw solid #B27A00;
+    border-radius: 4vw 4vw;
+    padding: 2vw;
+    overflow:auto;
 }
 
 #friendsTableDiv {
@@ -296,18 +318,23 @@ input, button {
 	padding: 2vw;
 }
 
-#serviceTable {
+#serviceTable, #cartTable {
 	text-align: left;
 	color: white;
 	margin: 0 auto;
 }
 
-#serviceTable tbody {
+#serviceTable tbody, #cartTable tbody {
 	overflow-y: auto;
 }
 
 #serviceTable td {
 	padding: 5px;
+}
+
+#cartTable {
+	height: 100%;
+	overflow: auto;
 }
 
 input, select {
