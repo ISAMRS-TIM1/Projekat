@@ -20,6 +20,9 @@ const getHotelDailyChartDataURL = "/api/getHotelDailyChartData";
 const getHotelWeeklyChartDataURL = "/api/getHotelWeeklyChartData";
 const getHotelMonthlyChartDataURL = "/api/getHotelMonthlyChartData";
 const addAdditionalServiceURL = "/api/addAdditionalService";
+const getAdditionalServiceURL = "/api/getAdditionalService";
+const editAdditionalServiceURL = "/api/editAdditionalService/";
+const deleteAdditionalServiceURL = "/api/deleteAdditionalService/";
 
 const logoutURL = "../logout";
 const loadUserInfoURL = "../api/getUserInfo";
@@ -28,6 +31,7 @@ const changePasswordURL = "../changePassword";
 
 var destMap = null;
 var shownRoom = null;
+var shownAdditionalService = null;
 var hotelName = null;
 
 $(document).ready(function() {
@@ -44,6 +48,7 @@ $(document).ready(function() {
 	setUpShownHotelRoomForm();
 	setUpNewAdditionalServiceForm();
 	setUpEditForm();
+	setUpShownAdditionalServiceForm();
 
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
 		$($.fn.dataTable.tables(true)).DataTable().columns.adjust();
@@ -61,11 +66,13 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#showHotelRoomModal').on('hidden.bs.modal', function() {
-		roomsTable.$('tr.selected').removeClass('selected');
-		shownRoom = null;
+	$('#newSeasonalPriceDateRange').daterangepicker({
+		minDate:  moment(moment()).add(1, 'days'), // tomorrow
+		endDate: moment(moment()).add(2, 'days'),
+		locale: {
+		      format: 'DD/MM/YYYY'
+		    },
 	});
-
 	$('#showIncomeDateRange').daterangepicker({
 		locale : {
 			format : 'DD/MM/YYYY'
@@ -83,7 +90,7 @@ function setUpTables() {
 		"paging" : false,
 		"info" : false,
 	});
-	$('#additionalServicesTable').DataTable({
+	additionalServicesTable = $('#additionalServicesTable').DataTable({
 		"paging" : false,
 		"info" : false,
 	});
@@ -103,11 +110,27 @@ function setUpTables() {
 	$('#roomsTable tbody').on('click', 'tr', function() {
 		roomsTable.$('tr.selected').removeClass('selected');
 		$(this).addClass('selected');
-		loadHotelRoom(roomsTable.row(this).data()[0]);
-		shownRoom = roomsTable.row(this).data()[0];
 		$("#showHotelRoomModal").modal();
+		shownRoom = roomsTable.row(this).data()[0];
+		loadHotelRoom(shownRoom);
 	});
-
+	$('#showHotelRoomModal').on('hidden.bs.modal', function() {
+		roomsTable.$('tr.selected').removeClass('selected');
+		shownRoom = null;
+	});
+	
+	
+	$('#additionalServicesTable tbody').on('click', 'tr', function() {
+		additionalServicesTable.$('tr.selected').removeClass('selected');
+		$(this).addClass('selected');
+		$("#shownAdditionalServiceModal").modal();
+		shownAdditionalService = additionalServicesTable.row(this).data()[0];
+		loadAdditionalService(shownAdditionalService);
+	});
+	$('#shownAdditionalServiceModal').on('hidden.bs.modal', function() {
+		additionalServicesTable.$('tr.selected').removeClass('selected');
+		shownAdditionalService = null;
+	});
 }
 
 function setUpTabView() {
@@ -187,14 +210,32 @@ function loadHotelRoom(roomNumber) {
 			renderSeasonalPrices(data["seasonalPrices"]);
 		}
 	});
+}
 
+function loadAdditionalService(name) {
+	$.ajax({
+		type : 'GET',
+		contentType : "application/json",
+		data : {
+			'name' : name
+		},
+		dataType : "json",
+		url : getAdditionalServiceURL,
+		headers : createAuthorizationTokenHeader(TOKEN_KEY),
+		success : function(data) {
+			$("#shownAdditionalServiceName").val(data["name"]);
+			$("#shownAdditionalServicePrice").val(data["price"]);
+		}
+	});
 }
 
 function renderAdditionalServices(data) {
 	var table = $('#additionalServicesTable').DataTable();
 	table.clear().draw();
 	$.each(data, function(i, val) {
-		table.row.add([ val.name, val.price ]).draw(false);
+		rowNode = table.row.add([ val.name, val.price ]).draw(false).node();
+		if(val.name == shownAdditionalService)
+			$(rowNode).addClass('selected');
 	});
 }
 
@@ -349,6 +390,7 @@ function setUpNewHotelRoomForm() {
 function setUpNewSeasonalPriceForm() {
 	$('#newSeasonalPriceForm').on('submit', function(e) {
 		e.preventDefault();
+		var drp = $('#newSeasonalPriceDateRange').data('daterangepicker');
 		$.ajax({
 			type : 'POST',
 			url : addSeasonalPriceURL + shownRoom,
@@ -357,8 +399,8 @@ function setUpNewSeasonalPriceForm() {
 			dataType : "json",
 			data : JSON.stringify({
 				"price" : $("#newSeasonalPricePrice").val(),
-				"fromDate" : $("#newSeasonalPriceFrom").val(),
-				"toDate" : $("#newSeasonalPriceTo").val(),
+				"fromDate" : drp.startDate.toDate(),
+				"toDate" : drp.endDate.toDate()
 			}),
 			success : function(data) {
 				loadHotel();
@@ -432,6 +474,37 @@ function setUpNewAdditionalServiceForm(){
 	});
 }
 
+function setUpShownAdditionalServiceForm(){
+	$('#shownAdditionalServiceForm').on('submit', function(e) {
+		e.preventDefault();
+		newAdditionalServiceName = $("#shownAdditionalServiceName").val();
+		$.ajax({
+			type : 'PUT',
+			url : editAdditionalServiceURL + shownAdditionalService,
+			contentType : 'application/json',
+			headers : createAuthorizationTokenHeader(TOKEN_KEY),
+			dataType : "json",
+			data : JSON.stringify({
+				"name" : newAdditionalServiceName,
+				"price" : $("#shownAdditionalServicePrice").val(),
+			}),
+			success : function(data) {
+				if (data.toastType == "success") {
+					shownAdditionalService = newAdditionalServiceName;
+				}
+				loadHotel();
+				loadAdditionalService(shownAdditionalService);
+				if (data != "") {
+					toastr[data.toastType](data.message);
+				}
+			},
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+				alert("AJAX ERROR: " + textStatus);
+			}
+		});
+	});
+}
+
 function setUpEditForm() {
 	$('#userEditForm').on(
 			'submit',
@@ -492,6 +565,22 @@ function deleteRoom() {
 		success : function(data) {
 			loadHotel();
 			$("#showHotelRoomModal").modal('hide');
+			if (data != "") {
+				toastr[data.toastType](data.message);
+			}
+		}
+	});
+}
+
+function deleteAdditionalService(){
+	$.ajax({
+		type : 'DELETE',
+		dataType : "json",
+		url : deleteAdditionalServiceURL + shownAdditionalService,
+		headers : createAuthorizationTokenHeader(TOKEN_KEY),
+		success : function(data) {
+			loadHotel();
+			$("#showAdditionalServiceModal").modal('hide');
 			if (data != "") {
 				toastr[data.toastType](data.message);
 			}

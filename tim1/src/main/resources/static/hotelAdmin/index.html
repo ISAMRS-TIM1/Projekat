@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Hotel Admin</title>
-<link rel="shortcut icon" type="image/png" href="login/common/images/favicon.png" />
+<link rel="shortcut icon" type="image/png"
+	href="login/common/images/favicon.png" />
 
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -28,7 +29,8 @@
 <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
 	integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
 	crossorigin=""></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.0"></script>
@@ -80,7 +82,7 @@
 					<div id="basicMapDiv" class="map leaflet-container"></div>
 					<input type="hidden" id="latitude" value="45" required> <input
 						type="hidden" id="longitude" value="0" required>
-					<button type="submit" id="saveChangesBasic" class="btn btn-default">Save
+					<button type="submit" id="saveChangesBasic" class="btn btn-default myButton">Save
 						changes</button>
 				</form>
 			</div>
@@ -93,7 +95,7 @@
 						</tr>
 					</table>
 					<br>
-					<button class="btn btn-default" id="showIncomeButton"
+					<button class="btn btn-default myButton" id="showIncomeButton"
 						onclick='showIncome(event)'>Show income</button>
 					<br> <span id="income"></span> <br> <br> <select
 						class="form-control" id="graphicLevel"
@@ -110,7 +112,7 @@
 			<div id="roomsTab" class="tab-pane fade in">
 				<div class="tableWrapper">
 					<div class="tableButtons">
-						<button type="button" id="addRoomButton" class="btn btn-default"
+						<button type="button" id="addRoomButton" class="btn btn-default myButton"
 							data-toggle="modal" data-target="#newHotelRoomModal">Add
 							room</button>
 					</div>
@@ -133,9 +135,10 @@
 			<div id="additionalServicesTab" class="tab-pane fade">
 				<div class="tableWrapper">
 					<div class="tableButtons">
-						<button type="button" id="addAdditionalServiceButton" class="btn btn-default"
-							data-toggle="modal" data-target="#newAdditionalServiceModal">Add
-							additional service</button>
+						<button type="button" id="addAdditionalServiceButton"
+							class="btn btn-default myButton" data-toggle="modal"
+							data-target="#newAdditionalServiceModal">Add additional
+							service</button>
 					</div>
 					<div class="tableDiv">
 						<table id="additionalServicesTable"
@@ -156,7 +159,7 @@
 				<div class="tableWrapper">
 					<div class="tableButtons">
 						<button type="button" id="addQuickReservationButton"
-							class="btn btn-default" data-toggle="modal"
+							class="btn btn-default myButton" data-toggle="modal"
 							data-target="addQuickReservationModal">Add quick
 							reservation</button>
 					</div>
@@ -218,10 +221,10 @@
 										class="glyphicon glyphicon-edit"></i></span>
 								</div>
 							</div>
-							<button type="button" class="btn btn-default"
+							<button type="button" class="btn btn-default myButton"
 								id="changePasswordButton">Change password</button>
 							<br>
-							<button type="submit" class="btn btn-default" id="saveChanges">Save
+							<button type="submit" class="btn btn-default myButton" id="saveChanges">Save
 								changes</button>
 						</form>
 					</div>
@@ -239,7 +242,8 @@
 						<table class="showHotelRoomTable">
 							<tr>
 								<td><label for="shownRoomNumber">Room number</label></td>
-								<td><input id="shownRoomNumber" class="form-control" required></td>
+								<td><input id="shownRoomNumber" class="form-control"
+									required></td>
 							</tr>
 							<tr>
 								<td><label for="shownRoomDefaultPrice">Default
@@ -260,9 +264,9 @@
 							</tr>
 							<tr>
 								<td><button type="submit" id="editHotelRoomButton"
-										class="btn btn-default">Save changes</button></td>
+										class="btn btn-default myButton">Save changes</button></td>
 								<td><button type="button" id="deleteHotelRoomButton"
-										onclick="deleteRoom()" class="btn btn-default">Delete
+										onclick="deleteRoom()" class="btn btn-default myButton">Delete
 										room</button></td>
 							</tr>
 						</table>
@@ -272,17 +276,16 @@
 					<form id="newSeasonalPriceForm">
 						<table class="showHotelRoomTable">
 							<tr>
-								<td><labeL for="newSeasonalPriceFrom">From</labeL><input
-									type="date" id="newSeasonalPriceFrom" required></td>
-								<td><labeL for="newSeasonalPriceTo">To</labeL><input
-									type="date" id="newSeasonalPriceTo" required></td>
+								<td><label for="newSeasonalPriceDateRange">Date</label></td>
+								<td><input type="text" id="newSeasonalPriceDateRange" /></td>
+								<td><label for="newSeasonalPricePrice">Price</label></td>
+								<td><input id="newSeasonalPricePrice" type="number"
+									step="0.01" oninput="validity.valid||(value='');" required></td>
 							</tr>
 							<tr>
-								<td><label for="newSeasonalPricePrice">Price</label><input
-									id="newSeasonalPricePrice" type="number" step="0.01"
-									oninput="validity.valid||(value='');" required></td>
-								<td><button type="submit" id="addSeasonalPriceButton"
-										class="btn btn-default">Add seasonal price</button></td>
+								<td colspan="4"><button type="submit"
+										id="addSeasonalPriceButton" class="btn btn-default myButton">Add
+										seasonal price</button></td>
 							</tr>
 						</table>
 					</form>
@@ -332,7 +335,7 @@
 						<tr>
 							<td colspan="2">
 								<button type="submit" id="addHotelRoomButton"
-									class="btn btn-default">Add</button>
+									class="btn btn-default myButton">Add</button>
 							</td>
 						</tr>
 					</table>
@@ -340,7 +343,36 @@
 			</div>
 		</div>
 	</div>
-	<!-- Add new additional service -->
+	<!-- Show additional service modal -->
+	<div class="modal fade" id="shownAdditionalServiceModal" tabindex="-1"
+		role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content" id="shownAdditionalServiceDiv">
+				<form id="shownAdditionalServiceForm">
+					<table id="newAdditionalServiceTable">
+						<tr>
+							<td><label for="shownAdditionalServiceName">Name</label></td>
+							<td><input id="shownAdditionalServiceName"
+								class="form-control" required></td>
+						</tr>
+						<tr>
+							<td><label for="shownAdditionalServicePrice">Price</label></td>
+							<td><input type="number" id="shownAdditionalServicePrice"
+								class="form-control" step='0.01' required></td>
+						</tr>
+						<tr>
+							<td><button type="submit" id="editAdditionalServiceButton"
+									class="btn btn-default myButton">Save changes</button></td>
+							<td><button type="button" id="deleteAdditionalServiceButton"
+									onclick="deleteAdditionalService()" class="btn btn-default myButton">Delete
+									service</button></td>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- Add new additional service modal -->
 	<div class="modal fade" id="newAdditionalServiceModal" tabindex="-1"
 		role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog" role="document">
@@ -349,7 +381,8 @@
 					<table id="newAdditionalServiceTable">
 						<tr>
 							<td><label for="newAdditionalServiceName">Name</label></td>
-							<td><input id="newAdditionalServiceName" class="form-control" required></td>
+							<td><input id="newAdditionalServiceName"
+								class="form-control" required></td>
 						</tr>
 						<tr>
 							<td><label for="newAdditionalServicePrice">Price</label></td>
@@ -359,7 +392,7 @@
 						<tr>
 							<td colspan="2">
 								<button type="submit" id="addAdditionalServiceButton"
-									class="btn btn-default">Add</button>
+									class="btn btn-default myButton">Add</button>
 							</td>
 						</tr>
 					</table>
