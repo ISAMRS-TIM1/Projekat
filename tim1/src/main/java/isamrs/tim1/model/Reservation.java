@@ -25,13 +25,13 @@ public abstract class Reservation implements Serializable {
 	@Column(name = "reservation_id", unique = true, nullable = false)
 	private Long id;
 
-	@Column(name = "dateOfReservation", unique = false, nullable = false)
+	@Column(name = "dateOfReservation", unique = false, nullable = true)
 	private Date dateOfReservation;
 
-	@Column(name = "done", unique = false, nullable = false)
-	private boolean done;
+	@Column(name = "done", unique = false, nullable = true)
+	private Boolean done;
 
-	@Column(name = "price", unique = false, nullable = false)
+	@Column(name = "price", unique = false, nullable = true)
 	private Double price;
 
 	@OneToOne(fetch = FetchType.LAZY)
@@ -59,10 +59,10 @@ public abstract class Reservation implements Serializable {
 	}
 
 	public boolean isDone() {
-		return done;
+		return done.booleanValue();
 	}
 
-	public void setDone(boolean done) {
+	public void setDone(Boolean done) {
 		this.done = done;
 	}
 
