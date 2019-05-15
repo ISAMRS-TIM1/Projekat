@@ -361,11 +361,18 @@ input, select {
 #showHotelTable td {
 	padding: 30px;
 	text-align: center;
-}
+}s
 
 #showHotelTable {
 	margin: auto;
 }
+
+/* hotels reservations */
+.reservedAdditionalService td{
+	background-color: #00ff00 !important;
+}
+
+/* CARS */
 
 .textInput {
 	border: none;
