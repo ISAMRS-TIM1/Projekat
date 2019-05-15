@@ -26,7 +26,7 @@ public class HotelAdditionalService {
 	@Column(name = "additionalservice_id", unique = true, nullable = false)
 	private Integer id;
 
-	@Column(name = "name", unique = true, nullable = false)
+	@Column(name = "name", unique = false, nullable = false)
 	private String name;
 
 	@Column(name = "price", unique = false, nullable = false)

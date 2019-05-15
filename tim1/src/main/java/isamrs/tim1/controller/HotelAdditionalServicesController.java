@@ -48,4 +48,12 @@ public class HotelAdditionalServicesController {
 				((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel()),
 				HttpStatus.OK);
 	}
+	
+	@PreAuthorize("hasRole('HOTELADMIN')")
+	@RequestMapping(value = "/api/deleteAdditionalService/{name}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MessageDTO> deleteAdditionalService(@PathVariable("name") String name) {
+		return new ResponseEntity<MessageDTO>(hotelAdditionalServicesService.deleteAdditionalService(name,
+				((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel()),
+				HttpStatus.OK);
+	}
 }

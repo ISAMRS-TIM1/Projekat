@@ -21,7 +21,8 @@ const getHotelWeeklyChartDataURL = "/api/getHotelWeeklyChartData";
 const getHotelMonthlyChartDataURL = "/api/getHotelMonthlyChartData";
 const addAdditionalServiceURL = "/api/addAdditionalService";
 const getAdditionalServiceURL = "/api/getAdditionalService";
-const editAdditionalServiceURL = "api/editAdditionalService/";
+const editAdditionalServiceURL = "/api/editAdditionalService/";
+const deleteAdditionalServiceURL = "/api/deleteAdditionalService/";
 
 const logoutURL = "../logout";
 const loadUserInfoURL = "../api/getUserInfo";
@@ -556,6 +557,22 @@ function deleteRoom() {
 		success : function(data) {
 			loadHotel();
 			$("#showHotelRoomModal").modal('hide');
+			if (data != "") {
+				toastr[data.toastType](data.message);
+			}
+		}
+	});
+}
+
+function deleteAdditionalService(){
+	$.ajax({
+		type : 'DELETE',
+		dataType : "json",
+		url : deleteAdditionalServiceURL + shownAdditionalService,
+		headers : createAuthorizationTokenHeader(TOKEN_KEY),
+		success : function(data) {
+			loadHotel();
+			$("#showAdditionalServiceModal").modal('hide');
 			if (data != "") {
 				toastr[data.toastType](data.message);
 			}
