@@ -51,6 +51,9 @@ public class HotelRoom implements Serializable {
 
 	@OneToMany(mappedBy = "hotelRoom", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<HotelReservation> normalReservations;
+	
+	@Column(name = "deleted", unique = false, nullable = false)
+	private boolean deleted = false;
 
 	public HotelRoom() {
 		super();
@@ -69,6 +72,7 @@ public class HotelRoom implements Serializable {
 		this.quickReservations = new HashSet<QuickHotelReservation>();
 		this.normalReservations = new HashSet<HotelReservation>();
 		this.seasonalPrices = new HashSet<SeasonalHotelRoomPrice>();
+		this.deleted = false;
 	}
 	public void update(HotelRoomDTO hotelRoom) {
 		this.numberOfPeople = hotelRoom.getNumberOfPeople();
@@ -150,6 +154,16 @@ public class HotelRoom implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+	
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+
+
 
 	private static final long serialVersionUID = 1359942200118829407L;
 

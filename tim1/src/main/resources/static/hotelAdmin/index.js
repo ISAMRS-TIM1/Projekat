@@ -19,6 +19,7 @@ const getIncomeOfHotelURL = "/api/getIncomeOfHotel";
 const getHotelDailyChartDataURL = "/api/getHotelDailyChartData";
 const getHotelWeeklyChartDataURL = "/api/getHotelWeeklyChartData";
 const getHotelMonthlyChartDataURL = "/api/getHotelMonthlyChartData";
+const addAdditionalServiceURL = "/api/addAdditionalService";
 
 const logoutURL = "../logout";
 const loadUserInfoURL = "../api/getUserInfo";
@@ -41,6 +42,7 @@ $(document).ready(function() {
 	setUpNewHotelRoomForm();
 	setUpNewSeasonalPriceForm();
 	setUpShownHotelRoomForm();
+	setUpNewAdditionalServiceForm();
 	setUpEditForm();
 
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
@@ -393,6 +395,32 @@ function setUpShownHotelRoomForm() {
 				}
 				loadHotel();
 				loadHotelRoom(shownRoom);
+				if (data != "") {
+					toastr[data.toastType](data.message);
+				}
+			},
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+				alert("AJAX ERROR: " + textStatus);
+			}
+		});
+	});
+}
+
+function setUpNewAdditionalServiceForm(){
+	$('#newAdditionalServiceForm').on('submit', function(e) {
+		e.preventDefault();
+		$.ajax({
+			type : 'POST',
+			url : addAdditionalServiceURL,
+			contentType : 'application/json',
+			headers : createAuthorizationTokenHeader(TOKEN_KEY),
+			dataType : "json",
+			data : JSON.stringify({
+				"name" : $("#newAdditionalServiceName").val(),
+				"price" : $("#newAdditionalServicePrice").val(),
+			}),
+			success : function(data) {
+				loadHotel();
 				if (data != "") {
 					toastr[data.toastType](data.message);
 				}
