@@ -33,6 +33,11 @@ public class RegisteredUserController {
 		return registeredUserService.getFriendInvitations();
 	}
 	
+	@RequestMapping(value = "/api/getFriends", method = RequestMethod.GET)
+	public ResponseEntity<ArrayList<FriendDTO>> getFriends(){
+		return registeredUserService.getFriends();
+	}
+	
 	@RequestMapping(value = "/api/sendInvitation", method = RequestMethod.POST)
 	public ResponseEntity<MessageDTO> sendInvitation(@RequestBody String invitedUser){
 		return registeredUserService.sendInvitation(invitedUser);

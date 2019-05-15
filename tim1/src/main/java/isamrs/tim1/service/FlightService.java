@@ -173,4 +173,9 @@ public class FlightService {
 		Flight f = flightRepository.findOneByFlightCode(flightCode);
 		return new PlaneSeatsDTO(f);
 	}
+
+	public FlightDTO getDetailedFlight(String flightCode) {
+		Flight f = flightRepository.findOneByFlightCode(flightCode);
+		return new FlightDTO(f);
+	}
 }
