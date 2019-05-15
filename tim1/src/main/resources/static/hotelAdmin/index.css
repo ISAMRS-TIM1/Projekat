@@ -326,3 +326,20 @@ a[data-toggle="tab"] {
 	border: 0.16vw solid #B27A00;
 	border-radius: 2vw 2vw 2vw 2vw;
 }
+
+/* SHOWN ADDITIONAL SERVICE MODAL */
+#shownAdditionalServiceDiv {
+	margin: 0;
+	background: #5994FF;
+	border: 0.24vw solid #B27A00;
+	border-radius: 4vw 1.6vw;
+}
+
+#shownAdditionalServiceTable {
+	margin: auto;
+}
+
+#shownAdditionalServiceTable td {
+	padding: 30px;
+	text-align: center;
+}

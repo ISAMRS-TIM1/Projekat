@@ -20,6 +20,8 @@ const getHotelDailyChartDataURL = "/api/getHotelDailyChartData";
 const getHotelWeeklyChartDataURL = "/api/getHotelWeeklyChartData";
 const getHotelMonthlyChartDataURL = "/api/getHotelMonthlyChartData";
 const addAdditionalServiceURL = "/api/addAdditionalService";
+const getAdditionalServiceURL = "/api/getAdditionalService";
+const editAdditionalServiceURL = "api/editAdditionalService/";
 
 const logoutURL = "../logout";
 const loadUserInfoURL = "../api/getUserInfo";
@@ -28,6 +30,7 @@ const changePasswordURL = "../changePassword";
 
 var destMap = null;
 var shownRoom = null;
+var shownAdditionalService = null;
 var hotelName = null;
 
 $(document).ready(function() {
@@ -44,6 +47,7 @@ $(document).ready(function() {
 	setUpShownHotelRoomForm();
 	setUpNewAdditionalServiceForm();
 	setUpEditForm();
+	setUpShownAdditionalServiceForm();
 
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
 		$($.fn.dataTable.tables(true)).DataTable().columns.adjust();
@@ -59,11 +63,6 @@ $(document).ready(function() {
 		} else {
 			$(this).siblings().first().prop('readonly', 'true');
 		}
-	});
-
-	$('#showHotelRoomModal').on('hidden.bs.modal', function() {
-		roomsTable.$('tr.selected').removeClass('selected');
-		shownRoom = null;
 	});
 
 	$('#showIncomeDateRange').daterangepicker({
@@ -83,7 +82,7 @@ function setUpTables() {
 		"paging" : false,
 		"info" : false,
 	});
-	$('#additionalServicesTable').DataTable({
+	additionalServicesTable = $('#additionalServicesTable').DataTable({
 		"paging" : false,
 		"info" : false,
 	});
@@ -103,11 +102,27 @@ function setUpTables() {
 	$('#roomsTable tbody').on('click', 'tr', function() {
 		roomsTable.$('tr.selected').removeClass('selected');
 		$(this).addClass('selected');
-		loadHotelRoom(roomsTable.row(this).data()[0]);
-		shownRoom = roomsTable.row(this).data()[0];
 		$("#showHotelRoomModal").modal();
+		shownRoom = roomsTable.row(this).data()[0];
+		loadHotelRoom(shownRoom);
 	});
-
+	$('#showHotelRoomModal').on('hidden.bs.modal', function() {
+		roomsTable.$('tr.selected').removeClass('selected');
+		shownRoom = null;
+	});
+	
+	
+	$('#additionalServicesTable tbody').on('click', 'tr', function() {
+		additionalServicesTable.$('tr.selected').removeClass('selected');
+		$(this).addClass('selected');
+		$("#shownAdditionalServiceModal").modal();
+		shownAdditionalService = additionalServicesTable.row(this).data()[0];
+		loadAdditionalService(shownAdditionalService);
+	});
+	$('#shownAdditionalServiceModal').on('hidden.bs.modal', function() {
+		additionalServicesTable.$('tr.selected').removeClass('selected');
+		shownAdditionalService = null;
+	});
 }
 
 function setUpTabView() {
@@ -187,14 +202,32 @@ function loadHotelRoom(roomNumber) {
 			renderSeasonalPrices(data["seasonalPrices"]);
 		}
 	});
+}
 
+function loadAdditionalService(name) {
+	$.ajax({
+		type : 'GET',
+		contentType : "application/json",
+		data : {
+			'name' : name
+		},
+		dataType : "json",
+		url : getAdditionalServiceURL,
+		headers : createAuthorizationTokenHeader(TOKEN_KEY),
+		success : function(data) {
+			$("#shownAdditionalServiceName").val(data["name"]);
+			$("#shownAdditionalServicePrice").val(data["price"]);
+		}
+	});
 }
 
 function renderAdditionalServices(data) {
 	var table = $('#additionalServicesTable').DataTable();
 	table.clear().draw();
 	$.each(data, function(i, val) {
-		table.row.add([ val.name, val.price ]).draw(false);
+		rowNode = table.row.add([ val.name, val.price ]).draw(false).node();
+		if(val.name == shownAdditionalService)
+			$(rowNode).addClass('selected');
 	});
 }
 
@@ -421,6 +454,37 @@ function setUpNewAdditionalServiceForm(){
 			}),
 			success : function(data) {
 				loadHotel();
+				if (data != "") {
+					toastr[data.toastType](data.message);
+				}
+			},
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+				alert("AJAX ERROR: " + textStatus);
+			}
+		});
+	});
+}
+
+function setUpShownAdditionalServiceForm(){
+	$('#shownAdditionalServiceForm').on('submit', function(e) {
+		e.preventDefault();
+		newAdditionalServiceName = $("#shownAdditionalServiceName").val();
+		$.ajax({
+			type : 'PUT',
+			url : editAdditionalServiceURL + shownAdditionalService,
+			contentType : 'application/json',
+			headers : createAuthorizationTokenHeader(TOKEN_KEY),
+			dataType : "json",
+			data : JSON.stringify({
+				"name" : newAdditionalServiceName,
+				"price" : $("#shownAdditionalServicePrice").val(),
+			}),
+			success : function(data) {
+				if (data.toastType == "success") {
+					shownAdditionalService = newAdditionalServiceName;
+				}
+				loadHotel();
+				loadAdditionalService(shownAdditionalService);
 				if (data != "") {
 					toastr[data.toastType](data.message);
 				}

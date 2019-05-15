@@ -116,5 +116,10 @@ public class HotelAdditionalService {
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
 	}
+
+	public void update(HotelAdditionalServiceDTO additionalService) {
+		this.name = additionalService.getName();
+		this.price = additionalService.getPrice();
+	}
 	
 }

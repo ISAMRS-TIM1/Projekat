@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Hotel Admin</title>
-<link rel="shortcut icon" type="image/png" href="login/common/images/favicon.png" />
+<link rel="shortcut icon" type="image/png"
+	href="login/common/images/favicon.png" />
 
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -28,7 +29,8 @@
 <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
 	integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
 	crossorigin=""></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.0"></script>
@@ -133,9 +135,10 @@
 			<div id="additionalServicesTab" class="tab-pane fade">
 				<div class="tableWrapper">
 					<div class="tableButtons">
-						<button type="button" id="addAdditionalServiceButton" class="btn btn-default"
-							data-toggle="modal" data-target="#newAdditionalServiceModal">Add
-							additional service</button>
+						<button type="button" id="addAdditionalServiceButton"
+							class="btn btn-default" data-toggle="modal"
+							data-target="#newAdditionalServiceModal">Add additional
+							service</button>
 					</div>
 					<div class="tableDiv">
 						<table id="additionalServicesTable"
@@ -239,7 +242,8 @@
 						<table class="showHotelRoomTable">
 							<tr>
 								<td><label for="shownRoomNumber">Room number</label></td>
-								<td><input id="shownRoomNumber" class="form-control" required></td>
+								<td><input id="shownRoomNumber" class="form-control"
+									required></td>
 							</tr>
 							<tr>
 								<td><label for="shownRoomDefaultPrice">Default
@@ -340,7 +344,36 @@
 			</div>
 		</div>
 	</div>
-	<!-- Add new additional service -->
+	<!-- Show additional service modal -->
+	<div class="modal fade" id="shownAdditionalServiceModal" tabindex="-1"
+		role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content" id="shownAdditionalServiceDiv">
+				<form id="shownAdditionalServiceForm">
+					<table id="newAdditionalServiceTable">
+						<tr>
+							<td><label for="shownAdditionalServiceName">Name</label></td>
+							<td><input id="shownAdditionalServiceName"
+								class="form-control" required></td>
+						</tr>
+						<tr>
+							<td><label for="shownAdditionalServicePrice">Price</label></td>
+							<td><input type="number" id="shownAdditionalServicePrice"
+								class="form-control" step='0.01' required></td>
+						</tr>
+						<tr>
+							<td><button type="submit" id="editAdditionalServiceButton"
+									class="btn btn-default">Save changes</button></td>
+							<td><button type="button" id="deleteAdditionalServiceButton"
+									onclick="deleteAdditionalService()" class="btn btn-default">Delete
+									room</button></td>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- Add new additional service modal -->
 	<div class="modal fade" id="newAdditionalServiceModal" tabindex="-1"
 		role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog" role="document">
@@ -349,7 +382,8 @@
 					<table id="newAdditionalServiceTable">
 						<tr>
 							<td><label for="newAdditionalServiceName">Name</label></td>
-							<td><input id="newAdditionalServiceName" class="form-control" required></td>
+							<td><input id="newAdditionalServiceName"
+								class="form-control" required></td>
 						</tr>
 						<tr>
 							<td><label for="newAdditionalServicePrice">Price</label></td>
