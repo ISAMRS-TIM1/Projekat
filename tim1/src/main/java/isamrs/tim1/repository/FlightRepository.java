@@ -11,4 +11,6 @@ public interface FlightRepository extends JpaRepository<Flight, Long>{
 	
 	@Query(value = "select * from flights f where f.start_destination = ?1 and f.end_destination = ?2", nativeQuery = true)
 	Set<Flight> searchFlightsByDestinations(Long startID, Long endID);
+	
+	Flight findOneByFlightCode(String flightCode);
 }

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import isamrs.tim1.dto.AirlineDTO;
 import isamrs.tim1.dto.DetailedServiceDTO;
 import isamrs.tim1.dto.MessageDTO;
-import isamrs.tim1.dto.PlaneSeatsDTO;
 import isamrs.tim1.dto.ServiceDTO;
 import isamrs.tim1.dto.ServiceViewDTO;
 import isamrs.tim1.model.Airline;
@@ -62,17 +61,6 @@ public class AirlineController {
 	@RequestMapping(value = "/api/getAirline", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DetailedServiceDTO> getAirline(@RequestParam String name) {
 		return new ResponseEntity<DetailedServiceDTO>(airlineService.getAirline(name), HttpStatus.OK);
-	}
-
-	@RequestMapping(value = "/api/saveSeats", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MessageDTO> saveSeats(@RequestBody String[] savedSeats) {
-		AirlineAdmin a = (AirlineAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		return new ResponseEntity<MessageDTO>(airlineService.saveSeats(savedSeats, a), HttpStatus.OK);
-	}
-
-	@RequestMapping(value = "/api/getPlaneSeats", method = RequestMethod.GET)
-	public ResponseEntity<PlaneSeatsDTO> getPlaneSeats() {
-		return new ResponseEntity<PlaneSeatsDTO>(airlineService.getPlaneSeats(), HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/api/getIncomeOfAirline", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)

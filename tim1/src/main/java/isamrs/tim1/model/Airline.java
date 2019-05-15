@@ -34,9 +34,6 @@ public class Airline extends Service implements Serializable {
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<FlightReservation> normalReservations;
 
-	@OneToMany(mappedBy = "airline", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<PlaneSegment> planeSegments;
-
 	private static final long serialVersionUID = 2322929543693920541L;
 
 	public Airline() {
@@ -45,16 +42,6 @@ public class Airline extends Service implements Serializable {
 		admins = new HashSet<AirlineAdmin>();
 		destinations = new HashSet<Destination>();
 		quickReservations = new HashSet<QuickFlightReservation>();
-		planeSegments = new HashSet<PlaneSegment>();
-		PlaneSegment f = new PlaneSegment(PlaneSegmentClass.FIRST);
-		PlaneSegment b = new PlaneSegment(PlaneSegmentClass.BUSINESS);
-		PlaneSegment e = new PlaneSegment(PlaneSegmentClass.ECONOMY);
-		f.setAirline(this);
-		b.setAirline(this);
-		e.setAirline(this);
-		planeSegments.add(f);
-		planeSegments.add(b);
-		planeSegments.add(e);
 		normalReservations = new HashSet<FlightReservation>();
 	}
 
@@ -64,16 +51,6 @@ public class Airline extends Service implements Serializable {
 		admins = new HashSet<AirlineAdmin>();
 		destinations = new HashSet<Destination>();
 		quickReservations = new HashSet<QuickFlightReservation>();
-		planeSegments = new HashSet<PlaneSegment>();
-		PlaneSegment f = new PlaneSegment(PlaneSegmentClass.FIRST);
-		PlaneSegment b = new PlaneSegment(PlaneSegmentClass.BUSINESS);
-		PlaneSegment e = new PlaneSegment(PlaneSegmentClass.ECONOMY);
-		f.setAirline(this);
-		b.setAirline(this);
-		e.setAirline(this);
-		planeSegments.add(f);
-		planeSegments.add(b);
-		planeSegments.add(e);
 		normalReservations = new HashSet<FlightReservation>();
 	}
 
@@ -107,14 +84,6 @@ public class Airline extends Service implements Serializable {
 
 	public void setQuickReservations(Set<QuickFlightReservation> quickReservations) {
 		this.quickReservations = quickReservations;
-	}
-
-	public Set<PlaneSegment> getPlaneSegments() {
-		return planeSegments;
-	}
-
-	public void setPlaneSegments(Set<PlaneSegment> planeSegments) {
-		this.planeSegments = planeSegments;
 	}
 
 	public Set<FlightReservation> getNormalReservations() {
