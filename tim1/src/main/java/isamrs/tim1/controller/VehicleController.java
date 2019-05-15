@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.VehicleDTO;
+import isamrs.tim1.dto.VehicleSearchDTO;
 import isamrs.tim1.model.FuelType;
-import isamrs.tim1.model.Vehicle;
 import isamrs.tim1.model.VehicleType;
 import isamrs.tim1.service.VehicleService;
 
@@ -41,8 +41,8 @@ public class VehicleController {
 	}
 
 	@RequestMapping(value = "/api/searchVehicles", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ArrayList<VehicleDTO>> searchVehicles(@RequestBody Vehicle vehicle) {
-		return new ResponseEntity<ArrayList<VehicleDTO>>(vehicleService.searchVehicles(vehicle), HttpStatus.OK);
+	public ResponseEntity<ArrayList<VehicleDTO>> searchVehicles(@RequestBody VehicleSearchDTO searchFields) {
+		return new ResponseEntity<ArrayList<VehicleDTO>>(vehicleService.searchVehicles(searchFields), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/api/addVehicle/{quantity}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -62,4 +62,25 @@ public class VehicleController {
 			@PathVariable("model") String model) {
 		return new ResponseEntity<MessageDTO>(vehicleService.deleteVehicle(producer, model), HttpStatus.OK);
 	}
+
+	@RequestMapping(value = "/api/getVehicleProducers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ArrayList<String>> getAllProducers() {
+		return new ResponseEntity<ArrayList<String>>(vehicleService.getAllProducers(), HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/api/getModels/{producer}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ArrayList<String>> getModelsForProducer(@PathVariable("producer") String producer) {
+		return new ResponseEntity<ArrayList<String>>(vehicleService.getModelsForProducer(producer), HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/api/getAllVehicleTypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ArrayList<String>> getAllVehicleTypes() {
+		return new ResponseEntity<ArrayList<String>>(vehicleService.getAllVehicleTypes(), HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/api/getAllFuelTypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ArrayList<String>> getAllFuelTypes() {
+		return new ResponseEntity<ArrayList<String>>(vehicleService.getAllFuelTypes(), HttpStatus.OK);
+	}
+
 }

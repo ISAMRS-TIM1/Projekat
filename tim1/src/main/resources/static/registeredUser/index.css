@@ -415,6 +415,7 @@ input, select {
 	border: none;
 	resize: none;
 }
+
 #reserveDivFriends {
 	margin-top: 5%;
     margin-left: 5%;
@@ -425,4 +426,26 @@ input, select {
 	margin-top: 5%;
     margin-left: 5%;
     margin-right: 5%;
+}
+
+#yearOfProductionDatepicker {
+	width: 260px;
+	max-width: 260px;
+}
+
+#searchCars {
+	margin-top: 2%;
+	width: 85%;
+	margin-left: 7%;
+	display: block;
+}
+
+#searchCarsTable {
+	text-align: center;
+	border-collapse: separate;
+	border-spacing: 20px;
+}
+
+#searchVehiclesButton {
+	width:100%;
 }

@@ -24,6 +24,10 @@ public class QuickHotelReservation extends QuickReservation implements Serializa
 	@JoinColumn(name = "hotelRoom")
 	private HotelRoom hotelRoom;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "additionalService")
+	private HotelAdditionalService additionalService;
+
 	private static final long serialVersionUID = -5431545631194865506L;
 
 	public QuickHotelReservation() {
@@ -52,6 +56,14 @@ public class QuickHotelReservation extends QuickReservation implements Serializa
 
 	public void setHotelRoom(HotelRoom hotelRoom) {
 		this.hotelRoom = hotelRoom;
+	}
+
+	public HotelAdditionalService getAdditionalService() {
+		return additionalService;
+	}
+
+	public void setAdditionalService(HotelAdditionalService additionalService) {
+		this.additionalService = additionalService;
 	}
 
 	public static long getSerialversionuid() {

@@ -2,6 +2,10 @@ package isamrs.tim1.model;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -20,12 +25,16 @@ public class Flight {
 	public Flight() {
 		super();
 		locationsOfConnecting = new ArrayList<String>();
+		planeSegments = new HashSet<PlaneSegment>();
 	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "flight_id", unique = true, nullable = false)
 	private Long id;
+	
+	@Column(name = "flightCode", unique = true, nullable = false)
+	private String flightCode;
 	
 	@Column(name = "averageGrade", unique = false, nullable = false)
 	private Double averageGrade;
@@ -71,6 +80,9 @@ public class Flight {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "endDestination")
 	private Destination endDestination;
+	
+	@OneToMany(mappedBy = "flight", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<PlaneSegment> planeSegments;
 
 	public Long getId() {
 		return id;
@@ -190,5 +202,21 @@ public class Flight {
 
 	public void setAverageGrade(Double averageGrade) {
 		this.averageGrade = averageGrade;
+	}
+
+	public String getFlightCode() {
+		return flightCode;
+	}
+
+	public void setFlightCode(String flightCode) {
+		this.flightCode = flightCode;
+	}
+
+	public Set<PlaneSegment> getPlaneSegments() {
+		return planeSegments;
+	}
+
+	public void setPlaneSegments(Set<PlaneSegment> planeSegments) {
+		this.planeSegments = planeSegments;
 	}
 }

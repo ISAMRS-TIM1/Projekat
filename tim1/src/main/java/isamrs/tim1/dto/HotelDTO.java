@@ -27,10 +27,12 @@ public class HotelDTO implements Serializable {
 		this.additionalServices = new ArrayList<HotelAdditionalServiceDTO>();
 		this.rooms = new ArrayList<HotelRoomDTO>();
 		for (HotelAdditionalService has : hotel.getAdditionalServices()) {
-			this.additionalServices.add(new HotelAdditionalServiceDTO(has));
+			if(!has.isDeleted())
+				this.additionalServices.add(new HotelAdditionalServiceDTO(has));
 		}
 		for (HotelRoom room : hotel.getRooms()) {
-			this.rooms.add(new HotelRoomDTO(room));
+			if(!room.isDeleted())
+				this.rooms.add(new HotelRoomDTO(room));
 		}
 	}
 

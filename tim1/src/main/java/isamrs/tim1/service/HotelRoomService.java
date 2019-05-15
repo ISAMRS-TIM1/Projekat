@@ -48,9 +48,10 @@ public class HotelRoomService {
 		HotelRoom hr = hotelRoomRepository.findOneByNumberAndHotel(roomNumber, hotel.getId());
 		if (hr == null)
 			return new MessageDTO("Hotel room with this number does not exist", ToasterType.ERROR.toString());
-		if (!hr.getNormalReservations().isEmpty() || !hr.getQuickReservations().isEmpty())
+		if (checkForActiveReservations(hr))
 			return new MessageDTO("Hotel room has reservations bound to it", ToasterType.ERROR.toString());
-		hotelRoomRepository.delete(hr);
+		hr.setDeleted(true);
+		hotelRoomRepository.save(hr);
 		return new MessageDTO("Hotel room deleted successfully", ToasterType.SUCCESS.toString());
 	}
 
@@ -99,7 +100,7 @@ public class HotelRoomService {
 		HotelRoom hr = hotelRoomRepository.findOneByNumberAndHotel(roomNumber, hotel.getId());
 		if (hr == null)
 			return new MessageDTO("Hotel room with this number does not exist", ToasterType.ERROR.toString());
-		if (!hr.getNormalReservations().isEmpty() || !hr.getQuickReservations().isEmpty())
+		if (checkForActiveReservations(hr))
 			return new MessageDTO("Hotel room has reservations bound to it", ToasterType.ERROR.toString());
 		if (!hotelRoom.getRoomNumber().equals(roomNumber)) // if room number was changed, check if new one is taken
 			if (hotelRoomRepository.findOneByNumberAndHotel(hotelRoom.getRoomNumber(), hotel.getId()) != null)
@@ -140,4 +141,23 @@ public class HotelRoomService {
 		return retval;
 	}
 
+	private boolean checkForActiveReservations(HotelRoom hr) {
+		boolean activeReservations = false;
+		for (HotelReservation r : hr.getNormalReservations()) {
+			if (r.isDone()) {
+				activeReservations = true;
+				break;
+			}
+		}
+
+		if (!activeReservations) {
+			for (QuickHotelReservation r : hr.getQuickReservations()) {
+				if (r.isDone()) {
+					activeReservations = true;
+					break;
+				}
+			}
+		}
+		return activeReservations;
+	}
 }
