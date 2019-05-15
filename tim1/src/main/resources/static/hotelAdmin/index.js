@@ -66,6 +66,13 @@ $(document).ready(function() {
 		}
 	});
 
+	$('#newSeasonalPriceDateRange').daterangepicker({
+		minDate:  moment(moment()).add(1, 'days'), // tomorrow
+		endDate: moment(moment()).add(2, 'days'),
+		locale: {
+		      format: 'DD/MM/YYYY'
+		    },
+	});
 	$('#showIncomeDateRange').daterangepicker({
 		locale : {
 			format : 'DD/MM/YYYY'
@@ -383,6 +390,7 @@ function setUpNewHotelRoomForm() {
 function setUpNewSeasonalPriceForm() {
 	$('#newSeasonalPriceForm').on('submit', function(e) {
 		e.preventDefault();
+		var drp = $('#newSeasonalPriceDateRange').data('daterangepicker');
 		$.ajax({
 			type : 'POST',
 			url : addSeasonalPriceURL + shownRoom,
@@ -391,8 +399,8 @@ function setUpNewSeasonalPriceForm() {
 			dataType : "json",
 			data : JSON.stringify({
 				"price" : $("#newSeasonalPricePrice").val(),
-				"fromDate" : $("#newSeasonalPriceFrom").val(),
-				"toDate" : $("#newSeasonalPriceTo").val(),
+				"fromDate" : drp.startDate.toDate(),
+				"toDate" : drp.endDate.toDate()
 			}),
 			success : function(data) {
 				loadHotel();

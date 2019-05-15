@@ -128,7 +128,7 @@ a[data-toggle="tab"] {
 	margin-top: -6%;
 }
 
-.btn-default {
+.myButton {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
@@ -261,12 +261,12 @@ a[data-toggle="tab"] {
 }
 
 .showHotelRoomTable td {
-	padding: 2vw;
+	padding: 0.5vw;
 	text-align: center;
 }
 
-.showHotelRoomTable label {
-	margin: 2vw;
+#addSeasonalPriceButton{
+	margin: auto;
 }
 
 /* NEW ROOM MODAL */
