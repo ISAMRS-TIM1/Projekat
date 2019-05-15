@@ -23,6 +23,10 @@ public class HotelReservation extends Reservation {
 	@JoinColumn(name = "hotelRoom")
 	private HotelRoom hotelRoom;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "additionalService")
+	private HotelAdditionalService additionalService;
+	
 	private static final long serialVersionUID = 4087468028517776623L;
 
 	public Date getFromDate() {

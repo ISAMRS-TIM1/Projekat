@@ -297,3 +297,32 @@ a[data-toggle="tab"] {
 	border: 0.16vw solid #B27A00;
 	border-radius: 2vw 2vw 2vw 2vw;
 }
+
+/* NEW ADDITIONAL SERVICE MODAL */
+#newAdditionalServiceDiv {
+	margin: 0;
+	background: #5994FF;
+	border: 0.24vw solid #B27A00;
+	border-radius: 4vw 1.6vw;
+}
+
+#newAdditionalServiceTable {
+	margin: auto;
+}
+
+#newAdditionalServiceTable td {
+	padding: 30px;
+	text-align: center;
+}
+
+#addAdditionalServiceButton {
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 2vh;
+	display: block;
+	background: #5994FF;
+	color: white;
+	font-size: 1.6vw;
+	border: 0.16vw solid #B27A00;
+	border-radius: 2vw 2vw 2vw 2vw;
+}
