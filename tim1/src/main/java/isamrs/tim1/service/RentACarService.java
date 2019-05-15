@@ -237,23 +237,21 @@ public class RentACarService {
 				.getRentACar();
 
 		for (QuickVehicleReservation qr : rentACar.getQuickReservations()) {
-			if (qr.getBranchOffice().getId() == quickReservation.getBranchOffice()
-					&& qr.getVehicle().getId() == quickReservation.getVehicle()
-					&& ((qr.getFromDate().before(quickReservation.getFromDate())
-							|| qr.getFromDate().equals(quickReservation.getFromDate())
-									&& (qr.getToDate().after(quickReservation.getToDate())
-											|| qr.getToDate().equals(quickReservation.getToDate()))))) {
+			if (qr.getBranchOffice().getId().equals(quickReservation.getBranchOffice())
+					&& qr.getVehicle().getId().equals(quickReservation.getVehicle())
+					&& !((quickReservation.getFromDate().before(qr.getFromDate()))
+							&& quickReservation.getToDate().before(qr.getFromDate()))
+					|| (quickReservation.getFromDate().after(qr.getToDate()))) {
 				return new MessageDTO("Vehicle is taken in given peroid", ToasterType.ERROR.toString());
 			}
 		}
 
 		for (VehicleReservation vr : rentACar.getNormalReservations()) {
-			if (vr.getBranchOffice().getId() == quickReservation.getBranchOffice()
-					&& vr.getVehicle().getId() == quickReservation.getVehicle()
-					&& ((vr.getFromDate().before(quickReservation.getFromDate())
-							|| vr.getFromDate().equals(quickReservation.getFromDate())
-									&& (vr.getToDate().after(quickReservation.getToDate())
-											|| vr.getToDate().equals(quickReservation.getToDate()))))) {
+			if (vr.getBranchOffice().getId().equals(quickReservation.getBranchOffice())
+					&& vr.getVehicle().getId().equals(quickReservation.getVehicle())
+					&& !((quickReservation.getFromDate().before(vr.getFromDate()))
+							&& quickReservation.getToDate().before(vr.getFromDate()))
+					|| (quickReservation.getFromDate().after(vr.getToDate()))) {
 				return new MessageDTO("Vehicle is taken in given peroid", ToasterType.ERROR.toString());
 			}
 		}
@@ -280,6 +278,18 @@ public class RentACarService {
 		rentACarRepository.save(rentACar);
 
 		return new MessageDTO("Quick vehicle reservation added successfully", ToasterType.SUCCESS.toString());
+	}
 
+	public ArrayList<QuickVehicleReservationDTO> getQuickVehicleReservations() {
+		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+				.getRentACar();
+
+		ArrayList<QuickVehicleReservationDTO> quickReservations = new ArrayList<QuickVehicleReservationDTO>();
+
+		for (QuickVehicleReservation qvr : rentACar.getQuickReservations()) {
+			quickReservations.add(new QuickVehicleReservationDTO(qvr));
+		}
+
+		return quickReservations;
 	}
 }

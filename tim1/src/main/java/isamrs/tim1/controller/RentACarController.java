@@ -105,8 +105,15 @@ public class RentACarController {
 	@RequestMapping(value = "/api/createQuickVehicleReservation", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MessageDTO> createQuickVehicleReservation(
 			@RequestBody QuickVehicleReservationDTO quickReservation) {
-		return new ResponseEntity<MessageDTO>(
-				rentACarService.createQuickVehicleReservation(quickReservation), HttpStatus.OK);
+		return new ResponseEntity<MessageDTO>(rentACarService.createQuickVehicleReservation(quickReservation),
+				HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasRole('RENTADMIN')")
+	@RequestMapping(value = "/api/getQuickVehicleReservations", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ArrayList<QuickVehicleReservationDTO>> getQuickVehicleReservations() {
+		return new ResponseEntity<ArrayList<QuickVehicleReservationDTO>>(rentACarService.getQuickVehicleReservations(),
+				HttpStatus.OK);
 	}
 
 }
