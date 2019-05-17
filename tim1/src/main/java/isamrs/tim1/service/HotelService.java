@@ -62,7 +62,7 @@ public class HotelService {
 	}
 
 	public HotelDTO getHotel(HotelAdmin admin) {
-		return new HotelDTO(admin.getHotel());
+		return new HotelDTO(admin.getHotel(), true);
 	}
 
 	public ArrayList<ServiceViewDTO> getHotels() {
@@ -85,7 +85,7 @@ public class HotelService {
 	}
 
 	public HotelDTO getDetailedHotel(String name) {
-		return new HotelDTO(hotelRepository.findOneByName(name));
+		return new HotelDTO(hotelRepository.findOneByName(name), false);
 	}
 
 	public double getIncomeOfHotel(Date fromDate, Date toDate) {

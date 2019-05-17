@@ -400,3 +400,11 @@ input, select {
 #searchVehiclesButton {
 	width:100%;
 }
+
+/* BIG MODAL */
+@media (min-width: 768px) {
+  .modal-xl {
+    width: 90%;
+   max-width:1200px;
+  }
+}

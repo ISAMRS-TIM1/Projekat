@@ -17,7 +17,7 @@ public class HotelDTO implements Serializable {
 	private ArrayList<HotelAdditionalServiceDTO> additionalServices;
 	private ArrayList<HotelRoomDTO> rooms;
 
-	public HotelDTO(Hotel hotel) {
+	public HotelDTO(Hotel hotel, boolean withRooms) {
 		super();
 		this.name = hotel.getName();
 		this.description = hotel.getDescription();
@@ -25,14 +25,16 @@ public class HotelDTO implements Serializable {
 		this.latitude = hotel.getLocation().getLatitude();
 		this.longitude = hotel.getLocation().getLongitude();
 		this.additionalServices = new ArrayList<HotelAdditionalServiceDTO>();
-		this.rooms = new ArrayList<HotelRoomDTO>();
 		for (HotelAdditionalService has : hotel.getAdditionalServices()) {
-			if(!has.isDeleted())
+			if (!has.isDeleted())
 				this.additionalServices.add(new HotelAdditionalServiceDTO(has));
 		}
-		for (HotelRoom room : hotel.getRooms()) {
-			if(!room.isDeleted())
-				this.rooms.add(new HotelRoomDTO(room));
+		if (withRooms) {
+			this.rooms = new ArrayList<HotelRoomDTO>();
+			for (HotelRoom room : hotel.getRooms()) {
+				if (!room.isDeleted())
+					this.rooms.add(new HotelRoomDTO(room));
+			}
 		}
 	}
 
