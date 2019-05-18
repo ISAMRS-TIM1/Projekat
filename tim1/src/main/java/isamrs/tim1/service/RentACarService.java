@@ -15,6 +15,7 @@ import isamrs.tim1.dto.BranchOfficeDTO;
 import isamrs.tim1.dto.DetailedServiceDTO;
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.MessageDTO.ToasterType;
+import isamrs.tim1.dto.QuickVehicleReservationDTO;
 import isamrs.tim1.dto.RentACarDTO;
 import isamrs.tim1.dto.ServiceViewDTO;
 import isamrs.tim1.model.BranchOffice;
@@ -22,6 +23,7 @@ import isamrs.tim1.model.Location;
 import isamrs.tim1.model.QuickVehicleReservation;
 import isamrs.tim1.model.RentACar;
 import isamrs.tim1.model.RentACarAdmin;
+import isamrs.tim1.model.Vehicle;
 import isamrs.tim1.model.VehicleReservation;
 import isamrs.tim1.repository.RentACarRepository;
 import isamrs.tim1.repository.ServiceRepository;
@@ -228,5 +230,66 @@ public class RentACarService {
 			}
 		}
 		return income;
+	}
+
+	public MessageDTO createQuickVehicleReservation(QuickVehicleReservationDTO quickReservation) {
+		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+				.getRentACar();
+
+		for (QuickVehicleReservation qr : rentACar.getQuickReservations()) {
+			if (qr.getBranchOffice().getId().equals(quickReservation.getBranchOffice())
+					&& qr.getVehicle().getId().equals(quickReservation.getVehicle())
+					&& !((quickReservation.getFromDate().before(qr.getFromDate()))
+							&& quickReservation.getToDate().before(qr.getFromDate()))
+					|| (quickReservation.getFromDate().after(qr.getToDate()))) {
+				return new MessageDTO("Vehicle is taken in given peroid", ToasterType.ERROR.toString());
+			}
+		}
+
+		for (VehicleReservation vr : rentACar.getNormalReservations()) {
+			if (vr.getBranchOffice().getId().equals(quickReservation.getBranchOffice())
+					&& vr.getVehicle().getId().equals(quickReservation.getVehicle())
+					&& !((quickReservation.getFromDate().before(vr.getFromDate()))
+							&& quickReservation.getToDate().before(vr.getFromDate()))
+					|| (quickReservation.getFromDate().after(vr.getToDate()))) {
+				return new MessageDTO("Vehicle is taken in given peroid", ToasterType.ERROR.toString());
+			}
+		}
+
+		QuickVehicleReservation newQuickReservation = new QuickVehicleReservation();
+
+		BranchOffice br = rentACar.getBranchOffices().stream()
+				.filter(bo -> bo.getId() == quickReservation.getBranchOffice()).findFirst().orElse(null);
+		newQuickReservation.setBranchOffice(br);
+		newQuickReservation.setDateOfReservation(null);
+		newQuickReservation.setDiscount(quickReservation.getDiscount());
+		newQuickReservation.setDone(null);
+		newQuickReservation.setFromDate(quickReservation.getFromDate());
+		newQuickReservation.setId(null);
+		newQuickReservation.setPrice(null);
+		newQuickReservation.setToDate(quickReservation.getToDate());
+		newQuickReservation.setUser(null);
+		Vehicle v = rentACar.getVehicles().stream().filter(ve -> ve.getId() == quickReservation.getVehicle())
+				.findFirst().orElse(null);
+		newQuickReservation.setVehicle(v);
+
+		rentACar.getQuickReservations().add(newQuickReservation);
+
+		rentACarRepository.save(rentACar);
+
+		return new MessageDTO("Quick vehicle reservation added successfully", ToasterType.SUCCESS.toString());
+	}
+
+	public ArrayList<QuickVehicleReservationDTO> getQuickVehicleReservations() {
+		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+				.getRentACar();
+
+		ArrayList<QuickVehicleReservationDTO> quickReservations = new ArrayList<QuickVehicleReservationDTO>();
+
+		for (QuickVehicleReservation qvr : rentACar.getQuickReservations()) {
+			quickReservations.add(new QuickVehicleReservationDTO(qvr));
+		}
+
+		return quickReservations;
 	}
 }

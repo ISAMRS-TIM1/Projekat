@@ -235,3 +235,24 @@ a[data-toggle="tab"] {
 	border: 0.16vw solid #B27A00;
 	border-radius: 2vw 2vw 2vw 2vw;
 }
+
+#quickDiv {
+	margin-top: 2%;
+	width: 85%;
+	margin-left: 15%;
+	display: block;
+}
+
+#quickTable {
+	text-align: center;
+	border-collapse: separate;
+	border-spacing: 20px;
+}
+
+#quickCreateTD {
+	transform: translate(188%, 0%);
+}
+
+#quickCreate {
+	width:100%;
+}

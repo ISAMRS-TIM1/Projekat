@@ -3,7 +3,7 @@ package isamrs.tim1.dto;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import isamrs.tim1.model.Airline;
+import isamrs.tim1.model.Flight;
 import isamrs.tim1.model.FlightReservation;
 import isamrs.tim1.model.PassengerSeat;
 import isamrs.tim1.model.PlaneSegment;
@@ -17,29 +17,36 @@ public class PlaneSeatsDTO implements Serializable {
 	private Double firstClassPrice;
 	private Double businessClassPrice;
 	private Double economyClassPrice;
+	private String[] savedSeats;
+	private String flightCode;
 	
 	public PlaneSeatsDTO() {
 		super();
 	}
 
-	public PlaneSeatsDTO(Airline airline) {
+	public PlaneSeatsDTO(Flight flight) {
 		super();
-		this.planeSegments = new ArrayList<PlaneSegment>(airline.getPlaneSegments());
+		this.flightCode = flight.getFlightCode();
+		this.planeSegments = new ArrayList<PlaneSegment>(flight.getPlaneSegments());
 		this.reservedSeats = new ArrayList<String>();
-		this.firstClassPrice = 50.0; // until the reservation feature is made
-		this.businessClassPrice = 40.0; // until the reservation feature is made
-		this.economyClassPrice = 30.0; // until the reservation feature is made
-		for (FlightReservation r : airline.getNormalReservations()) {
-			for (PassengerSeat ps : r.getPassengerSeats()) {
-				if (ps.getSeat() != null) {
-					this.reservedSeats.add(ps.getSeat().getRow() + "_" + ps.getSeat().getColumn());
+		this.firstClassPrice = flight.getFirstClassPrice();
+		this.businessClassPrice = flight.getBusinessClassPrice();
+		this.economyClassPrice = flight.getEconomyClassPrice();
+		for (FlightReservation r : flight.getAirline().getNormalReservations()) {
+			if (r.getFlight().getFlightCode().equals(flight.getFlightCode())) {
+				for (PassengerSeat ps : r.getPassengerSeats()) {
+					if (ps.getSeat() != null) {
+						this.reservedSeats.add(ps.getSeat().getRow() + "_" + ps.getSeat().getColumn());
+					}
 				}
 			}
 		}
-		for (QuickFlightReservation r : airline.getQuickReservations()) {
-			for (PassengerSeat ps : r.getPassengerSeats()) {
-				if (ps.getSeat() != null) {
-					this.reservedSeats.add(ps.getSeat().getRow() + "_" + ps.getSeat().getColumn());
+		for (QuickFlightReservation r : flight.getAirline().getQuickReservations()) {
+			if (r.getFlight().getFlightCode().equals(flight.getFlightCode())) {
+				for (PassengerSeat ps : r.getPassengerSeats()) {
+					if (ps.getSeat() != null) {
+						this.reservedSeats.add(ps.getSeat().getRow() + "_" + ps.getSeat().getColumn());
+					}
 				}
 			}
 		}
@@ -83,6 +90,22 @@ public class PlaneSeatsDTO implements Serializable {
 
 	public void setEconomyClassPrice(Double economyClassPrice) {
 		this.economyClassPrice = economyClassPrice;
+	}
+	
+	public String[] getSavedSeats() {
+		return savedSeats;
+	}
+
+	public void setSavedSeats(String[] savedSeats) {
+		this.savedSeats = savedSeats;
+	}
+
+	public String getFlightCode() {
+		return flightCode;
+	}
+
+	public void setFlightCode(String flightCode) {
+		this.flightCode = flightCode;
 	}
 
 	public static long getSerialversionuid() {

@@ -59,7 +59,6 @@
 					<li><a data-toggle="tab" href="#destinationsTab">Destinations</a>
 					</li>
 					<li><a data-toggle="tab" href="#flightsTab">Flights</a></li>
-					<li><a data-toggle="tab" href="#planeSeatsTab">Plane seats</a></li>
 					<li><a data-toggle="tab" href="#quickResevationsTab">Quick
 							reservations</a></li>
 					<li><a data-toggle="tab" href="#profile">Profile</a></li>
@@ -137,6 +136,7 @@
 					<table id="flightsTable" class="table display table-bordered">
 						<thead>
 							<tr>
+								<th>Flight code</th>
 								<th>Start destination</th>
 								<th>End destination</th>
 								<th>Departure time</th>
@@ -160,7 +160,7 @@
 							data-target="#flightModalDialog">Add flight</button>
 				</div>
 			</div>
-			<div id="planeSeatsTab" class="tab-pane fade">
+			<!-- <div id="planeSeatsTab" class="tab-pane fade">
 				<div id="planeSeatsTable">
 					<div id="seat-map">
 						<div class="front-indicator">Front</div>
@@ -206,7 +206,7 @@
 							onclick="saveSeatsChanges(event)">Save changes</button>
 					</div>
 				</div>
-			</div>
+			</div>-->
 			<div id="quickResevationsTab" class="tab-pane fade">
 				<div class="tableWrapper">
 					<div class="tableButtons">
@@ -289,7 +289,7 @@
 	<div class="modal fade" id="flightModalDialog" tabindex="-1" role="dialog"
 		aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-lg" role="document">
-			<div class="modal-content" id="serviceDiv">
+			<div class="modal-content" id="flightServiceDiv">
 				<table id="serviceTable">
 				<tr>
 					<td>
@@ -363,14 +363,52 @@
 						<input type="number" id="economyPrice"/>
 					</td>
 				</tr>
-				<tr><td colspan="4"></td></tr>
-				<tr>
-					<td colspan="4">
-						<button class="btn btn-default"
-									id="modalFlightButton" onclick="addFlight(event)">Add flight</button>
-					</td>
-				</tr>
-				</table>
+				</table><br><br>
+				<div id="planeSeatsTable">
+					<div id="seat-map">
+						<div class="front-indicator">Front</div>
+					</div>
+					<div class="booking-details">
+						<h2>Configure seats</h2>
+						<h3>First class</h3>
+						<input type="number" id="first">
+						<div>
+							<button class="btn btn-default configure-button" id="addButton"
+								onclick="add(event, 1)">Add</button>
+							<button class="btn btn-default configure-button"
+								id="deleteButton" onclick="deleteSeats(event, 1)">Delete</button>
+						</div>
+						<br>
+						<h3>Business class</h3>
+						<input type="number" id="business">
+						<div>
+							<button class="btn btn-default configure-button" id="addButton"
+								onclick="add(event, 2)">Add</button>
+							<button class="btn btn-default configure-button"
+								id="deleteButton" onclick="deleteSeats(event, 2)">Delete</button>
+						</div>
+						<br>
+						<h3>Economy class</h3>
+						<input type="number" id="economy">
+						<div>
+							<button class="btn btn-default configure-button" id="addButton"
+								onclick="add(event, 3)">Add</button>
+							<button class="btn btn-default configure-button"
+								id="deleteButton" onclick="deleteSeats(event, 3)">Delete</button>
+						</div>
+						<div id="seatDiv">
+							<button class="btn btn-default configure-button" id="addButton"
+								onclick="addSeatsIndividually(event)">Add seat</button>
+							<button class="btn btn-default configure-button"
+								id="deleteButton" onclick="deleteSeatsIndividually(event)">Delete
+								seat</button>
+						</div>
+						<div id="legend"></div>
+						<button id="saveSeatButton"
+							class="btn btn-default configure-button"
+							onclick="addFlight(event)">Add flight</button>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

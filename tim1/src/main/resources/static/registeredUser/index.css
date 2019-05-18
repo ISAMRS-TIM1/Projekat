@@ -54,7 +54,8 @@ a[data-toggle="tab"] {
 	margin-top: -6%;
 }
 
-#saveChanges, #searchFlights, #searchHotelsButton, #searchRoomsButton {
+#saveChanges, #searchFlights, #searchHotelsButton, #searchRoomsButton, 
+#nextButtonFlights, #nextButtonFlightsStep, #nextButtonFlightsFriends, #nextButtonFlightsLast {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
@@ -64,8 +65,48 @@ a[data-toggle="tab"] {
 	border-radius: 2vw 2vw 2vw 2vw;
 }
 
+#reserveButton {
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	color: white;
+	border: 0.16vw solid #B27A00;
+	border-radius: 2vw 2vw 2vw 2vw;
+}
+
+#nextButtonFlights {
+	position: absolute;
+    top: 100vh;
+    left: 55vw;
+}
+
+#nextButtonFlightsFriends {
+	position: relative;
+    margin-left: 90%;
+    margin-bottom: 5%;
+}
+
+#nextButtonFlightsLast {
+	position: relative;
+    margin-left: 80%;
+    margin-bottom: 5%;
+}
+
 #email {
 	text-align: center;
+}
+
+#reservationCart {
+	width: 17.5vw;
+    height: 17.5vw;
+    position: fixed;
+    right: 0;
+    top: 9.5vw;
+    background: #5994FF;
+    border: 0.24vw solid #B27A00;
+    border-radius: 4vw 4vw;
+    padding: 2vw;
+    overflow:auto;
 }
 
 #friendsTableDiv {
@@ -220,6 +261,18 @@ input, button {
 	font-size: 15px;
 }
 
+#showFlightTable, #passengersTable {
+	text-align:left;
+	color:white;
+	margin: 0 auto;
+}
+#showFlightTable tbody, #passengersTable tbody {
+	overflow-y : auto;
+}
+#showFlightTable td, #passengersTable td {
+	padding: 5px;
+}
+
 #searchUsersButton {
 	margin-left: auto;
 	margin-right: auto;
@@ -291,18 +344,23 @@ input, button {
 	padding: 2vw;
 }
 
-#serviceTable {
+#serviceTable, #cartTable {
 	text-align: left;
 	color: white;
 	margin: 0 auto;
 }
 
-#serviceTable tbody {
+#serviceTable tbody, #cartTable tbody {
 	overflow-y: auto;
 }
 
 #serviceTable td {
 	padding: 5px;
+}
+
+#cartTable {
+	height: 100%;
+	overflow: auto;
 }
 
 input, select {
@@ -336,7 +394,7 @@ input, select {
 	padding: 5px;
 }
 
-#showHotelDiv {
+#showHotelDiv, #showFlightDiv {
 	margin: 0;
 	background: #5994FF;
 	border: 0.24vw solid #B27A00;
@@ -377,6 +435,18 @@ input, select {
 .textInput {
 	border: none;
 	resize: none;
+}
+
+#reserveDivFriends {
+	margin-top: 5%;
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+#reserveDivPassengers {
+	margin-top: 5%;
+    margin-left: 5%;
+    margin-right: 5%;
 }
 
 #yearOfProductionDatepicker {

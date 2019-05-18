@@ -19,6 +19,8 @@ public class VehicleDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 9104954817019763655L;
 
+	private Integer id;
+
 	@NotBlank
 	@NotNull
 	private String model;
@@ -61,6 +63,7 @@ public class VehicleDTO implements Serializable {
 		this.pricePerDay = v.getPricePerDay();
 		this.averageGrade = v.getAverageGrade();
 		this.deleted = v.isDeleted();
+		this.id = v.getId();
 	}
 
 	public VehicleDTO() {
@@ -157,6 +160,14 @@ public class VehicleDTO implements Serializable {
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 }

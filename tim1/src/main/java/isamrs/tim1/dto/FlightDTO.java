@@ -2,8 +2,14 @@ package isamrs.tim1.dto;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import isamrs.tim1.model.Flight;
+import isamrs.tim1.model.FlightReservation;
+import isamrs.tim1.model.PassengerSeat;
+import isamrs.tim1.model.PlaneSegment;
+import isamrs.tim1.model.PlaneSegmentClass;
+import isamrs.tim1.model.QuickFlightReservation;
 
 public class FlightDTO implements Serializable {
 
@@ -19,6 +25,9 @@ public class FlightDTO implements Serializable {
 	private String startDestination;
 	private String endDestination;
 	private Double averageGrade;
+	private String flightCode;
+	private ArrayList<String> reservedSeats;
+	private ArrayList<PlaneSegment> planeSegments;
 	
 	public FlightDTO() {
 		super();
@@ -39,6 +48,27 @@ public class FlightDTO implements Serializable {
 		this.connections = new String[f.getLocationsOfConnecting().size()];
 		this.connections = f.getLocationsOfConnecting().toArray(this.connections);
 		this.averageGrade = f.getAverageGrade();
+		this.flightCode = f.getFlightCode();
+		this.planeSegments = new ArrayList<PlaneSegment>(f.getPlaneSegments());
+		this.reservedSeats = new ArrayList<String>();
+		for (FlightReservation r : f.getAirline().getNormalReservations()) {
+			if (r.getFlight().getFlightCode().equals(f.getFlightCode())) {
+				for (PassengerSeat ps : r.getPassengerSeats()) {
+					if (ps.getSeat() != null) {
+						this.reservedSeats.add(ps.getSeat().getRow() + "_" + ps.getSeat().getColumn());
+					}
+				}
+			}
+		}
+		for (QuickFlightReservation r : f.getAirline().getQuickReservations()) {
+			if (r.getFlight().getFlightCode().equals(f.getFlightCode())) {
+				for (PassengerSeat ps : r.getPassengerSeats()) {
+					if (ps.getSeat() != null) {
+						this.reservedSeats.add(ps.getSeat().getRow() + "_" + ps.getSeat().getColumn());
+					}
+				}
+			}
+		}
 	}
 
 	public String getDepartureTime() {
@@ -156,8 +186,39 @@ public class FlightDTO implements Serializable {
 		this.averageGrade = averageGrade;
 	}
 
+	public String getFlightCode() {
+		return flightCode;
+	}
 
+	public void setFlightCode(String flightCode) {
+		this.flightCode = flightCode;
+	}
+	
+	public ArrayList<String> getReservedSeats() {
+		return reservedSeats;
+	}
 
+	public void setReservedSeats(ArrayList<String> reservedSeats) {
+		this.reservedSeats = reservedSeats;
+	}
+
+	public ArrayList<PlaneSegment> getPlaneSegments() {
+		return planeSegments;
+	}
+
+	public void setPlaneSegments(ArrayList<PlaneSegment> planeSegments) {
+		this.planeSegments = planeSegments;
+	}
+
+	public PlaneSegment getPlaneSegmentByClass(PlaneSegmentClass segmentClass) {
+		for (PlaneSegment p : this.getPlaneSegments()) {
+			if (p.getSegmentClass() == segmentClass) {
+				return p;
+			}
+		}
+		return null;
+	}
+	
 	private static final long serialVersionUID = 3798933624021732767L;
 
 }

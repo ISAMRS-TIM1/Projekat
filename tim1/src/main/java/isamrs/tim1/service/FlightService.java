@@ -4,6 +4,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -16,10 +19,15 @@ import isamrs.tim1.dto.FlightDTO;
 import isamrs.tim1.dto.FlightUserViewDTO;
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.MessageDTO.ToasterType;
+import isamrs.tim1.dto.PlaneSeatsDTO;
 import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.Flight;
+import isamrs.tim1.model.PlaneSegment;
+import isamrs.tim1.model.PlaneSegmentClass;
+import isamrs.tim1.model.Seat;
 import isamrs.tim1.repository.DestinationRepository;
 import isamrs.tim1.repository.FlightRepository;
+import isamrs.tim1.repository.SeatRepository;
 import isamrs.tim1.repository.ServiceRepository;
 
 @Service
@@ -34,11 +42,35 @@ public class FlightService {
 	@Autowired
 	FlightRepository flightRepository;
 	
-	public ResponseEntity<MessageDTO> addFlight(FlightDTO flightDTO) {
+	@Autowired
+	SeatRepository seatRepository;
+	
+	public ResponseEntity<String> addFlight(FlightDTO flightDTO) {
 		Airline a = (Airline) serviceRepository.findOneByName(flightDTO.getAirlineName());
 		if (a == null)
-			return new ResponseEntity<MessageDTO>(new MessageDTO("Airline does not exist.", ToasterType.ERROR.toString()), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>("Airline does not exist.", HttpStatus.BAD_REQUEST);
 		Flight flight = new Flight();
+		Random rand = new Random();
+		int n;
+		String flightCode;
+		while(true) {
+			n = rand.nextInt(101);
+			flightCode = flightDTO.getStartDestination().substring(0, 2).toUpperCase() + 
+					flightDTO.getEndDestination().substring(0, 2).toUpperCase() + n;
+			if (flightRepository.findOneByFlightCode(flightCode) == null) {
+				break;
+			}
+		}
+		flight.setFlightCode(flightCode);
+		PlaneSegment f = new PlaneSegment(PlaneSegmentClass.FIRST);
+		PlaneSegment b = new PlaneSegment(PlaneSegmentClass.BUSINESS);
+		PlaneSegment ec = new PlaneSegment(PlaneSegmentClass.ECONOMY);
+		f.setFlight(flight);
+		b.setFlight(flight);
+		ec.setFlight(flight);
+		flight.getPlaneSegments().add(f);
+		flight.getPlaneSegments().add(b);
+		flight.getPlaneSegments().add(ec);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
 		try {
 			flight.setDepartureTime(sdf.parse(flightDTO.getDepartureTime()));
@@ -62,7 +94,7 @@ public class FlightService {
 		flight.setAirline(a);
 		a.getFlights().add(flight);
 		flightRepository.save(flight);
-		return new ResponseEntity<MessageDTO>(new MessageDTO("Flight added successfully.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
+		return new ResponseEntity<String>(flightCode, HttpStatus.OK);
 	}
 
 	public ArrayList<FlightUserViewDTO> searchFlights(FlightDTO flight) {
@@ -79,5 +111,71 @@ public class FlightService {
 		}
 		return flightsList;
 	}
+	
+	public MessageDTO saveSeats(PlaneSeatsDTO seats) {
+		Flight f = flightRepository.findOneByFlightCode(seats.getFlightCode());
+		if (f == null) {
+			return new MessageDTO("Flight does not exist.", ToasterType.ERROR.toString());
+		}
+		Set<PlaneSegment> planeSegments = f.getPlaneSegments();
+		for (PlaneSegment p : planeSegments) {
+			if (p.getSeats().size() == 0) {
+				for (String s : seats.getSavedSeats()) {
+					String[] idx = s.split("_");
+					if (idx[2].equalsIgnoreCase(p.getSegmentClass().toString().substring(0, 1))) {
+						Seat st = new Seat();
+						st.setRow(Integer.parseInt(idx[0]));
+						st.setColumn(Integer.parseInt(idx[1]));
+						st.setPlaneSegment(p);
+						p.getSeats().add(st);
+					}
+				}
+			}
+		}
+		for (String s : seats.getSavedSeats()) {
+			String[] idx = s.split("_");
+			int row = Integer.parseInt(idx[0]);
+			int column = Integer.parseInt(idx[1]);
+			for (PlaneSegment p : planeSegments) {
+				if (idx[2].equalsIgnoreCase(p.getSegmentClass().toString().substring(0, 1))
+						&& (!p.checkSeatExistence(row, column))) {
+					Seat st = new Seat();
+					st.setRow(row);
+					st.setColumn(column);
+					st.setPlaneSegment(p);
+					p.getSeats().add(st);
+				}
+			}
+		}
+		ArrayList<Seat> seatForDelete = new ArrayList<Seat>();
+		for (PlaneSegment p : planeSegments) {
+			Iterator<Seat> it = p.getSeats().iterator();
+			while (it.hasNext()) {
+				Seat s = it.next();
+				List<String> st = Arrays.asList(seats.getSavedSeats());
+				String ste = s.getRow() + "_" + s.getColumn() + "_"
+						+ p.getSegmentClass().toString().toLowerCase().charAt(0);
+				if (!(st.contains(ste))) {
+					seatForDelete.add(s);
+					it.remove();
+				}
+			}
+		}
+		f.setPlaneSegments(planeSegments);
+		flightRepository.save(f);
+		for (Seat s : seatForDelete) {
+			seatRepository.delete(s);
+		}
+		return new MessageDTO("Seats saved successfully", ToasterType.SUCCESS.toString());
+	}
+	
+	public PlaneSeatsDTO getPlaneSeats(String flightCode) {
+		Flight f = flightRepository.findOneByFlightCode(flightCode);
+		return new PlaneSeatsDTO(f);
+	}
 
+	public FlightDTO getDetailedFlight(String flightCode) {
+		Flight f = flightRepository.findOneByFlightCode(flightCode);
+		return new FlightDTO(f);
+	}
 }

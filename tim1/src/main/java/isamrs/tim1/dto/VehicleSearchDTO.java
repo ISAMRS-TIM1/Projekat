@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class VehicleSearchDTO {
-	String producer;
-	ArrayList<String> models;
-	ArrayList<String> vehicleTypes;
-	ArrayList<String> fuelTypes;
-	Integer price;
-	Integer seats;
-	Date startDate;
-	Date endDate;
-	double minGrade;
-	double maxGrade;
+	private String producer;
+	private ArrayList<String> models;
+	private ArrayList<String> vehicleTypes;
+	private ArrayList<String> fuelTypes;
+	private Integer price;
+	private Integer seats;
+	private Date startDate;
+	private Date endDate;
+	private double minGrade;
+	private double maxGrade;
 
 	public VehicleSearchDTO() {
 		super();

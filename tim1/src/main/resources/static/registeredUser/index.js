@@ -12,14 +12,18 @@ const searchUsersURL = "/api/searchUsers";
 const friendInvitationURL = "/api/sendInvitation";
 const acceptInvitationURL = "/api/acceptInvitation";
 const declineInvitationURL = "/api/declineInvitation";
-const getFriendsURL = "/api/getFriends";
+const getFriendInvitationsURL = "/api/getFriendInvitations";
 const getDestinationsURL = "/api/getDestinations";
 const searchFlightsURL = "/api/searchFlights";
+const getFriendsURL = "/api/getFriends";
+const getReservationsURL = "/api/getReservations";
 
 const searchHotelsURL = "/api/searchHotels";
 const getHotelURL = "../api/getHotel";
 const getDetailedHotelURL = "../api/getDetailedHotel";
-const searchRoomsURL = '/api/searchRooms/'
+const getDetailedFlightURL = "/api/getDetailedFlight";
+const searchRoomsURL = '/api/searchRooms/';
+const reserveFlightURL = "/api/reserveFlight";
 
 const getVehicleProducersURL = "/api/getVehicleProducers";
 const getModelsForProducerURL = "/api/getModels/";
@@ -49,8 +53,8 @@ $(document)
 					loadData();
 					setUpToastr();
 					getDestinations();
-					// getPlaneSeats();
-
+					getReservations();
+					
 					$('#friendsTable').DataTable({
 						"paging" : false,
 						"info" : false,
@@ -67,14 +71,14 @@ $(document)
 						"retrieve" : true,
 					});
 
-					$('#flightsTable').DataTable({
+					$('#usersTable').DataTable({
 						"paging" : false,
 						"info" : false,
 						"scrollCollapse" : true,
 						"retrieve" : true,
 					});
-
-					$('#usersTable').DataTable({
+					
+					$('#inviteFriendsTable').DataTable({
 						"paging" : false,
 						"info" : false,
 						"scrollCollapse" : true,
@@ -83,7 +87,7 @@ $(document)
 
 					setUpTableFilter("#flightsTable");
 
-					var table = $('#flightsTable').DataTable({
+					var flightsTable = $('#flightsTable').DataTable({
 						"paging" : false,
 						"info" : false,
 						"scrollY" : "17vw",
@@ -91,6 +95,22 @@ $(document)
 						"scrollCollapse" : true,
 						"retrieve" : true,
 						"orderCellsTop" : true
+					});
+					
+					$('#showFlightModal').on('hidden.bs.modal', function() {
+						flightsTable.$('tr.selected').removeClass('selected');
+						$("#reserveDivPassengers").hide();
+						$("#reserveDivFriends").hide();
+						$("#reserveDiv").show();
+						seatsToReserve = [];
+					});
+					
+					$('#flightsTable tbody').on('click', 'tr', function() {
+						flightsTable.$('tr.selected').removeClass('selected');
+						$(this).addClass('selected');
+						shownFlight = flightsTable.row(this).data()[0];
+						loadFlight(shownFlight);
+						$("#showFlightModal").modal();
 					});
 
 					$(".nav li").click(function() {
@@ -255,6 +275,9 @@ $(document)
 
 					setUpHotelsTab();
 					
+					$("#reserveDivFriends").hide();
+					$("#reserveDivPassengers").hide();
+
 					$('#startYear').datepicker({
 						format : 'yyyy',
 						minViewMode: 'years',
@@ -550,7 +573,7 @@ function searchFlights(e) {
 					var date2 = moment(val.landingTime, 'DD.MM.YYYY hh:mm');
 					var diff = date2.diff(date1, 'minutes');
 					table.row.add(
-							[ val.departureTime, val.landingTime, val.airline,
+							[ val.flightCode, val.departureTime, val.landingTime, val.airline,
 									val.numberOfConnections, diff + " min",
 									val.firstClassPrice,
 									val.businessClassPrice,
@@ -568,7 +591,7 @@ function getFriends() {
 	$
 			.ajax({
 				type : 'GET',
-				url : getFriendsURL,
+				url : getFriendInvitationsURL,
 				headers : createAuthorizationTokenHeader(tokenKey),
 				success : function(data) {
 					if (data != null) {
@@ -675,14 +698,34 @@ var firstPrice = 0;
 var businessPrice = 0;
 var economyPrice = 0;
 
-function getPlaneSeats() {
+function resetReservationModal() {
+	firstClass = [];
+	businessClass = [];
+	economyClass = [];
+	firstSeatLabel = 1;
+	reservedSeats = [];
+	$("#total").html(0);
+	$("#counter").html(0);
+	$("#selected-seats").empty();
+	$("#userPassNumber").val("");
+	$("#numOfBags").val(0);
+	$("#passengersTable tr").remove();
+}
+
+function getPlaneSeats(code) {
 	$.ajax({
-		dataType : "json",
 		url : getPlaneSeatsURL,
+		contentType : "application/json",
+		data : {
+			'flightCode' : code
+		},
+		dataType : "json",
+		headers : createAuthorizationTokenHeader(tokenKey),
 		success : function(data) {
 			firstPrice = data["firstClassPrice"];
 			businessPrice = data["businessClassPrice"];
 			economyPrice = data["economyClassPrice"];
+			resetReservationModal();
 			renderPlaneSeats(data["planeSegments"], data["reservedSeats"]);
 		}
 	});
@@ -756,6 +799,7 @@ var firstClass = [];
 var businessClass = [];
 var economyClass = [];
 var reservedSeats = [];
+var seatsToReserve = [];
 
 function showPlaneSeats(seats) {
 	var $cart = $('#selected-seats'), $counter = $('#counter'), $total = $('#total'), sc = $(
@@ -810,6 +854,16 @@ function showPlaneSeats(seats) {
 							if (this.status() == 'available') {
 								// let's create a new <li> which we'll add to
 								// the cart items
+								if (this.settings.character == 'a')
+									return;
+								var seat = this.settings.id.split("_");
+								if (seat[1] == 4 || seat[1] == 5) {
+									seatsToReserve.push((seat[0] + "_" +  (seat[1] - 1)) + "_" + this.settings.character);
+								}
+								else {
+									seatsToReserve.push(this.settings.id + "_" + this.settings.character);
+								}
+								console.log(seatsToReserve);
 								$(
 										'<li>'
 												+ this.data().category
@@ -846,7 +900,9 @@ function showPlaneSeats(seats) {
 
 								// remove the item from our cart
 								$('#cart-item-' + this.settings.id).remove();
-
+								let index = seatsToReserve.indexOf(this.settings.id);
+								seatsToReserve.splice(index, 1);
+								console.log(seatsToReserve);
 								// seat has been vacated
 								return 'available';
 							} else if (this.status() == 'unavailable') {
@@ -882,7 +938,7 @@ function renderPlaneSeats(planeSegments, reserved) {
 			&& planeSegments[2].length == 0) {
 		showPlaneSeats([]);
 	} else {
-		reservedSeats = [];
+		reservedSeats = reserved;
 		var maxRowFirst = 0;
 		var segment;
 		for (var i = 0; i < planeSegments.length; i++) {
@@ -1083,6 +1139,54 @@ function loadHotel(name) {
 	});
 }
 
+function loadFlight(code) {
+	$.ajax({
+		type : 'GET',
+		url : getDetailedFlightURL,
+		contentType : "application/json",
+		data : {
+			'flightCode' : code
+		},
+		dataType : "json",
+		headers : createAuthorizationTokenHeader(tokenKey),
+		success : function(data) {
+			if (data != null) {
+				localStorage.setItem("flightCode", code);
+				localStorage.setItem("startDest", data["startDestination"]);
+				localStorage.setItem("endDest", data["endDestination"]);
+				localStorage.setItem("flightDate", data["departureTime"]);
+				$("#startDest").text(data["startDestination"]);
+				$("#endDest").text(data["endDestination"]);
+				$("#depTime").text(data["departureTime"]);
+				$("#landTime").text(data["landingTime"]);
+				$("#flightAirline").text(data["airlineName"]);
+				var date1 = moment(data["departureTime"], 'DD.MM.YYYY hh:mm');
+				var date2 = moment(data["landingTime"], 'DD.MM.YYYY hh:mm');
+				var diff = date2.diff(date1, 'minutes');
+				$("#flightDuration").text(diff);
+				$("#flightDistance").text(data["flightDistance"]);
+				var conn = $("#flightConnections");
+				if (data["connections"].length == 0) {
+					conn.append("<option value=''></option>");
+				}
+				else {
+					$.each(data["connections"], function(i, val) {
+						conn.append("<option value=" + val + ">" + val
+								+ "</option>");
+					});
+				}
+				$("#flightConnections").text(data["description"]);
+				$("#pricePerBag").text(data["pricePerBag"]);
+				$("#averageGrade").text(data["averageGrade"]);
+				getPlaneSeats(code);
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
 function renderRooms(data) {
 	roomsTable.clear().draw();
 	$.each(data, function(i, val) {
@@ -1188,4 +1292,196 @@ function setUpTableFilter(tableID, exceptColumn=""){
 					});
 				}
 			});
+}
+
+function showFriendsStep(e) {
+	e.preventDefault();
+	var userPass = $("#userPassNumber").val();
+	if (userPass == "" || userPass == undefined) {
+		toastr["error"]("Invalid passport number.");
+		return;
+	}
+	var numOfBags = $("#numOfBags").val();
+	if (isNaN(numOfBags) || numOfBags < 0) {
+		toastr["error"]("Invalid number of bags.");
+		return;
+	}
+	var numberOfPassengers = seatsToReserve.length;
+	if (numberOfPassengers == 0) {
+		toastr["error"]("You did not choose any seat.");
+		return;
+	}
+	var flightReservation = { "flightCode" : localStorage.getItem("flightCode"), 
+							  "numberOfPassengers" : numberOfPassengers,
+							  "seatsLeft" : numberOfPassengers - 1,
+							  "invitedFriends" : [],
+							  "passengers" : [{ "firstName" : "", "lastName": "", "passport" : userPass, "numberOfBags" : numOfBags }],
+							  "seats": seatsToReserve };
+	localStorage.setItem("flightReservation", JSON.stringify(flightReservation));
+	if (flightReservation["seatsLeft"] == 0) {
+		toastr["success"]("Successfully added flight reservation to cart.");
+		$('#showFlightModal').modal('toggle');
+		localStorage.setItem("flightReservation", JSON.stringify(flightReservation));
+		var startDest = localStorage.getItem("startDest");
+		var endDest = localStorage.getItem("endDest");
+		var flightDate = localStorage.getItem("flightDate");
+		$("#flightRes").html(startDest + "-" + endDest + " " + flightDate);
+		localStorage.setItem("flightRes", "true");
+	}
+	$.ajax({
+		type : 'GET',
+		url : getFriendsURL,
+		headers : createAuthorizationTokenHeader(tokenKey),
+		success : function(data) {
+			if (data != null) {
+				var table = $('#inviteFriendsTable').DataTable();
+				table.clear().draw();
+				$.each(data, function(i, val) {
+					table.row.add([val.email, val.firstName, val.lastName, 
+						"<input type='checkbox' value='" + val.email + "'>"]).draw(false);
+				});
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+	$("#reserveDiv").hide();
+	$("#reserveDivFriends").show();
+}
+
+function showLastStep(e) {
+	e.preventDefault();
+	var numOfInvited = $('#reserveDivFriends').find('input[type=checkbox]:checked').length;
+	var flightReservation = JSON.parse(localStorage.getItem("flightReservation"));
+	if (numOfInvited > flightReservation["seatsLeft"]) {
+		toastr["error"]("You want to invite more friends than number of seats reserved.");
+		return;
+	}
+	var invitedFriends = $("#reserveDivFriends").find('input[type=checkbox]:checked');
+	$.each(invitedFriends, function(i, val) {
+		flightReservation["invitedFriends"].push(val.val());
+		flightReservation["seatsLeft"]--;
+	});
+	if (flightReservation["seatsLeft"] == 0) {
+		toastr["success"]("Successfully added flight reservation to cart.");
+		$('#showFlightModal').modal('toggle');
+		localStorage.setItem("flightReservation", JSON.stringify(flightReservation));
+		var startDest = localStorage.getItem("startDest");
+		var endDest = localStorage.getItem("endDest");
+		var flightDate = localStorage.getItem("flightDate");
+		$("#flightRes").html(startDest + "-" + endDest + " " + flightDate);
+		localStorage.setItem("flightRes", "true");
+	}
+	else {
+		var lastStepTable = $("#passengersTable");
+		for (var i = 0; i < flightReservation["seatsLeft"]; i++) {
+			var passengerNumber = flightReservation["numberOfPassengers"] - flightReservation["seatsLeft"] + i + 1;
+			var tableRow = "<tr><td>Passenger</td><td>" + passengerNumber + "</td></tr>";
+			tableRow += "<tr><td>First name</td><td><input type='text' name='passFirstName'/></td><tr>";
+			tableRow += "<tr><td>Last name</td><td><input type='text' name='passLastName'/></td><tr>";
+			tableRow += "<tr><td>Passport number</td><td><input type='text' name='passportNumber'/></td><tr>";
+			tableRow += "<tr><td>Number of bags</td><td><input type='number' name='bags'/></td><tr>";
+			tableRow += "<tr><td></td><td></td></tr>";
+			lastStepTable.append(tableRow);
+		}
+		$("#reserveDivFriends").hide();
+		$("#reserveDivPassengers").show();
+		localStorage.setItem("flightReservation", JSON.stringify(flightReservation));
+	}	
+}
+
+function endReservation(e) {
+	e.preventDefault();
+	var flightReservation = JSON.parse(localStorage.getItem("flightReservation"));
+	var firstNames = $("input[name='passFirstName']").map(function(){return $(this).val();}).get();
+	var lastNames = $("input[name='passLastName']").map(function(){return $(this).val();}).get();
+	var passports = $("input[name='passportNumber']").map(function(){return $(this).val();}).get();
+	var bags = $("input[name='bags']").map(function(){return $(this).val();}).get();
+	for (var i = 0; i < firstNames.length; i++) {
+		if ((!firstNames[i].trim()) || (!lastNames[i].trim()) || (!passports[i].trim())) {
+			toastr["error"]("Invalid data for passengers.");
+			return;
+		}
+		if (isNaN(bags[i]) || bags[i] <= 0) {
+			toastr["error"]("Invalid number of bags.");
+			return;
+		}
+	}
+	for (var i = 0; i < firstNames.length; i++) {
+		flightReservation["passengers"].push({"firstName" : firstNames[i], "lastName" : lastNames[i], "passport" : passports[i], "numberOfBags" : bags[i] });
+		flightReservation["seatsLeft"]--;
+	}
+	toastr["success"]("Successfully added flight reservation to cart.");
+	$('#showFlightModal').modal('toggle');
+	localStorage.setItem("flightReservation", JSON.stringify(flightReservation));
+	var startDest = localStorage.getItem("startDest");
+	var endDest = localStorage.getItem("endDest");
+	var flightDate = localStorage.getItem("flightDate");
+	$("#flightRes").html(startDest + "-" + endDest + " " + flightDate);
+	localStorage.setItem("flightRes", "true");
+}
+
+function confirmReservation(e) {
+	e.preventDefault();
+	var flightRes = localStorage.getItem("flightRes");
+	var hotelRes = localStorage.getItem("hotelRes");
+	var carRes = localStorage.getItem("carRes");
+	if (flightRes === null) {
+		toastr["error"]("You have to reserve flight first.");
+		return;
+	}
+	if (hotelRes === null && carRes === null) {
+		var flightReservation = JSON.parse(localStorage.getItem("flightReservation"));
+		$.ajax({
+			type : 'POST',
+			url : reserveFlightURL,
+			headers : createAuthorizationTokenHeader(tokenKey),
+			data : JSON.stringify({"flightCode" : flightReservation["flightCode"], 
+									"invitedFriends" : flightReservation["invitedFriends"], 
+									"numberOfPassengers" : flightReservation["numberOfPassengers"],
+									"passengers" : flightReservation["passengers"],
+									"seats" : flightReservation["seats"]}),
+			success : function(data) {
+				if (data != null) {
+					toastr[data.toastType](data.message);
+					localStorage.removeItem("flightReservation");
+					localStorage.removeItem("flightRes");
+					$("#flightRes").html("No flight reserved");
+					getReservations();
+				}
+			},
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+				alert("AJAX ERROR: " + textStatus);
+			}
+		});
+	}
+	else if (hotelRes != null && carRes === null) {
+		// FLIGHT + HOTEL
+	}
+	else if (hotelRes === null && carRes != null) {
+		// FLIGHT + CAR
+	}
+	else {
+		// FLIGHT + HOTEL + CAR
+	}
+}
+
+function getReservations() {
+	$.ajax({
+		type : 'GET',
+		url : getReservationsURL,
+		headers : createAuthorizationTokenHeader(tokenKey),
+		success : function(data) {
+			if (data != null) {
+				var table = $("#reservationsTable").DataTable();
+				$.each(data, function(i, val) {
+					table.row.add([ val.reservationInf, val.dateOfReservation, val.price, val.grade ]).draw(false);
+				});
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
 }

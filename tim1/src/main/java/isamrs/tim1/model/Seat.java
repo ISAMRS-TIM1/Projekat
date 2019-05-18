@@ -1,5 +1,6 @@
 package isamrs.tim1.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,7 +26,7 @@ public class Seat {
 	@Column(name = "column", unique = false, nullable = false)
 	private Integer column;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "planeSegment")
 	@JsonIgnore
 	private PlaneSegment planeSegment;

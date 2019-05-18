@@ -44,9 +44,9 @@ public class PlaneSegment implements Serializable {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "airline")
+	@JoinColumn(name = "flight")
 	@JsonIgnore
-	private Airline airline;
+	private Flight flight;
 
 	@OneToMany(mappedBy = "planeSegment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Seat> seats;
@@ -74,14 +74,6 @@ public class PlaneSegment implements Serializable {
 		this.id = id;
 	}
 
-	public Airline getAirline() {
-		return airline;
-	}
-
-	public void setAirline(Airline airline) {
-		this.airline = airline;
-	}
-
 	public Set<Seat> getSeats() {
 		return seats;
 	}
@@ -100,6 +92,14 @@ public class PlaneSegment implements Serializable {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public Flight getFlight() {
+		return flight;
+	}
+
+	public void setFlight(Flight flight) {
+		this.flight = flight;
 	}
 
 }
