@@ -356,7 +356,7 @@ input, select {
 }
 
 /* HOTELS */
-#searchHotelsDiv {
+#searchHotelsDiv, #searchCarsDiv {
 	width: 70%;
 	height: 38vw;
 	margin-left: 13%;
@@ -447,19 +447,15 @@ input, select {
 	max-width: 260px;
 }
 
-#searchCars {
-	margin-top: 2%;
-	width: 85%;
-	margin-left: 7%;
-	display: block;
-}
-
-#searchCarsTable {
-	text-align: center;
-	border-collapse: separate;
-	border-spacing: 20px;
+#searchCarsTable { 
+    border-spacing: 1.5vw;
+    border-collapse: separate;
 }
 
 #searchVehiclesButton {
-	width:100%;
+	width: 100%;
+}
+
+#searchCars {
+	padding-bottom: 2vw;
 }

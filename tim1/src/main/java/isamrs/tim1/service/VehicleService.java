@@ -1,9 +1,7 @@
 package isamrs.tim1.service;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -66,34 +64,30 @@ public class VehicleService {
 
 		int maxPrice;
 		if (vehicle.getPrice() == null) {
-			maxPrice = vehicleRepository.getMaxPricePerDay().intValue();
+			maxPrice = Integer.MAX_VALUE;
 		} else {
 			maxPrice = vehicle.getPrice().intValue();
 		}
 
 		int seats;
 		if (vehicle.getSeats() == null) {
-			seats = vehicleRepository.getMaxSeatsForVehicle().intValue();
+			seats = 0;
 		} else {
 			seats = vehicle.getSeats().intValue();
 		}
 
-		Calendar calendar = new GregorianCalendar();
-
 		int minYear;
 		if (vehicle.getStartDate() == null) {
-			minYear = vehicleRepository.getMinYear().intValue();
+			minYear = 1900;
 		} else {
-			calendar.setTime(vehicle.getStartDate());
-			minYear = calendar.get(Calendar.YEAR);
+			minYear = vehicle.getStartDate().intValue();
 		}
 
 		int maxYear;
 		if (vehicle.getEndDate() == null) {
-			maxYear = vehicleRepository.getMaxYear().intValue();
+			maxYear = 2050;
 		} else {
-			calendar.setTime(vehicle.getEndDate());
-			maxYear = calendar.get(Calendar.YEAR);
+			maxYear = vehicle.getEndDate().intValue();
 		}
 
 		ArrayList<Vehicle> searchResults = vehicleRepository.searchByParameters(producers, models, fuelTypes,

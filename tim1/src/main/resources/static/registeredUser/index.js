@@ -340,6 +340,8 @@ $(document)
 						let minGrade = $("#vehicleGrade").slider('getValue')[0];
 						let maxGrade = $("#vehicleGrade").slider('getValue')[1];
 						
+						console.log(startDate);
+						console.log(endDate);
 						searchVehicles(producer, models, vehicleTypes, fuelTypes, priceTo, numberOfSeats, startDate, endDate, minGrade, maxGrade);
 					});
 					
@@ -388,13 +390,13 @@ function searchVehicles(producer, models, vehicleTypes, fuelTypes, priceMax, num
 				
 				for(let vehicle of data) {
 					table.row.add([
-						vehicle.model,
 						vehicle.producer,
-						vehicle.yearOfProduction,
-						vehicle.numberOfSeats,
-						vehicle.fuelType,
+						vehicle.model,
 						vehicle.vehicleType,
+						vehicle.fuelType,
+						vehicle.numberOfSeats,
 						vehicle.pricePerDay,
+						vehicle.yearOfProduction,
 						vehicle.averageGrade
 					]).draw(false);
 				}

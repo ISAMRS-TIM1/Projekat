@@ -1,7 +1,6 @@
 package isamrs.tim1.dto;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class VehicleSearchDTO {
 	private String producer;
@@ -10,8 +9,8 @@ public class VehicleSearchDTO {
 	private ArrayList<String> fuelTypes;
 	private Integer price;
 	private Integer seats;
-	private Date startDate;
-	private Date endDate;
+	private Integer startDate;
+	private Integer endDate;
 	private double minGrade;
 	private double maxGrade;
 
@@ -51,22 +50,6 @@ public class VehicleSearchDTO {
 		this.fuelTypes = fuelTypes;
 	}
 
-	public Date getStartDate() {
-		return startDate;
-	}
-
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
-
-	public Date getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
-
 	public double getMinGrade() {
 		return minGrade;
 	}
@@ -97,5 +80,21 @@ public class VehicleSearchDTO {
 
 	public void setSeats(Integer seats) {
 		this.seats = seats;
+	}
+
+	public Integer getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Integer startDate) {
+		this.startDate = startDate;
+	}
+
+	public Integer getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Integer endDate) {
+		this.endDate = endDate;
 	}
 }
