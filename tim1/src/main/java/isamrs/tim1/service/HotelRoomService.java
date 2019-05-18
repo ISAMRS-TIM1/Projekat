@@ -116,21 +116,14 @@ public class HotelRoomService {
 		Hotel hotel = hotelRepository.findOneByName(hotelName);
 		for (HotelRoom hr : hotelRoomRepository.findByHotelPeopleGrade(hotel.getId(), forPeople, fromGrade, toGrade)) {
 			boolean hasReservations = false;
-			for (HotelReservation res : hr.getNormalReservations()) {
+			for (HotelReservation res : hr.getReservations()) {
 				// (StartA < EndB) and (EndA > StartB)
 				if (res.getFromDate().before(toDate) && res.getToDate().after(fromDate)) {
 					hasReservations = true;
 					break;
 				}
 			}
-			if (!hasReservations)
-				for (QuickHotelReservation res : hr.getQuickReservations()) {
-					// (StartA < EndB) and (EndA > StartB)
-					if (res.getFromDate().before(toDate) && res.getToDate().after(fromDate)) {
-						hasReservations = true;
-						break;
-					}
-				}
+
 			if (!hasReservations) {
 				HotelRoomDTO hrDTO = new HotelRoomDTO(hr);
 				if (hrDTO.getPrice() <= toPrice && hrDTO.getPrice() >= fromPrice) {
@@ -143,19 +136,10 @@ public class HotelRoomService {
 
 	private boolean checkForActiveReservations(HotelRoom hr) {
 		boolean activeReservations = false;
-		for (HotelReservation r : hr.getNormalReservations()) {
-			if (r.isDone()) {
+		for (HotelReservation r : hr.getReservations()) {
+			if (r.getFlightReservation().getDone()) {
 				activeReservations = true;
 				break;
-			}
-		}
-
-		if (!activeReservations) {
-			for (QuickHotelReservation r : hr.getQuickReservations()) {
-				if (r.isDone()) {
-					activeReservations = true;
-					break;
-				}
 			}
 		}
 		return activeReservations;

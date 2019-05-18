@@ -47,18 +47,14 @@ public class HotelRoom implements Serializable {
 	private Set<SeasonalHotelRoomPrice> seasonalPrices;
 
 	@OneToMany(mappedBy = "hotelRoom", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<QuickHotelReservation> quickReservations;
+	private Set<HotelReservation> reservations;
 
-	@OneToMany(mappedBy = "hotelRoom", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<HotelReservation> normalReservations;
-	
 	@Column(name = "deleted", unique = false, nullable = false)
 	private boolean deleted = false;
 
 	public HotelRoom() {
 		super();
-		quickReservations = new HashSet<QuickHotelReservation>();
-		normalReservations = new HashSet<HotelReservation>();
+		reservations = new HashSet<HotelReservation>();
 		seasonalPrices = new HashSet<SeasonalHotelRoomPrice>();
 	}
 
@@ -69,16 +65,17 @@ public class HotelRoom implements Serializable {
 		this.defaultPriceOneNight = hotelRoom.getPrice();
 		this.roomNumber = hotelRoom.getRoomNumber();
 		this.hotel = hotel;
-		this.quickReservations = new HashSet<QuickHotelReservation>();
-		this.normalReservations = new HashSet<HotelReservation>();
+		this.reservations = new HashSet<HotelReservation>();
 		this.seasonalPrices = new HashSet<SeasonalHotelRoomPrice>();
 		this.deleted = false;
 	}
+
 	public void update(HotelRoomDTO hotelRoom) {
 		this.numberOfPeople = hotelRoom.getNumberOfPeople();
 		this.defaultPriceOneNight = hotelRoom.getPrice();
 		this.roomNumber = hotelRoom.getRoomNumber();
 	}
+
 	public Double getAverageGrade() {
 		return averageGrade;
 	}
@@ -127,20 +124,12 @@ public class HotelRoom implements Serializable {
 		this.hotel = hotel;
 	}
 
-	public Set<QuickHotelReservation> getQuickReservations() {
-		return quickReservations;
+	public Set<HotelReservation> getReservations() {
+		return reservations;
 	}
 
-	public void setQuickReservations(Set<QuickHotelReservation> quickReservations) {
-		this.quickReservations = quickReservations;
-	}
-
-	public Set<HotelReservation> getNormalReservations() {
-		return normalReservations;
-	}
-
-	public void setNormalReservations(Set<HotelReservation> normalReservations) {
-		this.normalReservations = normalReservations;
+	public void setReservations(Set<HotelReservation> normalReservations) {
+		this.reservations = normalReservations;
 	}
 
 	public Set<SeasonalHotelRoomPrice> getSeasonalPrices() {
@@ -154,7 +143,7 @@ public class HotelRoom implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	
+
 	public boolean isDeleted() {
 		return deleted;
 	}
@@ -162,8 +151,6 @@ public class HotelRoom implements Serializable {
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
 	}
-
-
 
 	private static final long serialVersionUID = 1359942200118829407L;
 

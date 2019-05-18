@@ -32,16 +32,7 @@ public class PlaneSeatsDTO implements Serializable {
 		this.firstClassPrice = flight.getFirstClassPrice();
 		this.businessClassPrice = flight.getBusinessClassPrice();
 		this.economyClassPrice = flight.getEconomyClassPrice();
-		for (FlightReservation r : flight.getAirline().getNormalReservations()) {
-			if (r.getFlight().getFlightCode().equals(flight.getFlightCode())) {
-				for (PassengerSeat ps : r.getPassengerSeats()) {
-					if (ps.getSeat() != null) {
-						this.reservedSeats.add(ps.getSeat().getRow() + "_" + ps.getSeat().getColumn());
-					}
-				}
-			}
-		}
-		for (QuickFlightReservation r : flight.getAirline().getQuickReservations()) {
+		for (FlightReservation r : flight.getAirline().getReservations()) {
 			if (r.getFlight().getFlightCode().equals(flight.getFlightCode())) {
 				for (PassengerSeat ps : r.getPassengerSeats()) {
 					if (ps.getSeat() != null) {

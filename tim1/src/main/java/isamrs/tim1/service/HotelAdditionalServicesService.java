@@ -70,19 +70,10 @@ public class HotelAdditionalServicesService {
 
 	private boolean checkForActiveReservations(HotelAdditionalService has) {
 		boolean activeReservations = false;
-		for (HotelReservation r : has.getNormalReservations()) {
-			if (r.isDone()) {
+		for (HotelReservation r : has.getReservations()) {
+			if (r.getFlightReservation().getDone()) {
 				activeReservations = true;
 				break;
-			}
-		}
-
-		if (!activeReservations) {
-			for (QuickHotelReservation r : has.getQuickReservations()) {
-				if (r.isDone()) {
-					activeReservations = true;
-					break;
-				}
 			}
 		}
 		return activeReservations;

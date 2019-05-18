@@ -20,8 +20,7 @@ public class Hotel extends Service implements Serializable {
 		additionalServices = new HashSet<HotelAdditionalService>();
 		rooms = new HashSet<HotelRoom>();
 		admins = new HashSet<HotelAdmin>();
-		quickReservations = new HashSet<QuickHotelReservation>();
-		normalReservations = new HashSet<HotelReservation>();
+		reservations = new HashSet<HotelReservation>();
 	}
 
 	public Hotel(ServiceDTO hotel) {
@@ -29,8 +28,7 @@ public class Hotel extends Service implements Serializable {
 		additionalServices = new HashSet<HotelAdditionalService>();
 		rooms = new HashSet<HotelRoom>();
 		admins = new HashSet<HotelAdmin>();
-		quickReservations = new HashSet<QuickHotelReservation>();
-		normalReservations = new HashSet<HotelReservation>();
+		reservations = new HashSet<HotelReservation>();
 	}
 
 	@OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -43,18 +41,7 @@ public class Hotel extends Service implements Serializable {
 	private Set<HotelAdmin> admins;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<QuickHotelReservation> quickReservations;
-
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<HotelReservation> normalReservations;
-
-	public Set<QuickHotelReservation> getQuickReservations() {
-		return quickReservations;
-	}
-
-	public void setQuickReservations(Set<QuickHotelReservation> quickReservations) {
-		this.quickReservations = quickReservations;
-	}
+	private Set<HotelReservation> reservations;
 
 	public Set<HotelAdditionalService> getAdditionalServices() {
 		return additionalServices;
@@ -80,12 +67,12 @@ public class Hotel extends Service implements Serializable {
 		this.admins = admins;
 	}
 
-	public Set<HotelReservation> getNormalReservations() {
-		return normalReservations;
+	public Set<HotelReservation> getReservations() {
+		return reservations;
 	}
 
-	public void setNormalReservations(Set<HotelReservation> normalReservations) {
-		this.normalReservations = normalReservations;
+	public void setReservations(Set<HotelReservation> normalReservations) {
+		this.reservations = normalReservations;
 	}
 
 	public static long getSerialversionuid() {

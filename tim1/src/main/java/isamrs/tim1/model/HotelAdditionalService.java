@@ -37,18 +37,14 @@ public class HotelAdditionalService {
 	private Hotel hotel;
 
 	@OneToMany(mappedBy = "additionalService", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<QuickHotelReservation> quickReservations;
-
-	@OneToMany(mappedBy = "additionalService", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<HotelReservation> normalReservations;
+	private Set<HotelReservation> reservations;
 	
 	@Column(name = "deleted", unique = false, nullable = false)
 	private boolean deleted = false;
 	
 	public HotelAdditionalService() {
 		super();
-		quickReservations = new HashSet<QuickHotelReservation>();
-		normalReservations = new HashSet<HotelReservation>();
+		reservations = new HashSet<HotelReservation>();
 	}
 
 	public HotelAdditionalService(HotelAdditionalServiceDTO additionalService, Hotel hotel) {
@@ -56,8 +52,7 @@ public class HotelAdditionalService {
 		this.name = additionalService.getName();
 		this.price = additionalService.getPrice();
 		this.hotel = hotel;
-		this.quickReservations = new HashSet<QuickHotelReservation>();
-		this.normalReservations = new HashSet<HotelReservation>();
+		this.reservations = new HashSet<HotelReservation>();
 		this.deleted = false;
 	}
 
@@ -93,20 +88,12 @@ public class HotelAdditionalService {
 		this.hotel = hotel;
 	}
 
-	public Set<QuickHotelReservation> getQuickReservations() {
-		return quickReservations;
+	public Set<HotelReservation> getReservations() {
+		return reservations;
 	}
 
-	public void setQuickReservations(Set<QuickHotelReservation> quickReservations) {
-		this.quickReservations = quickReservations;
-	}
-
-	public Set<HotelReservation> getNormalReservations() {
-		return normalReservations;
-	}
-
-	public void setNormalReservations(Set<HotelReservation> normalReservations) {
-		this.normalReservations = normalReservations;
+	public void setReservations(Set<HotelReservation> normalReservations) {
+		this.reservations = normalReservations;
 	}
 
 	public boolean isDeleted() {

@@ -24,7 +24,6 @@ import isamrs.tim1.model.AirlineAdmin;
 import isamrs.tim1.model.FlightReservation;
 import isamrs.tim1.model.Location;
 import isamrs.tim1.model.QuickFlightReservation;
-import isamrs.tim1.model.Reservation;
 import isamrs.tim1.repository.AirlineRepository;
 import isamrs.tim1.repository.ServiceRepository;
 
@@ -107,13 +106,8 @@ public class AirlineService {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		for (Reservation r : airline.getNormalReservations()) {
-			if (!(r.getDateOfReservation().before(startDate)) && !(r.getDateOfReservation().after(endDate)) && r.isDone()) {
-				income += r.getPrice();
-			}
-		}
-		for (Reservation r : airline.getQuickReservations()) {
-			if (!(r.getDateOfReservation().before(startDate)) && !(r.getDateOfReservation().after(endDate)) && r.isDone()) {
+		for (FlightReservation r : airline.getReservations()) {
+			if (!(r.getDateOfReservation().before(startDate)) && !(r.getDateOfReservation().after(endDate)) && r.getDone()) {
 				income += r.getPrice();
 			}
 		}
@@ -124,31 +118,19 @@ public class AirlineService {
 		Airline airline = ((AirlineAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
 				.getAirline();
 
-		ArrayList<FlightReservation> doneNormalReservations = new ArrayList<FlightReservation>();
+		ArrayList<FlightReservation> doneReservations = new ArrayList<FlightReservation>();
 
-		for (FlightReservation fr : airline.getNormalReservations()) {
-			if (fr.isDone()) {
-				doneNormalReservations.add(fr);
-			}
-		}
-
-		ArrayList<QuickFlightReservation> doneQuickReservations = new ArrayList<QuickFlightReservation>();
-
-		for (QuickFlightReservation qr : airline.getQuickReservations()) {
-			if (qr.isDone()) {
-				doneQuickReservations.add(qr);
+		for (FlightReservation fr : airline.getReservations()) {
+			if (fr.getDone()) {
+				doneReservations.add(fr);
 			}
 		}
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-		Map<String, Long> normalCounts = doneNormalReservations.stream()
+		Map<String, Long> normalCounts = doneReservations.stream()
 				.collect(Collectors.groupingBy(r -> sdf.format(r.getDateOfReservation()), Collectors.counting()));
-		Map<String, Long> quickCounts = doneQuickReservations.stream()
-				.collect(Collectors.groupingBy(r -> sdf.format(r.getDateOfReservation()), Collectors.counting()));
-
 		Map<String, Long> returnValue = new HashMap<String, Long>(normalCounts);
-		quickCounts.forEach((key, value) -> returnValue.merge(key, value, (v1, v2) -> v1 + v2));
 
 		return returnValue;
 	}
@@ -157,31 +139,19 @@ public class AirlineService {
 		Airline airline = ((AirlineAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
 				.getAirline();
 
-		ArrayList<FlightReservation> doneNormalReservations = new ArrayList<FlightReservation>();
-		
-		for (FlightReservation fr : airline.getNormalReservations()) {
-			if (fr.isDone()) {
-				doneNormalReservations.add(fr);
-			}
-		}
+		ArrayList<FlightReservation> doneReservations = new ArrayList<FlightReservation>();
 
-		ArrayList<QuickFlightReservation> doneQuickReservations = new ArrayList<QuickFlightReservation>();
-
-		for (QuickFlightReservation qr : airline.getQuickReservations()) {
-			if (qr.isDone()) {
-				doneQuickReservations.add(qr);
+		for (FlightReservation fr : airline.getReservations()) {
+			if (fr.getDone()) {
+				doneReservations.add(fr);
 			}
 		}
 
 		SimpleDateFormat sdf = new SimpleDateFormat("MM/yyyy 'week: 'W");
 
-		Map<String, Long> normalCounts = doneNormalReservations.stream()
+		Map<String, Long> normalCounts = doneReservations.stream()
 				.collect(Collectors.groupingBy(r -> sdf.format(r.getDateOfReservation()), Collectors.counting()));
-		Map<String, Long> quickCounts = doneQuickReservations.stream()
-				.collect(Collectors.groupingBy(r -> sdf.format(r.getDateOfReservation()), Collectors.counting()));
-
 		Map<String, Long> returnValue = new HashMap<String, Long>(normalCounts);
-		quickCounts.forEach((key, value) -> returnValue.merge(key, value, (v1, v2) -> v1 + v2));
 
 		return returnValue;
 	}
@@ -190,31 +160,19 @@ public class AirlineService {
 		Airline airline = ((AirlineAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
 				.getAirline();
 
-		ArrayList<FlightReservation> doneNormalReservations = new ArrayList<FlightReservation>();
-		
-		for (FlightReservation fr : airline.getNormalReservations()) {
-			if (fr.isDone()) {
-				doneNormalReservations.add(fr);
-			}
-		}
+		ArrayList<FlightReservation> doneReservations = new ArrayList<FlightReservation>();
 
-		ArrayList<QuickFlightReservation> doneQuickReservations = new ArrayList<QuickFlightReservation>();
-
-		for (QuickFlightReservation qr : airline.getQuickReservations()) {
-			if (qr.isDone()) {
-				doneQuickReservations.add(qr);
+		for (FlightReservation fr : airline.getReservations()) {
+			if (fr.getDone()) {
+				doneReservations.add(fr);
 			}
 		}
 
 		SimpleDateFormat sdf = new SimpleDateFormat("MM/yyyy");
 
-		Map<String, Long> normalCounts = doneNormalReservations.stream()
+		Map<String, Long> normalCounts = doneReservations.stream()
 				.collect(Collectors.groupingBy(r -> sdf.format(r.getDateOfReservation()), Collectors.counting()));
-		Map<String, Long> quickCounts = doneQuickReservations.stream()
-				.collect(Collectors.groupingBy(r -> sdf.format(r.getDateOfReservation()), Collectors.counting()));
-
 		Map<String, Long> returnValue = new HashMap<String, Long>(normalCounts);
-		quickCounts.forEach((key, value) -> returnValue.merge(key, value, (v1, v2) -> v1 + v2));
 
 		return returnValue;
 

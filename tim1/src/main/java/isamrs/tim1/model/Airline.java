@@ -29,10 +29,7 @@ public class Airline extends Service implements Serializable {
 	private Set<Destination> destinations;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<QuickFlightReservation> quickReservations;
-
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<FlightReservation> normalReservations;
+	private Set<FlightReservation> reservations;
 
 	private static final long serialVersionUID = 2322929543693920541L;
 
@@ -41,8 +38,7 @@ public class Airline extends Service implements Serializable {
 		flights = new HashSet<Flight>();
 		admins = new HashSet<AirlineAdmin>();
 		destinations = new HashSet<Destination>();
-		quickReservations = new HashSet<QuickFlightReservation>();
-		normalReservations = new HashSet<FlightReservation>();
+		reservations = new HashSet<FlightReservation>();
 	}
 
 	public Airline(ServiceDTO airline) {
@@ -50,8 +46,7 @@ public class Airline extends Service implements Serializable {
 		flights = new HashSet<Flight>();
 		admins = new HashSet<AirlineAdmin>();
 		destinations = new HashSet<Destination>();
-		quickReservations = new HashSet<QuickFlightReservation>();
-		normalReservations = new HashSet<FlightReservation>();
+		reservations = new HashSet<FlightReservation>();
 	}
 
 	public Set<Flight> getFlights() {
@@ -78,20 +73,12 @@ public class Airline extends Service implements Serializable {
 		this.destinations = destinations;
 	}
 
-	public Set<QuickFlightReservation> getQuickReservations() {
-		return quickReservations;
+	public Set<FlightReservation> getReservations() {
+		return reservations;
 	}
 
-	public void setQuickReservations(Set<QuickFlightReservation> quickReservations) {
-		this.quickReservations = quickReservations;
-	}
-
-	public Set<FlightReservation> getNormalReservations() {
-		return normalReservations;
-	}
-
-	public void setNormalReservations(Set<FlightReservation> normalReservations) {
-		this.normalReservations = normalReservations;
+	public void setReservations(Set<FlightReservation> reservations) {
+		this.reservations = reservations;
 	}
 
 	public static long getSerialversionuid() {

@@ -26,7 +26,7 @@ import isamrs.tim1.model.RegisteredUser;
 import isamrs.tim1.model.Seat;
 import isamrs.tim1.model.UserReservation;
 import isamrs.tim1.repository.FlightRepository;
-import isamrs.tim1.repository.ReservationRepository;
+import isamrs.tim1.repository.FlightReservationRepository;
 import isamrs.tim1.repository.ServiceRepository;
 import isamrs.tim1.repository.UserRepository;
 import isamrs.tim1.repository.UserReservationRepository;
@@ -35,7 +35,7 @@ import isamrs.tim1.repository.UserReservationRepository;
 public class ReservationService {
 
 	@Autowired
-	ReservationRepository reservationRepository;
+	FlightReservationRepository flightReservationRepository;
 
 	@Autowired
 	FlightRepository flightRepository;
@@ -57,7 +57,7 @@ public class ReservationService {
 		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
 			return retval;
 		userReservationRepository.save(ur);
-		reservationRepository.save(fr);
+		flightReservationRepository.save(fr);
 		userRepository.save(ru);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
 	}
@@ -98,9 +98,15 @@ public class ReservationService {
 		
 		
 		userReservationRepository.save(ur); // proveri jel radi samo sa jednim save-om, trebalo bi
-		reservationRepository.save(fr);
+		flightReservationRepository.save(fr);
 		userRepository.save(ru);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
+	}
+
+	private MessageDTO reserveHotelNoSave(FlightHotelReservationDTO flightHotelRes, FlightReservation fr,
+			HotelReservation hr) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	private MessageDTO reserveFlightNoSave(FlightReservationDTO flightRes, UserReservation ur, FlightReservation fr,
@@ -138,7 +144,7 @@ public class ReservationService {
 				return null;
 			}
 			PassengerSeat ps = new PassengerSeat(p, st);
-			ps.setNormalReservation(fr);
+			ps.setReservation(fr);
 			fr.getPassengerSeats().add(ps);
 			counter++;
 		}
@@ -149,7 +155,7 @@ public class ReservationService {
 		ur.setUser(ru);
 		ru.getUserReservations().add(ur);
 		fr.setUser(ur);
-		f.getAirline().getNormalReservations().add(fr);
+		f.getAirline().getReservations().add(fr);
 		return new MessageDTO("", ToasterType.SUCCESS.toString());
 	}
 }

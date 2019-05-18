@@ -142,12 +142,11 @@ public class VehicleService {
 		v.setAverageGrade(0.0);
 		v.setFuelType(vehicle.getFuelType());
 		v.setModel(vehicle.getModel());
-		v.setNormalReservations(new HashSet<VehicleReservation>());
+		v.setReservations(new HashSet<VehicleReservation>());
 		v.setNumberOfSeats(vehicle.getNumberOfSeats());
 		v.setPricePerDay(vehicle.getPricePerDay());
 		v.setProducer(vehicle.getProducer());
 		v.setQuantity(quantity);
-		v.setQuickReservations(new HashSet<QuickVehicleReservation>());
 		v.setVehicleType(vehicle.getVehicleType());
 		v.setYearOfProduction(vehicle.getYearOfProduction());
 		v.setRentACar(rentACar);
@@ -198,15 +197,6 @@ public class VehicleService {
 			}
 		}
 
-		if (!activeReservations) {
-			for (QuickVehicleReservation qr : rentACar.getQuickReservations()) {
-				if (qr.getVehicle().getId().equals(vehicle.getId()) && qr.getToDate().compareTo(now) > 0) {
-					activeReservations = true;
-					break;
-				}
-			}
-		}
-
 		if (activeReservations) {
 			return new MessageDTO("Vehicle cannot be edited due to active reservations.", ToasterType.ERROR.toString());
 		}
@@ -249,15 +239,6 @@ public class VehicleService {
 			if (vr.getVehicle().getId().equals(vehicle.getId()) && vr.getToDate().compareTo(now) > 0) {
 				activeReservations = true;
 				break;
-			}
-		}
-
-		if (!activeReservations) {
-			for (QuickVehicleReservation qr : rentACar.getQuickReservations()) {
-				if (qr.getVehicle().getId().equals(vehicle.getId()) && qr.getToDate().compareTo(now) > 0) {
-					activeReservations = true;
-					break;
-				}
 			}
 		}
 
