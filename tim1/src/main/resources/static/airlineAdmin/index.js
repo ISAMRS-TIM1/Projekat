@@ -201,7 +201,7 @@ function renderFlights(data) {
 		});
 		conn += "</select>";
 		table.row.add(
-				[ val.startDestination, val.endDestination, val.departureTime,
+				[ val.flightCode, val.startDestination, val.endDestination, val.departureTime,
 					val.landingTime, diff + " min", val.flightDistance,
 						val.connections.length, conn, val.firstClassPrice, val.businessClassPrice, val.economyClassPrice,
 						val.pricePerBag, val.averageGrade]).draw(false);

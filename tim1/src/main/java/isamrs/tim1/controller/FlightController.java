@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim1.dto.FlightDTO;
@@ -39,7 +40,12 @@ public class FlightController {
 	}
 
 	@RequestMapping(value = "/api/getPlaneSeats", method = RequestMethod.GET)
-	public ResponseEntity<PlaneSeatsDTO> getPlaneSeats(@RequestBody String flightCode) {
+	public ResponseEntity<PlaneSeatsDTO> getPlaneSeats(@RequestParam String flightCode) {
 		return new ResponseEntity<PlaneSeatsDTO>(flightService.getPlaneSeats(flightCode), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/api/getDetailedFlight", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<FlightDTO> getDetailedFlight(@RequestParam String flightCode) {
+		return new ResponseEntity<FlightDTO>(flightService.getDetailedFlight(flightCode), HttpStatus.OK);
 	}
 }
