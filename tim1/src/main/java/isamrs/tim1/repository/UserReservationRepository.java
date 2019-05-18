@@ -9,6 +9,6 @@ import isamrs.tim1.model.UserReservation;
 
 public interface UserReservationRepository extends JpaRepository<UserReservation, Long> {
 	
-	@Query(value = "select * from userreservations u where u.user = ?1", nativeQuery = true)
+	@Query(value = "select * from user_reservations u where u.user = ?1", nativeQuery = true)
 	Set<UserReservation> getByUser(Long id);
 }

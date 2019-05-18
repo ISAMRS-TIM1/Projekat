@@ -54,7 +54,8 @@ a[data-toggle="tab"] {
 	margin-top: -6%;
 }
 
-#saveChanges, #searchFlights, #searchHotelsButton, #searchRoomsButton, #nextButtonFlights {
+#saveChanges, #searchFlights, #searchHotelsButton, #searchRoomsButton, 
+#nextButtonFlights, #nextButtonFlightsStep, #nextButtonFlightsFriends, #nextButtonFlightsLast {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
@@ -77,6 +78,18 @@ a[data-toggle="tab"] {
 	position: absolute;
     top: 100vh;
     left: 55vw;
+}
+
+#nextButtonFlightsFriends {
+	position: relative;
+    margin-left: 90%;
+    margin-bottom: 5%;
+}
+
+#nextButtonFlightsLast {
+	position: relative;
+    margin-left: 80%;
+    margin-bottom: 5%;
 }
 
 #email {

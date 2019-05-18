@@ -4,12 +4,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import isamrs.tim1.dto.FlightReservationDTO;
+import isamrs.tim1.dto.MessageDTO;
+import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.dto.PassengerDTO;
 import isamrs.tim1.model.Flight;
 import isamrs.tim1.model.FlightReservation;
@@ -43,10 +46,13 @@ public class ReservationService {
 	@Autowired
 	ServiceRepository serviceRepository;
 	
-	public FlightReservationDTO reserveFlight(FlightReservationDTO flightRes) {
+	public MessageDTO reserveFlight(FlightReservationDTO flightRes) {
 		FlightReservation fr = new FlightReservation();
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Flight f = flightRepository.findOneByFlightCode(flightRes.getFlightCode());
+		if (f == null) {
+			return new MessageDTO("Flight does not exist.", ToasterType.ERROR.toString());
+		}
 		fr.setFlight(f);
 		fr.setDone(false);
 		fr.setDateOfReservation(new Date());
@@ -94,9 +100,23 @@ public class ReservationService {
 		userReservationRepository.save(ur);
 		reservationRepository.save(fr);
 		userRepository.save(ru);
-		String res = f.getStartDestination().getName() + "-" + f.getEndDestination().getName();
-		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-		String date = sdf.format(fr.getDateOfReservation());
-		return new FlightReservationDTO(res, date, price, ur.getGrade());
+		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
+	}
+
+	public ArrayList<FlightReservationDTO> getReservations() {
+		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Set<UserReservation> ur = userReservationRepository.getByUser(ru.getId());
+		ArrayList<FlightReservationDTO> fr = new ArrayList<FlightReservationDTO>();
+		for (UserReservation u : ur) {
+			if (u.getReservation() instanceof FlightReservation) {
+				FlightReservation flightRes = (FlightReservation) u.getReservation();
+				String res = flightRes.getFlight().getStartDestination().getName() + "-" + 
+						 flightRes.getFlight().getEndDestination().getName();
+				SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+				String date = sdf.format(flightRes.getFlight().getDepartureTime());
+				fr.add(new FlightReservationDTO(res, date, flightRes.getPrice(), u.getGrade()));
+			}
+		}
+		return fr;
 	}
 }

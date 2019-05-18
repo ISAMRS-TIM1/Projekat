@@ -26,7 +26,7 @@ public class UserReservation implements Serializable{
 	@JoinColumn(name = "user")
 	RegisteredUser user;
 	
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne
 	@JoinColumn(name = "reservation")
 	Reservation reservation;
 
