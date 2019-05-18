@@ -74,8 +74,9 @@ a[data-toggle="tab"] {
 }
 
 #nextButtonFlights {
-	float:right;
-	margin-bottom: 5%;
+	position: absolute;
+    top: 100vh;
+    left: 55vw;
 }
 
 #email {

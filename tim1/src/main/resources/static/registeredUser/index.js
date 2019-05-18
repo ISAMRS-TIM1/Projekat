@@ -15,7 +15,7 @@ const declineInvitationURL = "/api/declineInvitation";
 const getFriendInvitationsURL = "/api/getFriendInvitations";
 const getDestinationsURL = "/api/getDestinations";
 const searchFlightsURL = "/api/searchFlights";
-const getFriendsURL = "/api/getFriends"
+const getFriendsURL = "/api/getFriends";
 
 const searchHotelsURL = "/api/searchHotels";
 const getHotelURL = "../api/getHotel";
@@ -50,7 +50,6 @@ $(document)
 					loadData();
 					setUpToastr();
 					getDestinations();
-					// getPlaneSeats();
 
 					$('#friendsTable').DataTable({
 						"paging" : false,
@@ -694,6 +693,19 @@ var firstPrice = 0;
 var businessPrice = 0;
 var economyPrice = 0;
 
+function resetReservationModal() {
+	firstClass = [];
+	businessClass = [];
+	economyClass = [];
+	firstSeatLabel = 1;
+	reservedSeats = [];
+	$("#total").html(0);
+	$("#counter").html(0);
+	$("#selected-seats").empty();
+	$("#userPassNumber").val("");
+	$("#numOfBags").val(0);
+}
+
 function getPlaneSeats(code) {
 	$.ajax({
 		url : getPlaneSeatsURL,
@@ -707,6 +719,7 @@ function getPlaneSeats(code) {
 			firstPrice = data["firstClassPrice"];
 			businessPrice = data["businessClassPrice"];
 			economyPrice = data["economyClassPrice"];
+			resetReservationModal();
 			renderPlaneSeats(data["planeSegments"], data["reservedSeats"]);
 		}
 	});
@@ -837,7 +850,13 @@ function showPlaneSeats(seats) {
 								// the cart items
 								if (this.settings.character == 'a')
 									return;
-								seatsToReserve.push(this.settings.id);
+								var seat = this.settings.id.split("_");
+								if (seat[1] == 4 || seat[1] == 5) {
+									seatsToReserve.push((seat[0] + "_" +  (seat[1] - 1)) + "_" + this.settings.character);
+								}
+								else {
+									seatsToReserve.push(this.settings.id + "_" + this.settings.character);
+								}
 								console.log(seatsToReserve);
 								$(
 										'<li>'
@@ -867,9 +886,6 @@ function showPlaneSeats(seats) {
 
 								return 'selected';
 							} else if (this.status() == 'selected') {
-								let index = seatsToReserve.indexOf(this.settings.id);
-								seatsToReserve.splice(index, 1);
-								console.log(seatsToReserve);
 								// update the counter
 								$counter.text(sc.find('selected').length - 1);
 								// and total
@@ -878,7 +894,9 @@ function showPlaneSeats(seats) {
 
 								// remove the item from our cart
 								$('#cart-item-' + this.settings.id).remove();
-
+								let index = seatsToReserve.indexOf(this.settings.id);
+								seatsToReserve.splice(index, 1);
+								console.log(seatsToReserve);
 								// seat has been vacated
 								return 'available';
 							} else if (this.status() == 'unavailable') {
@@ -914,7 +932,7 @@ function renderPlaneSeats(planeSegments, reserved) {
 			&& planeSegments[2].length == 0) {
 		showPlaneSeats([]);
 	} else {
-		reservedSeats = [];
+		reservedSeats = reserved;
 		var maxRowFirst = 0;
 		var segment;
 		for (var i = 0; i < planeSegments.length; i++) {
@@ -1246,12 +1264,22 @@ function setUpTableFilter(tableID){
 
 function showFriendsStep(e) {
 	e.preventDefault();
+	var userPass = $("#userPassNumber").val();
+	if (userPass == "" || userPass == undefined) {
+		toastr["error"]("Invalid passport number.");
+		return;
+	}
+	var numOfBags = $("#numOfBags").val();
+	if (isNaN(numOfBags) || numOfBags < 0) {
+		toastr["error"]("Invalid number of bags.");
+		return;
+	}
 	var numberOfPassengers = seatsToReserve.length;
 	var flightReservation = { "flightCode" : localStorage.getItem("flightCode"), 
 							  "numberOfPassengers" : numberOfPassengers,
 							  "seatsLeft" : numberOfPassengers - 1,
 							  "invitedFriends" : [],
-							  "passengers" : [],
+							  "passengers" : [{ "firstName" : "", "lastName": "", "passport" : userPass, "numberOfBags" : numOfBags }],
 							  "seats": seatsToReserve };
 	localStorage.setItem("flightReservation", JSON.stringify(flightReservation));
 	$.ajax({
@@ -1307,6 +1335,7 @@ function showLastStep(e) {
 			tableRow += "<tr><td>First name</td><td><input type='text' name='passFirstName'/></td><tr>";
 			tableRow += "<tr><td>Last name</td><td><input type='text' name='passLastName'/></td><tr>";
 			tableRow += "<tr><td>Passport number</td><td><input type='text' name='passportNumber'/></td><tr>";
+			tableRow += "<tr><td>Number of bags</td><td><input type='number' name='bags'/></td><tr>";
 			tableRow += "<tr><td></td><td></td></tr>";
 			lastStepTable.append(tableRow);
 		}
@@ -1322,14 +1351,19 @@ function endReservation(e) {
 	var firstNames = $("input[name='passFirstName']").map(function(){return $(this).val();}).get();
 	var lastNames = $("input[name='passLastName']").map(function(){return $(this).val();}).get();
 	var passports = $("input[name='passportNumber']").map(function(){return $(this).val();}).get();
+	var bags = $("input[name='bags']").map(function(){return $(this).val();}).get();
 	for (var i = 0; i < firstNames.length; i++) {
 		if ((!firstNames[i].trim()) || (!lastNames[i].trim()) || (!passports[i].trim())) {
 			toastr["error"]("Invalid data for passengers.");
 			return;
 		}
+		if (isNaN(bags[i]) || bags[i] <= 0) {
+			toastr["error"]("Invalid number of bags.");
+			return;
+		}
 	}
 	for (var i = 0; i < firstNames.length; i++) {
-		flightReservation["passengers"].push({"firstName" : firstNames[i], "lastName" : lastNames[i], "passport" : passports[i]});
+		flightReservation["passengers"].push({"firstName" : firstNames[i], "lastName" : lastNames[i], "passport" : passports[i], "numberOfBags" : bags[i] });
 		flightReservation["seatsLeft"]--;
 	}
 	toastr["success"]("Successfully added flight reservation to cart.");
@@ -1352,18 +1386,21 @@ function confirmReservation(e) {
 		return;
 	}
 	if (hotelRes === null && carRes === null) {
+		var flightReservation = JSON.parse(localStorage.getItem("flightReservation"));
 		$.ajax({
 			type : 'POST',
 			url : reserveFlightURL,
 			headers : createAuthorizationTokenHeader(tokenKey),
-			data : JSON.stringify({"flightCode" : flightRes["flightCode"], 
-									"invitedFriends" : flightRes["invitedFriends"], 
-									"numberOfPassengers" : flightRes["numberOfPassengers"],
-									"passengers" : flightRes["passengers"],
-									"seats" : flightRes["seats"]}),
+			data : JSON.stringify({"flightCode" : flightReservation["flightCode"], 
+									"invitedFriends" : flightReservation["invitedFriends"], 
+									"numberOfPassengers" : flightReservation["numberOfPassengers"],
+									"passengers" : flightReservation["passengers"],
+									"seats" : flightReservation["seats"]}),
 			success : function(data) {
 				if (data != null) {
-					
+					var table = $("#reservationsTable").DataTable();
+					table.row.add([ data.reservationInf, data.dateOfReservation, data.price, data.grade ]).draw(false);
+					toastr["success"]("Reservation successfully made.");
 				}
 			},
 			error : function(XMLHttpRequest, textStatus, errorThrown) {

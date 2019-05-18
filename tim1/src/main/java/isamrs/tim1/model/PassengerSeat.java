@@ -2,6 +2,7 @@ package isamrs.tim1.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import isamrs.tim1.dto.PassengerDTO;
 
 @Entity
 @Table(name = "PassengerSeats")
@@ -31,7 +34,7 @@ public class PassengerSeat implements Serializable {
 	@JoinColumn(name = "quickReservation")
 	private QuickFlightReservation quickReservation;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "seat")
 	private Seat seat;
 
@@ -46,6 +49,13 @@ public class PassengerSeat implements Serializable {
 
 	public PassengerSeat() {
 		super();
+	}
+
+	public PassengerSeat(PassengerDTO p, Seat seat) {
+		this.name = p.getFirstName();
+		this.surname = p.getLastName();
+		this.passport = p.getPassport();
+		this.seat = seat;
 	}
 
 	public Long getId() {

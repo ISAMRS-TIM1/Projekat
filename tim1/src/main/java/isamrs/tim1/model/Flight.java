@@ -69,7 +69,7 @@ public class Flight {
 	@Column(name = "pricePerBag", unique = false, nullable = false)
 	private Double pricePerBag;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "airline")
 	private Airline airline;
 
