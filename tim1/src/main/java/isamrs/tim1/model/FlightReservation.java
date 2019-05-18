@@ -25,13 +25,14 @@ public class FlightReservation extends Reservation {
 	@OneToMany(mappedBy = "normalReservation", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<PassengerSeat> passengerSeats;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "flight")
 	private Flight flight;
 
 	
 	public FlightReservation() {
 		super();
+		this.passengerSeats = new HashSet<PassengerSeat>();
 	}
 
 	public Set<PassengerSeat> getPassengerSeats() {

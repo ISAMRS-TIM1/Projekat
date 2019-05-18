@@ -14,6 +14,7 @@ public class FlightUserViewDTO implements Serializable {
 	private Double economyClassPrice;
 	private String airline;
 	private Integer numberOfConnections;
+	private String flightCode;
 	
 	public FlightUserViewDTO() {
 		super();
@@ -29,6 +30,7 @@ public class FlightUserViewDTO implements Serializable {
 		this.departureTime = sdf.format(f.getDepartureTime());
 		this.airline = f.getAirline().getName();
 		this.numberOfConnections = f.getNumberOfFlightConnections();
+		this.flightCode = f.getFlightCode();
 	}
 
 	public String getDepartureTime() {
@@ -90,6 +92,15 @@ public class FlightUserViewDTO implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+	
+	public String getFlightCode() {
+		return flightCode;
+	}
+
+	public void setFlightCode(String flightCode) {
+		this.flightCode = flightCode;
+	}
+
 
 	private static final long serialVersionUID = -8733756966532954933L;
 
