@@ -23,13 +23,15 @@ const getHotelURL = "../api/getHotel";
 const getDetailedHotelURL = "../api/getDetailedHotel";
 const getDetailedFlightURL = "/api/getDetailedFlight";
 const searchRoomsURL = '/api/searchRooms/';
-const reserveFlightURL = "/api/reserveFlight";
 
 const getVehicleProducersURL = "/api/getVehicleProducers";
 const getModelsForProducerURL = "/api/getModels/";
 const getAllVehicleTypesURL = "/api/getAllVehicleTypes";
 const getAllFuelTypesURL = "/api/getAllFuelTypes";
 const searchVehiclesURL = "/api/searchVehicles";
+
+const reserveFlightURL = "/api/reserveFlight";
+const reserveFlightHotelURL = "/api/reserveFlightHotel";
 
 var userMail = "";
 var hotelMap = null;
@@ -1223,6 +1225,22 @@ function dereserveAdditionalService(name){
 	selectedRow.find("button").attr("onclick", `reserveAdditionalService('${name}')`);
 }
 
+function reserveRoomNumber(roomNumber){
+	additionalServiceNames = [];
+	additionalServicesTable.rows('.reservedAdditionalService').every(function ( rowIdx, tableLoop, rowLoop ) {
+	    additionalServiceNames.push(this.data()[0]);
+	} );
+	var drp = $('#searchRoomsDateRange').data('daterangepicker');
+	var hotelRes = {'fromDate' : drp.startDate.toDate(),
+					'toDate' : drp.endDate.toDate(),
+					'hotelRoomNumber' : roomNumber,
+					'additionalServiceNames' : additionalServiceNames,
+					'hotelName' : shownHotel};
+	 localStorage.setItem("hotelRes", JSON.stringify(hotelRes));
+	 $('#hotelRes').text(shownHotel);
+	 additionalServicesTable.$('tr.reservedAdditionalService').removeClass('reservedAdditionalService');
+}
+
 function searchRooms(e){
 	e.preventDefault();
 	var drp = $('#searchRoomsDateRange').data('daterangepicker');
@@ -1425,7 +1443,7 @@ function endReservation(e) {
 function confirmReservation(e) {
 	e.preventDefault();
 	var flightRes = localStorage.getItem("flightRes");
-	var hotelRes = localStorage.getItem("hotelRes");
+	var hotelRes = JSON.parse(localStorage.getItem("hotelRes"));
 	var carRes = localStorage.getItem("carRes");
 	if (flightRes === null) {
 		toastr["error"]("You have to reserve flight first.");
@@ -1458,6 +1476,33 @@ function confirmReservation(e) {
 	}
 	else if (hotelRes != null && carRes === null) {
 		// FLIGHT + HOTEL
+		var flightReservation = JSON.parse(localStorage.getItem("flightReservation"));
+		flightRes = {"flightCode" : flightReservation["flightCode"], 
+				"invitedFriends" : flightReservation["invitedFriends"], 
+				"numberOfPassengers" : flightReservation["numberOfPassengers"],
+				"passengers" : flightReservation["passengers"],
+				"seats" : flightReservation["seats"]};
+		$.ajax({
+			type : 'POST',
+			url : reserveFlightHotelURL,
+			headers : createAuthorizationTokenHeader(tokenKey),
+			data : JSON.stringify({'flightReservation' : flightRes,
+								   'hotelReservation' : hotelRes}),
+			success : function(data) {
+				if (data != null) {
+					toastr[data.toastType](data.message);
+					localStorage.removeItem("flightReservation");
+					localStorage.removeItem("flightRes");
+					localStorage.removeItem("hotelRes");
+					$("#flightRes").text("No flight reserved");
+					$("#hotelRes").text("");
+					getReservations();
+				}
+			},
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+				alert("AJAX ERROR: " + textStatus);
+			}
+		});
 	}
 	else if (hotelRes === null && carRes != null) {
 		// FLIGHT + CAR

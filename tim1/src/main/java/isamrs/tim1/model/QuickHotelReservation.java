@@ -15,7 +15,7 @@ public class QuickHotelReservation extends HotelReservation {
 
 	private static final long serialVersionUID = -5431545631194865506L;
 
-	@Column(name = "discount", unique = false, nullable = false)
+	@Column(name = "discount", unique = false, nullable = true)
 	private Integer discount;
 
 	public QuickHotelReservation() {

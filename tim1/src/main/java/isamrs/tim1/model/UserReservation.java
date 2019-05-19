@@ -2,6 +2,7 @@ package isamrs.tim1.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -26,7 +27,7 @@ public class UserReservation implements Serializable{
 	@JoinColumn(name = "user")
 	RegisteredUser user;
 	
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "reservation")
 	FlightReservation reservation;
 

@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,9 @@ import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.dto.PassengerDTO;
 import isamrs.tim1.model.Flight;
 import isamrs.tim1.model.FlightReservation;
+import isamrs.tim1.model.HotelAdditionalService;
 import isamrs.tim1.model.HotelReservation;
+import isamrs.tim1.model.HotelRoom;
 import isamrs.tim1.model.PassengerSeat;
 import isamrs.tim1.model.PlaneSegment;
 import isamrs.tim1.model.PlaneSegmentClass;
@@ -27,6 +30,8 @@ import isamrs.tim1.model.Seat;
 import isamrs.tim1.model.UserReservation;
 import isamrs.tim1.repository.FlightRepository;
 import isamrs.tim1.repository.FlightReservationRepository;
+import isamrs.tim1.repository.HotelAdditionalServicesRepository;
+import isamrs.tim1.repository.HotelRoomRepository;
 import isamrs.tim1.repository.ServiceRepository;
 import isamrs.tim1.repository.UserRepository;
 import isamrs.tim1.repository.UserReservationRepository;
@@ -48,6 +53,12 @@ public class ReservationService {
 
 	@Autowired
 	ServiceRepository serviceRepository;
+
+	@Autowired
+	HotelRoomRepository hotelRoomRepository;
+	
+	@Autowired
+	HotelAdditionalServicesRepository hotelAdditionalServicesRepository;
 
 	public MessageDTO reserveFlight(FlightReservationDTO flightRes) {
 		UserReservation ur = new UserReservation();
@@ -85,28 +96,17 @@ public class ReservationService {
 		UserReservation ur = new UserReservation();
 		FlightReservation fr = new FlightReservation();
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		
+
 		MessageDTO retval = reserveFlightNoSave(flightRes, ur, fr, ru);
 		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
 			return retval;
-		
-		HotelReservation hr = new HotelReservation();
-		retval = reserveHotelNoSave(flightHotelRes, fr, hr);
+
+		retval = reserveHotelNoSave(hotelRes, fr);
 		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
 			return retval;
-		
-		
-		
-		userReservationRepository.save(ur); // proveri jel radi samo sa jednim save-om, trebalo bi
-		flightReservationRepository.save(fr);
+
 		userRepository.save(ru);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
-	}
-
-	private MessageDTO reserveHotelNoSave(FlightHotelReservationDTO flightHotelRes, FlightReservation fr,
-			HotelReservation hr) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	private MessageDTO reserveFlightNoSave(FlightReservationDTO flightRes, UserReservation ur, FlightReservation fr,
@@ -157,5 +157,32 @@ public class ReservationService {
 		fr.setUser(ur);
 		f.getAirline().getReservations().add(fr);
 		return new MessageDTO("", ToasterType.SUCCESS.toString());
+	}
+	
+
+	private MessageDTO reserveHotelNoSave(HotelReservationDTO hotelRes, FlightReservation fr) {
+		HotelRoom room = hotelRoomRepository.findOneByNumberAndHotelName(hotelRes.getHotelRoomNumber(),
+				hotelRes.getHotelName());
+		if(checkRoomReservations(room, hotelRes.getFromDate(), hotelRes.getToDate())) {
+			return new MessageDTO("This hotel room already has reservations in this period", ToasterType.ERROR.toString());
+		}
+		
+		HashSet<HotelAdditionalService> additionalServices = new HashSet<HotelAdditionalService>();
+		for(String asName : hotelRes.getAdditionalServiceNames()) {
+			additionalServices.add(hotelAdditionalServicesRepository.findOneByNameAndHotelName(asName, hotelRes.getHotelName()));
+		}
+		HotelReservation hr = new HotelReservation(hotelRes, room, additionalServices, fr);
+		fr.setHotelReservation(hr);
+		return new MessageDTO("", ToasterType.SUCCESS.toString());
+	}
+
+	private boolean checkRoomReservations(HotelRoom room, Date fromDate, Date toDate) {
+		for(HotelReservation res : room.getReservations()) {
+			// (StartA < EndB) and (EndA > StartB)
+			if (res.getFromDate().before(toDate) && res.getToDate().after(fromDate)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

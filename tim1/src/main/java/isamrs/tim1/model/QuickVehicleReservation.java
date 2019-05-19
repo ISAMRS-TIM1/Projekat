@@ -14,7 +14,7 @@ import javax.persistence.Table;
 public class QuickVehicleReservation extends VehicleReservation {
 	private static final long serialVersionUID = 1180459435781814006L;
 
-	@Column(name = "discount", unique = false, nullable = false)
+	@Column(name = "discount", unique = false, nullable = true)
 	private Integer discount;
 
 	public QuickVehicleReservation() {
