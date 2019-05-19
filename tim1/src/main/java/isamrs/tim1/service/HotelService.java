@@ -17,11 +17,11 @@ import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.dto.ServiceDTO;
 import isamrs.tim1.dto.ServiceViewDTO;
+import isamrs.tim1.model.FlightReservation;
 import isamrs.tim1.model.Hotel;
 import isamrs.tim1.model.HotelAdmin;
 import isamrs.tim1.model.HotelReservation;
 import isamrs.tim1.model.QuickHotelReservation;
-import isamrs.tim1.model.Reservation;
 import isamrs.tim1.repository.HotelRepository;
 import isamrs.tim1.repository.ServiceRepository;
 
@@ -62,7 +62,7 @@ public class HotelService {
 	}
 
 	public HotelDTO getHotel(HotelAdmin admin) {
-		return new HotelDTO(admin.getHotel());
+		return new HotelDTO(admin.getHotel(), true);
 	}
 
 	public ArrayList<ServiceViewDTO> getHotels() {
@@ -85,21 +85,16 @@ public class HotelService {
 	}
 
 	public HotelDTO getDetailedHotel(String name) {
-		return new HotelDTO(hotelRepository.findOneByName(name));
+		return new HotelDTO(hotelRepository.findOneByName(name), false);
 	}
 
 	public double getIncomeOfHotel(Date fromDate, Date toDate) {
 		Hotel hotel = ((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel();
 		double income = 0;
-		for (Reservation r : hotel.getNormalReservations()) {
+		for (HotelReservation hr : hotel.getReservations()) {
+			FlightReservation r = hr.getFlightReservation();
 			if (!(r.getDateOfReservation().before(fromDate)) && !(r.getDateOfReservation().after(toDate))
-					&& r.isDone()) {
-				income += r.getPrice();
-			}
-		}
-		for (Reservation r : hotel.getQuickReservations()) {
-			if (!(r.getDateOfReservation().before(fromDate)) && !(r.getDateOfReservation().after(toDate))
-					&& r.isDone()) {
+					&& r.getDone()) {
 				income += r.getPrice();
 			}
 		}
@@ -117,34 +112,22 @@ public class HotelService {
 	public Map<String, Long> getMonthlyChartData() {
 		return getChartData(new SimpleDateFormat("MM/yyyy"));
 	}
-	
-	private Map<String, Long> getChartData(SimpleDateFormat sdf){
-		Hotel hotel = ((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
-				.getHotel();
 
-		ArrayList<HotelReservation> doneNormalReservations = new ArrayList<HotelReservation>();
+	private Map<String, Long> getChartData(SimpleDateFormat sdf) {
+		Hotel hotel = ((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel();
 
-		for (HotelReservation hr : hotel.getNormalReservations()) {
-			if (hr.isDone()) {
-				doneNormalReservations.add(hr);
+		ArrayList<HotelReservation> doneReservations = new ArrayList<HotelReservation>();
+
+		for (HotelReservation hr : hotel.getReservations()) {
+			if (hr.getFlightReservation().getDone()) {
+				doneReservations.add(hr);
 			}
 		}
 
-		ArrayList<QuickHotelReservation> doneQuickReservations = new ArrayList<QuickHotelReservation>();
-
-		for (QuickHotelReservation qr : hotel.getQuickReservations()) {
-			if (qr.isDone()) {
-				doneQuickReservations.add(qr);
-			}
-		}
-
-		Map<String, Long> normalCounts = doneNormalReservations.stream()
-				.collect(Collectors.groupingBy(r -> sdf.format(r.getDateOfReservation()), Collectors.counting()));
-		Map<String, Long> quickCounts = doneQuickReservations.stream()
-				.collect(Collectors.groupingBy(r -> sdf.format(r.getDateOfReservation()), Collectors.counting()));
+		Map<String, Long> normalCounts = doneReservations.stream().collect(Collectors
+				.groupingBy(r -> sdf.format(r.getFlightReservation().getDateOfReservation()), Collectors.counting()));
 
 		Map<String, Long> returnValue = new HashMap<String, Long>(normalCounts);
-		quickCounts.forEach((key, value) -> returnValue.merge(key, value, (v1, v2) -> v1 + v2));
 
 		return returnValue;
 	}

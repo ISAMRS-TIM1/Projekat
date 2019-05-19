@@ -28,7 +28,7 @@ public class UserReservation implements Serializable{
 	
 	@OneToOne
 	@JoinColumn(name = "reservation")
-	Reservation reservation;
+	FlightReservation reservation;
 
 	@Column(name = "grade", unique = false, nullable = false)
 	private Integer grade;
@@ -49,11 +49,11 @@ public class UserReservation implements Serializable{
 		this.user = user;
 	}
 
-	public Reservation getReservation() {
+	public FlightReservation getReservation() {
 		return reservation;
 	}
 
-	public void setReservation(Reservation reservation) {
+	public void setReservation(FlightReservation reservation) {
 		this.reservation = reservation;
 	}
 

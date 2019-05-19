@@ -51,16 +51,7 @@ public class FlightDTO implements Serializable {
 		this.flightCode = f.getFlightCode();
 		this.planeSegments = new ArrayList<PlaneSegment>(f.getPlaneSegments());
 		this.reservedSeats = new ArrayList<String>();
-		for (FlightReservation r : f.getAirline().getNormalReservations()) {
-			if (r.getFlight().getFlightCode().equals(f.getFlightCode())) {
-				for (PassengerSeat ps : r.getPassengerSeats()) {
-					if (ps.getSeat() != null) {
-						this.reservedSeats.add(ps.getSeat().getRow() + "_" + ps.getSeat().getColumn());
-					}
-				}
-			}
-		}
-		for (QuickFlightReservation r : f.getAirline().getQuickReservations()) {
+		for (FlightReservation r : f.getAirline().getReservations()) {
 			if (r.getFlight().getFlightCode().equals(f.getFlightCode())) {
 				for (PassengerSeat ps : r.getPassengerSeats()) {
 					if (ps.getSeat() != null) {

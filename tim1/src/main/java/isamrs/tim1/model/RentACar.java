@@ -23,10 +23,7 @@ public class RentACar extends Service implements Serializable {
 	private Set<Vehicle> vehicles;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<QuickVehicleReservation> quickReservations;
-
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<VehicleReservation> normalReservations;
+	private Set<VehicleReservation> reservations;
 
 	@OneToMany(mappedBy = "rentACar", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<RentACarAdmin> admins;
@@ -54,8 +51,7 @@ public class RentACar extends Service implements Serializable {
 		branchOffices = new HashSet<BranchOffice>();
 		admins = new HashSet<RentACarAdmin>();
 		vehicles = new HashSet<Vehicle>();
-		quickReservations = new HashSet<QuickVehicleReservation>();
-		normalReservations = new HashSet<VehicleReservation>();
+		reservations = new HashSet<VehicleReservation>();
 
 	}
 
@@ -64,16 +60,15 @@ public class RentACar extends Service implements Serializable {
 		branchOffices = new HashSet<BranchOffice>();
 		admins = new HashSet<RentACarAdmin>();
 		vehicles = new HashSet<Vehicle>();
-		quickReservations = new HashSet<QuickVehicleReservation>();
-		normalReservations = new HashSet<VehicleReservation>();
+		reservations = new HashSet<VehicleReservation>();
 	}
 
-	public Set<QuickVehicleReservation> getQuickReservations() {
-		return quickReservations;
+	public Set<VehicleReservation> getReservations() {
+		return reservations;
 	}
 
-	public void setQuickReservations(Set<QuickVehicleReservation> quickReservations) {
-		this.quickReservations = quickReservations;
+	public void setReservations(Set<VehicleReservation> reservations) {
+		this.reservations = reservations;
 	}
 
 	public Set<RentACarAdmin> getAdmins() {
@@ -85,11 +80,11 @@ public class RentACar extends Service implements Serializable {
 	}
 
 	public Set<VehicleReservation> getNormalReservations() {
-		return normalReservations;
+		return reservations;
 	}
 
 	public void setNormalReservations(Set<VehicleReservation> normalReservations) {
-		this.normalReservations = normalReservations;
+		this.reservations = normalReservations;
 	}
 
 	public static long getSerialversionuid() {

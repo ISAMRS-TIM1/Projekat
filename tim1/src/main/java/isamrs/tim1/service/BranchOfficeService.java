@@ -104,19 +104,10 @@ public class BranchOfficeService {
 
 		Date now = new Date();
 		boolean activeReservations = false;
-		for (VehicleReservation vr : rentACar.getNormalReservations()) {
+		for (VehicleReservation vr : rentACar.getReservations()) {
 			if (vr.getBranchOffice().getName().equals(name) && vr.getToDate().compareTo(now) > 0) {
 				activeReservations = true;
 				break;
-			}
-		}
-
-		if (!activeReservations) {
-			for (QuickVehicleReservation qr : rentACar.getQuickReservations()) {
-				if (qr.getBranchOffice().getName().equals(name) && qr.getToDate().compareTo(now) > 0) {
-					activeReservations = true;
-					break;
-				}
 			}
 		}
 
