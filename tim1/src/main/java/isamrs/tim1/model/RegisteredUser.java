@@ -29,6 +29,9 @@ public class RegisteredUser extends User {
 	
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<UserReservation> userReservations;
+	
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<FlightReservation> invitingReservations;
 
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<ServiceGrade> serviceGrades;
@@ -40,6 +43,7 @@ public class RegisteredUser extends User {
 		friends = new HashSet<RegisteredUser>();
 		userReservations = new HashSet<UserReservation>();
 		serviceGrades = new HashSet<ServiceGrade>();
+		invitingReservations = new HashSet<FlightReservation>();
 		discountPoints = 0;
 	}
 
@@ -94,6 +98,16 @@ public class RegisteredUser extends User {
 	public void setInviters(Set<RegisteredUser> inviters) {
 		this.inviters = inviters;
 	}
+
+	public Set<FlightReservation> getInvitingReservations() {
+		return invitingReservations;
+	}
+
+	public void setInvitingReservations(Set<FlightReservation> invitingReservations) {
+		this.invitingReservations = invitingReservations;
+	}
+
+
 
 	private static final long serialVersionUID = 4453092532257405053L;
 }

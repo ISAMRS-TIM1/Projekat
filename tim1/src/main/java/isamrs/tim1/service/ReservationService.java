@@ -7,15 +7,19 @@ import java.util.Date;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import isamrs.tim1.dto.FlightHotelReservationDTO;
 import isamrs.tim1.dto.FlightReservationDTO;
 import isamrs.tim1.dto.HotelReservationDTO;
+import isamrs.tim1.dto.InvitingReservationDTO;
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.dto.PassengerDTO;
+import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.Flight;
 import isamrs.tim1.model.FlightReservation;
 import isamrs.tim1.model.HotelReservation;
@@ -27,6 +31,7 @@ import isamrs.tim1.model.Seat;
 import isamrs.tim1.model.UserReservation;
 import isamrs.tim1.repository.FlightRepository;
 import isamrs.tim1.repository.FlightReservationRepository;
+import isamrs.tim1.repository.PassengerSeatRepository;
 import isamrs.tim1.repository.ServiceRepository;
 import isamrs.tim1.repository.UserRepository;
 import isamrs.tim1.repository.UserReservationRepository;
@@ -48,6 +53,9 @@ public class ReservationService {
 
 	@Autowired
 	ServiceRepository serviceRepository;
+	
+	@Autowired
+	PassengerSeatRepository passengerSeatRepository;
 	
 	@Autowired
 	EmailService mailService;
@@ -209,8 +217,84 @@ public class ReservationService {
 		ps.setReservation(fRes);
 		fRes.setPrice(price);
 		fRes.getPassengerSeats().add(ps);
+		fRes.setUser(null);
+		friend.getInvitingReservations().add(fRes);
 		f.getAirline().getReservations().add(fRes);
 		fRes = flightReservationRepository.save(fRes);
-		mailService.sendMailToFriend(friend, fRes.getId(), inviter);
+		userRepository.save(friend);
+		mailService.sendMailToFriend(friend, fRes, inviter);
+	}
+	
+	public ResponseEntity<MessageDTO> acceptFlightInvitation(String id) {
+		Long resID = Long.parseLong(id);
+		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		FlightReservation fr = null;
+		Set<FlightReservation> res = ru.getInvitingReservations();
+		for (FlightReservation fRes : res) {
+			if (fRes.getId() == resID) {
+				fr = fRes;
+				res.remove(fRes);
+				break;
+			}
+		}
+		if (fr == null) {
+			return new ResponseEntity<MessageDTO>(new MessageDTO("Reservation does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
+		}
+		UserReservation ur = new UserReservation();
+		ur.setGrade(0);
+		ur.setReservation(fr);
+		ur.setUser(ru);
+		fr.setUser(ur);
+		userReservationRepository.save(ur);
+		flightReservationRepository.save(fr);
+		userRepository.save(ru);
+		return new ResponseEntity<MessageDTO>(new MessageDTO("Successfully accepted reservation.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
+	}
+
+	public ArrayList<InvitingReservationDTO> getInvitingReservations() {
+		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		ArrayList<InvitingReservationDTO> invitingReservations = new ArrayList<InvitingReservationDTO>();
+		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+		for (FlightReservation fr : ru.getInvitingReservations()) {
+			String description = fr.getFlight().getStartDestination().getName() + "-" + 
+								 fr.getFlight().getEndDestination().getName() + " " + sdf.format(fr.getFlight().getDepartureTime());
+			invitingReservations.add(new InvitingReservationDTO(fr.getId(), description));
+		}
+		return invitingReservations;
+	}
+
+	public ResponseEntity<MessageDTO> declineFlightInvitation(String id) {
+		long resID = Long.parseLong(id);
+		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		FlightReservation fr = null;
+		Set<FlightReservation> res = ru.getInvitingReservations();
+		for (FlightReservation fRes : res) {
+			if (fRes.getId().longValue() == resID) {
+				fr = fRes;
+				res.remove(fRes);
+				break;
+			}
+		}
+		if (fr == null) {
+			return new ResponseEntity<MessageDTO>(new MessageDTO("Reservation does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
+		}
+		Airline a = fr.getFlight().getAirline();
+		res = a.getReservations();
+		for (PassengerSeat ps : fr.getPassengerSeats()) {
+			passengerSeatRepository.delete(ps);
+		}
+		fr.setPassengerSeats(null);
+		fr.setFlight(null);
+		flightReservationRepository.save(fr);
+		for (FlightReservation fRes : res) {
+			if (fRes.getId().longValue() == fr.getId().longValue()) {
+				res.remove(fRes);
+				break;
+			}
+		}
+		serviceRepository.save(a);
+		userRepository.save(ru);
+		flightReservationRepository.delete(fr);
+		return new ResponseEntity<MessageDTO>(new MessageDTO("Successfully declined reservation.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
 	}
 }
