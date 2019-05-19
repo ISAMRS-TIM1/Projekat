@@ -19,6 +19,7 @@ import isamrs.tim1.dto.QuickVehicleReservationDTO;
 import isamrs.tim1.dto.RentACarDTO;
 import isamrs.tim1.dto.ServiceViewDTO;
 import isamrs.tim1.model.BranchOffice;
+import isamrs.tim1.model.FlightReservation;
 import isamrs.tim1.model.Location;
 import isamrs.tim1.model.QuickVehicleReservation;
 import isamrs.tim1.model.RentACar;
@@ -117,31 +118,19 @@ public class RentACarService {
 		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
 				.getRentACar();
 
-		ArrayList<VehicleReservation> doneNormalReservations = new ArrayList<VehicleReservation>();
+		ArrayList<VehicleReservation> doneReservations = new ArrayList<VehicleReservation>();
 
-		for (VehicleReservation vr : rentACar.getNormalReservations()) {
-			if (vr.isDone()) {
-				doneNormalReservations.add(vr);
-			}
-		}
-
-		ArrayList<QuickVehicleReservation> doneQuickReservations = new ArrayList<QuickVehicleReservation>();
-
-		for (QuickVehicleReservation qr : rentACar.getQuickReservations()) {
-			if (qr.isDone()) {
-				doneQuickReservations.add(qr);
+		for (VehicleReservation vr : rentACar.getReservations()) {
+			if (vr.getFlightReservation().getDone()) {
+				doneReservations.add(vr);
 			}
 		}
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-		Map<String, Long> normalCounts = doneNormalReservations.stream()
-				.collect(Collectors.groupingBy(r -> sdf.format(r.getDateOfReservation()), Collectors.counting()));
-		Map<String, Long> quickCounts = doneQuickReservations.stream()
-				.collect(Collectors.groupingBy(r -> sdf.format(r.getDateOfReservation()), Collectors.counting()));
-
+		Map<String, Long> normalCounts = doneReservations.stream().collect(Collectors
+				.groupingBy(r -> sdf.format(r.getFlightReservation().getDateOfReservation()), Collectors.counting()));
 		Map<String, Long> returnValue = new HashMap<String, Long>(normalCounts);
-		quickCounts.forEach((key, value) -> returnValue.merge(key, value, (v1, v2) -> v1 + v2));
 
 		return returnValue;
 	}
@@ -150,31 +139,19 @@ public class RentACarService {
 		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
 				.getRentACar();
 
-		ArrayList<VehicleReservation> doneNormalReservations = new ArrayList<VehicleReservation>();
+		ArrayList<VehicleReservation> doneReservations = new ArrayList<VehicleReservation>();
 
-		for (VehicleReservation vr : rentACar.getNormalReservations()) {
-			if (vr.isDone()) {
-				doneNormalReservations.add(vr);
-			}
-		}
-
-		ArrayList<QuickVehicleReservation> doneQuickReservations = new ArrayList<QuickVehicleReservation>();
-
-		for (QuickVehicleReservation qr : rentACar.getQuickReservations()) {
-			if (qr.isDone()) {
-				doneQuickReservations.add(qr);
+		for (VehicleReservation vr : rentACar.getReservations()) {
+			if (vr.getFlightReservation().getDone()) {
+				doneReservations.add(vr);
 			}
 		}
 
 		SimpleDateFormat sdf = new SimpleDateFormat("MM/yyyy 'week: 'W");
 
-		Map<String, Long> normalCounts = doneNormalReservations.stream()
-				.collect(Collectors.groupingBy(r -> sdf.format(r.getDateOfReservation()), Collectors.counting()));
-		Map<String, Long> quickCounts = doneQuickReservations.stream()
-				.collect(Collectors.groupingBy(r -> sdf.format(r.getDateOfReservation()), Collectors.counting()));
-
+		Map<String, Long> normalCounts = doneReservations.stream().collect(Collectors
+				.groupingBy(r -> sdf.format(r.getFlightReservation().getDateOfReservation()), Collectors.counting()));
 		Map<String, Long> returnValue = new HashMap<String, Long>(normalCounts);
-		quickCounts.forEach((key, value) -> returnValue.merge(key, value, (v1, v2) -> v1 + v2));
 
 		return returnValue;
 	}
@@ -183,31 +160,19 @@ public class RentACarService {
 		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
 				.getRentACar();
 
-		ArrayList<VehicleReservation> doneNormalReservations = new ArrayList<VehicleReservation>();
+		ArrayList<VehicleReservation> doneReservations = new ArrayList<VehicleReservation>();
 
-		for (VehicleReservation vr : rentACar.getNormalReservations()) {
-			if (vr.isDone()) {
-				doneNormalReservations.add(vr);
-			}
-		}
-
-		ArrayList<QuickVehicleReservation> doneQuickReservations = new ArrayList<QuickVehicleReservation>();
-
-		for (QuickVehicleReservation qr : rentACar.getQuickReservations()) {
-			if (qr.isDone()) {
-				doneQuickReservations.add(qr);
+		for (VehicleReservation vr : rentACar.getReservations()) {
+			if (vr.getFlightReservation().getDone()) {
+				doneReservations.add(vr);
 			}
 		}
 
 		SimpleDateFormat sdf = new SimpleDateFormat("MM/yyyy");
 
-		Map<String, Long> normalCounts = doneNormalReservations.stream()
-				.collect(Collectors.groupingBy(r -> sdf.format(r.getDateOfReservation()), Collectors.counting()));
-		Map<String, Long> quickCounts = doneQuickReservations.stream()
-				.collect(Collectors.groupingBy(r -> sdf.format(r.getDateOfReservation()), Collectors.counting()));
-
+		Map<String, Long> normalCounts = doneReservations.stream().collect(Collectors
+				.groupingBy(r -> sdf.format(r.getFlightReservation().getDateOfReservation()), Collectors.counting()));
 		Map<String, Long> returnValue = new HashMap<String, Long>(normalCounts);
-		quickCounts.forEach((key, value) -> returnValue.merge(key, value, (v1, v2) -> v1 + v2));
 
 		return returnValue;
 
@@ -218,33 +183,19 @@ public class RentACarService {
 				.getRentACar();
 		double income = 0;
 
-		for (VehicleReservation vr : rentACar.getNormalReservations()) {
-			if (vr.isDone() && vr.getDateOfReservation().after(fromDate) && vr.getDateOfReservation().before(toDate)) {
-				income += vr.getPrice();
+		for (VehicleReservation vr : rentACar.getReservations()) {
+			FlightReservation fr = vr.getFlightReservation();
+			if (fr.getDone() && fr.getDateOfReservation().after(fromDate) && fr.getDateOfReservation().before(toDate)) {
+				income += fr.getPrice();
 			}
 		}
 
-		for (QuickVehicleReservation qr : rentACar.getQuickReservations()) {
-			if (qr.isDone() && qr.getDateOfReservation().after(fromDate) && qr.getDateOfReservation().before(toDate)) {
-				income += qr.getPrice();
-			}
-		}
 		return income;
 	}
 
 	public MessageDTO createQuickVehicleReservation(QuickVehicleReservationDTO quickReservation) {
 		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
 				.getRentACar();
-
-		for (QuickVehicleReservation qr : rentACar.getQuickReservations()) {
-			if (qr.getBranchOffice().getId().equals(quickReservation.getBranchOffice())
-					&& qr.getVehicle().getId().equals(quickReservation.getVehicle())
-					&& !((quickReservation.getFromDate().before(qr.getFromDate()))
-							&& quickReservation.getToDate().before(qr.getFromDate()))
-					|| (quickReservation.getFromDate().after(qr.getToDate()))) {
-				return new MessageDTO("Vehicle is taken in given peroid", ToasterType.ERROR.toString());
-			}
-		}
 
 		for (VehicleReservation vr : rentACar.getNormalReservations()) {
 			if (vr.getBranchOffice().getId().equals(quickReservation.getBranchOffice())
@@ -261,13 +212,10 @@ public class RentACarService {
 		BranchOffice br = rentACar.getBranchOffices().stream()
 				.filter(bo -> bo.getId() == quickReservation.getBranchOffice()).findFirst().orElse(null);
 		newQuickReservation.setBranchOffice(br);
-		newQuickReservation.setDateOfReservation(null);
 		newQuickReservation.setDiscount(quickReservation.getDiscount());
-		newQuickReservation.setDone(null);
 		newQuickReservation.setFromDate(quickReservation.getFromDate());
 		newQuickReservation.setId(null);
 		newQuickReservation.setToDate(quickReservation.getToDate());
-		newQuickReservation.setUser(null);
 		Vehicle v = rentACar.getVehicles().stream().filter(ve -> ve.getId() == quickReservation.getVehicle())
 				.findFirst().orElse(null);
 		newQuickReservation.setVehicle(v);
@@ -275,7 +223,7 @@ public class RentACarService {
 				.setPrice(this.daysBetween(newQuickReservation.getFromDate(), newQuickReservation.getToDate())
 						* (double) v.getPricePerDay());
 
-		rentACar.getQuickReservations().add(newQuickReservation);
+		rentACar.getReservations().add(newQuickReservation);
 
 		rentACarRepository.save(rentACar);
 
@@ -288,8 +236,9 @@ public class RentACarService {
 
 		ArrayList<QuickVehicleReservationDTO> quickReservations = new ArrayList<QuickVehicleReservationDTO>();
 
-		for (QuickVehicleReservation qvr : rentACar.getQuickReservations()) {
-			quickReservations.add(new QuickVehicleReservationDTO(qvr));
+		for (VehicleReservation qvr : rentACar.getReservations()) {
+			if (qvr instanceof QuickVehicleReservation)
+				quickReservations.add(new QuickVehicleReservationDTO((QuickVehicleReservation) qvr));
 		}
 
 		return quickReservations;

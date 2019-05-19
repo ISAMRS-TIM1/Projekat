@@ -60,10 +60,7 @@ public class Vehicle implements Serializable {
 	private RentACar rentACar;
 
 	@OneToMany(mappedBy = "vehicle", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<QuickVehicleReservation> quickReservations;
-
-	@OneToMany(mappedBy = "vehicle", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<VehicleReservation> normalReservations;
+	private Set<VehicleReservation> reservations;
 
 	@Column(name = "quantity", unique = false, nullable = false)
 	private Integer quantity;
@@ -76,8 +73,7 @@ public class Vehicle implements Serializable {
 
 	public Vehicle() {
 		super();
-		quickReservations = new HashSet<QuickVehicleReservation>();
-		normalReservations = new HashSet<VehicleReservation>();
+		reservations = new HashSet<VehicleReservation>();
 	}
 
 	public Integer getId() {
@@ -164,20 +160,12 @@ public class Vehicle implements Serializable {
 		return serialVersionUID;
 	}
 
-	public Set<QuickVehicleReservation> getQuickReservations() {
-		return quickReservations;
+	public Set<VehicleReservation> getReservations() {
+		return reservations;
 	}
 
-	public void setQuickReservations(Set<QuickVehicleReservation> quickReservations) {
-		this.quickReservations = quickReservations;
-	}
-
-	public Set<VehicleReservation> getNormalReservations() {
-		return normalReservations;
-	}
-
-	public void setNormalReservations(Set<VehicleReservation> normalReservations) {
-		this.normalReservations = normalReservations;
+	public void setReservations(Set<VehicleReservation> normalReservations) {
+		this.reservations = normalReservations;
 	}
 
 	@Override

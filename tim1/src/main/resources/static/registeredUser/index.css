@@ -261,6 +261,18 @@ input, button {
 	font-size: 15px;
 }
 
+#showFlightTable, #passengersTable {
+	text-align:left;
+	color:white;
+	margin: 0 auto;
+}
+#showFlightTable tbody, #passengersTable tbody {
+	overflow-y : auto;
+}
+#showFlightTable td, #passengersTable td {
+	padding: 5px;
+}
+
 #searchUsersButton {
 	margin-left: auto;
 	margin-right: auto;
@@ -407,23 +419,18 @@ input, select {
 #showHotelTable td {
 	padding: 30px;
 	text-align: center;
-}
+}s
 
 #showHotelTable {
 	margin: auto;
 }
 
-#showFlightTable, #passengersTable {
-	text-align:left;
-	color:white;
-	margin: 0 auto;
+/* hotels reservations */
+.reservedAdditionalService td{
+	background-color: #00ff00 !important;
 }
-#showFlightTable tbody, #passengersTable tbody {
-	overflow-y : auto;
-}
-#showFlightTable td, #passengersTable td {
-	padding: 5px;
-}
+
+/* CARS */
 
 .textInput {
 	border: none;
@@ -458,4 +465,16 @@ input, select {
 
 #searchCars {
 	padding-bottom: 2vw;
+}
+
+#searchVehiclesButton {
+	width:100%;
+}
+
+/* BIG MODAL */
+@media (min-width: 768px) {
+  .modal-xl {
+    width: 90%;
+   max-width:1200px;
+  }
 }

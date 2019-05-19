@@ -27,12 +27,8 @@ public class PassengerSeat implements Serializable {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "normalReservation")
-	private FlightReservation normalReservation;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "quickReservation")
-	private QuickFlightReservation quickReservation;
+	@JoinColumn(name = "reservations")
+	private FlightReservation reservations;
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "seat")
@@ -66,20 +62,12 @@ public class PassengerSeat implements Serializable {
 		this.id = id;
 	}
 
-	public FlightReservation getNormalReservation() {
-		return normalReservation;
+	public FlightReservation getReservation() {
+		return reservations;
 	}
 
-	public void setNormalReservation(FlightReservation normalReservation) {
-		this.normalReservation = normalReservation;
-	}
-
-	public QuickFlightReservation getQuickReservation() {
-		return quickReservation;
-	}
-
-	public void setQuickReservation(QuickFlightReservation quickReservation) {
-		this.quickReservation = quickReservation;
+	public void setReservation(FlightReservation normalReservation) {
+		this.reservations = normalReservation;
 	}
 
 	public Seat getSeat() {

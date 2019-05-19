@@ -11,63 +11,22 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "QuickHotelReservation")
-public class QuickHotelReservation extends QuickReservation implements Serializable {
-
-	@Column(name = "fromDate", unique = false, nullable = false)
-	private Date fromDate;
-
-	@Column(name = "toDate", unique = false, nullable = false)
-	private Date toDate;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "hotelRoom")
-	private HotelRoom hotelRoom;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "additionalService")
-	private HotelAdditionalService additionalService;
+public class QuickHotelReservation extends HotelReservation {
 
 	private static final long serialVersionUID = -5431545631194865506L;
+
+	@Column(name = "discount", unique = false, nullable = true)
+	private Integer discount;
 
 	public QuickHotelReservation() {
 		super();
 	}
 
-	public Date getFromDate() {
-		return fromDate;
+	public Integer getDiscount() {
+		return discount;
 	}
 
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
+	public void setDiscount(Integer discount) {
+		this.discount = discount;
 	}
-
-	public Date getToDate() {
-		return toDate;
-	}
-
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
-
-	public HotelRoom getHotelRoom() {
-		return hotelRoom;
-	}
-
-	public void setHotelRoom(HotelRoom hotelRoom) {
-		this.hotelRoom = hotelRoom;
-	}
-
-	public HotelAdditionalService getAdditionalService() {
-		return additionalService;
-	}
-
-	public void setAdditionalService(HotelAdditionalService additionalService) {
-		this.additionalService = additionalService;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
 }

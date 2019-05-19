@@ -11,62 +11,21 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "QuickVehicleReservation")
-public class QuickVehicleReservation extends QuickReservation implements Serializable {
-
-	/**
-	 * 
-	 */
+public class QuickVehicleReservation extends VehicleReservation {
 	private static final long serialVersionUID = 1180459435781814006L;
 
-	@Column(name = "fromDate", unique = false, nullable = false)
-	private Date fromDate;
+	@Column(name = "discount", unique = false, nullable = true)
+	private Integer discount;
 
-	@Column(name = "toDate", unique = false, nullable = false)
-	private Date toDate;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "vehicle")
-	private Vehicle vehicle;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "branchOffice")
-	private BranchOffice branchOffice;
-
-	public Date getFromDate() {
-		return fromDate;
+	public QuickVehicleReservation() {
+		super();
 	}
 
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
+	public Integer getDiscount() {
+		return discount;
 	}
 
-	public Date getToDate() {
-		return toDate;
+	public void setDiscount(Integer discount) {
+		this.discount = discount;
 	}
-
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
-
-	public Vehicle getVehicle() {
-		return vehicle;
-	}
-
-	public void setVehicle(Vehicle vehicle) {
-		this.vehicle = vehicle;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
-	public BranchOffice getBranchOffice() {
-		return branchOffice;
-	}
-
-	public void setBranchOffice(BranchOffice branchOffice) {
-		this.branchOffice = branchOffice;
-	}
-
 }

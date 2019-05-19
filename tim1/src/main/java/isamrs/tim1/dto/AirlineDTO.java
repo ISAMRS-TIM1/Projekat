@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.Destination;
 import isamrs.tim1.model.Flight;
+import isamrs.tim1.model.FlightReservation;
 import isamrs.tim1.model.QuickFlightReservation;
 
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
@@ -20,7 +21,7 @@ public class AirlineDTO implements Serializable {
 	private double longitude;
 	private ArrayList<Destination> destinations;
 	private ArrayList<FlightDTO> flights;
-	private ArrayList<QuickFlightReservation> quickReservations;
+	private ArrayList<FlightReservation> reservations;
 
 
 	public AirlineDTO() {
@@ -39,7 +40,7 @@ public class AirlineDTO implements Serializable {
 		for (Flight f : airline.getFlights()) {
 			this.flights.add(new FlightDTO(f));
 		}
-		this.quickReservations = new ArrayList<QuickFlightReservation>(airline.getQuickReservations());
+		this.reservations = new ArrayList<FlightReservation>(airline.getReservations());
 	}
 
 	public String getName() {
@@ -98,12 +99,13 @@ public class AirlineDTO implements Serializable {
 		this.flights = flights;
 	}
 
-	public ArrayList<QuickFlightReservation> getQuickReservations() {
-		return quickReservations;
+
+	public ArrayList<FlightReservation> getReservations() {
+		return reservations;
 	}
 
-	public void setQuickReservations(ArrayList<QuickFlightReservation> quickReservations) {
-		this.quickReservations = quickReservations;
+	public void setReservations(ArrayList<FlightReservation> reservations) {
+		this.reservations = reservations;
 	}
 
 	public static long getSerialversionuid() {
