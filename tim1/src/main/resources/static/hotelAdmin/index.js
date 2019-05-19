@@ -23,6 +23,8 @@ const addAdditionalServiceURL = "/api/addAdditionalService";
 const getAdditionalServiceURL = "/api/getAdditionalService";
 const editAdditionalServiceURL = "/api/editAdditionalService/";
 const deleteAdditionalServiceURL = "/api/deleteAdditionalService/";
+const searchRoomsAdminURL = "/api/searchRoomsAdmin";
+const createQuickHotelReservationURL = "/api/createQuickHotelReservation";
 
 const logoutURL = "../logout";
 const loadUserInfoURL = "../api/getUserInfo";
@@ -65,7 +67,16 @@ $(document).ready(function() {
 			$(this).siblings().first().prop('readonly', 'true');
 		}
 	});
+	
+	setUpInputFields();
+})
 
+function loadData() {
+	loadHotel();
+	loadProfileData();
+}
+
+function setUpInputFields(){
 	$('#newSeasonalPriceDateRange').daterangepicker({
 		minDate:  moment(moment()).add(1, 'days'), // tomorrow
 		endDate: moment(moment()).add(2, 'days'),
@@ -78,11 +89,16 @@ $(document).ready(function() {
 			format : 'DD/MM/YYYY'
 		}
 	});
-})
 
-function loadData() {
-	loadHotel();
-	loadProfileData();
+	$("#searchHotelGrade").slider({});
+	$('#searchRoomsDateRange').daterangepicker({
+		minDate:new Date(),
+		locale: {
+		      format: 'DD/MM/YYYY'
+		    },
+	});
+	$("#searchRoomsPrice").slider({});
+	$("#searchRoomsGrade").slider({});
 }
 
 function setUpTables() {
@@ -94,7 +110,15 @@ function setUpTables() {
 		"paging" : false,
 		"info" : false,
 	});
-	$('#quickReservationsTable').DataTable({
+	quickAdditionalServicesTable = $('#quickAdditionalServicesTable').DataTable({
+		"paging" : false,
+		"info" : false,
+	});
+	quickRoomsTable = $('#quickRoomsTable').DataTable({
+		"paging" : false,
+		"info" : false,
+	});
+	quickReservationsTable = $('#quickReservationsTable').DataTable({
 		"paging" : false,
 		"info" : false,
 	});
@@ -187,7 +211,7 @@ function loadHotel() {
 			setUpMap(data["latitude"], data["longitude"], 'basicMapDiv');
 			renderAdditionalServices(data["additionalServices"]);
 			renderRooms(data["rooms"]);
-			// renderQuickReservations[data["quickReservations"]];
+			renderQuickReservations[data["quickReservations"]];
 		}
 	});
 }
@@ -230,12 +254,16 @@ function loadAdditionalService(name) {
 }
 
 function renderAdditionalServices(data) {
-	var table = $('#additionalServicesTable').DataTable();
-	table.clear().draw();
+	additionalServicesTable.clear().draw();
 	$.each(data, function(i, val) {
-		rowNode = table.row.add([ val.name, val.price ]).draw(false).node();
+		rowNode = additionalServicesTable.row.add([ val.name, val.price ]).draw(false).node();
 		if(val.name == shownAdditionalService)
 			$(rowNode).addClass('selected');
+	});
+	quickAdditionalServicesTable.clear().draw();
+	$.each(data, function(i, val) {
+		quickAdditionalServicesTable.row.add([ val.name, val.price,
+			`<button onclick="reserveAdditionalService('${val.name}')" class="btn btn-default"><i class="fa fa-plus"></i></button>` ]).draw(false);
 	});
 }
 
@@ -248,6 +276,31 @@ function renderRooms(data) {
 		if (val.roomNumber == shownRoom)
 			$(rowNode).addClass('selected');
 	});
+}
+
+function renderQuickRooms(data) {
+	quickRoomsTable.clear().draw();
+	$.each(data, function(i, val) {
+		quickRoomsTable.row.add(
+				[ val.roomNumber, val.price, val.numberOfPeople, val.averageGrade,
+					`<button onclick="reserveRoomNumber('${val.roomNumber}')" class="btn btn-default">Reserve</a>` ]).draw(false);
+	});
+}
+
+function renderQuickReservations(data){
+	quickReservationsTable.clear().draw();
+	$.each(data, function(i, val) {
+			quickReservationsTable.row.add(
+								[		val.id,
+										val.discountedPrice,
+										val.discount,
+										val.fromDate,
+										val.toDate,
+										val.roomNumber,
+										val.additionalServices,
+										`<a href="javascript:deleteQuickReservation('${val.id}')">Delete</a>` ])
+						.draw(false);
+			});
 }
 
 function renderSeasonalPrices(data) {
@@ -671,7 +724,83 @@ function getMonthlyChartData() {
 	});
 }
 
+/* QUICK RESERVATIONS */
 
+function searchRooms(e){
+	e.preventDefault();
+	var drp = $('#searchRoomsDateRange').data('daterangepicker');
+	$.ajax({
+		type : "GET",
+		url : searchRoomsAdminURL,
+		contentType : "application/json",
+		data : {
+			'fromDate' : drp.startDate.toDate(),
+			'toDate' : drp.endDate.toDate(),
+			'forPeople' : $('#searchRoomsForPeople').val(),
+			'fromPrice' : $("#searchRoomsPrice").slider('getValue')[0],
+			'toPrice' : $("#searchRoomsPrice").slider('getValue')[1],
+			'fromGrade' : $("#searchRoomsGrade").slider('getValue')[0],
+			'toGrade' : $("#searchRoomsGrade").slider('getValue')[1]
+		},
+		dataType : "json",
+		headers : createAuthorizationTokenHeader(TOKEN_KEY),
+		success : function(data) {
+			renderQuickRooms(data);
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
+function reserveAdditionalService(name){
+	var indexes = quickAdditionalServicesTable.rows().eq( 0 ).filter( function (rowIdx) {
+	    return quickAdditionalServicesTable.cell( rowIdx, 0 ).data() === name ? true : false;
+	} );
+	var selectedRow = quickAdditionalServicesTable.rows( indexes ).nodes().to$();
+	selectedRow.addClass( 'reservedAdditionalService' );
+	selectedRow.find("i").attr("class", "fa fa-minus");
+	selectedRow.find("button").attr("onclick", `dereserveAdditionalService('${name}')`);
+}
+
+function dereserveAdditionalService(name){
+	var indexes = quickAdditionalServicesTable.rows().eq( 0 ).filter( function (rowIdx) {
+	    return additionalServicesTable.cell( rowIdx, 0 ).data() === name ? true : false;
+	} );
+	var selectedRow = quickAdditionalServicesTable.rows( indexes ).nodes().to$();
+	selectedRow.removeClass( 'reservedAdditionalService' );
+	selectedRow.find("i").attr("class", "fa fa-plus");
+	selectedRow.find("button").attr("onclick", `reserveAdditionalService('${name}')`);
+}
+
+function reserveRoomNumber(roomNumber){
+	additionalServiceNames = [];
+	quickAdditionalServicesTable.rows('.reservedAdditionalService').every(function ( rowIdx, tableLoop, rowLoop ) {
+	    additionalServiceNames.push(this.data()[0]);
+	} );
+	var drp = $('#searchRoomsDateRange').data('daterangepicker');
+	var hotelRes = {'fromDate' : drp.startDate.toDate(),
+					'toDate' : drp.endDate.toDate(),
+					'hotelRoomNumber' : roomNumber,
+					'additionalServiceNames' : additionalServiceNames,
+					'discount' : $("#quickDiscount").val()};
+	$.ajax({
+		type : 'POST',
+		url : createQuickHotelReservationURL,
+		headers : createAuthorizationTokenHeader(tokenKey),
+		data : JSON.stringify(hotelRes),
+		success : function(data) {
+			if (data != null) {
+				toastr[data.toastType](data.message);
+				quickAdditionalServicesTable.$('tr.reservedAdditionalService').removeClass('reservedAdditionalService');
+				loadHotel();
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
 
 
 
@@ -955,3 +1084,5 @@ function makeMonthlyChart(data, comparator) {
 	    }
 	});
 }
+
+

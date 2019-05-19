@@ -325,3 +325,33 @@ a[data-toggle="tab"] {
 	padding: 30px;
 	text-align: center;
 }
+
+/* QUICK RESERVATIONS */
+
+#createQuickReservationlDiv {
+	margin: 0;
+	background: #5994FF;
+	border: 0.24vw solid #B27A00;
+	border-radius: 4vw 1.6vw;
+}
+
+#createQuickReservationTable td {
+	padding: 30px;
+	text-align: center;
+}
+
+#createQuickReservationTable {
+	margin: auto;
+}
+
+.reservedAdditionalService td{
+	background-color: #00ff00 !important;
+}
+
+/* BIG MODAL */
+@media (min-width: 768px) {
+  .modal-xl {
+    width: 90%;
+   max-width:1200px;
+  }
+}

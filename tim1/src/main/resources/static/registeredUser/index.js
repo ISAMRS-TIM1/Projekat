@@ -1192,9 +1192,9 @@ function loadFlight(code) {
 function renderRooms(data) {
 	roomsTable.clear().draw();
 	$.each(data, function(i, val) {
-		rowNode = roomsTable.row.add(
+		roomsTable.row.add(
 				[ val.roomNumber, val.price, val.numberOfPeople, val.averageGrade,
-					`<button onclick="reserveRoomNumber('${val.roomNumber}')" class="btn btn-default">Reserve</a>` ]).draw(false).node();
+					`<button onclick="reserveRoomNumber('${val.roomNumber}')" class="btn btn-default">Reserve</a>` ]).draw(false);
 	});
 }
 function renderAdditionalServices(data) {

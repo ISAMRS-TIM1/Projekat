@@ -44,6 +44,10 @@
 	src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
 <link rel="stylesheet"
 	href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.1/bootstrap-slider.min.js"></script>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.1/css/bootstrap-slider.min.css" />
 
 <script src="auth/auth.js"></script>
 <script src="hotelAdmin/index.js"></script>
@@ -158,9 +162,9 @@
 			<div id="quickResevationsTab" class="tab-pane fade">
 				<div class="tableWrapper">
 					<div class="tableButtons">
-						<button type="button" id="addQuickReservationButton"
+						<button type="button" id="createQuickReservationButton"
 							class="btn btn-default myButton" data-toggle="modal"
-							data-target="addQuickReservationModal">Add quick
+							data-target="#createQuickReservationModal">Create quick
 							reservation</button>
 					</div>
 					<div class="tableDiv">
@@ -169,6 +173,13 @@
 							<thead>
 								<tr>
 									<th>Reservation ID</th>
+									<th>Discounted price</th>
+									<th>Discount</th>
+									<th>From</th>
+									<th>To</th>
+									<th>Room</th>
+									<th>Additional services</th>
+									<th></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -400,5 +411,77 @@
 			</div>
 		</div>
 	</div>
+	<!-- Create quick reservation modal -->
+	<div class="modal fade" id="createQuickReservationModal" tabindex="-1" role="dialog"
+		aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-xl" role="document">
+			<div class="modal-content" id="createQuickReservationlDiv">
+				<table id="createQuickReservationTable">
+					<tr>
+						<td><label for="quickDiscount">Discount (%)</label></td>
+						<td><input id="quickDiscount" type="number" min="0" max ="80"
+										oninput="validity.valid||(value='');" value="0"></td>
+					</tr>
+					<tr>
+						<td colspan="2"><table id="quickAdditionalServicesTable"
+								class="table display table-bordered">
+								<thead>
+									<tr>
+										<th>Additional service</th>
+										<th>Price</th>
+										<th>Add to reservation</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table></td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<table id="hotelRoomsSearchTable">
+								<tr>
+									<td>Reservation date</td>
+									<td><input type="text" id="searchRoomsDateRange" /></td>
+									<td>For people</td>
+									<td><input id="searchRoomsForPeople" type="number" min="1"
+										oninput="validity.valid||(value='');" value="1"></td>
+								</tr>
+								<tr>
+									<td>Price</td>
+									<td><input id="searchRoomsPrice" type="text" class="span2"
+										value="" data-slider-min="0" data-slider-max="10000"
+										data-slider-step="10" data-slider-value="[0,10000]" /></td>
+									<td>Grade</td>
+									<td><input id="searchRoomsGrade" type="text" class="span2"
+										value="" data-slider-min="0" data-slider-max="5"
+										data-slider-step="0.1" data-slider-value="[0,5]" /></td>
+								</tr>
+							</table> <br>
+							<button class="btn btn-default" id="searchRoomsButton"
+								onclick="searchRooms(event)">Search</button> <br>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<table id="quickRoomsTable" class="table display table-bordered">
+								<thead>
+									<tr>
+										<th>Room</th>
+										<th>Current price</th>
+										<th>For people</th>
+										<th>Average grade</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+	
 </body>
 </html>
