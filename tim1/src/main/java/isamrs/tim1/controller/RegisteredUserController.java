@@ -3,7 +3,6 @@ package isamrs.tim1.controller;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,7 +29,7 @@ public class RegisteredUserController {
 			@RequestParam String email) {
 		return registeredUserService.searchUsers(firstName, lastName, email);
 	}
-	
+
 	@PreAuthorize("hasRole('REGISTEREDUSER')")
 	@RequestMapping(value = "/api/getFriendInvitations", method = RequestMethod.GET)
 	public ResponseEntity<ArrayList<FriendDTO>> getFriendInvitations() {
@@ -60,12 +59,4 @@ public class RegisteredUserController {
 	public ResponseEntity<MessageDTO> declineInvitation(@RequestBody String declinedUser) {
 		return registeredUserService.declineInvitation(declinedUser);
 	}
-
-	@PreAuthorize("hasRole('REGISTEREDUSER')")
-	@RequestMapping(value = "/api/makeQuickVehicleReservation", method = RequestMethod.POST)
-	public ResponseEntity<MessageDTO> makeQuickVehicleReservation(@RequestBody Long reservationID) {
-		return new ResponseEntity<MessageDTO>(registeredUserService.makeQuickVehicleReservation(reservationID),
-				HttpStatus.OK);
-	}
-
 }

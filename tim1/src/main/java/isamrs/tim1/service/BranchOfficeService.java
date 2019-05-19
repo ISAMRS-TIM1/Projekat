@@ -11,7 +11,6 @@ import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.model.BranchOffice;
 import isamrs.tim1.model.Location;
-import isamrs.tim1.model.QuickVehicleReservation;
 import isamrs.tim1.model.RentACar;
 import isamrs.tim1.model.RentACarAdmin;
 import isamrs.tim1.model.VehicleReservation;

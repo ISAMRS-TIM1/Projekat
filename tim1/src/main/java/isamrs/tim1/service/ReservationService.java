@@ -13,10 +13,13 @@ import org.springframework.stereotype.Service;
 
 import isamrs.tim1.dto.FlightHotelReservationDTO;
 import isamrs.tim1.dto.FlightReservationDTO;
+import isamrs.tim1.dto.FlightVehicleReservationDTO;
 import isamrs.tim1.dto.HotelReservationDTO;
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.dto.PassengerDTO;
+import isamrs.tim1.dto.VehicleReservationDTO;
+import isamrs.tim1.model.BranchOffice;
 import isamrs.tim1.model.Flight;
 import isamrs.tim1.model.FlightReservation;
 import isamrs.tim1.model.HotelAdditionalService;
@@ -25,16 +28,23 @@ import isamrs.tim1.model.HotelRoom;
 import isamrs.tim1.model.PassengerSeat;
 import isamrs.tim1.model.PlaneSegment;
 import isamrs.tim1.model.PlaneSegmentClass;
+import isamrs.tim1.model.QuickVehicleReservation;
 import isamrs.tim1.model.RegisteredUser;
 import isamrs.tim1.model.Seat;
 import isamrs.tim1.model.UserReservation;
+import isamrs.tim1.model.Vehicle;
+import isamrs.tim1.model.VehicleReservation;
+import isamrs.tim1.repository.BranchOfficeRepository;
 import isamrs.tim1.repository.FlightRepository;
 import isamrs.tim1.repository.FlightReservationRepository;
 import isamrs.tim1.repository.HotelAdditionalServicesRepository;
 import isamrs.tim1.repository.HotelRoomRepository;
+import isamrs.tim1.repository.QuickVehicleReservationRepository;
 import isamrs.tim1.repository.ServiceRepository;
 import isamrs.tim1.repository.UserRepository;
 import isamrs.tim1.repository.UserReservationRepository;
+import isamrs.tim1.repository.VehicleRepository;
+import isamrs.tim1.repository.VehicleReservationRepository;
 
 @Service
 public class ReservationService {
@@ -56,9 +66,21 @@ public class ReservationService {
 
 	@Autowired
 	HotelRoomRepository hotelRoomRepository;
-	
+
 	@Autowired
 	HotelAdditionalServicesRepository hotelAdditionalServicesRepository;
+
+	@Autowired
+	QuickVehicleReservationRepository quickVehicleReservationRepository;
+
+	@Autowired
+	BranchOfficeRepository branchOfficeRepository;
+
+	@Autowired
+	VehicleRepository vehicleRepository;
+
+	@Autowired
+	VehicleReservationRepository vehicleReservationRepository;
 
 	public MessageDTO reserveFlight(FlightReservationDTO flightRes) {
 		UserReservation ur = new UserReservation();
@@ -102,6 +124,25 @@ public class ReservationService {
 			return retval;
 
 		retval = reserveHotelNoSave(hotelRes, fr);
+		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
+			return retval;
+
+		userRepository.save(ru);
+		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
+	}
+
+	public MessageDTO reserveFlightVehicle(FlightVehicleReservationDTO flightVehicleRes) {
+		FlightReservationDTO flightRes = flightVehicleRes.getFlightReservation();
+		VehicleReservationDTO vehicleRes = flightVehicleRes.getVehicleReservation();
+		UserReservation ur = new UserReservation();
+		FlightReservation fr = new FlightReservation();
+		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		MessageDTO retval = reserveFlightNoSave(flightRes, ur, fr, ru);
+		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
+			return retval;
+
+		retval = reserveVehicleNoSave(vehicleRes, fr);
 		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
 			return retval;
 
@@ -158,18 +199,19 @@ public class ReservationService {
 		f.getAirline().getReservations().add(fr);
 		return new MessageDTO("", ToasterType.SUCCESS.toString());
 	}
-	
 
 	private MessageDTO reserveHotelNoSave(HotelReservationDTO hotelRes, FlightReservation fr) {
 		HotelRoom room = hotelRoomRepository.findOneByNumberAndHotelName(hotelRes.getHotelRoomNumber(),
 				hotelRes.getHotelName());
-		if(checkRoomReservations(room, hotelRes.getFromDate(), hotelRes.getToDate())) {
-			return new MessageDTO("This hotel room already has reservations in this period", ToasterType.ERROR.toString());
+		if (checkRoomReservations(room, hotelRes.getFromDate(), hotelRes.getToDate())) {
+			return new MessageDTO("This hotel room already has reservations in this period",
+					ToasterType.ERROR.toString());
 		}
-		
+
 		HashSet<HotelAdditionalService> additionalServices = new HashSet<HotelAdditionalService>();
-		for(String asName : hotelRes.getAdditionalServiceNames()) {
-			additionalServices.add(hotelAdditionalServicesRepository.findOneByNameAndHotelName(asName, hotelRes.getHotelName()));
+		for (String asName : hotelRes.getAdditionalServiceNames()) {
+			additionalServices
+					.add(hotelAdditionalServicesRepository.findOneByNameAndHotelName(asName, hotelRes.getHotelName()));
 		}
 		HotelReservation hr = new HotelReservation(hotelRes, room, additionalServices, fr);
 		fr.setHotelReservation(hr);
@@ -177,12 +219,55 @@ public class ReservationService {
 	}
 
 	private boolean checkRoomReservations(HotelRoom room, Date fromDate, Date toDate) {
-		for(HotelReservation res : room.getReservations()) {
+		for (HotelReservation res : room.getReservations()) {
 			// (StartA < EndB) and (EndA > StartB)
 			if (res.getFromDate().before(toDate) && res.getToDate().after(fromDate)) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	private MessageDTO reserveVehicleNoSave(VehicleReservationDTO vehicleRes, FlightReservation fr) {
+		if (vehicleRes.getQuickVehicleReservationID() != null) {
+			QuickVehicleReservation qvr = quickVehicleReservationRepository
+					.findOneById(vehicleRes.getQuickVehicleReservationID());
+
+			if (qvr == null) {
+				return new MessageDTO("Quick vehicle reservation does not exist", ToasterType.ERROR.toString());
+			}
+			fr.setVehicleReservation(qvr);
+			qvr.setFlightReservation(fr);
+			return new MessageDTO("", ToasterType.SUCCESS.toString());
+		}
+
+		BranchOffice bo = branchOfficeRepository.findOneByName(vehicleRes.getBranchOfficeName());
+
+		if (bo == null) {
+			return new MessageDTO("Branch office does not exist", ToasterType.ERROR.toString());
+		}
+
+		Vehicle v = vehicleRepository.findOneByModelAndProducer(vehicleRes.getVehicleModel(),
+				vehicleRes.getVehicleProducer());
+
+		if (v == null) {
+			return new MessageDTO("Vehicle does not exist", ToasterType.ERROR.toString());
+		}
+
+		if (!vehicleReservationRepository.findByDates(vehicleRes.getFromDate(), vehicleRes.getToDate(), v.getId())
+				.isEmpty()) {
+			return new MessageDTO("Vehicle is taken in given period", ToasterType.ERROR.toString());
+		}
+
+		VehicleReservation vr = new VehicleReservation();
+		vr.setId(null);
+		vr.setBranchOffice(bo);
+		vr.setFlightReservation(fr);
+		vr.setFromDate(vehicleRes.getFromDate());
+		vr.setToDate(vehicleRes.getToDate());
+		vr.setVehicle(v);
+		fr.setVehicleReservation(vr);
+
+		return new MessageDTO("", ToasterType.SUCCESS.toString());
 	}
 }

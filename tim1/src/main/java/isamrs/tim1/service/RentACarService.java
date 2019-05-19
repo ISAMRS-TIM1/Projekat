@@ -214,14 +214,12 @@ public class RentACarService {
 		newQuickReservation.setBranchOffice(br);
 		newQuickReservation.setDiscount(quickReservation.getDiscount());
 		newQuickReservation.setFromDate(quickReservation.getFromDate());
-		newQuickReservation.setId(null);
 		newQuickReservation.setToDate(quickReservation.getToDate());
+		newQuickReservation.setId(null);
 		Vehicle v = rentACar.getVehicles().stream().filter(ve -> ve.getId() == quickReservation.getVehicle())
 				.findFirst().orElse(null);
 		newQuickReservation.setVehicle(v);
-		newQuickReservation
-				.setPrice(this.daysBetween(newQuickReservation.getFromDate(), newQuickReservation.getToDate())
-						* (double) v.getPricePerDay());
+		newQuickReservation.setFlightReservation(null);
 
 		rentACar.getReservations().add(newQuickReservation);
 
@@ -242,9 +240,5 @@ public class RentACarService {
 		}
 
 		return quickReservations;
-	}
-
-	private int daysBetween(Date d1, Date d2) {
-		return (int) ((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
 	}
 }

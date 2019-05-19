@@ -21,7 +21,6 @@ import isamrs.tim1.model.FlightReservation;
 import isamrs.tim1.model.Hotel;
 import isamrs.tim1.model.HotelAdmin;
 import isamrs.tim1.model.HotelReservation;
-import isamrs.tim1.model.QuickHotelReservation;
 import isamrs.tim1.repository.HotelRepository;
 import isamrs.tim1.repository.ServiceRepository;
 

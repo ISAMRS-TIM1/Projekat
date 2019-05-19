@@ -2,7 +2,6 @@ package isamrs.tim1.model;
 
 import java.io.Serializable;
 import java.util.Date;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -91,12 +90,11 @@ public class VehicleReservation implements Serializable {
 	public void setFlightReservation(FlightReservation flightReservation) {
 		this.flightReservation = flightReservation;
 	}
-	
+
 	private static final long serialVersionUID = 4730544312048644658L;
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	
 
 }

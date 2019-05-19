@@ -7,7 +7,6 @@ import isamrs.tim1.model.Flight;
 import isamrs.tim1.model.FlightReservation;
 import isamrs.tim1.model.PassengerSeat;
 import isamrs.tim1.model.PlaneSegment;
-import isamrs.tim1.model.QuickFlightReservation;
 
 public class PlaneSeatsDTO implements Serializable {
 	

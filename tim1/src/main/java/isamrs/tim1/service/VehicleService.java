@@ -14,7 +14,6 @@ import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.dto.VehicleDTO;
 import isamrs.tim1.dto.VehicleSearchDTO;
 import isamrs.tim1.model.FuelType;
-import isamrs.tim1.model.QuickVehicleReservation;
 import isamrs.tim1.model.RentACar;
 import isamrs.tim1.model.RentACarAdmin;
 import isamrs.tim1.model.Vehicle;

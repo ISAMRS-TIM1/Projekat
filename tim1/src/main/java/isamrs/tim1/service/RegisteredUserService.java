@@ -1,7 +1,6 @@
 package isamrs.tim1.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -16,11 +15,8 @@ import isamrs.tim1.dto.FriendDTO;
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.dto.UserDTO;
-import isamrs.tim1.model.QuickVehicleReservation;
 import isamrs.tim1.model.RegisteredUser;
 import isamrs.tim1.model.User;
-import isamrs.tim1.model.UserReservation;
-import isamrs.tim1.repository.QuickVehicleReservationRepository;
 import isamrs.tim1.repository.RegisteredUserRepository;
 
 @Service
@@ -31,9 +27,6 @@ public class RegisteredUserService {
 
 	@Autowired
 	private RegisteredUserRepository registeredUserRepository;
-
-	@Autowired
-	private QuickVehicleReservationRepository quickVehicleReservationRepository;
 
 	public ArrayList<UserDTO> searchUsers(String firstName, String lastName, String email) {
 		if (firstName.equals(""))
@@ -169,35 +162,5 @@ public class RegisteredUserService {
 			friends.add(new FriendDTO(us, "Accepted"));
 		}
 		return new ResponseEntity<ArrayList<FriendDTO>>(friends, HttpStatus.OK);
-	}
-
-	public MessageDTO makeQuickVehicleReservation(Long reservationID) {
-		QuickVehicleReservation qvr = quickVehicleReservationRepository.findOneById(reservationID);
-
-		if (qvr == null) {
-			return new MessageDTO("Quick vehicle reservation with given id does not exist",
-					ToasterType.ERROR.toString());
-		}
-
-		RegisteredUser currUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication()
-				.getPrincipal();
-
-		qvr.setDateOfReservation(new Date());
-		qvr.setDone(false);
-
-		UserReservation userReservation = new UserReservation();
-		userReservation.setId(null);
-		userReservation.setGrade(null);
-		userReservation.setReservation(qvr);
-		userReservation.setUser(currUser);
-
-		qvr.setUser(userReservation);
-
-		currUser.getUserReservations().add(userReservation);
-
-		registeredUserRepository.save(currUser);
-		quickVehicleReservationRepository.save(qvr);
-
-		return new MessageDTO("Quick vehicle reservation successfull", ToasterType.SUCCESS.toString());
 	}
 }
