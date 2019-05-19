@@ -1377,8 +1377,8 @@ function showLastStep(e) {
 		return;
 	}
 	var invitedFriends = $("#reserveDivFriends").find('input[type=checkbox]:checked');
-	$.each(invitedFriends, function(i, val) {
-		flightReservation["invitedFriends"].push(val.val());
+	$.each(invitedFriends, function(i, friend) {
+		flightReservation["invitedFriends"].push(friend.value);
 		flightReservation["seatsLeft"]--;
 	});
 	if (flightReservation["seatsLeft"] == 0) {

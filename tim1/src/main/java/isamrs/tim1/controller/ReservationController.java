@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim1.dto.FlightHotelReservationDTO;
 import isamrs.tim1.dto.FlightReservationDTO;
+import isamrs.tim1.dto.InvitingReservationDTO;
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.service.ReservationService;
 
@@ -36,5 +37,20 @@ public class ReservationController {
 	@RequestMapping(value = "/api/getReservations", method = RequestMethod.GET)
 	public ArrayList<FlightReservationDTO> getReservations() {
 		return reservationService.getReservations();
+	}
+	
+	@RequestMapping(value = "/api/getInvitingReservations", method = RequestMethod.GET)
+	public ArrayList<InvitingReservationDTO> getInvitingReservations() {
+		return reservationService.getInvitingReservations();
+	}
+	
+	@RequestMapping(value = "/api/acceptFlightInvitation", method = RequestMethod.POST)
+	public ResponseEntity<MessageDTO> acceptFlightInvitation(@RequestBody String resID) {
+		return reservationService.acceptFlightInvitation(resID);
+	}
+	
+	@RequestMapping(value = "/api/declineFlightInvitation", method = RequestMethod.POST)
+	public ResponseEntity<MessageDTO> declineFlightInvitation(@RequestBody String resID) {
+		return reservationService.declineFlightInvitation(resID);
 	}
 }
