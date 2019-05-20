@@ -163,7 +163,7 @@ public class AuthenticationController {
 	}
 
 	@RequestMapping(value = "auth/registerAdmin/{serviceName}", method = RequestMethod.POST)
-	public ResponseEntity<MessageDTO> registerAirlineAdmin(@Valid @RequestBody User user,
+	public ResponseEntity<MessageDTO> registerAdmin(@Valid @RequestBody User user,
 			@PathVariable("serviceName") String serviceName) {
 
 		Service service = serviceRepository.findOneByName(serviceName);
