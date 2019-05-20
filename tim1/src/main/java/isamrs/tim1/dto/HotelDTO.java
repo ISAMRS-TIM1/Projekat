@@ -41,9 +41,8 @@ public class HotelDTO implements Serializable {
 			}
 		}
 		this.quickReservations = new ArrayList<QuickHotelReservationDTO>();
-		for(HotelReservation res : hotel.getReservations()) {
-			if(res instanceof QuickHotelReservation 
-					&& res.getFlightReservation() == null) { // it is not used
+		for (HotelReservation res : hotel.getReservations()) {
+			if (res instanceof QuickHotelReservation && res.getFlightReservation() == null) { // it is not used
 				this.quickReservations.add(new QuickHotelReservationDTO((QuickHotelReservation) res));
 			}
 		}
@@ -107,6 +106,14 @@ public class HotelDTO implements Serializable {
 
 	public void setRooms(ArrayList<HotelRoomDTO> rooms) {
 		this.rooms = rooms;
+	}
+
+	public ArrayList<QuickHotelReservationDTO> getQuickReservations() {
+		return quickReservations;
+	}
+
+	public void setQuickReservations(ArrayList<QuickHotelReservationDTO> quickReservations) {
+		this.quickReservations = quickReservations;
 	}
 
 	public static long getSerialversionuid() {

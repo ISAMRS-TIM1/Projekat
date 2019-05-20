@@ -20,15 +20,19 @@ import isamrs.tim1.dto.InvitingReservationDTO;
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.dto.PassengerDTO;
+import isamrs.tim1.dto.QuickHotelReservationDTO;
 import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.Flight;
 import isamrs.tim1.model.FlightReservation;
+import isamrs.tim1.model.Hotel;
 import isamrs.tim1.model.HotelAdditionalService;
+import isamrs.tim1.model.HotelAdmin;
 import isamrs.tim1.model.HotelReservation;
 import isamrs.tim1.model.HotelRoom;
 import isamrs.tim1.model.PassengerSeat;
 import isamrs.tim1.model.PlaneSegment;
 import isamrs.tim1.model.PlaneSegmentClass;
+import isamrs.tim1.model.QuickHotelReservation;
 import isamrs.tim1.model.RegisteredUser;
 import isamrs.tim1.model.Seat;
 import isamrs.tim1.model.UserReservation;
@@ -37,6 +41,7 @@ import isamrs.tim1.repository.FlightReservationRepository;
 import isamrs.tim1.repository.HotelAdditionalServicesRepository;
 import isamrs.tim1.repository.HotelRoomRepository;
 import isamrs.tim1.repository.PassengerSeatRepository;
+import isamrs.tim1.repository.QuickHotelReservationRepository;
 import isamrs.tim1.repository.ServiceRepository;
 import isamrs.tim1.repository.UserRepository;
 import isamrs.tim1.repository.UserReservationRepository;
@@ -58,18 +63,24 @@ public class ReservationService {
 
 	@Autowired
 	ServiceRepository serviceRepository;
-	
+
 	@Autowired
 	PassengerSeatRepository passengerSeatRepository;
-	
+
 	@Autowired
 	EmailService mailService;
 
 	@Autowired
 	HotelRoomRepository hotelRoomRepository;
-	
+
 	@Autowired
 	HotelAdditionalServicesRepository hotelAdditionalServicesRepository;
+	
+	@Autowired
+	HotelReservationService hotelReservationService;
+	
+	@Autowired
+	QuickHotelReservationRepository quickHotelReservationRepository;
 
 	public MessageDTO reserveFlight(FlightReservationDTO flightRes) {
 		UserReservation ur = new UserReservation();
@@ -182,27 +193,61 @@ public class ReservationService {
 	private MessageDTO reserveHotelNoSave(HotelReservationDTO hotelRes, FlightReservation fr) {
 		HotelRoom room = hotelRoomRepository.findOneByNumberAndHotelName(hotelRes.getHotelRoomNumber(),
 				hotelRes.getHotelName());
-		if(checkRoomReservations(room, hotelRes.getFromDate(), hotelRes.getToDate())) {
-			return new MessageDTO("This hotel room already has reservations in this period", ToasterType.ERROR.toString());
+		if (checkRoomReservations(room, hotelRes.getFromDate(), hotelRes.getToDate())) {
+			return new MessageDTO("This hotel room already has reservations in this period",
+					ToasterType.ERROR.toString());
 		}
-		
+
 		HashSet<HotelAdditionalService> additionalServices = new HashSet<HotelAdditionalService>();
-		for(String asName : hotelRes.getAdditionalServiceNames()) {
-			additionalServices.add(hotelAdditionalServicesRepository.findOneByNameAndHotelName(asName, hotelRes.getHotelName()));
+		for (String asName : hotelRes.getAdditionalServiceNames()) {
+			additionalServices
+					.add(hotelAdditionalServicesRepository.findOneByNameAndHotelName(asName, hotelRes.getHotelName()));
 		}
 		HotelReservation hr = new HotelReservation(hotelRes, room, additionalServices, fr);
+		hr.setPrice(hotelReservationService.calculateReservationPrice(hr));
+		room.getReservations().add(hr);
+		room.getHotel().getReservations().add(hr);
+		for(HotelAdditionalService has : additionalServices) {
+			has.getReservations().add(hr);
+		}
 		fr.setHotelReservation(hr);
 		return new MessageDTO("", ToasterType.SUCCESS.toString());
 	}
 
 	private boolean checkRoomReservations(HotelRoom room, Date fromDate, Date toDate) {
-		for(HotelReservation res : room.getReservations()) {
+		for (HotelReservation res : room.getReservations()) {
 			// (StartA < EndB) and (EndA > StartB)
 			if (res.getFromDate().before(toDate) && res.getToDate().after(fromDate)) {
 				return true;
 			}
 		}
 		return false;
+	}
+	
+	public MessageDTO createQuickHotelReservation(QuickHotelReservationDTO hotelRes) {
+		Hotel hotel = ((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel();
+		HotelRoom room = hotelRoomRepository.findOneByNumberAndHotelName(hotelRes.getHotelRoomNumber(),
+				hotel.getName());
+		if (checkRoomReservations(room, hotelRes.getFromDate(), hotelRes.getToDate())) {
+			return new MessageDTO("This hotel room already has reservations in this period",
+					ToasterType.ERROR.toString());
+		}
+
+		HashSet<HotelAdditionalService> additionalServices = new HashSet<HotelAdditionalService>();
+		for (String asName : hotelRes.getAdditionalServiceNames()) {
+			additionalServices
+					.add(hotelAdditionalServicesRepository.findOneByNameAndHotelName(asName, hotel.getName()));
+		}
+		QuickHotelReservation qhr = new QuickHotelReservation(hotelRes, room, additionalServices);
+		qhr.setPrice((1.0 - qhr.getDiscount()/100.0)*hotelReservationService.calculateReservationPrice(qhr));
+		room.getReservations().add(qhr);
+		room.getHotel().getReservations().add(qhr);
+		for(HotelAdditionalService has : additionalServices) {
+			has.getReservations().add(qhr);
+		}
+		quickHotelReservationRepository.save(qhr);
+		return new MessageDTO("Quick hotel reservation successfully created", ToasterType.SUCCESS.toString());
+	}
 
 	private boolean checkIfSeatIsReserved(Flight flight, int row, int column) {
 		for (FlightReservation r : flight.getAirline().getReservations()) {
@@ -217,7 +262,8 @@ public class ReservationService {
 		return false;
 	}
 
-	private void inviteFriendToFlight(String email, FlightReservationDTO flightRes, Flight f, int counter, String inviter) {
+	private void inviteFriendToFlight(String email, FlightReservationDTO flightRes, Flight f, int counter,
+			String inviter) {
 		RegisteredUser friend = (RegisteredUser) userRepository.findOneByEmail(email);
 		FlightReservation fRes = new FlightReservation();
 		fRes.setFlight(f);
@@ -249,7 +295,7 @@ public class ReservationService {
 		userRepository.save(friend);
 		mailService.sendMailToFriend(friend, fRes, inviter);
 	}
-	
+
 	public ResponseEntity<MessageDTO> acceptFlightInvitation(String id) {
 		Long resID = Long.parseLong(id);
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -263,7 +309,8 @@ public class ReservationService {
 			}
 		}
 		if (fr == null) {
-			return new ResponseEntity<MessageDTO>(new MessageDTO("Reservation does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
+			return new ResponseEntity<MessageDTO>(
+					new MessageDTO("Reservation does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
 		}
 		UserReservation ur = new UserReservation();
 		ur.setGrade(0);
@@ -273,7 +320,8 @@ public class ReservationService {
 		userReservationRepository.save(ur);
 		flightReservationRepository.save(fr);
 		userRepository.save(ru);
-		return new ResponseEntity<MessageDTO>(new MessageDTO("Successfully accepted reservation.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
+		return new ResponseEntity<MessageDTO>(
+				new MessageDTO("Successfully accepted reservation.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
 	}
 
 	public ArrayList<InvitingReservationDTO> getInvitingReservations() {
@@ -281,8 +329,9 @@ public class ReservationService {
 		ArrayList<InvitingReservationDTO> invitingReservations = new ArrayList<InvitingReservationDTO>();
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 		for (FlightReservation fr : ru.getInvitingReservations()) {
-			String description = fr.getFlight().getStartDestination().getName() + "-" + 
-								 fr.getFlight().getEndDestination().getName() + " " + sdf.format(fr.getFlight().getDepartureTime());
+			String description = fr.getFlight().getStartDestination().getName() + "-"
+					+ fr.getFlight().getEndDestination().getName() + " "
+					+ sdf.format(fr.getFlight().getDepartureTime());
 			invitingReservations.add(new InvitingReservationDTO(fr.getId(), description));
 		}
 		return invitingReservations;
@@ -301,7 +350,8 @@ public class ReservationService {
 			}
 		}
 		if (fr == null) {
-			return new ResponseEntity<MessageDTO>(new MessageDTO("Reservation does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
+			return new ResponseEntity<MessageDTO>(
+					new MessageDTO("Reservation does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
 		}
 		Airline a = fr.getFlight().getAirline();
 		res = a.getReservations();
@@ -320,6 +370,8 @@ public class ReservationService {
 		serviceRepository.save(a);
 		userRepository.save(ru);
 		flightReservationRepository.delete(fr);
-		return new ResponseEntity<MessageDTO>(new MessageDTO("Successfully declined reservation.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
+		return new ResponseEntity<MessageDTO>(
+				new MessageDTO("Successfully declined reservation.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
 	}
+
 }

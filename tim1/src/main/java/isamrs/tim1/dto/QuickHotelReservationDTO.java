@@ -10,12 +10,12 @@ import isamrs.tim1.service.HotelReservationService;
 
 public class QuickHotelReservationDTO implements Serializable {
 
+	private long id;
 	private Date fromDate;
 	private Date toDate;
 	private String hotelRoomNumber;
 	private ArrayList<String> additionalServiceNames;
-	private String hotelName;
-	private double discount;
+	private int discount;
 	private double discountedPrice;
 
 	public QuickHotelReservationDTO() {
@@ -23,16 +23,24 @@ public class QuickHotelReservationDTO implements Serializable {
 	}
 
 	public QuickHotelReservationDTO(QuickHotelReservation res) {
+		this.id = res.getId();
 		this.fromDate = res.getFromDate();
 		this.toDate = res.getToDate();
 		this.hotelRoomNumber = res.getHotelRoom().getRoomNumber();
 		this.additionalServiceNames = new ArrayList<String>();
-		for(HotelAdditionalService has : res.getAdditionalServices()) {
+		for (HotelAdditionalService has : res.getAdditionalServices()) {
 			this.additionalServiceNames.add(has.getName());
 		}
-		this.hotelName = res.getHotelRoom().getHotel().getName();
 		this.discount = res.getDiscount();
-		this.discountedPrice = (this.discount/100) * HotelReservationService.calculateReservationPrice(res);
+		this.discountedPrice = res.getPrice();
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public Date getFromDate() {
@@ -67,19 +75,11 @@ public class QuickHotelReservationDTO implements Serializable {
 		this.additionalServiceNames = additionalServiceNames;
 	}
 
-	public String getHotelName() {
-		return hotelName;
-	}
-
-	public void setHotelName(String hotelName) {
-		this.hotelName = hotelName;
-	}
-
-	public double getDiscount() {
+	public int getDiscount() {
 		return discount;
 	}
 
-	public void setDiscount(double discount) {
+	public void setDiscount(int discount) {
 		this.discount = discount;
 	}
 

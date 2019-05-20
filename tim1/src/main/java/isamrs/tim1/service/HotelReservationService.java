@@ -11,7 +11,7 @@ import isamrs.tim1.model.SeasonalHotelRoomPrice;
 @Service
 public class HotelReservationService {
 
-	public static double calculateReservationPrice(HotelReservation res) {
+	public double calculateReservationPrice(HotelReservation res) {
 		double price = 0;
 		for(HotelAdditionalService has : res.getAdditionalServices()) {
 			price+= has.getPrice();

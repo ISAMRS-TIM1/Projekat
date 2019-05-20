@@ -211,7 +211,7 @@ function loadHotel() {
 			setUpMap(data["latitude"], data["longitude"], 'basicMapDiv');
 			renderAdditionalServices(data["additionalServices"]);
 			renderRooms(data["rooms"]);
-			renderQuickReservations[data["quickReservations"]];
+			renderQuickReservations(data["quickReservations"]);
 		}
 	});
 }
@@ -290,14 +290,14 @@ function renderQuickRooms(data) {
 function renderQuickReservations(data){
 	quickReservationsTable.clear().draw();
 	$.each(data, function(i, val) {
-			quickReservationsTable.row.add(
-								[		val.id,
+			quickReservationsTable.row.add([
+										val.id,
 										val.discountedPrice,
 										val.discount,
 										val.fromDate,
 										val.toDate,
-										val.roomNumber,
-										val.additionalServices,
+										val.hotelRoomNumber,
+										val.additionalServiceNames,
 										`<a href="javascript:deleteQuickReservation('${val.id}')">Delete</a>` ])
 						.draw(false);
 			});
@@ -787,7 +787,7 @@ function reserveRoomNumber(roomNumber){
 	$.ajax({
 		type : 'POST',
 		url : createQuickHotelReservationURL,
-		headers : createAuthorizationTokenHeader(tokenKey),
+		headers : createAuthorizationTokenHeader(TOKEN_KEY),
 		data : JSON.stringify(hotelRes),
 		success : function(data) {
 			if (data != null) {

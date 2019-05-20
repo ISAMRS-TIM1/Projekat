@@ -25,24 +25,27 @@ public class VehicleReservation implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "reservation_id", unique = true, nullable = false)
-	private Long id;
+	protected Long id;
 
 	@Column(name = "fromDate", unique = false, nullable = false)
-	private Date fromDate;
+	protected Date fromDate;
 
 	@Column(name = "toDate", unique = false, nullable = false)
-	private Date toDate;
+	protected Date toDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "vehicle")
-	private Vehicle vehicle;
+	protected Vehicle vehicle;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "branchOffice")
-	private BranchOffice branchOffice;
+	protected BranchOffice branchOffice;
 
 	@OneToOne(mappedBy = "vehicleReservation", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private FlightReservation flightReservation;
+	protected FlightReservation flightReservation;
+
+	@Column(name = "price", unique = false, nullable = true)
+	protected Double price;
 
 	public Date getFromDate() {
 		return fromDate;
@@ -91,12 +94,19 @@ public class VehicleReservation implements Serializable {
 	public void setFlightReservation(FlightReservation flightReservation) {
 		this.flightReservation = flightReservation;
 	}
-	
+
+	public Double getPrice() {
+		return price;
+	}
+
+	public void setPrice(Double price) {
+		this.price = price;
+	}
+
 	private static final long serialVersionUID = 4730544312048644658L;
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	
 
 }

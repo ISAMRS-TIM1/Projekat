@@ -31,31 +31,35 @@ public class HotelReservation implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "reservation_id", unique = true, nullable = false)
-	private Long id;
+	protected Long id;
 
 	@Column(name = "fromDate", unique = false, nullable = false)
-	private Date fromDate;
+	protected Date fromDate;
 
 	@Column(name = "toDate", unique = false, nullable = false)
-	private Date toDate;
+	protected Date toDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "hotelRoom")
-	private HotelRoom hotelRoom;
+	protected HotelRoom hotelRoom;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "reservation_additionalservices", joinColumns = @JoinColumn(name = "reservation", referencedColumnName = "reservation_id"), inverseJoinColumns = @JoinColumn(name = "additionalservice", referencedColumnName = "additionalservice_id"))
-	private Set<HotelAdditionalService> additionalServices;
+	protected Set<HotelAdditionalService> additionalServices;
 
 	@OneToOne(mappedBy = "hotelReservation", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private FlightReservation flightReservation;
+	protected FlightReservation flightReservation;
+
+	@Column(name = "price", unique = false, nullable = true)
+	protected Double price;
 
 	public HotelReservation() {
 		super();
 		additionalServices = new HashSet<HotelAdditionalService>();
 	}
 
-	public HotelReservation(HotelReservationDTO hotelRes, HotelRoom room, HashSet<HotelAdditionalService> additionalServices, FlightReservation fr) {
+	public HotelReservation(HotelReservationDTO hotelRes, HotelRoom room,
+			HashSet<HotelAdditionalService> additionalServices, FlightReservation fr) {
 		super();
 		this.id = null;
 		this.fromDate = hotelRes.getFromDate();
@@ -111,6 +115,14 @@ public class HotelReservation implements Serializable {
 
 	public void setFlightReservation(FlightReservation flightReservation) {
 		this.flightReservation = flightReservation;
+	}
+
+	public Double getPrice() {
+		return price;
+	}
+
+	public void setPrice(Double price) {
+		this.price = price;
 	}
 
 	private static final long serialVersionUID = 2735432254411939871L;

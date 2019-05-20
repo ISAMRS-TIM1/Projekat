@@ -30,35 +30,35 @@ public class FlightReservation implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "reservation_id", unique = true, nullable = false)
-	private Long id;
+	protected Long id;
 
 	@Column(name = "dateOfReservation", unique = false, nullable = true)
-	private Date dateOfReservation;
+	protected Date dateOfReservation;
 
 	@Column(name = "done", unique = false, nullable = true)
-	private Boolean done;
+	protected Boolean done;
 
 	@Column(name = "price", unique = false, nullable = true)
-	private Double price;
+	protected Double price;
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user")
-	private UserReservation user;
+	protected UserReservation user;
 
 	@OneToMany(mappedBy = "reservations", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<PassengerSeat> passengerSeats;
+	protected Set<PassengerSeat> passengerSeats;
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "flight")
-	private Flight flight;
+	protected Flight flight;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "hotelReservation")
-	private HotelReservation hotelReservation;
+	protected HotelReservation hotelReservation;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "vehicleReservation")
-	private VehicleReservation vehicleReservation;
+	protected VehicleReservation vehicleReservation;
 
 	public FlightReservation() {
 		super();
