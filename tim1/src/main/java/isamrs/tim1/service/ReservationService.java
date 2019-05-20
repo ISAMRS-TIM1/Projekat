@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -191,6 +192,16 @@ public class ReservationService {
 	}
 
 	private MessageDTO reserveHotelNoSave(HotelReservationDTO hotelRes, FlightReservation fr) {
+		if(hotelRes.getQuickReservationID() != null) {
+			QuickHotelReservation qhr = quickHotelReservationRepository.findById(hotelRes.getQuickReservationID()).orElse(null);
+			if(qhr == null)
+				return new MessageDTO("Quick hotel reservation is already taken",
+						ToasterType.ERROR.toString());
+			qhr.setFlightReservation(fr);
+			fr.setHotelReservation(qhr);
+			return new MessageDTO("", ToasterType.SUCCESS.toString());
+		}
+		
 		HotelRoom room = hotelRoomRepository.findOneByNumberAndHotelName(hotelRes.getHotelRoomNumber(),
 				hotelRes.getHotelName());
 		if (checkRoomReservations(room, hotelRes.getFromDate(), hotelRes.getToDate())) {
