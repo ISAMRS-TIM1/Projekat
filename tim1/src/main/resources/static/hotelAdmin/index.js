@@ -290,14 +290,15 @@ function renderQuickRooms(data) {
 function renderQuickReservations(data){
 	quickReservationsTable.clear().draw();
 	$.each(data, function(i, val) {
+			var additionalServiceNames = val.additionalServiceNames.join('<br>');
 			quickReservationsTable.row.add([
 										val.id,
 										val.discountedPrice,
 										val.discount,
-										val.fromDate,
-										val.toDate,
+										moment(val.fromDate).format("DD.MM.YYYY HH:mm"),
+										moment(val.toDate).format("DD.MM.YYYY HH:mm"),
 										val.hotelRoomNumber,
-										val.additionalServiceNames,
+										additionalServiceNames,
 										`<a href="javascript:deleteQuickReservation('${val.id}')">Delete</a>` ])
 						.draw(false);
 			});
@@ -313,8 +314,8 @@ function renderSeasonalPrices(data) {
 								.add(
 										[
 												val.price,
-												val.fromDate,
-												val.toDate,
+												moment(val.fromDate).format("DD.MM.YYYY HH:mm"),
+												moment(val.toDate).format("DD.MM.YYYY HH:mm"),
 												`<a href="javascript:deleteSeasonalPrice('${val.fromDate}', '${val.toDate}')">Delete</a>` ])
 								.draw(false);
 					});

@@ -1068,6 +1068,13 @@ function setUpTablesHotelsTab() {
 		"fixedHeader" : true
 	});
 	setUpTableFilter("#additionalServicesTable", "Add to reservation");
+	
+	quickHotelReservationsTable = $('#quickHotelReservationsTable').DataTable({
+		"paging" : false,
+		"info" : false,
+		"orderCellsTop" : true,
+		"fixedHeader" : true
+	});
 
 	$('#hotelsTable tbody').on('click', 'tr', function() {
 		hotelsTable.$('tr.selected').removeClass('selected');
@@ -1133,6 +1140,7 @@ function loadHotel(name) {
 				hotelMap = setUpMap(data["latitude"], data["longitude"],
 						'hotelMapDiv', false);
 				renderAdditionalServices(data["additionalServices"]);
+				renderQuickHotelReservations(data["quickReservations"]);
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
@@ -1225,6 +1233,24 @@ function dereserveAdditionalService(name){
 	selectedRow.find("button").attr("onclick", `reserveAdditionalService('${name}')`);
 }
 
+function renderQuickHotelReservations(data){
+	quickHotelReservationsTable.clear().draw();
+	$.each(data, function(i, val) {
+		var additionalServiceNames = val.additionalServiceNames.join('<br>');
+		console.log(additionalServiceNames);
+		quickHotelReservationsTable.row.add([
+										val.id,
+										val.discountedPrice,
+										val.discount,
+										moment(val.fromDate).format("DD.MM.YYYY HH:mm"),
+										moment(val.toDate).format("DD.MM.YYYY HH:mm"),
+										val.hotelRoomNumber,
+										additionalServiceNames,
+										`<button onclick="reserveQuickHotelReservation('${val.id}')" class="btn btn-default">Reserve</a>` ])
+						.draw(false);
+			});
+}
+
 function reserveRoomNumber(roomNumber){
 	additionalServiceNames = [];
 	additionalServicesTable.rows('.reservedAdditionalService').every(function ( rowIdx, tableLoop, rowLoop ) {
@@ -1235,10 +1261,22 @@ function reserveRoomNumber(roomNumber){
 					'toDate' : drp.endDate.toDate(),
 					'hotelRoomNumber' : roomNumber,
 					'additionalServiceNames' : additionalServiceNames,
-					'hotelName' : shownHotel};
-	 localStorage.setItem("hotelRes", JSON.stringify(hotelRes));
-	 $('#hotelRes').text(shownHotel);
-	 additionalServicesTable.$('tr.reservedAdditionalService').removeClass('reservedAdditionalService');
+					'hotelName' : shownHotel,
+					'quickReservationID' : null};
+	localStorage.setItem("hotelRes", JSON.stringify(hotelRes));
+	$('#hotelRes').text(shownHotel);
+	additionalServicesTable.$('tr.reservedAdditionalService').removeClass('reservedAdditionalService');
+}
+
+function reserveQuickHotelReservation(quickID){
+	var hotelRes = {'fromDate' : null,
+			'toDate' : null,
+			'hotelRoomNumber' : null,
+			'additionalServiceNames' : null,
+			'hotelName' : null,
+			'quickReservationID' : quickID};
+	localStorage.setItem("hotelRes", JSON.stringify(hotelRes));
+	$('#hotelRes').text(shownHotel);
 }
 
 function searchRooms(e){
@@ -1299,8 +1337,7 @@ function setUpTableFilter(tableID, exceptColumn=""){
 				var title = $(this).text();
 				if(title != ""){
 					$(this).html(
-							'<input type="text" placeholder="Filter by ' + title
-									+ '" />');
+							'<input type="text" placeholder="Filter"/>');
 	
 					$('input', this).on('keyup change', function() {
 						table = $(tableID).DataTable();
@@ -1311,6 +1348,8 @@ function setUpTableFilter(tableID, exceptColumn=""){
 				}
 			});
 }
+
+/* FLIGHT RESERVATION */
 
 function showFriendsStep(e) {
 	e.preventDefault();
