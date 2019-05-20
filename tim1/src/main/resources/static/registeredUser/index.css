@@ -380,6 +380,10 @@ input, select {
 	padding: 2vw;
 }
 
+#searchCarsDiv {
+	height: 50vw;
+}
+
 #hotelsSearchTable {
 	text-align: left;
 	color: white;

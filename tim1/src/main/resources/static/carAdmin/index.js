@@ -203,11 +203,13 @@ $(document).ready(function() {
 		
 		let branch = $("#selectBranch").val();
 		let vehicle = $("#selectVehicle").val();
+		let producer = vehicle.split("_")[0];
+		let model = vehicle.split("_")[1];
 		let discount = emptyToZero($("#discount").val());
-		let startDate = $('#showIncomeDateRange').data('daterangepicker').startDate.toDate();
-		let endDate = $('#showIncomeDateRange').data('daterangepicker').endDate.toDate();
+		let startDate = $('#showIncomeDateRange').data('daterangepicker').startDate.format("DD/MM/YYYY");
+		let endDate = $('#showIncomeDateRange').data('daterangepicker').endDate.format("DD/MM/YYYY");
 		
-		addQuickReservation(branch, vehicle, discount, startDate, endDate);
+		addQuickReservation(branch, producer, model, discount, startDate, endDate);
 	});
 });
 
@@ -288,7 +290,7 @@ function loadBranchOffices() {
 				table.clear();
 				$('#selectBranch').empty();
 				for(let branchOffice of data) {
-					$('#selectBranch').append(new Option(branchOffice.name, branchOffice.id));
+					$('#selectBranch').append(new Option(branchOffice.name, branchOffice.name));
 					table.row.add([
 					               branchOffice.id,
 					               branchOffice.name,
@@ -426,7 +428,7 @@ function loadVehicles() {
 				table.clear();
 				$('#selectVehicle').empty();
 				for(let vehicle of data) {
-					$('#selectVehicle').append(new Option(vehicle.producer + " " + vehicle.model, vehicle.id));
+					$('#selectVehicle').append(new Option(vehicle.producer + " " + vehicle.model, vehicle.producer + "_" + vehicle.model));
 					table.row.add([
 					               vehicle.producer,
 					               vehicle.model,
@@ -762,11 +764,12 @@ function loadQuickReservations() {
 				
 				for(let reservation of data) {
 					table.row.add([
-						reservation.branchOffice,
-						reservation.vehicle,
+						reservation.branchOfficeName,
+						reservation.vehicleProducer,
+						reservation.vehicleModel,
 						reservation.fromDate,
 						reservation.toDate,
-						reservation.discount
+						reservation.discount + "%"
 					]).draw(false);
 				}
 			}
@@ -777,13 +780,13 @@ function loadQuickReservations() {
 	});
 }
 
-function addQuickReservation(branch, vehicle, discount, fromDate, toDate) {
+function addQuickReservation(branch, producer, model, discount, fromDate, toDate) {
 	$.ajax({
 		type : 'POST',
 		url : addQuickReservationURL,
 		contentType: "application/json",
 		dataType : "json",
-		data: quickReservationFormToJSON(branch, vehicle, discount, fromDate, toDate),
+		data: quickReservationFormToJSON(branch, producer, model, discount, fromDate, toDate),
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
 			toastr[data.toastType](data.message);
@@ -804,12 +807,13 @@ function emptyToZero(value) {
 	}
 }
 
-function quickReservationFormToJSON(branch, vehicle, discount, fromDate, toDate) {
+function quickReservationFormToJSON(branch, producer, model, discount, fromDate, toDate) {
 	return JSON.stringify({
 		"fromDate": fromDate,
 		"toDate": toDate,
-		"vehicle": vehicle,
-		"branchOffice": branch,
+		"vehicleProducer": producer,
+		"vehicleModel": model,
+		"branchOfficeName": branch,
 		"discount": discount
 	});
 }

@@ -26,8 +26,8 @@ const searchRoomsURL = '/api/searchRooms/';
 
 const getVehicleProducersURL = "/api/getVehicleProducers";
 const getModelsForProducerURL = "/api/getModels/";
-const getAllVehicleTypesURL = "/api/getAllVehicleTypes";
-const getAllFuelTypesURL = "/api/getAllFuelTypes";
+const getAllVehicleTypesURL = "/api/getVehicleTypes";
+const getAllFuelTypesURL = "/api/getFuelTypes";
 const searchVehiclesURL = "/api/searchVehicles";
 
 const reserveFlightURL = "/api/reserveFlight";
@@ -354,7 +354,9 @@ $(document)
                 "paging": false,
                 "info": false,
                 "orderCellsTop": true,
-                "fixedHeader": true
+                "fixedHeader": true,
+                "scrollY": "17vw",
+                "scrollCollapse": true
             });
         });
 
@@ -385,7 +387,7 @@ function searchVehicles(producer, models, vehicleTypes, fuelTypes, priceMax, num
     $.ajax({
         type: 'POST',
         url: searchVehiclesURL,
-        // headers : createAuthorizationTokenHeader(tokenKey),
+        headers : createAuthorizationTokenHeader(tokenKey),
         contentType: "application/json",
         data: vehicleSearchFormToJSON(producer, models, vehicleTypes, fuelTypes, priceMax, numberOfSeats, startDate, endDate, minGrade, maxGrade),
         success: function(data) {
@@ -418,7 +420,7 @@ function getAllVehicleTypes() {
         type: 'GET',
         url: getAllVehicleTypesURL,
         dataType: "json",
-        // headers: createAuthorizationTokenHeader(TOKEN_KEY),
+        headers: createAuthorizationTokenHeader(tokenKey),
         success: function(data) {
             let options = [];
             for (let type of data) {
@@ -440,7 +442,7 @@ function getAllFuelTypes() {
         type: 'GET',
         url: getAllFuelTypesURL,
         dataType: "json",
-        // headers: createAuthorizationTokenHeader(TOKEN_KEY),
+        headers: createAuthorizationTokenHeader(tokenKey),
         success: function(data) {
             let options = [];
             for (let type of data) {
@@ -462,7 +464,7 @@ function getVehicleProducers() {
         type: 'GET',
         url: getVehicleProducersURL,
         dataType: "json",
-        // headers: createAuthorizationTokenHeader(TOKEN_KEY),
+        headers: createAuthorizationTokenHeader(tokenKey),
         success: function(data) {
             let producers = $("#selectProducer");
             producers.empty();
@@ -482,7 +484,7 @@ function getModelsForProducer(producer) {
         type: 'GET',
         url: getModelsForProducerURL + producer,
         dataType: "json",
-        // headers: createAuthorizationTokenHeader(TOKEN_KEY),
+        headers: createAuthorizationTokenHeader(tokenKey),
         success: function(data) {
             let options = [];
             for (let model of data) {

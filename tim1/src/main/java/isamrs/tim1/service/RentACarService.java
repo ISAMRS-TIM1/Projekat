@@ -1,5 +1,6 @@
 package isamrs.tim1.service;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -121,7 +122,7 @@ public class RentACarService {
 		ArrayList<VehicleReservation> doneReservations = new ArrayList<VehicleReservation>();
 
 		for (VehicleReservation vr : rentACar.getReservations()) {
-			if (vr.getFlightReservation()!= null && vr.getFlightReservation().getDone()) {
+			if (vr.getFlightReservation() != null && vr.getFlightReservation().getDone()) {
 				doneReservations.add(vr);
 			}
 		}
@@ -142,7 +143,7 @@ public class RentACarService {
 		ArrayList<VehicleReservation> doneReservations = new ArrayList<VehicleReservation>();
 
 		for (VehicleReservation vr : rentACar.getReservations()) {
-			if (vr.getFlightReservation()!= null && vr.getFlightReservation().getDone()) {
+			if (vr.getFlightReservation() != null && vr.getFlightReservation().getDone()) {
 				doneReservations.add(vr);
 			}
 		}
@@ -163,7 +164,7 @@ public class RentACarService {
 		ArrayList<VehicleReservation> doneReservations = new ArrayList<VehicleReservation>();
 
 		for (VehicleReservation vr : rentACar.getReservations()) {
-			if (vr.getFlightReservation()!= null && vr.getFlightReservation().getDone()) {
+			if (vr.getFlightReservation() != null && vr.getFlightReservation().getDone()) {
 				doneReservations.add(vr);
 			}
 		}
@@ -197,30 +198,64 @@ public class RentACarService {
 		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
 				.getRentACar();
 
-		for (VehicleReservation vr : rentACar.getNormalReservations()) {
-			if (vr.getBranchOffice().getId().equals(quickReservation.getBranchOffice())
-					&& vr.getVehicle().getId().equals(quickReservation.getVehicle())
-					&& !((quickReservation.getFromDate().before(vr.getFromDate()))
-							&& quickReservation.getToDate().before(vr.getFromDate()))
-					|| (quickReservation.getFromDate().after(vr.getToDate()))) {
-				return new MessageDTO("Vehicle is taken in given peroid", ToasterType.ERROR.toString());
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		String branchName = quickReservation.getBranchOfficeName();
+		String producer = quickReservation.getVehicleProducer();
+		String model = quickReservation.getVehicleModel();
+
+		Date from = null;
+		try {
+			from = sdf.parse(quickReservation.getFromDate());
+		} catch (ParseException e1) {
+			e1.printStackTrace();
+		}
+
+		Date to = null;
+		try {
+			to = sdf.parse(quickReservation.getToDate());
+		} catch (ParseException e1) {
+			e1.printStackTrace();
+		}
+
+		for (VehicleReservation vr : rentACar.getReservations()) {
+			if (vr.getBranchOffice().getName().equals(branchName) && vr.getVehicle().getProducer().equals(producer)
+					&& vr.getVehicle().getModel().equals(model) && vr.getFromDate().compareTo(from) <= 0
+					&& vr.getToDate().compareTo(to) >= 0) {
+				return new MessageDTO("Vehicle is taken in given period", ToasterType.ERROR.toString());
 			}
 		}
 
 		QuickVehicleReservation newQuickReservation = new QuickVehicleReservation();
 
 		BranchOffice br = rentACar.getBranchOffices().stream()
-				.filter(bo -> bo.getId() == quickReservation.getBranchOffice()).findFirst().orElse(null);
+				.filter(bo -> bo.getName().equals(quickReservation.getBranchOfficeName())).findFirst().orElse(null);
 		newQuickReservation.setBranchOffice(br);
 		newQuickReservation.setDiscount(quickReservation.getDiscount());
-		newQuickReservation.setFromDate(quickReservation.getFromDate());
-		newQuickReservation.setToDate(quickReservation.getToDate());
+		try {
+			newQuickReservation.setFromDate(sdf.parse(quickReservation.getFromDate()));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		try {
+			newQuickReservation.setToDate(sdf.parse(quickReservation.getToDate()));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		newQuickReservation.setId(null);
-		Vehicle v = rentACar.getVehicles().stream().filter(ve -> ve.getId() == quickReservation.getVehicle())
+		Vehicle v = rentACar.getVehicles().stream()
+				.filter(ve -> ve.getProducer().equals(quickReservation.getVehicleProducer())
+						&& ve.getModel().equals(quickReservation.getVehicleModel()))
 				.findFirst().orElse(null);
 		newQuickReservation.setVehicle(v);
 		newQuickReservation.setFlightReservation(null);
 
+		int numberOfDays = (int) ((newQuickReservation.getFromDate().getTime()
+				- newQuickReservation.getToDate().getTime()) / (1000 * 60 * 60 * 24));
+
+		if (numberOfDays == 0) {
+			numberOfDays = 1;
+		}
+		newQuickReservation.setPrice(numberOfDays * newQuickReservation.getDiscount() / 100.0);
 		rentACar.getReservations().add(newQuickReservation);
 
 		rentACarRepository.save(rentACar);
@@ -234,9 +269,14 @@ public class RentACarService {
 
 		ArrayList<QuickVehicleReservationDTO> quickReservations = new ArrayList<QuickVehicleReservationDTO>();
 
-		for (VehicleReservation qvr : rentACar.getReservations()) {
-			if (qvr instanceof QuickVehicleReservation)
-				quickReservations.add(new QuickVehicleReservationDTO((QuickVehicleReservation) qvr));
+		for (VehicleReservation vr : rentACar.getReservations()) {
+			if (vr instanceof QuickVehicleReservation) {
+				QuickVehicleReservation qvr = (QuickVehicleReservation) vr;
+
+				if (qvr.getFlightReservation() == null) {
+					quickReservations.add(new QuickVehicleReservationDTO(qvr));
+				}
+			}
 		}
 
 		return quickReservations;

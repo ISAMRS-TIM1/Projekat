@@ -1,57 +1,73 @@
 package isamrs.tim1.dto;
 
-import java.util.Date;
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
 
 import isamrs.tim1.model.QuickVehicleReservation;
 
-public class QuickVehicleReservationDTO {
-	private Date fromDate;
-	private Date toDate;
-	private Integer vehicle;
-	private Long branchOffice;
+public class QuickVehicleReservationDTO implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -402162839391849498L;
+	private String fromDate;
+	private String toDate;
+	private String vehicleProducer;
+	private String vehicleModel;
+	private String branchOfficeName;
 	private Integer discount;
-
-	public QuickVehicleReservationDTO(QuickVehicleReservation qvr) {
-		this.fromDate = qvr.getFromDate();
-		this.toDate = qvr.getToDate();
-		this.vehicle = qvr.getVehicle().getId();
-		this.branchOffice = qvr.getBranchOffice().getId();
-		this.discount = qvr.getDiscount();
-	}
 
 	public QuickVehicleReservationDTO() {
 	}
 
-	public Date getFromDate() {
+	public QuickVehicleReservationDTO(QuickVehicleReservation qvr) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		this.fromDate = sdf.format(qvr.getFromDate());
+		this.toDate = sdf.format(qvr.getToDate());
+		this.vehicleProducer = qvr.getVehicle().getProducer();
+		this.vehicleModel = qvr.getVehicle().getModel();
+		this.branchOfficeName = qvr.getBranchOffice().getName();
+		this.discount = qvr.getDiscount();
+	}
+
+	public String getFromDate() {
 		return fromDate;
 	}
 
-	public void setFromDate(Date fromDate) {
+	public void setFromDate(String fromDate) {
 		this.fromDate = fromDate;
 	}
 
-	public Date getToDate() {
+	public String getToDate() {
 		return toDate;
 	}
 
-	public void setToDate(Date toDate) {
+	public void setToDate(String toDate) {
 		this.toDate = toDate;
 	}
 
-	public Integer getVehicle() {
-		return vehicle;
+	public String getVehicleProducer() {
+		return vehicleProducer;
 	}
 
-	public void setVehicle(Integer vehicle) {
-		this.vehicle = vehicle;
+	public void setVehicleProducer(String vehicleProducer) {
+		this.vehicleProducer = vehicleProducer;
 	}
 
-	public Long getBranchOffice() {
-		return branchOffice;
+	public String getVehicleModel() {
+		return vehicleModel;
 	}
 
-	public void setBranchOffice(Long branchOffice) {
-		this.branchOffice = branchOffice;
+	public void setVehicleModel(String vehicleModel) {
+		this.vehicleModel = vehicleModel;
+	}
+
+	public String getBranchOfficeName() {
+		return branchOfficeName;
+	}
+
+	public void setBranchOfficeName(String branchOfficeName) {
+		this.branchOfficeName = branchOfficeName;
 	}
 
 	public Integer getDiscount() {

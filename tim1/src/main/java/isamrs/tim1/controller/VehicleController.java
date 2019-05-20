@@ -82,16 +82,4 @@ public class VehicleController {
 	public ResponseEntity<ArrayList<String>> getModelsForProducer(@PathVariable("producer") String producer) {
 		return new ResponseEntity<ArrayList<String>>(vehicleService.getModelsForProducer(producer), HttpStatus.OK);
 	}
-
-	@PreAuthorize("hasRole('RENTADMIN') or hasRole('REGISTEREDUSER')")
-	@RequestMapping(value = "/api/getAllVehicleTypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ArrayList<String>> getAllVehicleTypes() {
-		return new ResponseEntity<ArrayList<String>>(vehicleService.getAllVehicleTypes(), HttpStatus.OK);
-	}
-
-	@PreAuthorize("hasRole('RENTADMIN') or hasRole('REGISTEREDUSER')")
-	@RequestMapping(value = "/api/getAllFuelTypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ArrayList<String>> getAllFuelTypes() {
-		return new ResponseEntity<ArrayList<String>>(vehicleService.getAllFuelTypes(), HttpStatus.OK);
-	}
 }
