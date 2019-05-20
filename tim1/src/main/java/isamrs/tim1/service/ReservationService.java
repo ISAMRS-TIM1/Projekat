@@ -129,6 +129,8 @@ public class ReservationService {
 		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
 			return retval;
 
+		userReservationRepository.save(ur);
+		flightReservationRepository.save(fr);
 		userRepository.save(ru);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
 	}
@@ -313,7 +315,7 @@ public class ReservationService {
 		FlightReservation fr = null;
 		Set<FlightReservation> res = ru.getInvitingReservations();
 		for (FlightReservation fRes : res) {
-			if (fRes.getId() == resID) {
+			if (fRes.getId().longValue() == resID) {
 				fr = fRes;
 				res.remove(fRes);
 				break;
@@ -328,8 +330,8 @@ public class ReservationService {
 		ur.setReservation(fr);
 		ur.setUser(ru);
 		fr.setUser(ur);
-		userReservationRepository.save(ur);
-		flightReservationRepository.save(fr);
+		//userReservationRepository.save(ur);
+		//flightReservationRepository.save(fr);
 		userRepository.save(ru);
 		return new ResponseEntity<MessageDTO>(
 				new MessageDTO("Successfully accepted reservation.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
