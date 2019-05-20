@@ -2,10 +2,13 @@ package isamrs.tim1.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 
 import isamrs.tim1.model.Hotel;
 import isamrs.tim1.model.HotelAdditionalService;
+import isamrs.tim1.model.HotelReservation;
 import isamrs.tim1.model.HotelRoom;
+import isamrs.tim1.model.QuickHotelReservation;
 
 public class HotelDTO implements Serializable {
 
@@ -16,6 +19,7 @@ public class HotelDTO implements Serializable {
 	private double longitude;
 	private ArrayList<HotelAdditionalServiceDTO> additionalServices;
 	private ArrayList<HotelRoomDTO> rooms;
+	private ArrayList<QuickHotelReservationDTO> quickReservations;
 
 	public HotelDTO(Hotel hotel, boolean withRooms) {
 		super();
@@ -33,7 +37,13 @@ public class HotelDTO implements Serializable {
 			this.rooms = new ArrayList<HotelRoomDTO>();
 			for (HotelRoom room : hotel.getRooms()) {
 				if (!room.isDeleted())
-					this.rooms.add(new HotelRoomDTO(room));
+					this.rooms.add(new HotelRoomDTO(room, new Date()));
+			}
+		}
+		this.quickReservations = new ArrayList<QuickHotelReservationDTO>();
+		for (HotelReservation res : hotel.getReservations()) {
+			if (res instanceof QuickHotelReservation && res.getFlightReservation() == null) { // it is not used
+				this.quickReservations.add(new QuickHotelReservationDTO((QuickHotelReservation) res));
 			}
 		}
 	}
@@ -96,6 +106,14 @@ public class HotelDTO implements Serializable {
 
 	public void setRooms(ArrayList<HotelRoomDTO> rooms) {
 		this.rooms = rooms;
+	}
+
+	public ArrayList<QuickHotelReservationDTO> getQuickReservations() {
+		return quickReservations;
+	}
+
+	public void setQuickReservations(ArrayList<QuickHotelReservationDTO> quickReservations) {
+		this.quickReservations = quickReservations;
 	}
 
 	public static long getSerialversionuid() {

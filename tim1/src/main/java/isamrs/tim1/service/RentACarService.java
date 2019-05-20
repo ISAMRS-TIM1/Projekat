@@ -121,7 +121,7 @@ public class RentACarService {
 		ArrayList<VehicleReservation> doneReservations = new ArrayList<VehicleReservation>();
 
 		for (VehicleReservation vr : rentACar.getReservations()) {
-			if (vr.getFlightReservation().getDone()) {
+			if (vr.getFlightReservation()!= null && vr.getFlightReservation().getDone()) {
 				doneReservations.add(vr);
 			}
 		}
@@ -142,7 +142,7 @@ public class RentACarService {
 		ArrayList<VehicleReservation> doneReservations = new ArrayList<VehicleReservation>();
 
 		for (VehicleReservation vr : rentACar.getReservations()) {
-			if (vr.getFlightReservation().getDone()) {
+			if (vr.getFlightReservation()!= null && vr.getFlightReservation().getDone()) {
 				doneReservations.add(vr);
 			}
 		}
@@ -163,7 +163,7 @@ public class RentACarService {
 		ArrayList<VehicleReservation> doneReservations = new ArrayList<VehicleReservation>();
 
 		for (VehicleReservation vr : rentACar.getReservations()) {
-			if (vr.getFlightReservation().getDone()) {
+			if (vr.getFlightReservation()!= null && vr.getFlightReservation().getDone()) {
 				doneReservations.add(vr);
 			}
 		}
@@ -186,7 +186,7 @@ public class RentACarService {
 		for (VehicleReservation vr : rentACar.getReservations()) {
 			FlightReservation fr = vr.getFlightReservation();
 			if (fr.getDone() && fr.getDateOfReservation().after(fromDate) && fr.getDateOfReservation().before(toDate)) {
-				income += fr.getPrice();
+				income += vr.getPrice();
 			}
 		}
 

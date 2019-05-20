@@ -11,6 +11,7 @@ public class HotelReservationDTO implements Serializable {
 	private String hotelRoomNumber;
 	private ArrayList<String> additionalServiceNames;
 	private String hotelName;
+	private Long quickReservationID;
 
 	public HotelReservationDTO() {
 		super();
@@ -54,6 +55,14 @@ public class HotelReservationDTO implements Serializable {
 
 	public void setHotelName(String hotelName) {
 		this.hotelName = hotelName;
+	}
+
+	public Long getQuickReservationID() {
+		return quickReservationID;
+	}
+
+	public void setQuickReservationID(Long quickReservationID) {
+		this.quickReservationID = quickReservationID;
 	}
 
 	public static long getSerialversionuid() {

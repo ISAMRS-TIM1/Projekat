@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Flights</title>
-<link rel="shortcut icon" type="image/png" href="common/images/favicon.png" />
+<link rel="shortcut icon" type="image/png"
+	href="common/images/favicon.png" />
 <link rel="stylesheet"
 	href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
 	integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
@@ -19,7 +20,8 @@
 <link rel="stylesheet" type="text/css"
 	href="common/css/jquery.seat-charts.css">
 <link rel="stylesheet" href="common/css/tableStyle.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.1/bootstrap-slider.min.js"></script>
 <link rel="stylesheet"
@@ -49,13 +51,17 @@
 <script type="text/javascript"
 	src="//cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script src="common/js/jquery.seat-charts.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css" type="text/css">
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/js/bootstrap-multiselect.min.js"></script>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css"
+	type="text/css">
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/js/bootstrap-multiselect.min.js"></script>
 <script type="text/javascript"
 	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js"></script>
 <link rel="stylesheet" type="text/css"
 	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <link rel="stylesheet" href="registeredUser/index.css">
 <script type="text/javascript" src="registeredUser/index.js"></script>
@@ -355,10 +361,13 @@
 					<td><img src="common/images/car.png" width="50%"/></td>
 					<td colspan="2" id="carRes"></td>
 				</tr>
-				<tr><td colspan="3"></td></tr>
 				<tr>
-					<td colspan="3" style="text-align:center;"><button class="btn btn-default" id="reserveButton"
-								onclick="confirmReservation(event)">Confirm reservation</button></td>
+					<td colspan="3"></td>
+				</tr>
+				<tr>
+					<td colspan="3" style="text-align: center;"><button
+							class="btn btn-default" id="reserveButton"
+							onclick="confirmReservation(event)">Confirm reservation</button></td>
 				</tr>
 			</table>
 		</div>
@@ -411,6 +420,27 @@
 						<td><textarea rows="8" cols="20" id="hotelDescription"
 								class="textInput" readonly></textarea></td>
 						<td><div id="hotelMapDiv"></div></td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<table id="quickHotelReservationsTable"
+								class="table display table-bordered">
+								<thead>
+									<tr>
+										<th>Reservation ID</th>
+										<th>Discounted price</th>
+										<th>Discount</th>
+										<th>From</th>
+										<th>To</th>
+										<th>Room</th>
+										<th>Additional services</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</td>
 					</tr>
 					<tr>
 						<td colspan="2"><table id="additionalServicesTable"
@@ -472,10 +502,10 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<!-- SHOW FLIGHT MODAL -->
-	<div class="modal fade" id="showFlightModal" tabindex="-1" role="dialog"
-		aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal fade" id="showFlightModal" tabindex="-1"
+		role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-lg" role="document">
 			<div class="modal-content" id="showFlightDiv">
 				<div id="reserveDiv">
@@ -516,21 +546,26 @@
 							<td>Number of bags</td>
 							<td><input type='number' id="numOfBags" /></td>
 						</tr>
-					</table><br><br>
+					</table>
+					<br> <br>
 					<div id="planeSeats">
 						<div id="seat-map">
-					      <div class="front-indicator">Front</div>
-					    </div>
-					    <div class="booking-details">
-					      <h2>Booking Details</h2>
-					      <h3> Selected Seats (<span id="counter">0</span>):</h3>
-					      <ul id="selected-seats">
-					      </ul>
-					      Total: <b>$<span id="total">0</span></b>
-					      <div id="legend"></div>
+							<div class="front-indicator">Front</div>
 						</div>
-					</div><br><br>
-					<button class="btn btn-default" id="nextButtonFlights" onclick="showFriendsStep(event)">Next</button>
+						<div class="booking-details">
+							<h2>Booking Details</h2>
+							<h3>
+								Selected Seats (<span id="counter">0</span>):
+							</h3>
+							<ul id="selected-seats">
+							</ul>
+							Total: <b>$<span id="total">0</span></b>
+							<div id="legend"></div>
+						</div>
+					</div>
+					<br> <br>
+					<button class="btn btn-default" id="nextButtonFlights"
+						onclick="showFriendsStep(event)">Next</button>
 				</div>
 				<div id="reserveDivFriends">
 					<table id="inviteFriendsTable" class="table display table-bordered">
@@ -544,13 +579,17 @@
 						</thead>
 						<tbody>
 						</tbody>
-					</table><br><br>
-					<button class="btn btn-default" id="nextButtonFlightsFriends" onclick="showLastStep(event)">Next</button>
+					</table>
+					<br> <br>
+					<button class="btn btn-default" id="nextButtonFlightsFriends"
+						onclick="showLastStep(event)">Next</button>
 				</div>
 				<div id="reserveDivPassengers">
 					<table id="passengersTable">
-					</table><br><br>
-					<button class="btn btn-default" id="nextButtonFlightsLast" onclick="endReservation(event)">End reservation</button>
+					</table>
+					<br> <br>
+					<button class="btn btn-default" id="nextButtonFlightsLast"
+						onclick="endReservation(event)">End reservation</button>
 				</div>
 			</div>
 		</div>

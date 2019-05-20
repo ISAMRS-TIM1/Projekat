@@ -3,6 +3,13 @@ package isamrs.tim1.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
+import java.util.HashSet;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+
+import isamrs.tim1.dto.QuickHotelReservationDTO;
+
 @Entity
 public class QuickHotelReservation extends HotelReservation {
 
@@ -13,6 +20,18 @@ public class QuickHotelReservation extends HotelReservation {
 
 	public QuickHotelReservation() {
 		super();
+	}
+
+	public QuickHotelReservation(QuickHotelReservationDTO hotelRes, HotelRoom room,
+			HashSet<HotelAdditionalService> additionalServices) {
+		super();
+		this.id = null;
+		this.fromDate = hotelRes.getFromDate();
+		this.toDate = hotelRes.getToDate();
+		this.hotelRoom = room;
+		this.additionalServices = additionalServices;
+		this.flightReservation = null;
+		this.discount = hotelRes.getDiscount();
 	}
 
 	public Integer getDiscount() {

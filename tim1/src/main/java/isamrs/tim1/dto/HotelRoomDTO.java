@@ -17,12 +17,11 @@ public class HotelRoomDTO {
 	}
 
 
-	public HotelRoomDTO(HotelRoom room) {
+	public HotelRoomDTO(HotelRoom room, Date now) {
 		this.roomNumber = room.getRoomNumber();
 		this.averageGrade = room.getAverageGrade();
 		this.numberOfPeople = room.getNumberOfPeople();
 		this.price = room.getDefaultPriceOneNight();
-		Date now = new Date();
 		for(SeasonalHotelRoomPrice sp : room.getSeasonalPrices()) {
 			if( now.after(sp.getFromDate()) && now.before(sp.getToDate())) {
 				this.price = sp.getPrice();

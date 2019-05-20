@@ -124,7 +124,7 @@ public class HotelRoomService {
 			}
 
 			if (!hasReservations) {
-				HotelRoomDTO hrDTO = new HotelRoomDTO(hr);
+				HotelRoomDTO hrDTO = new HotelRoomDTO(hr, fromDate);
 				if (hrDTO.getPrice() <= toPrice && hrDTO.getPrice() >= fromPrice) {
 					retval.add(hrDTO);
 				}

@@ -402,7 +402,7 @@ input, select {
 }
 
 #hotelMapDiv {
-	width: 30vw;
+	width: 45vw;
 	height: 30vh;
 	border-radius: 2vw 2vw 2vw 2vw;
 }
@@ -416,10 +416,15 @@ input, select {
 	background-color: #5994FF;
 }
 
-#showHotelTable td {
+#showHotelTable > tbody > tr >  td {
 	padding: 30px;
 	text-align: center;
-}s
+}
+
+#hotelRoomsSearchTable > tbody > tr >  td {
+	padding: 30px;
+	text-align: center;
+}
 
 #showHotelTable {
 	margin: auto;
@@ -435,6 +440,7 @@ input, select {
 .textInput {
 	border: none;
 	resize: none;
+	text-align: center;
 }
 
 #reserveDivFriends {

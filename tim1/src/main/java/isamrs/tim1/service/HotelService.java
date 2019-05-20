@@ -94,7 +94,7 @@ public class HotelService {
 			FlightReservation r = hr.getFlightReservation();
 			if (!(r.getDateOfReservation().before(fromDate)) && !(r.getDateOfReservation().after(toDate))
 					&& r.getDone()) {
-				income += r.getPrice();
+				income += hr.getPrice();
 			}
 		}
 		return income;
@@ -118,7 +118,7 @@ public class HotelService {
 		ArrayList<HotelReservation> doneReservations = new ArrayList<HotelReservation>();
 
 		for (HotelReservation hr : hotel.getReservations()) {
-			if (hr.getFlightReservation().getDone()) {
+			if (hr.getFlightReservation()!= null && hr.getFlightReservation().getDone()) {
 				doneReservations.add(hr);
 			}
 		}

@@ -87,4 +87,13 @@ public class HotelRoomController {
 		return hotelRoomService.searchRooms(hotel, fromDate, toDate, forPeople, fromPrice, toPrice, fromGrade, toGrade);
 	}
 
+	@PreAuthorize("hasRole('HOTELADMIN')")
+	@RequestMapping(value = "api/searchRoomsAdmin", method = RequestMethod.GET)
+	public ArrayList<HotelRoomDTO> searchRoomsAdmin(Date fromDate, Date toDate, int forPeople, double fromPrice,
+			double toPrice, double fromGrade, double toGrade) {
+		return hotelRoomService
+				.searchRooms(((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+						.getHotel().getName(), fromDate, toDate, forPeople, fromPrice, toPrice, fromGrade, toGrade);
+	}
+
 }
