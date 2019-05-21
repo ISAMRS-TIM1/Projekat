@@ -5,7 +5,6 @@ public class FlightReservationDTO {
 	private String[] invitedFriends;
 	private Integer numberOfPassengers;
 	private PassengerDTO[] passengers;
-	private Long QuickReservationID;
 	private String[] seats;
 	private String reservationInf;
 	private String dateOfReservation;
@@ -43,12 +42,6 @@ public class FlightReservationDTO {
 	}
 	public void setPassengers(PassengerDTO[] passengers) {
 		this.passengers = passengers;
-	}
-	public Long getQuickReservationID() {
-		return QuickReservationID;
-	}
-	public void setQuickReservationID(Long quickReservationID) {
-		QuickReservationID = quickReservationID;
 	}
 	public String[] getSeats() {
 		return seats;

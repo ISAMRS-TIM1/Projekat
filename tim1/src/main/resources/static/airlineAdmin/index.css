@@ -402,3 +402,42 @@ input, select {
     margin-left: auto;
     margin-right: auto;
 }
+#showFlightTable {
+	text-align:left;
+	color:white;
+	margin: 0 auto;
+}
+#showFlightTable tbody {
+	overflow-y : auto;
+}
+#showFlightTable td {
+	padding: 5px;
+}
+#showFlightDiv {
+	margin: 0;
+	background: #5994FF;
+	border: 0.24vw solid #B27A00;
+	border-radius: 4vw 1.6vw;
+}
+#resTableDiv {
+	width: 70%;
+	height: 30vw; 
+	margin-left : 13%;
+	margin-top: 5%;
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	padding: 2vw;
+}
+#legend-second {
+    bottom: 150px !important;
+    left: 0 !important;
+}
+#seat-map-second {
+	margin-left: 25% !important;
+}
+#quickReserveButton {
+	position: absolute;
+    top: 175%;
+    left: 80%;
+}
