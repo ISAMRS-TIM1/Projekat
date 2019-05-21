@@ -17,6 +17,7 @@ import isamrs.tim1.dto.FlightHotelReservationDTO;
 import isamrs.tim1.dto.FlightReservationDTO;
 import isamrs.tim1.dto.InvitingReservationDTO;
 import isamrs.tim1.dto.MessageDTO;
+import isamrs.tim1.dto.QuickFlightReservationDTO;
 import isamrs.tim1.dto.QuickHotelReservationDTO;
 import isamrs.tim1.service.ReservationService;
 
@@ -63,5 +64,15 @@ public class ReservationController {
 	@RequestMapping(value = "/api/createQuickHotelReservation", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MessageDTO> createQuickHotelReservation(@RequestBody QuickHotelReservationDTO hotelRes) {
 		return new ResponseEntity<MessageDTO>(reservationService.createQuickHotelReservation(hotelRes), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/api/createQuickFlightReservation", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MessageDTO> createQuickFlightReservation(@RequestBody QuickFlightReservationDTO quickDTO) {
+		return new ResponseEntity<MessageDTO>(reservationService.createQuickFlightReservation(quickDTO), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/api/getQuickFlightReservations", method = RequestMethod.GET)
+	public ArrayList<QuickFlightReservationDTO> getQuickFlightReservations() {
+		return reservationService.getQuickFlightReservations();
 	}
 }

@@ -36,7 +36,7 @@ $(document).ready(function() {
 	loadAirline();
 	loadProfileData();
 	setUpTables();
-	
+	getQuickReservations();
 	userEditFormSetUp();
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
 		$($.fn.dataTable.tables(true)).DataTable().columns.adjust();
@@ -984,7 +984,13 @@ function showPlaneSeatsSecondMap(seats) {
 							toastr["error"]("You can not choose more than one seat for quick reservation.");
 							return 'available';
 						}
-						quickSeat = this.settings.id;
+						var seat = this.settings.id.split("_");
+						if (seat[1] == 4 || seat[1] == 5) {
+							quickSeat = seat[0] + "_" +  (seat[1] - 1) + "_" + this.settings.character;
+						}
+						else {
+							quickSeat = this.settings.id + "_" + this.settings.character;
+						}
 						console.log(quickSeat);
 						return 'selected';
 					} else if (this.status() == 'selected') {
@@ -1579,6 +1585,7 @@ function createQuickReservation(e) {
 		return;
 	}
 	$.ajax({
+		method : 'POST',
 		url : createQuickFlightReservationURL,
 		headers : createAuthorizationTokenHeader(TOKEN_KEY),
 		contentType : "application/json",
@@ -1589,11 +1596,13 @@ function createQuickReservation(e) {
 		}),
 		success : function(data) {
 			if (data != null) {
+				if (data.toastType == "success") {
+					localStorage.removeItem("flightCode");
+					quickSeat = null;
+					getQuickReservations();
+					$("#addQuickReservationModal").modal("hide");
+				}
 				toastr[data.toastType](data.message);
-				localStorage.removeItem("flightCode");
-				quickSeat = null;
-				getQuickReservations();
-				$("#addQuickReservationModal").modal("hide");
 			}
 		}
 	});
@@ -1601,6 +1610,7 @@ function createQuickReservation(e) {
 
 function getQuickReservations() {
 	$.ajax({
+		method : 'GET',
 		url : getQuickFlightReservationsURL,
 		headers : createAuthorizationTokenHeader(TOKEN_KEY),
 		success : function(data) {
@@ -1608,7 +1618,7 @@ function getQuickReservations() {
 				var table = $("#quickReservationsTable").DataTable();
 				table.clear().draw();
 				$.each(data, function(i, val) {
-					table.row.add([ val.flightCode, val.seat, val.discount, val.realPrice ]).draw(false);
+					table.row.add([ val.flightCode, val.seat, val.seatClass, val.discount, val.realPrice ]).draw(false);
 				});
 			}
 		}
