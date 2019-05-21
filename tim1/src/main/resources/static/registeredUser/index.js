@@ -346,8 +346,6 @@ $(document)
                 let minGrade = $("#vehicleGrade").slider('getValue')[0];
                 let maxGrade = $("#vehicleGrade").slider('getValue')[1];
 
-                console.log(startDate);
-                console.log(endDate);
                 searchVehicles(producer, models, vehicleTypes, fuelTypes, priceTo, numberOfSeats, startDate, endDate, minGrade, maxGrade);
             });
 
@@ -373,7 +371,7 @@ $(document)
                 "orderCellsTop": true,
                 "fixedHeader": true,
                 "scrollY": "200px",
-                "scrollCollapse": true
+                "scrollCollapse": true,
             });
             
             $(document).on('click', '#vehiclesTable tbody tr', function() {
@@ -400,9 +398,10 @@ function getQuickReservationsForVehicle(id) {
                     	quickReservation.branchOfficeName,
                     	quickReservation.vehicleProducer,
                     	quickReservation.vehicleModel,
-                    	quickReservation.fromDate,
-                    	quickReservation.toDate,
-                    	quickReservation.discount
+                    	moment(quickReservation.fromDate).format("DD/MM/YYYY"),
+                    	moment(quickReservation.toDate).format("DD/MM/YYYY"),
+                    	quickReservation.discount,
+                    	"<button onclick='reserveQuickVehicleReservation(" + quickReservation.quickVehicleReservationID + ")' class='btn btn-default' type='button'>Reserve</a>"
                     ]).draw(false);
         		}
         },
@@ -410,6 +409,10 @@ function getQuickReservationsForVehicle(id) {
             alert("AJAX ERROR: " + textStatus);
         }
     });
+}
+
+function reserveQuickVehicleReservation(reservationID) {
+	alert(reservationID);
 }
 
 function emptyToNull(value) {

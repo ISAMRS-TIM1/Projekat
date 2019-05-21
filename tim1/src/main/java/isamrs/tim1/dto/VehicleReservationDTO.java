@@ -3,6 +3,9 @@ package isamrs.tim1.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import isamrs.tim1.model.QuickVehicleReservation;
+import isamrs.tim1.model.VehicleReservation;
+
 public class VehicleReservationDTO implements Serializable {
 	/**
 	 * 
@@ -14,9 +17,30 @@ public class VehicleReservationDTO implements Serializable {
 	private String vehicleModel;
 	private String branchOfficeName;
 	private Long quickVehicleReservationID;
+	private Integer discount;
 
 	public VehicleReservationDTO() {
 		super();
+	}
+
+	public VehicleReservationDTO(QuickVehicleReservation qvr) {
+		this.fromDate = qvr.getFromDate();
+		this.toDate = qvr.getToDate();
+		this.vehicleProducer = qvr.getVehicle().getProducer();
+		this.vehicleModel = qvr.getVehicle().getModel();
+		this.branchOfficeName = qvr.getBranchOffice().getName();
+		this.quickVehicleReservationID = qvr.getId();
+		this.discount = qvr.getDiscount();
+	}
+
+	public VehicleReservationDTO(VehicleReservation vr) {
+		this.fromDate = vr.getFromDate();
+		this.toDate = vr.getToDate();
+		this.vehicleProducer = vr.getVehicle().getProducer();
+		this.vehicleModel = vr.getVehicle().getModel();
+		this.branchOfficeName = vr.getBranchOffice().getName();
+		this.quickVehicleReservationID = null;
+		this.discount = null;
 	}
 
 	public Date getFromDate() {
@@ -65,6 +89,14 @@ public class VehicleReservationDTO implements Serializable {
 
 	public void setQuickVehicleReservationID(Long quickVehicleReservationID) {
 		this.quickVehicleReservationID = quickVehicleReservationID;
+	}
+
+	public Integer getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(Integer discount) {
+		this.discount = discount;
 	}
 
 }

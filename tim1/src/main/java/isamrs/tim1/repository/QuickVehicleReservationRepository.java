@@ -9,7 +9,7 @@ import isamrs.tim1.model.QuickVehicleReservation;
 
 public interface QuickVehicleReservationRepository extends JpaRepository<QuickVehicleReservation, Long> {
 	QuickVehicleReservation findOneById(Long id);
-
+	
 	@Query(value = "select * from vehicle_reservations vr where vr.vehicle = ?1", nativeQuery = true)
-	ArrayList<QuickVehicleReservation> findAllByVehicle(int vehicleId);
+	ArrayList<QuickVehicleReservation> findAllByVehicle(int vehicle);
 }

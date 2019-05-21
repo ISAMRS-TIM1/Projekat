@@ -590,14 +590,14 @@ public class ReservationService {
 		return quickReservations;
 	}
 
-	public ArrayList<QuickVehicleReservationDTO> getQuickVehicleReservationsForVehicle(int vehicleId) {
+	public ArrayList<VehicleReservationDTO> getQuickVehicleReservationsForVehicle(int vehicleId) {
 		ArrayList<QuickVehicleReservation> quickReservations = quickVehicleReservationRepository
 				.findAllByVehicle(vehicleId);
 
-		ArrayList<QuickVehicleReservationDTO> dtos = new ArrayList<QuickVehicleReservationDTO>();
+		ArrayList<VehicleReservationDTO> dtos = new ArrayList<VehicleReservationDTO>();
 		for (QuickVehicleReservation qvr : quickReservations) {
 			if (qvr.getFlightReservation() == null) {
-				dtos.add(new QuickVehicleReservationDTO(qvr));
+				dtos.add(new VehicleReservationDTO(qvr));
 			}
 		}
 

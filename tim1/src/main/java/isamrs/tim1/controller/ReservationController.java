@@ -20,6 +20,7 @@ import isamrs.tim1.dto.InvitingReservationDTO;
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.QuickHotelReservationDTO;
 import isamrs.tim1.dto.QuickVehicleReservationDTO;
+import isamrs.tim1.dto.VehicleReservationDTO;
 import isamrs.tim1.service.ReservationService;
 
 @RestController
@@ -93,9 +94,9 @@ public class ReservationController {
 
 	@PreAuthorize("hasRole('REGISTEREDUSER')")
 	@RequestMapping(value = "/api/getQuickReservationsForVehicle/{vehicleId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ArrayList<QuickVehicleReservationDTO>> getQuickVehicleReservationsForVehicle(
+	public ResponseEntity<ArrayList<VehicleReservationDTO>> getQuickVehicleReservationsForVehicle(
 			@PathVariable("vehicleId") int vehicleId) {
-		return new ResponseEntity<ArrayList<QuickVehicleReservationDTO>>(
+		return new ResponseEntity<ArrayList<VehicleReservationDTO>>(
 				reservationService.getQuickVehicleReservationsForVehicle(vehicleId), HttpStatus.OK);
 	}
 }
