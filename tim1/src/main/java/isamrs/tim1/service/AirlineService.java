@@ -18,13 +18,17 @@ import isamrs.tim1.dto.AirlineDTO;
 import isamrs.tim1.dto.DetailedServiceDTO;
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.MessageDTO.ToasterType;
+import isamrs.tim1.dto.QuickFlightReservationDTO;
 import isamrs.tim1.dto.ServiceViewDTO;
 import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.AirlineAdmin;
+import isamrs.tim1.model.Flight;
 import isamrs.tim1.model.FlightReservation;
 import isamrs.tim1.model.Location;
+import isamrs.tim1.model.PassengerSeat;
 import isamrs.tim1.model.QuickFlightReservation;
 import isamrs.tim1.repository.AirlineRepository;
+import isamrs.tim1.repository.FlightRepository;
 import isamrs.tim1.repository.ServiceRepository;
 
 @Service
@@ -35,6 +39,9 @@ public class AirlineService {
 
 	@Autowired
 	private ServiceRepository serviceRepository;
+	
+	@Autowired
+	private FlightRepository flightRepository;
 
 	public String editProfile(Airline airline, String oldName) {
 		Airline airlineToEdit = airlineRepository.findOneByName(oldName);

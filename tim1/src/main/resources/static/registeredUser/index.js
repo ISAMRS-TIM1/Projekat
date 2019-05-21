@@ -812,14 +812,12 @@ function showPlaneSeats(seats) {
 						seats : {
 							f : {
 								price : firstPrice,
-								classes : 'first-class', // your custom CSS
-								// class
+								classes : 'first-class',
 								category : 'First Class'
 							},
 							e : {
 								price : economyPrice,
-								classes : 'economy-class', // your custom CSS
-								// class
+								classes : 'economy-class',
 								category : 'Economy Class'
 							},
 							b : {
@@ -854,8 +852,6 @@ function showPlaneSeats(seats) {
 						},
 						click : function() {
 							if (this.status() == 'available') {
-								// let's create a new <li> which we'll add to
-								// the cart items
 								if (this.settings.character == 'a')
 									return;
 								var seat = this.settings.id.split("_");
@@ -878,37 +874,22 @@ function showPlaneSeats(seats) {
 												'cart-item-' + this.settings.id)
 										.data('seatId', this.settings.id)
 										.appendTo($cart);
-
-								/*
-								 * Lets update the counter and total
-								 * 
-								 * .find function will not find the current
-								 * seat, because it will change its stauts only
-								 * after return 'selected'. This is why we have
-								 * to add 1 to the length and the current seat
-								 * price to the total.
-								 */
 								$counter.text(sc.find('selected').length + 1);
 								$total.text(recalculateTotal(sc)
 										+ this.data().price);
 
 								return 'selected';
 							} else if (this.status() == 'selected') {
-								// update the counter
 								$counter.text(sc.find('selected').length - 1);
-								// and total
 								$total.text(recalculateTotal(sc)
 										- this.data().price);
 
-								// remove the item from our cart
 								$('#cart-item-' + this.settings.id).remove();
 								let index = seatsToReserve.indexOf(this.settings.id);
 								seatsToReserve.splice(index, 1);
 								console.log(seatsToReserve);
-								// seat has been vacated
 								return 'available';
 							} else if (this.status() == 'unavailable') {
-								// seat has been already booked
 								return 'unavailable';
 							} else {
 								return this.style();
@@ -916,10 +897,7 @@ function showPlaneSeats(seats) {
 						}
 					});
 
-	// this will handle "[cancel]" link clicks
 	$('#selected-seats').on('click', '.cancel-cart-item', function() {
-		// let's just trigger Click event on the appropriate seat, so we don't
-		// have to repeat the logic here
 		sc.get($(this).parents('li:first').data('seatId')).click();
 	});
 }

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import isamrs.tim1.dto.AirlineDTO;
 import isamrs.tim1.dto.DetailedServiceDTO;
 import isamrs.tim1.dto.MessageDTO;
+import isamrs.tim1.dto.QuickFlightReservationDTO;
 import isamrs.tim1.dto.ServiceDTO;
 import isamrs.tim1.dto.ServiceViewDTO;
 import isamrs.tim1.model.Airline;
