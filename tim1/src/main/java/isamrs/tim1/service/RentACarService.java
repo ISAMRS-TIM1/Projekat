@@ -1,6 +1,5 @@
 package isamrs.tim1.service;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,16 +15,13 @@ import isamrs.tim1.dto.BranchOfficeDTO;
 import isamrs.tim1.dto.DetailedServiceDTO;
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.MessageDTO.ToasterType;
-import isamrs.tim1.dto.QuickVehicleReservationDTO;
 import isamrs.tim1.dto.RentACarDTO;
 import isamrs.tim1.dto.ServiceViewDTO;
 import isamrs.tim1.model.BranchOffice;
 import isamrs.tim1.model.FlightReservation;
 import isamrs.tim1.model.Location;
-import isamrs.tim1.model.QuickVehicleReservation;
 import isamrs.tim1.model.RentACar;
 import isamrs.tim1.model.RentACarAdmin;
-import isamrs.tim1.model.Vehicle;
 import isamrs.tim1.model.VehicleReservation;
 import isamrs.tim1.repository.RentACarRepository;
 import isamrs.tim1.repository.ServiceRepository;
@@ -192,93 +188,5 @@ public class RentACarService {
 		}
 
 		return income;
-	}
-
-	public MessageDTO createQuickVehicleReservation(QuickVehicleReservationDTO quickReservation) {
-		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
-				.getRentACar();
-
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		String branchName = quickReservation.getBranchOfficeName();
-		String producer = quickReservation.getVehicleProducer();
-		String model = quickReservation.getVehicleModel();
-
-		Date from = null;
-		try {
-			from = sdf.parse(quickReservation.getFromDate());
-		} catch (ParseException e1) {
-			e1.printStackTrace();
-		}
-
-		Date to = null;
-		try {
-			to = sdf.parse(quickReservation.getToDate());
-		} catch (ParseException e1) {
-			e1.printStackTrace();
-		}
-
-		for (VehicleReservation vr : rentACar.getReservations()) {
-			if (vr.getBranchOffice().getName().equals(branchName) && vr.getVehicle().getProducer().equals(producer)
-					&& vr.getVehicle().getModel().equals(model) && vr.getFromDate().compareTo(from) <= 0
-					&& vr.getToDate().compareTo(to) >= 0) {
-				return new MessageDTO("Vehicle is taken in given period", ToasterType.ERROR.toString());
-			}
-		}
-
-		QuickVehicleReservation newQuickReservation = new QuickVehicleReservation();
-
-		BranchOffice br = rentACar.getBranchOffices().stream()
-				.filter(bo -> bo.getName().equals(quickReservation.getBranchOfficeName())).findFirst().orElse(null);
-		newQuickReservation.setBranchOffice(br);
-		newQuickReservation.setDiscount(quickReservation.getDiscount());
-		try {
-			newQuickReservation.setFromDate(sdf.parse(quickReservation.getFromDate()));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		try {
-			newQuickReservation.setToDate(sdf.parse(quickReservation.getToDate()));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		newQuickReservation.setId(null);
-		Vehicle v = rentACar.getVehicles().stream()
-				.filter(ve -> ve.getProducer().equals(quickReservation.getVehicleProducer())
-						&& ve.getModel().equals(quickReservation.getVehicleModel()))
-				.findFirst().orElse(null);
-		newQuickReservation.setVehicle(v);
-		newQuickReservation.setFlightReservation(null);
-
-		int numberOfDays = (int) ((newQuickReservation.getFromDate().getTime()
-				- newQuickReservation.getToDate().getTime()) / (1000 * 60 * 60 * 24));
-
-		if (numberOfDays == 0) {
-			numberOfDays = 1;
-		}
-		newQuickReservation.setPrice(numberOfDays * newQuickReservation.getDiscount() / 100.0);
-		rentACar.getReservations().add(newQuickReservation);
-
-		rentACarRepository.save(rentACar);
-
-		return new MessageDTO("Quick vehicle reservation added successfully", ToasterType.SUCCESS.toString());
-	}
-
-	public ArrayList<QuickVehicleReservationDTO> getQuickVehicleReservations() {
-		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
-				.getRentACar();
-
-		ArrayList<QuickVehicleReservationDTO> quickReservations = new ArrayList<QuickVehicleReservationDTO>();
-
-		for (VehicleReservation vr : rentACar.getReservations()) {
-			if (vr instanceof QuickVehicleReservation) {
-				QuickVehicleReservation qvr = (QuickVehicleReservation) vr;
-
-				if (qvr.getFlightReservation() == null) {
-					quickReservations.add(new QuickVehicleReservationDTO(qvr));
-				}
-			}
-		}
-
-		return quickReservations;
 	}
 }

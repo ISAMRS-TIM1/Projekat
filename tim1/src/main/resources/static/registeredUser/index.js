@@ -29,6 +29,7 @@ const getModelsForProducerURL = "/api/getModels/";
 const getAllVehicleTypesURL = "/api/getVehicleTypes";
 const getAllFuelTypesURL = "/api/getFuelTypes";
 const searchVehiclesURL = "/api/searchVehicles";
+const getQuickReservationsForVehicleURL = "/api/getQuickReservationsForVehicle/";
 
 const reserveFlightURL = "/api/reserveFlight";
 const reserveFlightHotelURL = "/api/reserveFlightHotel";
@@ -355,10 +356,61 @@ $(document)
                 "info": false,
                 "orderCellsTop": true,
                 "fixedHeader": true,
-                "scrollY": "17vw",
+                "scrollY": "200px",
+                "scrollCollapse": true,
+                "columnDefs": [
+                	{
+                		"targets": [ 0 ],
+                		"visible": false,
+                		"searchable": true
+                	}
+                ]
+            });
+            
+            $('#quickReservationsTable').DataTable({
+                "paging": false,
+                "info": false,
+                "orderCellsTop": true,
+                "fixedHeader": true,
+                "scrollY": "200px",
                 "scrollCollapse": true
             });
+            
+            $(document).on('click', '#vehiclesTable tbody tr', function() {
+            	let table = $("#vehiclesTable").DataTable();
+            	let rowData = table.row(this).data();
+        		let title = rowData[1] + " " + rowData[2];
+        		$("#quickReservationsModalTitle").text(title);
+        		getQuickReservationsForVehicle(rowData[0]);
+        		$('#quickVehicleReservationsModal').modal('show');
+        	});
         });
+
+function getQuickReservationsForVehicle(id) {
+	$.ajax({
+        type: 'GET',
+        url: getQuickReservationsForVehicleURL + id,
+        dataType: "json",
+        headers: createAuthorizationTokenHeader(tokenKey),
+        success: function(data) {
+        		let table = $('#quickReservationsTable').DataTable();
+        		table.clear().draw();
+        		for(let quickReservation of data) {
+        			table.row.add([
+                    	quickReservation.branchOfficeName,
+                    	quickReservation.vehicleProducer,
+                    	quickReservation.vehicleModel,
+                    	quickReservation.fromDate,
+                    	quickReservation.toDate,
+                    	quickReservation.discount
+                    ]).draw(false);
+        		}
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            alert("AJAX ERROR: " + textStatus);
+        }
+    });
+}
 
 function emptyToNull(value) {
     if (value == "") {
@@ -397,6 +449,7 @@ function searchVehicles(producer, models, vehicleTypes, fuelTypes, priceMax, num
 
                 for (let vehicle of data) {
                     table.row.add([
+                    	vehicle.id,
                         vehicle.producer,
                         vehicle.model,
                         vehicle.vehicleType,

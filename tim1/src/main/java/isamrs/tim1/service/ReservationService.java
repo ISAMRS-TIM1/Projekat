@@ -1,5 +1,6 @@
 package isamrs.tim1.service;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import isamrs.tim1.dto.FlightHotelReservationDTO;
+import isamrs.tim1.dto.FlightHotelVehicleReservationDTO;
 import isamrs.tim1.dto.FlightReservationDTO;
 import isamrs.tim1.dto.FlightVehicleReservationDTO;
 import isamrs.tim1.dto.HotelReservationDTO;
@@ -24,6 +26,7 @@ import isamrs.tim1.dto.PassengerDTO;
 import isamrs.tim1.dto.VehicleReservationDTO;
 import isamrs.tim1.model.BranchOffice;
 import isamrs.tim1.dto.QuickHotelReservationDTO;
+import isamrs.tim1.dto.QuickVehicleReservationDTO;
 import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.Flight;
 import isamrs.tim1.model.FlightReservation;
@@ -38,6 +41,8 @@ import isamrs.tim1.model.PlaneSegmentClass;
 import isamrs.tim1.model.QuickVehicleReservation;
 import isamrs.tim1.model.QuickHotelReservation;
 import isamrs.tim1.model.RegisteredUser;
+import isamrs.tim1.model.RentACar;
+import isamrs.tim1.model.RentACarAdmin;
 import isamrs.tim1.model.Seat;
 import isamrs.tim1.model.UserReservation;
 import isamrs.tim1.model.Vehicle;
@@ -48,6 +53,7 @@ import isamrs.tim1.repository.FlightReservationRepository;
 import isamrs.tim1.repository.HotelAdditionalServicesRepository;
 import isamrs.tim1.repository.HotelRoomRepository;
 import isamrs.tim1.repository.QuickVehicleReservationRepository;
+import isamrs.tim1.repository.RentACarRepository;
 import isamrs.tim1.repository.PassengerSeatRepository;
 import isamrs.tim1.repository.QuickHotelReservationRepository;
 import isamrs.tim1.repository.ServiceRepository;
@@ -85,10 +91,10 @@ public class ReservationService {
 
 	@Autowired
 	HotelAdditionalServicesRepository hotelAdditionalServicesRepository;
-	
+
 	@Autowired
 	HotelReservationService hotelReservationService;
-	
+
 	@Autowired
 	QuickHotelReservationRepository quickHotelReservationRepository;
 
@@ -104,19 +110,8 @@ public class ReservationService {
 	@Autowired
 	VehicleReservationRepository vehicleReservationRepository;
 
-	public MessageDTO reserveFlight(FlightReservationDTO flightRes) {
-		UserReservation ur = new UserReservation();
-		FlightReservation fr = new FlightReservation();
-		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		MessageDTO retval = reserveFlightNoSave(flightRes, ur, fr, ru);
-		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
-			return retval;
-		userReservationRepository.save(ur);
-		flightReservationRepository.save(fr);
-		userRepository.save(ru);
-		mailService.sendFlightReservationMail(ru, fr);
-		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
-	}
+	@Autowired
+	RentACarRepository rentACarRepository;
 
 	public ArrayList<FlightReservationDTO> getReservations() {
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -133,6 +128,20 @@ public class ReservationService {
 			}
 		}
 		return fr;
+	}
+
+	public MessageDTO reserveFlight(FlightReservationDTO flightRes) {
+		UserReservation ur = new UserReservation();
+		FlightReservation fr = new FlightReservation();
+		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		MessageDTO retval = reserveFlightNoSave(flightRes, ur, fr, ru);
+		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
+			return retval;
+		userReservationRepository.save(ur);
+		flightReservationRepository.save(fr);
+		userRepository.save(ru);
+		mailService.sendFlightReservationMail(ru, fr);
+		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
 	}
 
 	public MessageDTO reserveFlightHotel(FlightHotelReservationDTO flightHotelRes) {
@@ -162,6 +171,31 @@ public class ReservationService {
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 		MessageDTO retval = reserveFlightNoSave(flightRes, ur, fr, ru);
+		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
+			return retval;
+
+		retval = reserveVehicleNoSave(vehicleRes, fr);
+		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
+			return retval;
+
+		userRepository.save(ru);
+		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
+	}
+
+	public MessageDTO reserveFlightHotelVehicle(FlightHotelVehicleReservationDTO flightHotelVehicleRes) {
+		FlightReservationDTO flightRes = flightHotelVehicleRes.getFlightReservation();
+		HotelReservationDTO hotelRes = flightHotelVehicleRes.getHotelReservation();
+		VehicleReservationDTO vehicleRes = flightHotelVehicleRes.getVehicleReservation();
+
+		UserReservation ur = new UserReservation();
+		FlightReservation fr = new FlightReservation();
+		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		MessageDTO retval = reserveFlightNoSave(flightRes, ur, fr, ru);
+		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
+			return retval;
+
+		retval = reserveHotelNoSave(hotelRes, fr);
 		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
 			return retval;
 
@@ -232,16 +266,16 @@ public class ReservationService {
 	}
 
 	private MessageDTO reserveHotelNoSave(HotelReservationDTO hotelRes, FlightReservation fr) {
-		if(hotelRes.getQuickReservationID() != null) {
-			QuickHotelReservation qhr = quickHotelReservationRepository.findById(hotelRes.getQuickReservationID()).orElse(null);
-			if(qhr == null)
-				return new MessageDTO("Quick hotel reservation is already taken",
-						ToasterType.ERROR.toString());
+		if (hotelRes.getQuickReservationID() != null) {
+			QuickHotelReservation qhr = quickHotelReservationRepository.findById(hotelRes.getQuickReservationID())
+					.orElse(null);
+			if (qhr == null)
+				return new MessageDTO("Quick hotel reservation is already taken", ToasterType.ERROR.toString());
 			qhr.setFlightReservation(fr);
 			fr.setHotelReservation(qhr);
 			return new MessageDTO("", ToasterType.SUCCESS.toString());
 		}
-		
+
 		HotelRoom room = hotelRoomRepository.findOneByNumberAndHotelName(hotelRes.getHotelRoomNumber(),
 				hotelRes.getHotelName());
 		if (checkRoomReservations(room, hotelRes.getFromDate(), hotelRes.getToDate())) {
@@ -258,7 +292,7 @@ public class ReservationService {
 		hr.setPrice(hotelReservationService.calculateReservationPrice(hr));
 		room.getReservations().add(hr);
 		room.getHotel().getReservations().add(hr);
-		for(HotelAdditionalService has : additionalServices) {
+		for (HotelAdditionalService has : additionalServices) {
 			has.getReservations().add(hr);
 		}
 		fr.setHotelReservation(hr);
@@ -316,31 +350,6 @@ public class ReservationService {
 		fr.setVehicleReservation(vr);
 
 		return new MessageDTO("", ToasterType.SUCCESS.toString());
-	}
-	
-	public MessageDTO createQuickHotelReservation(QuickHotelReservationDTO hotelRes) {
-		Hotel hotel = ((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel();
-		HotelRoom room = hotelRoomRepository.findOneByNumberAndHotelName(hotelRes.getHotelRoomNumber(),
-				hotel.getName());
-		if (checkRoomReservations(room, hotelRes.getFromDate(), hotelRes.getToDate())) {
-			return new MessageDTO("This hotel room already has reservations in this period",
-					ToasterType.ERROR.toString());
-		}
-
-		HashSet<HotelAdditionalService> additionalServices = new HashSet<HotelAdditionalService>();
-		for (String asName : hotelRes.getAdditionalServiceNames()) {
-			additionalServices
-					.add(hotelAdditionalServicesRepository.findOneByNameAndHotelName(asName, hotel.getName()));
-		}
-		QuickHotelReservation qhr = new QuickHotelReservation(hotelRes, room, additionalServices);
-		qhr.setPrice((1.0 - qhr.getDiscount()/100.0)*hotelReservationService.calculateReservationPrice(qhr));
-		room.getReservations().add(qhr);
-		room.getHotel().getReservations().add(qhr);
-		for(HotelAdditionalService has : additionalServices) {
-			has.getReservations().add(qhr);
-		}
-		quickHotelReservationRepository.save(qhr);
-		return new MessageDTO("Quick hotel reservation successfully created", ToasterType.SUCCESS.toString());
 	}
 
 	private boolean checkIfSeatIsReserved(Flight flight, int row, int column) {
@@ -466,5 +475,132 @@ public class ReservationService {
 		flightReservationRepository.delete(fr);
 		return new ResponseEntity<MessageDTO>(
 				new MessageDTO("Successfully declined reservation.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
+	}
+
+	public MessageDTO createQuickHotelReservation(QuickHotelReservationDTO hotelRes) {
+		Hotel hotel = ((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel();
+		HotelRoom room = hotelRoomRepository.findOneByNumberAndHotelName(hotelRes.getHotelRoomNumber(),
+				hotel.getName());
+		if (checkRoomReservations(room, hotelRes.getFromDate(), hotelRes.getToDate())) {
+			return new MessageDTO("This hotel room already has reservations in this period",
+					ToasterType.ERROR.toString());
+		}
+
+		HashSet<HotelAdditionalService> additionalServices = new HashSet<HotelAdditionalService>();
+		for (String asName : hotelRes.getAdditionalServiceNames()) {
+			additionalServices
+					.add(hotelAdditionalServicesRepository.findOneByNameAndHotelName(asName, hotel.getName()));
+		}
+		QuickHotelReservation qhr = new QuickHotelReservation(hotelRes, room, additionalServices);
+		qhr.setPrice((1.0 - qhr.getDiscount() / 100.0) * hotelReservationService.calculateReservationPrice(qhr));
+		room.getReservations().add(qhr);
+		room.getHotel().getReservations().add(qhr);
+		for (HotelAdditionalService has : additionalServices) {
+			has.getReservations().add(qhr);
+		}
+		quickHotelReservationRepository.save(qhr);
+		return new MessageDTO("Quick hotel reservation successfully created", ToasterType.SUCCESS.toString());
+	}
+
+	public MessageDTO createQuickVehicleReservation(QuickVehicleReservationDTO quickReservation) {
+		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+				.getRentACar();
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		String branchName = quickReservation.getBranchOfficeName();
+		String producer = quickReservation.getVehicleProducer();
+		String model = quickReservation.getVehicleModel();
+
+		Date from = null;
+		try {
+			from = sdf.parse(quickReservation.getFromDate());
+		} catch (ParseException e1) {
+			e1.printStackTrace();
+		}
+
+		Date to = null;
+		try {
+			to = sdf.parse(quickReservation.getToDate());
+		} catch (ParseException e1) {
+			e1.printStackTrace();
+		}
+
+		for (VehicleReservation vr : rentACar.getReservations()) {
+			if (vr.getBranchOffice().getName().equals(branchName) && vr.getVehicle().getProducer().equals(producer)
+					&& vr.getVehicle().getModel().equals(model) && vr.getFromDate().compareTo(from) <= 0
+					&& vr.getToDate().compareTo(to) >= 0) {
+				return new MessageDTO("Vehicle is taken in given period", ToasterType.ERROR.toString());
+			}
+		}
+
+		QuickVehicleReservation newQuickReservation = new QuickVehicleReservation();
+
+		BranchOffice br = rentACar.getBranchOffices().stream()
+				.filter(bo -> bo.getName().equals(quickReservation.getBranchOfficeName())).findFirst().orElse(null);
+		newQuickReservation.setBranchOffice(br);
+		newQuickReservation.setDiscount(quickReservation.getDiscount());
+		try {
+			newQuickReservation.setFromDate(sdf.parse(quickReservation.getFromDate()));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		try {
+			newQuickReservation.setToDate(sdf.parse(quickReservation.getToDate()));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		newQuickReservation.setId(null);
+		Vehicle v = rentACar.getVehicles().stream()
+				.filter(ve -> ve.getProducer().equals(quickReservation.getVehicleProducer())
+						&& ve.getModel().equals(quickReservation.getVehicleModel()))
+				.findFirst().orElse(null);
+		newQuickReservation.setVehicle(v);
+		newQuickReservation.setFlightReservation(null);
+
+		int numberOfDays = (int) ((newQuickReservation.getFromDate().getTime()
+				- newQuickReservation.getToDate().getTime()) / (1000 * 60 * 60 * 24));
+
+		if (numberOfDays == 0) {
+			numberOfDays = 1;
+		}
+		newQuickReservation.setPrice(numberOfDays * newQuickReservation.getDiscount() / 100.0);
+		rentACar.getReservations().add(newQuickReservation);
+
+		rentACarRepository.save(rentACar);
+
+		return new MessageDTO("Quick vehicle reservation added successfully", ToasterType.SUCCESS.toString());
+	}
+
+	public ArrayList<QuickVehicleReservationDTO> getQuickVehicleReservations() {
+		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+				.getRentACar();
+
+		ArrayList<QuickVehicleReservationDTO> quickReservations = new ArrayList<QuickVehicleReservationDTO>();
+
+		for (VehicleReservation vr : rentACar.getReservations()) {
+			if (vr instanceof QuickVehicleReservation) {
+				QuickVehicleReservation qvr = (QuickVehicleReservation) vr;
+
+				if (qvr.getFlightReservation() == null) {
+					quickReservations.add(new QuickVehicleReservationDTO(qvr));
+				}
+			}
+		}
+
+		return quickReservations;
+	}
+
+	public ArrayList<QuickVehicleReservationDTO> getQuickVehicleReservationsForVehicle(int vehicleId) {
+		ArrayList<QuickVehicleReservation> quickReservations = quickVehicleReservationRepository
+				.findAllByVehicle(vehicleId);
+
+		ArrayList<QuickVehicleReservationDTO> dtos = new ArrayList<QuickVehicleReservationDTO>();
+		for (QuickVehicleReservation qvr : quickReservations) {
+			if (qvr.getFlightReservation() == null) {
+				dtos.add(new QuickVehicleReservationDTO(qvr));
+			}
+		}
+
+		return dtos;
 	}
 }
