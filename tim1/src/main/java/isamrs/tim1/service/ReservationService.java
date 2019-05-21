@@ -424,6 +424,7 @@ public class ReservationService {
 		qfr.setDone(false);
 		qfr.setDiscount(Integer.parseInt(quickDTO.getDiscount()));
 		qfr.setPrice(price);
+		qfr.setUser(null);
 		ps.setReservation(qfr);
 		qfr.getPassengerSeats().add(ps);
 		f.getAirline().getReservations().add(qfr);
@@ -438,7 +439,7 @@ public class ReservationService {
 		ArrayList<QuickFlightReservationDTO> quickRes = new ArrayList<QuickFlightReservationDTO>();
 		Set<FlightReservation> fRes = a.getReservations();
 		for(FlightReservation fr : fRes) {
-			if (fr instanceof QuickFlightReservation) {
+			if (fr instanceof QuickFlightReservation && fr.getUser() == null) {
 				quickRes.add(new QuickFlightReservationDTO((QuickFlightReservation) fr));
 			}
 		}
