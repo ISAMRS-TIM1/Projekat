@@ -65,6 +65,13 @@ a[data-toggle="tab"] {
 	border-radius: 2vw 2vw 2vw 2vw;
 }
 
+#searchVehiclesButton {
+	color: white;
+	font-size: 1.6vw;
+	border: 0.16vw solid #B27A00;
+	border-radius: 2vw 2vw 2vw 2vw;
+}
+
 #reserveButton {
 	margin-left: auto;
 	margin-right: auto;
@@ -487,4 +494,22 @@ input, select {
     width: 90%;
    max-width:1200px;
   }
+}
+
+.modal-header {
+	text-align: center;
+	color: white;
+}
+
+.searchLabel {
+	color: white;
+}
+
+.reserve {
+	background-color: white;
+	color: black;
+}
+
+.modal-body, .modal-header {
+	background: #548cf1;	
 }

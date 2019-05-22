@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim1.dto.FlightHotelReservationDTO;
+import isamrs.tim1.dto.FlightHotelVehicleReservationDTO;
 import isamrs.tim1.dto.FlightReservationDTO;
 import isamrs.tim1.dto.FlightVehicleReservationDTO;
 import isamrs.tim1.dto.InvitingReservationDTO;
@@ -45,6 +46,14 @@ public class ReservationController {
 	@RequestMapping(value = "/api/reserveFlightVehicle", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MessageDTO> reserveFlightVehicle(@RequestBody FlightVehicleReservationDTO flightVehicleRes) {
 		return new ResponseEntity<MessageDTO>(reservationService.reserveFlightVehicle(flightVehicleRes), HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasRole('REGISTEREDUSER')")
+	@RequestMapping(value = "/api/reserveFlightHotelVehicle", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MessageDTO> reserveFlightHotelVehicle(
+			@RequestBody FlightHotelVehicleReservationDTO flightHotelVehicleRes) {
+		return new ResponseEntity<MessageDTO>(reservationService.reserveFlightHotelVehicle(flightHotelVehicleRes),
+				HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasRole('REGISTEREDUSER')")

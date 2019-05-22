@@ -33,6 +33,8 @@ const getQuickReservationsForVehicleURL = "/api/getQuickReservationsForVehicle/"
 
 const reserveFlightURL = "/api/reserveFlight";
 const reserveFlightHotelURL = "/api/reserveFlightHotel";
+const reserveFlightVehicleURL = "/api/reserveFlightVehicle";
+const reserveFlightHotelVehicleURL = "/api/reserveFlightHotelVehicle";
 
 var userMail = "";
 var hotelMap = null;
@@ -382,6 +384,11 @@ $(document)
         		getQuickReservationsForVehicle(rowData[0]);
         		$('#quickVehicleReservationsModal').modal('show');
         	});
+            
+            /*$('#quickVehicleReservationsModal').on('shown.bs.modal', function () {
+            	$($.fn.dataTable.tables(true))
+                .DataTable().columns.adjust();
+            });*/
         });
 
 function getQuickReservationsForVehicle(id) {
@@ -401,7 +408,7 @@ function getQuickReservationsForVehicle(id) {
                     	moment(quickReservation.fromDate).format("DD/MM/YYYY"),
                     	moment(quickReservation.toDate).format("DD/MM/YYYY"),
                     	quickReservation.discount,
-                    	"<button onclick='reserveQuickVehicleReservation(" + quickReservation.quickVehicleReservationID + ")' class='btn btn-default' type='button'>Reserve</a>"
+                    	"<button onclick='reserveQuickVehicleReservation(" + quickReservation.quickVehicleReservationID + ")' class='btn btn-default reserve' type='button'>Reserve</a>"
                     ]).draw(false);
         		}
         },
@@ -412,7 +419,20 @@ function getQuickReservationsForVehicle(id) {
 }
 
 function reserveQuickVehicleReservation(reservationID) {
-	alert(reservationID);
+	var carRes = {
+			'fromDate' : null,
+			'toDate' : null,
+			'vehicleProducer' : null,
+			'vehicleModel' : null,
+			'branchOfficeName' : null,
+			'discount': null,
+			'quickVehicleReservationID' :parseInt(reservationID)
+			};
+	console.log(carRes);
+	localStorage.setItem("carRes", JSON.stringify(carRes));
+	$('#carRes').text($('#quickReservationsModalTitle').text());
+	toastr["success"]("Vehicle reservation successfully added to cart");
+	$('#quickVehicleReservationsModal').modal('hide');
 }
 
 function emptyToNull(value) {
@@ -1582,7 +1602,7 @@ function confirmReservation(e) {
     e.preventDefault();
     var flightRes = localStorage.getItem("flightRes");
     var hotelRes = JSON.parse(localStorage.getItem("hotelRes"));
-    var carRes = localStorage.getItem("carRes");
+    var carRes = JSON.parse(localStorage.getItem("carRes"));
     if (flightRes === null) {
         toastr["error"]("You have to reserve flight first.");
         return;
@@ -1647,9 +1667,73 @@ function confirmReservation(e) {
             }
         });
     } else if (hotelRes === null && carRes != null) {
-        // FLIGHT + CAR
+    	var flightReservation = JSON.parse(localStorage.getItem("flightReservation"));
+        flightRes = {
+            "flightCode": flightReservation["flightCode"],
+            "invitedFriends": flightReservation["invitedFriends"],
+            "numberOfPassengers": flightReservation["numberOfPassengers"],
+            "passengers": flightReservation["passengers"],
+            "seats": flightReservation["seats"]
+        };
+        $.ajax({
+            type: 'POST',
+            url: reserveFlightVehicleURL,
+            headers: createAuthorizationTokenHeader(tokenKey),
+            data: JSON.stringify({
+                'flightReservation': flightRes,
+                'vehicleReservation': carRes
+            }),
+            success: function(data) {
+                if (data != null) {
+                    toastr[data.toastType](data.message);
+                    localStorage.removeItem("flightReservation");
+                    localStorage.removeItem("flightRes");
+                    localStorage.removeItem("carRes");
+                    $("#flightRes").text("No flight reserved");
+                    $("#carRes").text("");
+                    getReservations();
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("AJAX ERROR: " + textStatus);
+            }
+        });
     } else {
         // FLIGHT + HOTEL + CAR
+    	var flightReservation = JSON.parse(localStorage.getItem("flightReservation"));
+        flightRes = {
+            "flightCode": flightReservation["flightCode"],
+            "invitedFriends": flightReservation["invitedFriends"],
+            "numberOfPassengers": flightReservation["numberOfPassengers"],
+            "passengers": flightReservation["passengers"],
+            "seats": flightReservation["seats"]
+        };
+        $.ajax({
+            type: 'POST',
+            url: reserveFlightHotelVehicleURL,
+            headers: createAuthorizationTokenHeader(tokenKey),
+            data: JSON.stringify({
+                'flightReservation': flightRes,
+                'vehicleReservation': carRes,
+                'hotelReservation': hotelRes
+            }),
+            success: function(data) {
+                if (data != null) {
+                    toastr[data.toastType](data.message);
+                    localStorage.removeItem("flightReservation");
+                    localStorage.removeItem("flightRes");
+                    localStorage.removeItem("carRes");
+                    localStorage.removeItem("hotelRes");
+                    $("#flightRes").text("No flight reserved");
+                    $("#carRes").text("");
+                    $("#hotelRes").text("");
+                    getReservations();
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("AJAX ERROR: " + textStatus);
+            }
+        });
     }
 }
 
