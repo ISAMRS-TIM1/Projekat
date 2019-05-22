@@ -176,56 +176,86 @@
 				</div>
 			</div>
 			<div id="cars" class="tab-pane fade">
-				<div id="searchCars">
-					<table id="searchCarsTable">
-						<tr>
-							<td><select class="form-control" id="selectProducer"></select>
-							</td>
-							<td><select id="selectModel" disabled multiple></select></td>
-							<td><select id="vehicleType" multiple></select></td>
-							<td><select id="fuelType" multiple></select></td>
-							<td><label>Grade:</label></td>
-							<td><input id="vehicleGrade" type="text" value=""
-								data-slider-min="0" data-slider-max="5" data-slider-step="0.1"
-								data-slider-value="[0,5]"></td>
-						</tr>
-						<tr>
-							<td><input type="number" class="form-control" id="priceTo"
-								min="0" placeholder="Maximum price"></td>
-							<td><input type="number" class="form-control"
-								id="numberOfSeats" min="1" placeholder="Number of seats">
-							</td>
-							<td><label>Production year from:</label></td>
-							<td><input type="text" class="form-control" id="startYear">
-							</td>
-							<td><label>To:</label></td>
-							<td><input type="text" class="form-control" id="endYear">
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<button class="btn btn-default" id="searchVehiclesButton">Search</button>
-							</td>
-						</tr>
-					</table>
-				</div>
-				<div id="vehiclesTableWrapper">
-					<table id="vehiclesTable" class="table display table-bordered">
-						<thead>
-							<tr>
-								<th>Model</th>
-								<th>Producer</th>
-								<th>Year of production</th>
-								<th>Number of seats</th>
-								<th>Fuel type</th>
-								<th>Vehicle type</th>
-								<th>Price per day</th>
-								<th>Average grade</th>
-							</tr>
-						</thead>
-						<tbody>
-						</tbody>
-					</table>
+				<div id="searchCarsDiv">
+					<div id="searchCars">
+						<table id="searchCarsTable">
+							<thead></thead>
+							<tbody>
+								<tr>
+									<td colspan="2">
+										<select class="form-control" id="selectProducer"></select>
+									</td>
+									<td>
+										<select id="selectModel" disabled multiple></select>
+									</td>
+									<td>
+										<select id="vehicleType" multiple></select>
+									</td>
+									<td>
+										<select id="fuelType" multiple></select>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<label class="searchLabel">Maximum price per day:</label>
+									</td>
+									<td>
+										<input type="number" class="form-control" id="priceTo" min="0">
+									</td>
+									<td>
+										<label class="searchLabel">Minimal number of seats:</label>
+									</td>
+									<td>
+										<input type="number" class="form-control" id="numberOfSeats" min="1">
+									</td>								
+								</tr>
+								<tr>
+									<td>
+										<label class="searchLabel">Production year from:</label>
+									</td>
+									<td>
+										<input type="text" class="form-control" id="startYear">
+									</td>
+									<td>
+										<label class="searchLabel">To:</label>
+									</td>
+									<td>
+										<input type="text" class="form-control" id="endYear">
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<label class="searchLabel">Grade:</label>
+									</td>
+									<td>
+										<input id="vehicleGrade" type="text" value="" data-slider-min="0" data-slider-max="5" data-slider-step="0.1" data-slider-value="[0,5]">
+									</td>
+									<td colspan="2">
+										<button class="btn btn-default" id="searchVehiclesButton">Search</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div id="vehiclesTableWrapper">
+						<table id="vehiclesTable" class="table display table-bordered">
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Producer</th>
+									<th>Model</th>
+									<th>Vehicle type</th>
+									<th>Fuel type</th>
+									<th>Number of seats</th>
+									<th>Price per day</th>
+									<th>Year of production</th>
+									<th>Average grade</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div>
 			<div id="friends" class="tab-pane fade">
@@ -321,15 +351,15 @@
 		<div id="reservationCart">
 			<table id="cartTable">
 				<tr>
-					<td><img src="airplane.png" width="50%" /></td>
+					<td><img src="common/images/airplane.png" width="50%"/></td>
 					<td colspan="2" id="flightRes">No flight reserved</td>
 				</tr>
 				<tr>
-					<td><img src="hotel.png" width="50%" /></td>
+					<td><img src="common/images/hotel.png" width="50%"/></td>
 					<td colspan="2" id="hotelRes"></td>
 				</tr>
 				<tr>
-					<td><img src="car.png" width="50%" /></td>
+					<td><img src="common/images/car.png" width="50%"/></td>
 					<td colspan="2" id="carRes"></td>
 				</tr>
 				<tr>
@@ -561,6 +591,34 @@
 					<br> <br>
 					<button class="btn btn-default" id="nextButtonFlightsLast"
 						onclick="endReservation(event)">End reservation</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- QUICK VEHICLE RESERVATIONS MODAL -->
+	<div id="quickVehicleReservationsModal" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+        			<h4 id="quickReservationsModalTitle" class="modal-title"></h4>
+				</div>
+				<div class="modal-body">
+					<table id="quickReservationsTable" class="table display table-bordered">
+						<thead>
+							<tr>
+								<th>Branch office name</th>
+								<th>Vehicle producer</th>
+								<th>Vehicle model</th>
+								<th>From</th>
+								<th>To</th>
+								<th>Discount</th>
+								<th>&nbsp;</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
 				</div>
 			</div>
 		</div>

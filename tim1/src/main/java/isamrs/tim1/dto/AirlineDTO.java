@@ -9,7 +9,6 @@ import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.Destination;
 import isamrs.tim1.model.Flight;
 import isamrs.tim1.model.FlightReservation;
-import isamrs.tim1.model.QuickFlightReservation;
 
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class AirlineDTO implements Serializable {

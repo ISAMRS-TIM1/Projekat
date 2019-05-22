@@ -6,7 +6,6 @@ import java.util.Date;
 
 import isamrs.tim1.model.HotelAdditionalService;
 import isamrs.tim1.model.QuickHotelReservation;
-import isamrs.tim1.service.HotelReservationService;
 
 public class QuickHotelReservationDTO implements Serializable {
 

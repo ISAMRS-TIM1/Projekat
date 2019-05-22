@@ -65,6 +65,13 @@ a[data-toggle="tab"] {
 	border-radius: 2vw 2vw 2vw 2vw;
 }
 
+#searchVehiclesButton {
+	color: white;
+	font-size: 1.6vw;
+	border: 0.16vw solid #B27A00;
+	border-radius: 2vw 2vw 2vw 2vw;
+}
+
 #reserveButton {
 	margin-left: auto;
 	margin-right: auto;
@@ -368,7 +375,7 @@ input, select {
 }
 
 /* HOTELS */
-#searchHotelsDiv {
+#searchHotelsDiv, #searchCarsDiv {
 	width: 70%;
 	height: 38vw;
 	margin-left: 13%;
@@ -378,6 +385,10 @@ input, select {
 	border-radius: 4vw 1.6vw;
 	margin-left: 13%;
 	padding: 2vw;
+}
+
+#searchCarsDiv {
+	height: 50vw;
 }
 
 #hotelsSearchTable {
@@ -460,17 +471,17 @@ input, select {
 	max-width: 260px;
 }
 
-#searchCars {
-	margin-top: 2%;
-	width: 85%;
-	margin-left: 7%;
-	display: block;
+#searchCarsTable { 
+    border-spacing: 1.5vw;
+    border-collapse: separate;
 }
 
-#searchCarsTable {
-	text-align: center;
-	border-collapse: separate;
-	border-spacing: 20px;
+#searchVehiclesButton {
+	width: 100%;
+}
+
+#searchCars {
+	padding-bottom: 2vw;
 }
 
 #searchVehiclesButton {
@@ -483,4 +494,22 @@ input, select {
     width: 90%;
    max-width:1200px;
   }
+}
+
+.modal-header {
+	text-align: center;
+	color: white;
+}
+
+.searchLabel {
+	color: white;
+}
+
+.reserve {
+	background-color: white;
+	color: black;
+}
+
+.modal-body, .modal-header {
+	background: #548cf1;	
 }

@@ -9,8 +9,6 @@ import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.model.Hotel;
 import isamrs.tim1.model.HotelAdditionalService;
 import isamrs.tim1.model.HotelReservation;
-import isamrs.tim1.model.HotelRoom;
-import isamrs.tim1.model.QuickHotelReservation;
 import isamrs.tim1.repository.HotelAdditionalServicesRepository;
 import isamrs.tim1.repository.HotelRepository;
 

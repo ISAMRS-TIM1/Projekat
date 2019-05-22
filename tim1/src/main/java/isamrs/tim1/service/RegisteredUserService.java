@@ -21,13 +21,13 @@ import isamrs.tim1.repository.RegisteredUserRepository;
 
 @Service
 public class RegisteredUserService {
-	
+
 	@Autowired
 	private SimpMessagingTemplate template;
-	
+
 	@Autowired
 	private RegisteredUserRepository registeredUserRepository;
-	
+
 	public ArrayList<UserDTO> searchUsers(String firstName, String lastName, String email) {
 		if (firstName.equals(""))
 			firstName = "%";
@@ -35,8 +35,7 @@ public class RegisteredUserService {
 			try {
 				firstName = firstName.toLowerCase();
 				firstName = firstName.substring(0, 1).toUpperCase() + firstName.substring(1);
-			}
-			catch(Exception ex) {
+			} catch (Exception ex) {
 				firstName = firstName.substring(0, 1);
 			}
 		}
@@ -46,8 +45,7 @@ public class RegisteredUserService {
 			try {
 				lastName = lastName.toLowerCase();
 				lastName = lastName.substring(0, 1).toUpperCase() + lastName.substring(1);
-			}
-			catch(Exception ex) {
+			} catch (Exception ex) {
 				lastName = lastName.substring(0, 1);
 			}
 		}
@@ -62,25 +60,29 @@ public class RegisteredUserService {
 		}
 		return usersDTO;
 	}
-	
+
 	public ResponseEntity<MessageDTO> sendInvitation(String invitedUser) {
 		RegisteredUser inviter = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		RegisteredUser invited = registeredUserRepository.findOneByEmail(invitedUser);
 		if (invited == null)
-			return new ResponseEntity<MessageDTO>(new MessageDTO("User does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
+			return new ResponseEntity<MessageDTO>(new MessageDTO("User does not exist.", ToasterType.ERROR.toString()),
+					HttpStatus.OK);
 		UserDTO u = new UserDTO(inviter.getFirstName(), inviter.getLastName(), "", "", inviter.getEmail());
 		this.template.convertAndSend("/friendsInvitation/" + invitedUser, u);
 		invited.getInviters().add(inviter);
 		inviter.getInvitedUsers().add(invited);
 		registeredUserRepository.save(inviter);
-		return new ResponseEntity<MessageDTO>(new MessageDTO("Friend invitation is sent.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
+		return new ResponseEntity<MessageDTO>(
+				new MessageDTO("Friend invitation is sent.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
 	}
 
 	public ResponseEntity<MessageDTO> acceptInvitation(String acceptedUser) {
-		RegisteredUser currUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		RegisteredUser currUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication()
+				.getPrincipal();
 		RegisteredUser accepted = registeredUserRepository.findOneByEmail(acceptedUser);
 		if (accepted == null)
-			return new ResponseEntity<MessageDTO>(new MessageDTO("User does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
+			return new ResponseEntity<MessageDTO>(new MessageDTO("User does not exist.", ToasterType.ERROR.toString()),
+					HttpStatus.OK);
 		this.template.convertAndSend("/friendsInvitation/" + acceptedUser, "Accepted-" + currUser.getEmail());
 		Iterator<RegisteredUser> it = currUser.getInviters().iterator();
 		while (it.hasNext()) {
@@ -102,14 +104,17 @@ public class RegisteredUserService {
 		accepted.getFriends().add(currUser);
 		registeredUserRepository.save(accepted);
 		registeredUserRepository.save(currUser);
-		return new ResponseEntity<MessageDTO>(new MessageDTO("Friend invitation accepted.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
+		return new ResponseEntity<MessageDTO>(
+				new MessageDTO("Friend invitation accepted.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
 	}
-	
+
 	public ResponseEntity<MessageDTO> declineInvitation(String declinedUser) {
-		RegisteredUser currUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		RegisteredUser currUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication()
+				.getPrincipal();
 		RegisteredUser declined = registeredUserRepository.findOneByEmail(declinedUser);
 		if (declined == null)
-			return new ResponseEntity<MessageDTO>(new MessageDTO("User does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
+			return new ResponseEntity<MessageDTO>(new MessageDTO("User does not exist.", ToasterType.ERROR.toString()),
+					HttpStatus.OK);
 		this.template.convertAndSend("/friendsInvitation/" + declinedUser, "Declined-" + currUser.getEmail());
 		Iterator<RegisteredUser> it = currUser.getInviters().iterator();
 		while (it.hasNext()) {
@@ -129,12 +134,14 @@ public class RegisteredUserService {
 		}
 		registeredUserRepository.save(declined);
 		registeredUserRepository.save(currUser);
-		return new ResponseEntity<MessageDTO>(new MessageDTO("Friend invitation declined.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
+		return new ResponseEntity<MessageDTO>(
+				new MessageDTO("Friend invitation declined.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
 	}
 
 	public ResponseEntity<ArrayList<FriendDTO>> getFriendInvitations() {
 		ArrayList<FriendDTO> friends = new ArrayList<FriendDTO>();
-		RegisteredUser currUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		RegisteredUser currUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication()
+				.getPrincipal();
 		for (User us : currUser.getFriends()) {
 			friends.add(new FriendDTO(us, "Accepted"));
 		}
@@ -149,7 +156,8 @@ public class RegisteredUserService {
 
 	public ResponseEntity<ArrayList<FriendDTO>> getFriends() {
 		ArrayList<FriendDTO> friends = new ArrayList<FriendDTO>();
-		RegisteredUser currUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		RegisteredUser currUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication()
+				.getPrincipal();
 		for (User us : currUser.getFriends()) {
 			friends.add(new FriendDTO(us, "Accepted"));
 		}

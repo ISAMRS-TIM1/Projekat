@@ -1,10 +1,9 @@
 package isamrs.tim1.model;
 
-
-import java.util.HashSet;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
+
+import java.util.HashSet;
 
 import isamrs.tim1.dto.QuickHotelReservationDTO;
 

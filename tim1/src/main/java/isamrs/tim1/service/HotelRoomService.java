@@ -14,7 +14,6 @@ import isamrs.tim1.dto.SeasonalPriceDTO;
 import isamrs.tim1.model.Hotel;
 import isamrs.tim1.model.HotelReservation;
 import isamrs.tim1.model.HotelRoom;
-import isamrs.tim1.model.QuickHotelReservation;
 import isamrs.tim1.model.SeasonalHotelRoomPrice;
 import isamrs.tim1.repository.HotelRepository;
 import isamrs.tim1.repository.HotelRoomRepository;

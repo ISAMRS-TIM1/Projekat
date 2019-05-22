@@ -2,7 +2,6 @@ package isamrs.tim1.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 
 @Entity
 public class QuickFlightReservation extends FlightReservation {
