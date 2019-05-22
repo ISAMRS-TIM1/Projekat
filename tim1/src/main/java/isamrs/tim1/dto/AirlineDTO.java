@@ -39,7 +39,7 @@ public class AirlineDTO implements Serializable {
 		for (Flight f : airline.getFlights()) {
 			this.flights.add(new FlightDTO(f));
 		}
-		this.reservations = new ArrayList<FlightReservation>(airline.getReservations());
+		this.reservations = null;
 	}
 
 	public String getName() {

@@ -212,7 +212,7 @@
 					<div class="tableButtons">
 						<button type="button" id="addQuickReservationButton"
 							class="btn btn-default" data-toggle="modal"
-							data-target="addQuickReservationModal">Add quick
+							data-target="#addQuickReservationModal">Add quick
 							reservation</button>
 					</div>
 					<div class="tableDiv">
@@ -220,7 +220,11 @@
 							class="table display table-bordered">
 							<thead>
 								<tr>
-									<th>Reservation ID</th>
+									<th>Flight code</th>
+									<th>Seat</th>
+									<th>Seat class</th>
+									<th>Discount</th>
+									<th>Real price</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -424,6 +428,83 @@
 						type="hidden" id="destMapDivLongitude" value="0" required>
 					<button type="button" id="modalDestButton" class="btn btn-default" onclick="addDestination(event)">Save
 						changes</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- QUICK RESERVATION MODAL -->
+	<div class="modal fade" id="addQuickReservationModal" tabindex="-1"
+		role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content" id="showFlightDiv">
+				<div id="resTableDiv">
+					<table id="flightsResTable" class="table display table-bordered">
+						<thead>
+							<tr>
+								<th>Flight code</th>
+								<th>Start destination</th>
+								<th>End destination</th>
+								<th>Departure time</th>
+								<th>Landing time</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+				<div id="quickReserveDiv">
+					<table id="showFlightTable">
+						<tr>
+							<td>Start destination</td>
+							<td><span id="startDest"></span></td>
+							<td>End destination</td>
+							<td><span id="endDest"></span></td>
+						</tr>
+						<tr>
+							<td>Departure time</td>
+							<td><span id="depTime"></span></td>
+							<td>Landing time</td>
+							<td><span id="landTime"></span></td>
+						</tr>
+						<tr>
+							<td>Airline</td>
+							<td><span id="flightAirline"></span></td>
+							<td>Flight duration</td>
+							<td><span id="flightDuration"></span></td>
+						</tr>
+						<tr>
+							<td>Flight distance</td>
+							<td><span id="flightResDistance"></span></td>
+							<td>Locations of connections</td>
+							<td><select id="flightResConnections"></select>
+						</tr>
+						<tr>
+							<td>Price per bag</td>
+							<td><span id="resPricePerBag"></span></td>
+							<td>Average grade</td>
+							<td><span id="resAverageGrade"></span>
+						</tr>
+						<tr>
+							<td>
+								<span>Discount:</span>
+							</td>
+							<td>
+								<input type="number" class="form-control" id="discount" value="0" min="0" max="80">
+							</td>
+						</tr>
+					</table>
+					<br> <br>
+					<div id="planeSeats">
+						<div id="seat-map-second">
+							<div class="front-indicator">Front</div>
+						</div>
+						<div class="booking-details">
+							<div id="legend-second"></div>
+						</div>
+						<button class="btn btn-default" id="quickReserveButton"
+						onclick="createQuickReservation(event)">Create</button>
+					</div>
 				</div>
 			</div>
 		</div>

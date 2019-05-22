@@ -899,127 +899,102 @@ var reservedSeats = [];
 var seatsToReserve = [];
 
 function showPlaneSeats(seats) {
-    var $cart = $('#selected-seats'),
-        $counter = $('#counter'),
-        $total = $('#total'),
-        sc = $(
-            '#seat-map')
-        .seatCharts({
-            map: seats,
-            seats: {
-                f: {
-                    price: firstPrice,
-                    classes: 'first-class', // your custom CSS
-                    // class
-                    category: 'First Class'
-                },
-                e: {
-                    price: economyPrice,
-                    classes: 'economy-class', // your custom CSS
-                    // class
-                    category: 'Economy Class'
-                },
-                b: {
-                    price: businessPrice,
-                    classes: 'business-class',
-                    category: 'Business Class'
-                },
-                l: {
-                    classes: 'blank-class',
-                    category: 'Blank seat'
-                },
-                a: {
-                    classes: 'unavailable',
-                    category: 'Already booked'
-                }
+	var $cart = $('#selected-seats'), $counter = $('#counter'), $total = $('#total'), sc = $(
+			'#seat-map')
+			.seatCharts(
+					{
+						map : seats,
+						seats : {
+							f : {
+								price : firstPrice,
+								classes : 'first-class',
+								category : 'First Class'
+							},
+							e : {
+								price : economyPrice,
+								classes : 'economy-class',
+								category : 'Economy Class'
+							},
+							b : {
+								price : businessPrice,
+								classes : 'business-class',
+								category : 'Business Class'
+							},
+							l : {
+								classes : 'blank-class',
+								category : 'Blank seat'
+							},
+							a : {
+								classes : 'unavailable',
+								category : 'Already booked'
+							}
 
-            },
-            naming: {
-                top: false,
-                left: false,
-                getLabel: function(character, row, column) {
-                    return firstSeatLabel++;
-                },
-            },
-            legend: {
-                node: $('#legend'),
-                items: [
-                    ['f', 'available', 'First Class'],
-                    ['b', 'available', 'Business Class'],
-                    ['e', 'available', 'Economy Class'],
-                    ['a', 'unavailable', 'Already Booked'],
-                    ['l', 'available', 'Blank seat']
-                ]
-            },
-            click: function() {
-                if (this.status() == 'available') {
-                    // let's create a new <li> which we'll add to
-                    // the cart items
-                    if (this.settings.character == 'a')
-                        return;
-                    var seat = this.settings.id.split("_");
-                    if (seat[1] == 4 || seat[1] == 5) {
-                        seatsToReserve.push((seat[0] + "_" + (seat[1] - 1)) + "_" + this.settings.character);
-                    } else {
-                        seatsToReserve.push(this.settings.id + "_" + this.settings.character);
-                    }
-                    console.log(seatsToReserve);
-                    $(
-                            '<li>' +
-                            this.data().category +
-                            ' Seat # ' +
-                            this.settings.label +
-                            ': <b>$' +
-                            this.data().price +
-                            '</b> <a href="#" class="cancel-cart-item">[cancel]</a></li>')
-                        .attr('id',
-                            'cart-item-' + this.settings.id)
-                        .data('seatId', this.settings.id)
-                        .appendTo($cart);
+						},
+						naming : {
+							top : false,
+							left : false,
+							getLabel : function(character, row, column) {
+								return firstSeatLabel++;
+							},
+						},
+						legend : {
+							node : $('#legend'),
+							items : [ [ 'f', 'available', 'First Class' ],
+									[ 'b', 'available', 'Business Class' ],
+									[ 'e', 'available', 'Economy Class' ],
+									[ 'a', 'unavailable', 'Already Booked' ],
+									[ 'l', 'available', 'Blank seat' ] ]
+						},
+						click : function() {
+							if (this.status() == 'available') {
+								if (this.settings.character == 'a')
+									return;
+								var seat = this.settings.id.split("_");
+								if (seat[1] == 4 || seat[1] == 5) {
+									seatsToReserve.push((seat[0] + "_" +  (seat[1] - 1)) + "_" + this.settings.character);
+								}
+								else {
+									seatsToReserve.push(this.settings.id + "_" + this.settings.character);
+								}
+								console.log(seatsToReserve);
+								$(
+										'<li>'
+												+ this.data().category
+												+ ' Seat # '
+												+ this.settings.label
+												+ ': <b>$'
+												+ this.data().price
+												+ '</b> <a href="#" class="cancel-cart-item">[cancel]</a></li>')
+										.attr('id',
+												'cart-item-' + this.settings.id)
+										.data('seatId', this.settings.id)
+										.appendTo($cart);
+								$counter.text(sc.find('selected').length + 1);
+								$total.text(recalculateTotal(sc)
+										+ this.data().price);
 
-                    /*
-                     * Lets update the counter and total
-                     * 
-                     * .find function will not find the current
-                     * seat, because it will change its stauts only
-                     * after return 'selected'. This is why we have
-                     * to add 1 to the length and the current seat
-                     * price to the total.
-                     */
-                    $counter.text(sc.find('selected').length + 1);
-                    $total.text(recalculateTotal(sc) +
-                        this.data().price);
+								return 'selected';
+							} else if (this.status() == 'selected') {
+								$counter.text(sc.find('selected').length - 1);
+								$total.text(recalculateTotal(sc)
+										- this.data().price);
 
-                    return 'selected';
-                } else if (this.status() == 'selected') {
-                    // update the counter
-                    $counter.text(sc.find('selected').length - 1);
-                    // and total
-                    $total.text(recalculateTotal(sc) -
-                        this.data().price);
+								$('#cart-item-' + this.settings.id).remove();
+								let index = seatsToReserve.indexOf(this.settings.id);
+								seatsToReserve.splice(index, 1);
+								console.log(seatsToReserve);
+								return 'available';
+							} else if (this.status() == 'unavailable') {
+								return 'unavailable';
+							} else {
+								return this.style();
+							}
+						}
+					});
 
-                    // remove the item from our cart
-                    $('#cart-item-' + this.settings.id).remove();
-                    let index = seatsToReserve.indexOf(this.settings.id);
-                    seatsToReserve.splice(index, 1);
-                    console.log(seatsToReserve);
-                    // seat has been vacated
-                    return 'available';
-                } else if (this.status() == 'unavailable') {
-                    // seat has been already booked
-                    return 'unavailable';
-                } else {
-                    return this.style();
-                }
-            }
-        });
-
-    // this will handle "[cancel]" link clicks
-    $('#selected-seats').on('click', '.cancel-cart-item', function() {
-        // let's just trigger Click event on the appropriate seat, so we don't
-        // have to repeat the logic here
-        sc.get($(this).parents('li:first').data('seatId')).click();
-    });
+	$('#selected-seats').on('click', '.cancel-cart-item', function() {
+		sc.get($(this).parents('li:first').data('seatId')).click();
+	});
 }
 
 function recalculateTotal(sc) {

@@ -19,6 +19,7 @@ import isamrs.tim1.dto.FlightReservationDTO;
 import isamrs.tim1.dto.FlightVehicleReservationDTO;
 import isamrs.tim1.dto.InvitingReservationDTO;
 import isamrs.tim1.dto.MessageDTO;
+import isamrs.tim1.dto.QuickFlightReservationDTO;
 import isamrs.tim1.dto.QuickHotelReservationDTO;
 import isamrs.tim1.dto.QuickVehicleReservationDTO;
 import isamrs.tim1.dto.VehicleReservationDTO;
@@ -107,5 +108,15 @@ public class ReservationController {
 			@PathVariable("vehicleId") int vehicleId) {
 		return new ResponseEntity<ArrayList<VehicleReservationDTO>>(
 				reservationService.getQuickVehicleReservationsForVehicle(vehicleId), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/api/createQuickFlightReservation", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MessageDTO> createQuickFlightReservation(@RequestBody QuickFlightReservationDTO quickDTO) {
+		return new ResponseEntity<MessageDTO>(reservationService.createQuickFlightReservation(quickDTO), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/api/getQuickFlightReservations", method = RequestMethod.GET)
+	public ArrayList<QuickFlightReservationDTO> getQuickFlightReservations() {
+		return reservationService.getQuickFlightReservations();
 	}
 }
