@@ -17,6 +17,7 @@ const getDestinationsURL = "/api/getDestinations";
 const searchFlightsURL = "/api/searchFlights";
 const getFriendsURL = "/api/getFriends";
 const getReservationsURL = "/api/getReservations";
+const cancelReservationURL = "/api/cancelReservation";
 
 const searchHotelsURL = "/api/searchHotels";
 const getHotelURL = "../api/getHotel";
@@ -123,7 +124,6 @@ $(document)
             	var resTable = $("#reservationsTable").DataTable();
             	if (tgt[0].id == "cancelResButton") {
             		var res = resTable.row(this).data()[0];
-            		console.log(res);
             		cancelReservation(res);
             	}
             });
@@ -1740,9 +1740,7 @@ function cancelReservation(id) {
         url: cancelReservationURL,
         headers: createAuthorizationTokenHeader(tokenKey),
         contentType: "application/json",
-        data: {
-            'resID': id
-        },
+        data: id.toString(),
         success: function(data) {
             if (data.toastType == "success") {
             	var table = $("#reservationsTable").DataTable();

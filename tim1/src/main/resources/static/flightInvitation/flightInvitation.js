@@ -18,13 +18,13 @@ $(document).ready(function() {
 	
 	$('#reservationsTable tbody').on('click', 'td', function(event) {
 		var tgt = $(event.target);
+		var table = $("#reservationsTable").DataTable();
+		var rowData;
 		if (tgt[0].innerHTML == "Accept") {
-			var table = $("#reservationsTable").DataTable();
-			var rowData = table.cell(this).row().data();
+			rowData = table.row(this.parentNode).data();
 			acceptInvitation(rowData[0]);
 		} else if (tgt[0].innerHTML == "Decline") {
-			var table = $("#reservationsTable").DataTable();
-			var rowData = table.cell(this).row().data();
+			rowData = table.row(this.parentNode).data();
 			declineInvitation(rowData[0]);
 		}
 	});
