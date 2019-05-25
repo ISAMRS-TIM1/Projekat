@@ -82,6 +82,19 @@ $(document).ready(function() {
 		loadFlight(shownFlight);
 		$("#quickReserveDiv").show();
 	});
+	
+	$('#flightModalDialog').on('hidden.bs.modal', function() {
+		resetFlightsModal();
+	});
+	
+	$('#flightsTable tbody').on('click', 'tr', function() {
+		var flightsTable = $('#flightsTable').DataTable();
+		shownFlight = flightsTable.row(this).data()[0];
+		loadFlightForEdit(shownFlight);
+		$("#saveSeatButton").text("Edit flight");
+		$("#saveSeatButton").attr("onclick", "editFlight('" + shownFlight + "')");
+		$("#flightModalDialog").modal('show');
+	});
 })
 
 function setUpTables() {
@@ -400,7 +413,7 @@ function renderPlaneSeats(planeSegments, reserved, mapNum) {
 		$('.seatCharts-legendItem').remove();
 		firstSeatLabel = 1;
 		if (mapNum == 0) {
-			$('#seat-map,#seat-map *').unbind().removeData();
+			$('.seat-map,.seat-map *').unbind().removeData();
 			showPlaneSeatsFirstMap(seats);
 		}
 		else {
@@ -526,7 +539,7 @@ function addSeatsIndividually(e) {
 	firstSeatLabel = 1;
 	$('.seatCharts-row').remove();
 	$('.seatCharts-legendItem').remove();
-	$('#seat-map,#seat-map *').unbind().removeData();
+	$('.seat-map,.seat-map *').unbind().removeData();
 	showPlaneSeatsFirstMap(seats);
 }
 
@@ -603,7 +616,7 @@ function addSeats(number, seatClass, label, cat, initial) {
 		var seats = firstClass.concat(businessClass).concat(economyClass);
 		$('.seatCharts-row').remove();
 		$('.seatCharts-legendItem').remove();
-		$('#seat-map,#seat-map *').unbind().removeData();
+		$('.seat-map,.seat-map *').unbind().removeData();
 		firstSeatLabel = 1;
 		showPlaneSeatsFirstMap(seats);
 	}
@@ -679,7 +692,7 @@ function deleteSeatsIndividually(e) {
 	firstSeatLabel = 1;
 	$('.seatCharts-row').remove();
 	$('.seatCharts-legendItem').remove();
-	$('#seat-map,#seat-map *').unbind().removeData();
+	$('.seat-map,.seat-map *').unbind().removeData();
 	showPlaneSeatsFirstMap(seats);
 }
 
@@ -856,12 +869,12 @@ function deleteSeats(e, cat) {
 	firstSeatLabel = 1;
 	$('.seatCharts-row').remove();
 	$('.seatCharts-legendItem').remove();
-	$('#seat-map,#seat-map *').unbind().removeData();
+	$('.seat-map,.seat-map *').unbind().removeData();
 	showPlaneSeatsFirstMap(seats);
 }
 
 function showPlaneSeatsFirstMap(seats) {
-	var sc = $('#seat-map').seatCharts(
+	var sc = $('.seat-map').seatCharts(
 			{
 				map : seats,
 				seats : {
@@ -913,7 +926,6 @@ function showPlaneSeatsFirstMap(seats) {
 							return;
 						seatsForDelete.push(this.settings.id);
 						console.log(seatsForDelete);
-						$counter.text(sc.find('selected').length + 1);
 						return 'selected';
 					} else if (this.status() == 'selected') {
 						let index = seatsForDelete.indexOf(this.settings.id);
@@ -1087,7 +1099,7 @@ function addFlight(e) {
 		url : addFlightURL,
 		headers : createAuthorizationTokenHeader(TOKEN_KEY),
 		contentType : "application/json",
-		data : flightToJSON(startDestination, endDestination, departureTime, landingTime, flightDistance, connections, pricePerBag,
+		data : flightToJSON("", startDestination, endDestination, departureTime, landingTime, flightDistance, connections, pricePerBag,
 				firstPrice, businessPrice, economyPrice),
 		success : function(data) {
 				var table = $('#flightsTable').DataTable();
@@ -1113,9 +1125,83 @@ function addFlight(e) {
 	});
 }
 
-function flightToJSON(startDestination, endDestination, departureTime, landingTime, flightDistance, connections, pricePerBag,
+function editFlight(code) {
+	e.preventDefault();
+	var startDestination = $( "#startDestination option:selected" ).text();
+	var endDestination = $( "#endDestination  option:selected" ).text();
+	if (startDestination == endDestination) {
+		toastr["error"]("Start destination and end destination must not be the same.");
+		return;
+	}
+	var departureTime = $("#departureTime").val();
+	if (departureTime == null || departureTime == "") {
+		toastr["error"]("Departure time is not valid.")
+		return;
+	}
+	var landingTime = $("#landingTime").val();
+	if (landingTime == null || landingTime == "") {
+		toastr["error"]("Landing time is not valid.")
+		return;
+	}
+	if (moment(landingTime).isBefore(departureTime) || moment(landingTime).isSame(departureTime)) {
+		toastr["error"]("Landing time must be after the departure time.");
+		return;
+	}
+	var flightDistance = $("#flightDistance").val();
+	if (isNaN(flightDistance) || flightDistance <= 0 || flightDistance == "") {
+		toastr["error"]("Invalid flight distance.");
+		return;
+	}
+	var connections = $("#connections").val();
+	var pricePerBag = $("#pricePerBag").val();
+	if (isNaN(pricePerBag) || pricePerBag < 0 || pricePerBag == "") {
+		toastr["error"]("Invalid price per bag.");
+		return;
+	}
+	var firstPrice = $("#firstPrice").val();
+	if (isNaN(firstPrice) || firstPrice < 0 || firstPrice == "") {
+		toastr["error"]("Invalid first class seat price.");
+		return;
+	}
+	var businessPrice = $("#businessPrice").val();
+	if (isNaN(businessPrice) || businessPrice < 0 || businessPrice == "") {
+		toastr["error"]("Invalid business class seat price.");
+		return;
+	}
+	var economyPrice = $("#economyPrice").val();
+	if (isNaN(economyPrice) || economyPrice < 0 || economyPrice == "") {
+		toastr["error"]("Invalid economy class seat price.");
+		return;
+	}
+	$.ajax({
+		method : "PUT",
+		url : editFlightURL,
+		headers : createAuthorizationTokenHeader(TOKEN_KEY),
+		contentType : "application/json",
+		data : flightToJSON(code, startDestination, endDestination, departureTime, landingTime, flightDistance, connections, pricePerBag,
+				firstPrice, businessPrice, economyPrice),
+		success : function(data) {
+			saveSeatsChanges(code);
+			getFlights();
+		}
+	});
+}
+
+function getFlights() {
+	$.ajax({
+		method : "GET",
+		url : getFlightsURL,
+		headers : createAuthorizationTokenHeader(TOKEN_KEY),
+		success : function(data) {
+			renderFlights(data);
+		}
+	});
+}
+
+function flightToJSON(code, startDestination, endDestination, departureTime, landingTime, flightDistance, connections, pricePerBag,
 		firstPrice, businessPrice, economyPrice) {
 	var a = JSON.stringify({
+		"flightCode" : code,
 		"startDestination" : startDestination,
 		"endDestination" : endDestination,
 		"departureTime" : departureTime,
@@ -1496,6 +1582,43 @@ function changeGraphic(level) {
 	}
 }
 
+function loadFlightForEdit(code) {
+	$.ajax({
+		type : 'GET',
+		url : getDetailedFlightURL,
+		contentType : "application/json",
+		data : {
+			'flightCode' : code
+		},
+		dataType : "json",
+		headers : createAuthorizationTokenHeader(TOKEN_KEY),
+		success : function(data) {
+			if (data != null) {
+				$("#startDestination").val(data["startDestination"]);
+				$("#endDestination").val(data["endDestination"]);
+				var d = data["departureTime"].split(" ");
+				$("#departureTime").val(d[0].substring(6, 10) + "-" + d[0].substring(3, 5) + "-" +
+							d[0].substring(0, 2) + "T" + d[1]);
+				d = data["landingTime"].split(" ");
+				$("#landingTime").val(d[0].substring(6, 10) + "-" + d[0].substring(3, 5) + "-" +
+							d[0].substring(0, 2) + "T" + d[1]);
+				$("#flightDistance").val(data["flightDistance"]);
+				$("#pricePerBag").val(data["pricePerBag"]);
+				$.each(data["connections"], function(i, val){
+				    $("#connections option[value='" + val + "']").prop("selected", true);
+				});
+				$("#firstPrice").val(data["firstClassPrice"]);
+				$("#businessPrice").val(data["businessClassPrice"]);
+				$("#economyPrice").val(data["economyClassPrice"]);
+				getPlaneSeats(code, 0);
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
 function loadFlight(code) {
 	$.ajax({
 		type : 'GET',
@@ -1566,6 +1689,24 @@ function resetReservationModal() {
 	economyClass = [];
 	firstSeatLabel = 1;
 	reservedSeats = [];
+}
+
+function resetFlightsModal() {
+	$("#startDestination option:selected").prop("selected", false);
+	$("#endDestination option:selected").prop("selected", false);
+	$("#departureTime").val("");
+	$("#landingTime").val("");
+	$("#flightDistance").val(0);
+	$("#pricePerBag").val(0);
+	$("#firstPrice").val(0);
+	$("#businessPrice").val(0);
+	$("#economyPrice").val(0);
+	$("#connections option:selected").prop("selected", false);
+	$('.seatCharts-row').remove();
+	$('.seatCharts-legendItem').remove();
+	$('.seat-map,.seat-map *').unbind().removeData();
+	$("#saveSeatButton").text("Add flight");
+	$("#saveSeatButton").attr("onclick", "addFlight(event)");
 }
 
 function createQuickReservation(e) {
