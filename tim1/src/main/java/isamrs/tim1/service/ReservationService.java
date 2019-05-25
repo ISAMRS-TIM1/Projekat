@@ -651,6 +651,7 @@ public class ReservationService {
 		}
 
 		return dtos;
+	}
 
 	public ArrayList<QuickFlightReservationDTO> getQuickFlightReservations() {
 		AirlineAdmin airlineAdmin = (AirlineAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

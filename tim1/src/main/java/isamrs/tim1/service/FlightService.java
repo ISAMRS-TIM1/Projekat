@@ -178,4 +178,33 @@ public class FlightService {
 		Flight f = flightRepository.findOneByFlightCode(flightCode);
 		return new FlightDTO(f);
 	}
+
+	public MessageDTO editFlight(FlightDTO flightDTO) {
+		Flight flight = flightRepository.findOneByFlightCode(flightDTO.getFlightCode());
+		if (flight == null) {
+			return new MessageDTO("Flight does not exist.", ToasterType.ERROR.toString());
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+		try {
+			flight.setDepartureTime(sdf.parse(flightDTO.getDepartureTime()));
+			flight.setLandingTime(sdf.parse(flightDTO.getLandingTime()));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		flight.setStartDestination(destinationRepository.findOneByName(flightDTO.getStartDestination()));
+		flight.setEndDestination(destinationRepository.findOneByName(flightDTO.getEndDestination()));
+		flight.setFlightLength(flightDTO.getFlightDistance());
+		long diffInMillies = Math.abs(flight.getDepartureTime().getTime() - flight.getLandingTime().getTime());
+		int flightDuration = (int) TimeUnit.MINUTES.convert(diffInMillies, TimeUnit.MILLISECONDS);
+		flight.setFlightDuration(flightDuration);
+		flight.setFirstClassPrice(flightDTO.getFirstClassPrice());
+		flight.setBusinessClassPrice(flightDTO.getBusinessClassPrice());
+		flight.setEconomyClassPrice(flightDTO.getEconomyClassPrice());
+		flight.setPricePerBag(flightDTO.getPricePerBag());
+		flight.setNumberOfFlightConnections(flightDTO.getConnections().length);
+		flight.setLocationsOfConnecting(new ArrayList<String>(Arrays.asList(flightDTO.getConnections())));
+		flight.setAverageGrade(0.0);
+		flightRepository.save(flight);
+		return new MessageDTO("Flight successfully edited.", ToasterType.SUCCESS.toString());
+	}
 }

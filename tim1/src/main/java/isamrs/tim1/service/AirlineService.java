@@ -16,19 +16,17 @@ import org.springframework.stereotype.Service;
 
 import isamrs.tim1.dto.AirlineDTO;
 import isamrs.tim1.dto.DetailedServiceDTO;
+import isamrs.tim1.dto.FlightDTO;
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.MessageDTO.ToasterType;
-import isamrs.tim1.dto.QuickFlightReservationDTO;
+import isamrs.tim1.dto.ServiceDTO;
 import isamrs.tim1.dto.ServiceViewDTO;
 import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.AirlineAdmin;
 import isamrs.tim1.model.Flight;
 import isamrs.tim1.model.FlightReservation;
 import isamrs.tim1.model.Location;
-import isamrs.tim1.model.PassengerSeat;
-import isamrs.tim1.model.QuickFlightReservation;
 import isamrs.tim1.repository.AirlineRepository;
-import isamrs.tim1.repository.FlightRepository;
 import isamrs.tim1.repository.ServiceRepository;
 
 @Service
@@ -39,19 +37,14 @@ public class AirlineService {
 
 	@Autowired
 	private ServiceRepository serviceRepository;
-	
-	@Autowired
-	private FlightRepository flightRepository;
 
-	public String editProfile(Airline airline, String oldName) {
-		Airline airlineToEdit = airlineRepository.findOneByName(oldName);
-		if (airlineToEdit == null) {
-			return "Airline with given name does not exist.";
-		}
-
+	public MessageDTO editAirline(ServiceDTO airline) {
+		AirlineAdmin admin = (AirlineAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Airline airlineToEdit = admin.getAirline();
 		String newName = airline.getName();
-		if (serviceRepository.findOneByName(newName) != null)
-			return "Name is already in use by some other service.";
+		if (!newName.equals(airlineToEdit.getName()))
+			if (serviceRepository.findOneByName(newName) != null)
+				return new MessageDTO("Name is already in use by some other service.", ToasterType.ERROR.toString());
 
 		if (newName != null) {
 			airlineToEdit.setName(newName);
@@ -61,21 +54,18 @@ public class AirlineService {
 		if (newDescription != null) {
 			airlineToEdit.setDescription(newDescription);
 		}
-
-		Location newLocation = airline.getLocation();
-		if (newLocation != null) {
-			airlineToEdit.getLocation().setLatitude(airline.getLocation().getLatitude());
-			airlineToEdit.getLocation().setLongitude(airline.getLocation().getLongitude());
-		}
+		
+		airlineToEdit.getLocation().setLatitude(airline.getLatitude());
+		airlineToEdit.getLocation().setLongitude(airline.getLongitude());
 
 		try {
 			airlineRepository.save(airlineToEdit);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
-			return "Database error.";
+			return new MessageDTO("Database error.", ToasterType.ERROR.toString());
 		}
 
-		return null;
+		return new MessageDTO("Airline edited successfully", ToasterType.SUCCESS.toString());
 	}
 
 	public AirlineDTO getAirlineOfAdmin(AirlineAdmin admin) {
@@ -183,5 +173,15 @@ public class AirlineService {
 
 		return returnValue;
 
+	}
+
+	public ArrayList<FlightDTO> getFlights() {
+		AirlineAdmin admin = (AirlineAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Airline a = airlineRepository.findOneByName(admin.getAirline().getName());
+		ArrayList<FlightDTO> flights = new ArrayList<FlightDTO>();
+		for (Flight f : a.getFlights()) {
+			flights.add(new FlightDTO(f));
+		}
+		return flights;
 	}
 }
