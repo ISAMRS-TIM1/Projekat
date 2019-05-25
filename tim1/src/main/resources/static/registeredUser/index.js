@@ -117,6 +117,16 @@ $(document)
                 loadFlight(shownFlight);
                 $("#showFlightModal").modal();
             });
+            
+            $('#reservationsTable tbody').on('click', 'tr', function() {
+            	var tgt = $(event.target);
+            	var resTable = $("#reservationsTable").DataTable();
+            	if (tgt[0].id == "cancelResButton") {
+            		var res = resTable.row(this).data()[0];
+            		console.log(res);
+            		cancelReservation(res);
+            	}
+            });
 
             $(".nav li").click(function() {
                 $(this).addClass("active");
@@ -661,16 +671,8 @@ function searchFlights(e) {
                 var table = $('#flightsTable').DataTable();
                 table.clear().draw();
                 $.each(data, function(i, val) {
-                    var date1 = moment(val.departureTime, 'DD.MM.YYYY hh:mm');
-                    var date2 = moment(val.landingTime, 'DD.MM.YYYY hh:mm');
-                    var diff = date2.diff(date1, 'minutes');
                     table.row.add(
-                        [val.flightCode, val.departureTime, val.landingTime, val.airline,
-                            val.numberOfConnections, diff + " min",
-                            val.firstClassPrice,
-                            val.businessClassPrice,
-                            val.economyClassPrice
-                        ]).draw(false);
+                        [val.flightCode, val.departureTime, val.landingTime, val.airline ]).draw(false);
                 });
             }
         },
@@ -1720,10 +1722,34 @@ function getReservations() {
         success: function(data) {
             if (data != null) {
                 var table = $("#reservationsTable").DataTable();
+                var cancel = "<button id='cancelResButton' class='btn btn-default'>Cancel</button>";
                 $.each(data, function(i, val) {
-                    table.row.add([val.reservationInf, val.dateOfReservation, val.price, val.grade]).draw(false);
+                    table.row.add([val.id, val.reservationInf, val.dateOfReservation, val.price, val.grade, cancel ]).draw(false);
                 });
             }
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            alert("AJAX ERROR: " + textStatus);
+        }
+    });
+}
+
+function cancelReservation(id) {
+	$.ajax({
+        type: 'DELETE',
+        url: cancelReservationURL,
+        headers: createAuthorizationTokenHeader(tokenKey),
+        contentType: "application/json",
+        data: {
+            'resID': id
+        },
+        success: function(data) {
+            if (data.toastType == "success") {
+            	var table = $("#reservationsTable").DataTable();
+            	table.clear().draw();
+            	getReservations();
+            }
+            toastr[data.toastType](data.message);
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
             alert("AJAX ERROR: " + textStatus);

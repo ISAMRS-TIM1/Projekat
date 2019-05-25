@@ -131,7 +131,7 @@ public class ReservationService {
 						+ flightRes.getFlight().getEndDestination().getName();
 				SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 				String date = sdf.format(flightRes.getFlight().getDepartureTime());
-				fr.add(new FlightReservationDTO(res, date, flightRes.getPrice(), u.getGrade()));
+				fr.add(new FlightReservationDTO(flightRes.getId(), res, date, flightRes.getPrice(), u.getGrade()));
 			}
 		}
 		return fr;
@@ -651,6 +651,7 @@ public class ReservationService {
 		}
 
 		return dtos;
+	}
 
 	public ArrayList<QuickFlightReservationDTO> getQuickFlightReservations() {
 		AirlineAdmin airlineAdmin = (AirlineAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
