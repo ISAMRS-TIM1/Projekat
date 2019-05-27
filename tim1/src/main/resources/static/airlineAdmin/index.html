@@ -77,7 +77,7 @@
 				<div id="basicMapDiv" class="map leaflet-container"></div>
 				<input type="hidden" id="basicMapDivLatitude" value="45" required> <input
 					type="hidden" id="basicMapDivLongitude" value="0" required>
-				<button type="button" id="saveChangesBasic" class="btn btn-default">Save
+				<button type="button" id="saveChangesBasic" class="btn btn-default" onclick='editAirline(event)'>Save
 					changes</button>
 			</div>
 			<div id="destinationsTab" class="tab-pane fade in">
@@ -141,15 +141,6 @@
 								<th>End destination</th>
 								<th>Departure time</th>
 								<th>Landing time</th>
-								<th>Flight duration</th>
-								<th>Flight distance</th>
-								<th>Number of connections</th>
-								<th>Locations of connections</th>
-								<th>First class price</th>
-								<th>Business class price</th>
-								<th>Economy class price</th>
-								<th>Price per bag</th>
-								<th>Average grade</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -160,53 +151,6 @@
 							data-target="#flightModalDialog">Add flight</button>
 				</div>
 			</div>
-			<!-- <div id="planeSeatsTab" class="tab-pane fade">
-				<div id="planeSeatsTable">
-					<div id="seat-map">
-						<div class="front-indicator">Front</div>
-					</div>
-					<div class="booking-details">
-						<h2>Configure seats</h2>
-						<h3>First class</h3>
-						<input type="number" id="first">
-						<div>
-							<button class="btn btn-default configure-button" id="addButton"
-								onclick="add(event, 1)">Add</button>
-							<button class="btn btn-default configure-button"
-								id="deleteButton" onclick="deleteSeats(event, 1)">Delete</button>
-						</div>
-						<br>
-						<h3>Business class</h3>
-						<input type="number" id="business">
-						<div>
-							<button class="btn btn-default configure-button" id="addButton"
-								onclick="add(event, 2)">Add</button>
-							<button class="btn btn-default configure-button"
-								id="deleteButton" onclick="deleteSeats(event, 2)">Delete</button>
-						</div>
-						<br>
-						<h3>Economy class</h3>
-						<input type="number" id="economy">
-						<div>
-							<button class="btn btn-default configure-button" id="addButton"
-								onclick="add(event, 3)">Add</button>
-							<button class="btn btn-default configure-button"
-								id="deleteButton" onclick="deleteSeats(event, 3)">Delete</button>
-						</div>
-						<div id="seatDiv">
-							<button class="btn btn-default configure-button" id="addButton"
-								onclick="addSeatsIndividually(event)">Add seat</button>
-							<button class="btn btn-default configure-button"
-								id="deleteButton" onclick="deleteSeatsIndividually(event)">Delete
-								seat</button>
-						</div>
-						<div id="legend"></div>
-						<button id="saveSeatButton"
-							class="btn btn-default configure-button"
-							onclick="saveSeatsChanges(event)">Save changes</button>
-					</div>
-				</div>
-			</div>-->
 			<div id="quickResevationsTab" class="tab-pane fade">
 				<div class="tableWrapper">
 					<div class="tableButtons">
@@ -369,7 +313,7 @@
 				</tr>
 				</table><br><br>
 				<div id="planeSeatsTable">
-					<div id="seat-map">
+					<div class="seat-map">
 						<div class="front-indicator">Front</div>
 					</div>
 					<div class="booking-details">

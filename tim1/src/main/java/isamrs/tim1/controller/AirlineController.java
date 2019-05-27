@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim1.dto.AirlineDTO;
 import isamrs.tim1.dto.DetailedServiceDTO;
+import isamrs.tim1.dto.FlightDTO;
 import isamrs.tim1.dto.MessageDTO;
-import isamrs.tim1.dto.QuickFlightReservationDTO;
 import isamrs.tim1.dto.ServiceDTO;
 import isamrs.tim1.dto.ServiceViewDTO;
 import isamrs.tim1.model.Airline;
@@ -39,9 +39,8 @@ public class AirlineController {
 
 	@PreAuthorize("hasRole('AIRADMIN')")
 	@RequestMapping(value = "/api/editAirline", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> editAirline(@RequestBody Airline airline,
-			@RequestParam(required = true) String oldName) throws Exception {
-		return new ResponseEntity<String>(airlineService.editProfile(airline, oldName), HttpStatus.OK);
+	public ResponseEntity<MessageDTO> editAirline(@RequestBody ServiceDTO airline) throws Exception {
+		return new ResponseEntity<MessageDTO>(airlineService.editAirline(airline), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/api/getAirlineOfAdmin", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -82,5 +81,10 @@ public class AirlineController {
 	@RequestMapping(value = "/api/getAirlineMonthlyGraphData", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Map<String, Long>> getAirlineMonthlyGraphData() {
 		return new ResponseEntity<Map<String, Long>>(airlineService.getMonthlyGraphData(), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "api/getFlights", method = RequestMethod.GET)
+	public ArrayList<FlightDTO> getFlights() {
+		return airlineService.getFlights();
 	}
 }

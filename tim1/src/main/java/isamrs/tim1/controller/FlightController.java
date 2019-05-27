@@ -29,6 +29,11 @@ public class FlightController {
 		return flightService.addFlight(flight);
 	}
 	
+	@RequestMapping(value = "api/editFlight", method = RequestMethod.PUT)
+	public ResponseEntity<MessageDTO> editFlight(@RequestBody FlightDTO flight) {
+		return new ResponseEntity<MessageDTO>(flightService.editFlight(flight), HttpStatus.OK);
+	}
+	
 	@RequestMapping(value = "api/searchFlights", method = RequestMethod.POST)
 	public ArrayList<FlightUserViewDTO> searchFlights(@RequestBody FlightDTO flight) {
 		return flightService.searchFlights(flight);
