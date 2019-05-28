@@ -31,6 +31,7 @@ const getAllVehicleTypesURL = "/api/getVehicleTypes";
 const getAllFuelTypesURL = "/api/getFuelTypes";
 const searchVehiclesURL = "/api/searchVehicles";
 const getQuickReservationsForVehicleURL = "/api/getQuickReservationsForVehicle/";
+const checkVehicleForPeriodURL = "/api/checkVehicleForPeriod";
 
 const reserveFlightURL = "/api/reserveFlight";
 const reserveFlightHotelURL = "/api/reserveFlightHotel";
@@ -386,20 +387,106 @@ $(document)
                 "scrollCollapse": true,
             });
             
+            var currentVehicleID = null;
+            var currentVehicleProducer = null;
+            var currentVehicleModel = null;
             $(document).on('click', '#vehiclesTable tbody tr', function() {
             	let table = $("#vehiclesTable").DataTable();
             	let rowData = table.row(this).data();
         		let title = rowData[1] + " " + rowData[2];
+        		currentVehicleID = rowData[0];
+        		currentVehicleProducer = rowData[1];
+        		currentVehicleModel = rowData[2];
         		$("#quickReservationsModalTitle").text(title);
         		getQuickReservationsForVehicle(rowData[0]);
         		$('#quickVehicleReservationsModal').modal('show');
         	});
+            
+            $('#vrstartDate').datepicker({
+                format: "dd/mm/yyyy",
+                minViewMode: 'days',
+                autoclose: true,
+                startDate: new Date()
+            });
+            
+            $('#vrendDate').datepicker({
+            	format: "dd/mm/yyyy",
+                minViewMode: 'days',
+                autoclose: true,
+                startDate: new Date()
+            });
+            
+            $("#vrstartDate").change(function() {
+            	let date = $("#vrstartDate").datepicker('getDate', '+1d');
+            	date.setDate(date.getDate()+1);
+            	$("#vrendDate").datepicker('setStartDate', date);
+            });
+            
+            $("#rvButton").click(function(e) {
+            	e.preventDefault();
+            	
+            	let start = $("#vrstartDate").val();
+            	
+            	if(start == null) {
+            		toastr["error"]("Start date must have a value");
+            		return;
+            	}
+            	
+            	let end = $("#vrendDate").val();
+            	
+            	if(end == null) {
+            		toastr["error"]("End date must have a value");
+            		return;
+            	}
+            	
+            	checkVehicleForPeriod(currentVehicleID, start, end, currentVehicleProducer, currentVehicleModel);
+            });
             
             /*$('#quickVehicleReservationsModal').on('shown.bs.modal', function () {
             	$($.fn.dataTable.tables(true))
                 .DataTable().columns.adjust();
             });*/
         });
+
+function checkVehicleForPeriod(vehicleID, start, end, vehicleProducer, vehicleModel) {
+	$.ajax({
+        type: 'POST',
+        url: checkVehicleForPeriodURL,
+        headers : createAuthorizationTokenHeader(tokenKey),
+        contentType: "application/json",
+        data: checkVehicleToJSON(vehicleID, start, end),
+        success: function(data) {
+        	if(data) {
+        		var carRes = {
+        				'fromDate' : start,
+        				'toDate' : end,
+        				'vehicleProducer' : vehicleProducer,
+        				'vehicleModel' : vehicleModel,
+        				'branchOfficeName' : null, // will be added after reverse geocoding
+        				'discount': null,
+        				'quickVehicleReservationID': null
+        				};
+        		localStorage.setItem("carRes", JSON.stringify(carRes));
+        		$('#carRes').text($('#quickReservationsModalTitle').text());
+        		toastr["success"]("Vehicle reservation successfully added to cart");
+        		$('#quickVehicleReservationsModal').modal('hide');
+        	} else{
+        		toastr["error"]("Vehicle is taken in given period");
+        	}
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            alert("AJAX ERROR: " + textStatus);
+        }
+    });
+}
+
+function checkVehicleToJSON(vehicleID, start, end) {
+	return JSON.stringify({
+        "vehicleID": vehicleID,
+        "start": start,
+        "end": end
+    });
+}
 
 function getQuickReservationsForVehicle(id) {
 	$.ajax({

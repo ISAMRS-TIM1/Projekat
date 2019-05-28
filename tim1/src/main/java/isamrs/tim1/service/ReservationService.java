@@ -101,7 +101,7 @@ public class ReservationService {
 
 	@Autowired
 	QuickHotelReservationRepository quickHotelReservationRepository;
-	
+
 	@Autowired
 	QuickFlightReservationRepository quickFlightReservationRepository;
 
@@ -344,8 +344,7 @@ public class ReservationService {
 			return new MessageDTO("Vehicle does not exist", ToasterType.ERROR.toString());
 		}
 
-		if (!vehicleReservationRepository.findByDates(vehicleRes.getFromDate(), vehicleRes.getToDate(), v.getId())
-				.isEmpty()) {
+		if (!this.checkVehicleForPeriod(v.getId(), vehicleRes.getFromDate(), vehicleRes.getToDate())) {
 			return new MessageDTO("Vehicle is taken in given period", ToasterType.ERROR.toString());
 		}
 
@@ -359,6 +358,10 @@ public class ReservationService {
 		fr.setVehicleReservation(vr);
 
 		return new MessageDTO("", ToasterType.SUCCESS.toString());
+	}
+
+	public Boolean checkVehicleForPeriod(Integer vehicleID, Date start, Date end) {
+		return vehicleReservationRepository.findByDates(start, end, vehicleID).isEmpty();
 	}
 
 	private boolean checkIfSeatIsReserved(Flight flight, int row, int column) {
@@ -429,6 +432,15 @@ public class ReservationService {
 			return new ResponseEntity<MessageDTO>(
 					new MessageDTO("Reservation does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
 		}
+		/* removed in merging
+		UserReservation ur = new UserReservation();
+		ur.setGrade(0);
+		ur.setReservation(fr);
+		ur.setUser(ru);
+		fr.setUser(ur);
+		// userReservationRepository.save(ur);
+		// flightReservationRepository.save(fr);
+		*/
 		fr.getUser().setUser(ru);
 		userReservationRepository.save(fr.getUser());
 		flightReservationRepository.save(fr);
@@ -474,7 +486,7 @@ public class ReservationService {
 		return new ResponseEntity<MessageDTO>(
 				new MessageDTO("Successfully declined reservation.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
 	}
-	
+
 	public MessageDTO createQuickFlightReservation(QuickFlightReservationDTO quickDTO) {
 		Flight f = flightRepository.findOneByFlightCode(quickDTO.getFlightCode());
 		if (f == null) {
@@ -643,11 +655,12 @@ public class ReservationService {
 	}
 
 	public ArrayList<QuickFlightReservationDTO> getQuickFlightReservations() {
-		AirlineAdmin airlineAdmin = (AirlineAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		AirlineAdmin airlineAdmin = (AirlineAdmin) SecurityContextHolder.getContext().getAuthentication()
+				.getPrincipal();
 		Airline a = airlineAdmin.getAirline();
 		ArrayList<QuickFlightReservationDTO> quickRes = new ArrayList<QuickFlightReservationDTO>();
 		Set<FlightReservation> fRes = a.getReservations();
-		for(FlightReservation fr : fRes) {
+		for (FlightReservation fr : fRes) {
 			if (fr instanceof QuickFlightReservation && fr.getUser() == null) {
 				quickRes.add(new QuickFlightReservationDTO((QuickFlightReservation) fr));
 			}
