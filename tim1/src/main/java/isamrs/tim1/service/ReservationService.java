@@ -186,7 +186,7 @@ public class ReservationService {
 		retval = reserveVehicleNoSave(vehicleRes, fr);
 		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
 			return retval;
-
+		
 		userRepository.save(ru);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
 	}
@@ -672,13 +672,35 @@ public class ReservationService {
 		
 		if (fr.getHotelReservation() != null) {
 			Hotel hotel = fr.getHotelReservation().getHotelRoom().getHotel();
-			hotel.getReservations().removeIf(h -> h.getId().longValue() == fr.getHotelReservation().getId().longValue());
+			hotel.getReservations().removeIf(h -> {
+				if (h.getId().longValue() == fr.getHotelReservation().getId().longValue()) {
+					if (quickHotelReservationRepository.existsById(h.getId())) {
+						h.setFlightReservation(null);
+						return false;
+					}
+					else {
+						return true;
+					}
+				}
+				return false;
+			});
 			serviceRepository.save(hotel);
 		}
 		
 		if (fr.getVehicleReservation() != null) {
 			RentACar rac = fr.getVehicleReservation().getVehicle().getRentACar();
-			rac.getReservations().removeIf(r -> r.getId().longValue() == fr.getVehicleReservation().getId().longValue());
+			rac.getReservations().removeIf(r -> {
+				if (r.getId().longValue() == fr.getVehicleReservation().getId().longValue()) {
+					if (quickVehicleReservationRepository.existsById(r.getId())) {
+						r.setFlightReservation(null);
+						return false;
+					}
+					else {
+						return true;
+					}
+				}
+				return false;
+			});
 			serviceRepository.save(rac);
 		}
 		
