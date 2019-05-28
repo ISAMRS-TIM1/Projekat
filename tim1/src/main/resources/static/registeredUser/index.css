@@ -341,7 +341,7 @@ input, button {
 
 #searchFlightsDiv {
 	width: 70%;
-	height: 38vw;
+	height: 90vh;
 	margin-left: 13%;
 	margin-top: 5%;
 	background: #5994FF;
@@ -355,6 +355,10 @@ input, button {
 	text-align: left;
 	color: white;
 	margin: 0 auto;
+}
+
+#serviceTable {
+	margin-top: 5%;
 }
 
 #serviceTable tbody, #cartTable tbody {
@@ -405,7 +409,7 @@ input, select {
 	padding: 5px;
 }
 
-#showHotelDiv, #showFlightDiv {
+#showHotelDiv, #showFlightDiv, #showAirlineDiv {
 	margin: 0;
 	background: #5994FF;
 	border: 0.24vw solid #B27A00;
@@ -438,6 +442,16 @@ input, select {
 }
 
 #showHotelTable {
+	margin: auto;
+}
+
+#showAirlineTable > tbody > tr >  td {
+	padding: 30px;
+	text-align: center;
+	color:white;
+}
+
+#showAirlineTable {
 	margin: auto;
 }
 

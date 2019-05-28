@@ -12,7 +12,7 @@
 	crossorigin="" />
 <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
 	integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
-	crossorigin=""></script>
+	crossorigin=""></script>	
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <link rel="stylesheet"
@@ -88,6 +88,18 @@
 				style="text-align: center;">
 				<div id="flightsTableWrapper">
 					<div id="searchFlightsDiv">
+						<div id="airlinesDiv">
+							<table id="airlinesTable" class="table display table-bordered">
+								<thead>
+									<tr>
+										<th>Name of airline</th>
+										<th>Average grade</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
 						<table id="serviceTable">
 							<tr>
 								<td>Start destination</td>
@@ -487,7 +499,49 @@
 			</div>
 		</div>
 	</div>
-
+	
+	<!-- SHOW AIRLINE MODAL -->
+	<div class="modal fade" id="showAirlineModal" tabindex="-1" role="dialog"
+		aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-xl" role="document">
+			<div class="modal-content" id="showAirlineDiv">
+				<table id="showAirlineTable">
+					<tr>
+						<td colspan="2"><input type="text" id="airlineName"
+							class="textInput" readonly></td>
+					</tr>
+					<tr>
+						<td colspan="2">Average grade:
+							<p id="airlineGrade"></p>
+						</td>
+					</tr>
+					<tr>
+						<td><textarea rows="8" cols="20" id="airlineDescription"
+								class="textInput" readonly></textarea></td>
+						<td><div id="airlineMapDiv"></div></td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<table id="quickAirlineReservationsTable"
+								class="table display table-bordered">
+								<thead>
+									<tr>
+										<th>Reservation ID</th>
+										<th>Discounted price</th>
+										<th>Discount</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+	
 	<!-- SHOW FLIGHT MODAL -->
 	<div class="modal fade" id="showFlightModal" tabindex="-1"
 		role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

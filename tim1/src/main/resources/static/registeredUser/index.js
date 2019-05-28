@@ -18,6 +18,8 @@ const searchFlightsURL = "/api/searchFlights";
 const getFriendsURL = "/api/getFriends";
 const getReservationsURL = "/api/getReservations";
 const cancelReservationURL = "/api/cancelReservation";
+const getAirlinesURL = "/api/getAirlines";
+const getDetailedAirlineURL = "../api/getDetailedAirline";
 
 const searchHotelsURL = "/api/searchHotels";
 const getHotelURL = "../api/getHotel";
@@ -40,6 +42,7 @@ const reserveFlightHotelVehicleURL = "/api/reserveFlightHotelVehicle";
 
 var userMail = "";
 var hotelMap = null;
+var airlineMap = null;
 
 var shownHotel = null;
 
@@ -91,6 +94,13 @@ $(document)
                 "scrollCollapse": true,
                 "retrieve": true,
             });
+            
+            var airlinesTable = $('#airlinesTable').DataTable({
+                "paging": false,
+                "info": false,
+                "scrollCollapse": true,
+                "retrieve": true,
+            });
 
             setUpTableFilter("#flightsTable");
 
@@ -118,6 +128,14 @@ $(document)
                 shownFlight = flightsTable.row(this).data()[0];
                 loadFlight(shownFlight);
                 $("#showFlightModal").modal();
+            });
+            
+            $('#airlinesTable tbody').on('click', 'tr', function() {
+            	airlinesTable.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+                shownAirline = airlinesTable.row(this).data()[0];
+                loadAirline(shownAirline);
+                $("#showAirlineModal").modal();
             });
             
             $('#reservationsTable tbody').on('click', 'tr', function() {
@@ -447,6 +465,46 @@ $(document)
                 .DataTable().columns.adjust();
             });*/
         });
+
+function setUpShowAirlineModal() {
+    $('#showAirlineModal').on('shown.bs.modal', function() {
+        setTimeout(function() {
+            airlineMap.invalidateSize()
+        }, 100);
+        setTimeout(function() {
+            airlineMap.invalidateSize()
+        }, 1000);
+    });
+
+    $('#showAirlineModal').on('hidden.bs.modal', function() {
+        airlinesTable.$('tr.selected').removeClass('selected');
+        airlineMap.off();
+        airlineMap.remove();
+        airlineMap = null;
+    });
+}
+
+function getAirlines() {
+	$.ajax({
+        type: 'GET',
+        url: getAirlinesURL,
+        headers: createAuthorizationTokenHeader(tokenKey),
+        contentType: "application/json",
+        success: function(data) {
+            if (data != null) {
+                var table = $('#airlinesTable').DataTable();
+                table.clear().draw();
+                $.each(data, function(i, val) {
+                    table.row.add(
+                        [ val.name, val.averageGrade ]).draw(false);
+                });
+            }
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            alert("AJAX ERROR: " + textStatus);
+        }
+    });
+}
 
 function checkVehicleForPeriod(vehicleID, start, end, vehicleProducer, vehicleModel) {
 	$.ajax({
@@ -1302,6 +1360,37 @@ function loadHotel(name) {
 						'hotelMapDiv', false);
 				renderAdditionalServices(data["additionalServices"]);
 				renderQuickHotelReservations(data["quickReservations"]);
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
+function loadAirline(name) {
+	$.ajax({
+		type : 'GET',
+		url : getDetailedAirlineURL,
+		contentType : "application/json",
+		data : {
+			'name' : name
+		},
+		dataType : "json",
+		headers : createAuthorizationTokenHeader(tokenKey),
+		success : function(data) {
+			if (data != null) {
+				$("#airlineName").val(data["name"]);
+				$("#airlineGrade").text(data["averageGrade"]);
+				$("#airlineDescription").text(data["description"]);
+				if (airlineMap != null) {
+					airlineMap.off();
+					airlineMap.remove();
+					airlineMap = null;
+				}
+				airlineMap = setUpMap(data["latitude"], data["longitude"],
+						'airlineMapDiv', false);
+				renderQuickFlightReservations(data["quickReservations"]);
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
