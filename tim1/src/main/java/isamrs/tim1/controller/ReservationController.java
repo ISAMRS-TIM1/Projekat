@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import isamrs.tim1.dto.CheckVehicleReservationDTO;
 import isamrs.tim1.dto.FlightHotelReservationDTO;
 import isamrs.tim1.dto.FlightHotelVehicleReservationDTO;
 import isamrs.tim1.dto.FlightReservationDTO;
@@ -109,14 +110,21 @@ public class ReservationController {
 		return new ResponseEntity<ArrayList<VehicleReservationDTO>>(
 				reservationService.getQuickVehicleReservationsForVehicle(vehicleId), HttpStatus.OK);
 	}
-	
+
 	@RequestMapping(value = "/api/createQuickFlightReservation", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MessageDTO> createQuickFlightReservation(@RequestBody QuickFlightReservationDTO quickDTO) {
 		return new ResponseEntity<MessageDTO>(reservationService.createQuickFlightReservation(quickDTO), HttpStatus.OK);
 	}
-	
+
 	@RequestMapping(value = "/api/getQuickFlightReservations", method = RequestMethod.GET)
 	public ArrayList<QuickFlightReservationDTO> getQuickFlightReservations() {
 		return reservationService.getQuickFlightReservations();
+	}
+
+	@RequestMapping(value = "/api/checkVehicleForPeriod", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Boolean> checkVehicleForPeriod(@RequestBody CheckVehicleReservationDTO vehicle) {
+		return new ResponseEntity<Boolean>(
+				reservationService.checkVehicleForPeriod(vehicle.getVehicleID(), vehicle.getStart(), vehicle.getEnd()),
+				HttpStatus.OK);
 	}
 }

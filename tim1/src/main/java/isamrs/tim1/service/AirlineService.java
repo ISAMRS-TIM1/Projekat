@@ -25,7 +25,6 @@ import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.AirlineAdmin;
 import isamrs.tim1.model.Flight;
 import isamrs.tim1.model.FlightReservation;
-import isamrs.tim1.model.Location;
 import isamrs.tim1.repository.AirlineRepository;
 import isamrs.tim1.repository.ServiceRepository;
 

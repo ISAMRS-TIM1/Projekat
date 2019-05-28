@@ -471,7 +471,7 @@ input, select {
 	max-width: 260px;
 }
 
-#searchCarsTable { 
+#searchCarsTable, #reserveCarsTable { 
     border-spacing: 1.5vw;
     border-collapse: separate;
 }
@@ -512,4 +512,15 @@ input, select {
 
 .modal-body, .modal-header {
 	background: #548cf1;	
+}
+
+#rvButton {
+ 	width: 50%;
+ 	margin-left: auto;
+ 	margin-right: auto;
+ 	display: block;
+ 	color: white;
+	font-size: 1.6vw;
+	border: 0.16vw solid #B27A00;
+	border-radius: 2vw 2vw 2vw 2vw;
 }
