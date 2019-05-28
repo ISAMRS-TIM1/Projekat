@@ -328,7 +328,7 @@ input, button {
 	margin-right: 3%;
 }
 
-#sendInvButton {
+#sendInvButton, #cancelResButton {
 	color: white;
 	font-size: 1vw;
 	border: 0.16vw solid #B27A00;

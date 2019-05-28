@@ -80,6 +80,12 @@ public class ReservationController {
 	public ResponseEntity<MessageDTO> declineFlightInvitation(@RequestBody String resID) {
 		return reservationService.declineFlightInvitation(resID);
 	}
+	
+	@PreAuthorize("hasRole('REGISTEREDUSER')")
+	@RequestMapping(value = "/api/cancelReservation", method = RequestMethod.DELETE)
+	public ResponseEntity<MessageDTO> cancelReservation(@RequestBody String resID) {
+		return reservationService.cancelReservation(resID);
+	}
 
 	@PreAuthorize("hasRole('HOTELADMIN')")
 	@RequestMapping(value = "/api/createQuickHotelReservation", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

@@ -11,6 +11,7 @@ public class QuickFlightReservationDTO implements Serializable {
 
 	private static final long serialVersionUID = 8308369767514619103L;
 	
+	private long id;
 	private String flightCode;
 	private String seat;
 	private String discount;
@@ -27,6 +28,7 @@ public class QuickFlightReservationDTO implements Serializable {
 		ArrayList<PassengerSeat> ps = new ArrayList<PassengerSeat>(fr.getPassengerSeats());
 		this.seat = ps.get(0).getSeat().getRow() + "_" + ps.get(0).getSeat().getColumn();
 		this.seatClass = ps.get(0).getSeat().getPlaneSegment().getSegmentClass();
+		this.id = fr.getId();
 	}
 	public String getFlightCode() {
 		return flightCode;
@@ -57,6 +59,12 @@ public class QuickFlightReservationDTO implements Serializable {
 	}
 	public void setSeatClass(PlaneSegmentClass seatClass) {
 		this.seatClass = seatClass;
+	}
+	public long getId() {
+		return id;
+	}
+	public void setId(long id) {
+		this.id = id;
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;
