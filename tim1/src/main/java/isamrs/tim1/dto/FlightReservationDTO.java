@@ -1,6 +1,7 @@
 package isamrs.tim1.dto;
 
 public class FlightReservationDTO {
+	private long id;
 	private String flightCode;
 	private String[] invitedFriends;
 	private Integer numberOfPassengers;
@@ -14,7 +15,8 @@ public class FlightReservationDTO {
 	public FlightReservationDTO() {
 	}
 
-	public FlightReservationDTO(String res, String date, double price, Integer grade) {
+	public FlightReservationDTO(long id, String res, String date, double price, Integer grade) {
+		this.id = id;
 		this.reservationInf = res;
 		this.dateOfReservation = date;
 		this.price = price;
@@ -91,5 +93,13 @@ public class FlightReservationDTO {
 
 	public void setGrade(Integer grade) {
 		this.grade = grade;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 }

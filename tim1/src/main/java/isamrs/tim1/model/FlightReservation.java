@@ -48,7 +48,7 @@ public class FlightReservation implements Serializable {
 	@OneToMany(mappedBy = "reservations", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	protected Set<PassengerSeat> passengerSeats;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "flight")
 	protected Flight flight;
 
