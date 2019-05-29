@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import isamrs.tim1.model.Authority;
 import isamrs.tim1.model.DiscountInfo;
@@ -19,6 +20,7 @@ import isamrs.tim1.repository.UserRepository;
 import isamrs.tim1.service.CustomUserDetailsService;
 
 @SpringBootApplication
+@EnableTransactionManagement
 public class ProjekatApplication implements CommandLineRunner {
 
 	@Autowired

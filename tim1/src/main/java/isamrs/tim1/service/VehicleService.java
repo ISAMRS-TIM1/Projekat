@@ -8,6 +8,8 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.MessageDTO.ToasterType;
@@ -23,6 +25,7 @@ import isamrs.tim1.repository.RentACarRepository;
 import isamrs.tim1.repository.VehicleRepository;
 
 @Service
+@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 public class VehicleService {
 	@Autowired
 	private VehicleRepository vehicleRepository;
@@ -117,6 +120,7 @@ public class VehicleService {
 		return returnValues;
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO addVehicle(VehicleDTO vehicle, int quantity) {
 		if (this.alreadyExists(vehicle.getModel(), vehicle.getProducer())) {
 			return new MessageDTO("Vehicle already exists", ToasterType.ERROR.toString());
@@ -151,6 +155,7 @@ public class VehicleService {
 		return new MessageDTO("Vehicle successfully added.", ToasterType.SUCCESS.toString());
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO editVehicle(String producer, String model, VehicleDTO editedVehicle) {
 		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
 				.getRentACar();
@@ -206,6 +211,7 @@ public class VehicleService {
 		return new MessageDTO("Vehicle successfully edited.", ToasterType.SUCCESS.toString());
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO deleteVehicle(String producer, String model) {
 		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
 				.getRentACar();

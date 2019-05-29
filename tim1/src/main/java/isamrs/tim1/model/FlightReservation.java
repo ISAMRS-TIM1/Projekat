@@ -41,7 +41,7 @@ public class FlightReservation implements Serializable {
 	@Column(name = "price", unique = false, nullable = true)
 	protected Double price;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "user")
 	protected UserReservation user;
 

@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim1.dto.BranchOfficeDTO;
 import isamrs.tim1.dto.DetailedServiceDTO;
@@ -27,6 +29,7 @@ import isamrs.tim1.repository.RentACarRepository;
 import isamrs.tim1.repository.ServiceRepository;
 
 @Service
+@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 public class RentACarService {
 	@Autowired
 	private RentACarRepository rentACarRepository;
@@ -34,6 +37,7 @@ public class RentACarService {
 	@Autowired
 	private ServiceRepository serviceRepository;
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public String editProfile(RentACar rentACar, String oldName) {
 		RentACar rentACarToEdit = rentACarRepository.findOneByName(oldName);
 		if (rentACarToEdit == null) {
@@ -91,6 +95,7 @@ public class RentACarService {
 		return new DetailedServiceDTO(rentACarRepository.findOneByName(name));
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO addRentACar(RentACar rentACar) {
 		if (serviceRepository.findOneByName(rentACar.getName()) != null)
 			return new MessageDTO("Service with the same name already exists.", ToasterType.ERROR.toString());

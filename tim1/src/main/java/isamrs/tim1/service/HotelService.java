@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim1.dto.DetailedServiceDTO;
 import isamrs.tim1.dto.HotelDTO;
@@ -25,6 +27,7 @@ import isamrs.tim1.repository.HotelRepository;
 import isamrs.tim1.repository.ServiceRepository;
 
 @Service
+@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 public class HotelService {
 
 	@Autowired
@@ -33,6 +36,7 @@ public class HotelService {
 	@Autowired
 	private ServiceRepository serviceRepository;
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO addHotel(Hotel hotel) {
 		if (serviceRepository.findOneByName(hotel.getName()) != null)
 			return new MessageDTO("Service with the same name already exists.", ToasterType.ERROR.toString());
@@ -41,6 +45,7 @@ public class HotelService {
 		return new MessageDTO("Hotel successfully added", ToasterType.SUCCESS.toString());
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO editHotel(ServiceDTO hotel, Hotel hotelToEdit) {
 		String newName = hotel.getName();
 		if (!newName.equals(hotelToEdit.getName())) // if hotel name was changed, check if new one is taken

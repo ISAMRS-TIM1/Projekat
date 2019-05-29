@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim1.dto.DestinationDTO;
 import isamrs.tim1.dto.MessageDTO;
@@ -18,6 +20,7 @@ import isamrs.tim1.repository.LocationRepository;
 import isamrs.tim1.repository.ServiceRepository;
 
 @Service
+@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 public class DestinationService {
 
 	@Autowired
@@ -29,6 +32,7 @@ public class DestinationService {
 	@Autowired
 	LocationRepository locationRepository;
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public ResponseEntity<MessageDTO> addDestination(DestinationDTO destDTO) {
 	    Airline a = (Airline) serviceRepository.findOneByName(destDTO.getAirlineName());
 	    if (a == null)

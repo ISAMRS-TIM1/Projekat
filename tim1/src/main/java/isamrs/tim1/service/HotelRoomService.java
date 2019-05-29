@@ -5,6 +5,8 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim1.dto.HotelRoomDTO;
 import isamrs.tim1.dto.HotelRoomDetailedDTO;
@@ -20,6 +22,7 @@ import isamrs.tim1.repository.HotelRoomRepository;
 import isamrs.tim1.repository.SeasonalHotelRoomPriceRepository;
 
 @Service
+@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 public class HotelRoomService {
 
 	@Autowired
@@ -35,6 +38,7 @@ public class HotelRoomService {
 		return new HotelRoomDetailedDTO(hotelRoomRepository.findOneByNumberAndHotel(roomNumber, hotel.getId()));
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO addHotelRoom(HotelRoomDTO hotelRoom, Hotel hotel) {
 		if (hotelRoomRepository.findOneByNumberAndHotel(hotelRoom.getRoomNumber(), hotel.getId()) != null)
 			return new MessageDTO("Hotel room with same number already exists", ToasterType.ERROR.toString());
@@ -43,6 +47,7 @@ public class HotelRoomService {
 		return new MessageDTO("Hotel room added successfully", ToasterType.SUCCESS.toString());
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO deleteHotelRoom(String roomNumber, Hotel hotel) {
 		HotelRoom hr = hotelRoomRepository.findOneByNumberAndHotel(roomNumber, hotel.getId());
 		if (hr == null)
@@ -54,6 +59,7 @@ public class HotelRoomService {
 		return new MessageDTO("Hotel room deleted successfully", ToasterType.SUCCESS.toString());
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO addSeasonalPrice(SeasonalPriceDTO seasonalPrice, String roomNumber, Hotel hotel) {
 		if (!seasonalPrice.getToDate().after(seasonalPrice.getFromDate())) {
 			return new MessageDTO("'To' date must be after 'From' date", ToasterType.ERROR.toString());
@@ -95,6 +101,7 @@ public class HotelRoomService {
 
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO editHotelRoom(HotelRoomDTO hotelRoom, String roomNumber, Hotel hotel) {
 		HotelRoom hr = hotelRoomRepository.findOneByNumberAndHotel(roomNumber, hotel.getId());
 		if (hr == null)

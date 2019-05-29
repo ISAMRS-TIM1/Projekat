@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim1.dto.AirlineDTO;
 import isamrs.tim1.dto.DetailedServiceDTO;
@@ -29,6 +31,7 @@ import isamrs.tim1.repository.AirlineRepository;
 import isamrs.tim1.repository.ServiceRepository;
 
 @Service
+@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 public class AirlineService {
 
 	@Autowired
@@ -37,6 +40,7 @@ public class AirlineService {
 	@Autowired
 	private ServiceRepository serviceRepository;
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO editAirline(ServiceDTO airline) {
 		AirlineAdmin admin = (AirlineAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Airline airlineToEdit = admin.getAirline();
@@ -82,6 +86,7 @@ public class AirlineService {
 		return new DetailedServiceDTO(airlineRepository.findOneByName(name));
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO addAirline(Airline airline) {
 		if (serviceRepository.findOneByName(airline.getName()) != null)
 			return new MessageDTO("Service with the same name already exists.", ToasterType.ERROR.toString());

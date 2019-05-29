@@ -10,11 +10,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim1.model.User;
 import isamrs.tim1.repository.UserRepository;
 
 @Service
+@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 public class CustomUserDetailsService implements UserDetailsService {
 
 	protected final Log LOGGER = LogFactory.getLog(getClass());
@@ -25,6 +28,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public boolean saveUser(User ru) {
 		try {
 			this.userRepository.save(ru);
@@ -58,6 +62,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 		return this.passwordEncoder.encode(password);
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public void changePassword(String newPassword) {
 		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
 		String username = currentUser.getName();

@@ -5,6 +5,8 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim1.dto.BranchOfficeDTO;
 import isamrs.tim1.dto.MessageDTO;
@@ -19,6 +21,7 @@ import isamrs.tim1.repository.LocationRepository;
 import isamrs.tim1.repository.RentACarRepository;
 
 @Service
+@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 public class BranchOfficeService {
 	@Autowired
 	BranchOfficeRepository branchOfficeRepository;
@@ -29,6 +32,7 @@ public class BranchOfficeService {
 	@Autowired
 	private RentACarRepository rentACarRepository;
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO addBranchOffice(BranchOfficeDTO branch) {
 		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
 				.getRentACar();
@@ -51,6 +55,7 @@ public class BranchOfficeService {
 		return new MessageDTO("Branch office added.", "success");
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO editBranchOffice(BranchOfficeDTO branch, String oldName) {
 		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
 				.getRentACar();
@@ -81,6 +86,7 @@ public class BranchOfficeService {
 		return new MessageDTO("Branch office saved.", ToasterType.SUCCESS.toString());
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO deleteBranchOffice(String name) {
 		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
 				.getRentACar();
