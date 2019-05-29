@@ -42,7 +42,7 @@ public class AirlineDTO implements Serializable {
 		}
 		this.quickReservations = new ArrayList<QuickFlightReservationDTO>();
 		for (FlightReservation f : airline.getReservations()) {
-			if (f instanceof QuickFlightReservation) {
+			if (f instanceof QuickFlightReservation && f.getUser() == null) {
 				quickReservations.add(new QuickFlightReservationDTO((QuickFlightReservation) f));
 			}
 		}

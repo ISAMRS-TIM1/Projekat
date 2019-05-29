@@ -517,13 +517,12 @@ public class ReservationService {
 		qfr.setFlight(f);
 		qfr.setDone(false);
 		qfr.setDiscount(Integer.parseInt(quickDTO.getDiscount()));
-		qfr.setPrice(price);
+		qfr.setPrice((1.0 - qfr.getDiscount() / 100.0) * price);
 		qfr.setUser(null);
 		ps.setReservation(qfr);
 		qfr.getPassengerSeats().add(ps);
 		f.getAirline().getReservations().add(qfr);
 		quickFlightReservationRepository.save(qfr);
-		System.out.println(qfr.getId());
 		return new MessageDTO("Quick flight reservation successfully created", ToasterType.SUCCESS.toString());
 	}
 
@@ -670,6 +669,30 @@ public class ReservationService {
 
 	public ResponseEntity<MessageDTO> cancelReservation(String resID) {
 		Long id = Long.parseLong(resID);
+		QuickFlightReservation qfr = quickFlightReservationRepository.getOne(id);
+		if (qfr != null) {
+			if (qfr.getDone()) {
+				return new ResponseEntity<MessageDTO>(new MessageDTO("You can not cancel flight reservation which is done.", 
+						ToasterType.ERROR.toString()), HttpStatus.OK);
+			}
+			RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			ru.getUserReservations().removeIf(u -> u.getId().longValue() == qfr.getUser().getId().longValue());
+			userRepository.save(ru);
+			UserReservation ur = qfr.getUser();
+			qfr.setUser(null);
+			qfr.setDateOfReservation(null);
+			qfr.getPassengerSeats().forEach(p -> {
+				p.setName("");
+				p.setSurname("");
+				p.setPassport("");
+			});
+			ur.setUser(null);
+			userReservationRepository.save(ur);
+			quickFlightReservationRepository.save(qfr);
+			userReservationRepository.delete(ur);
+			return new ResponseEntity<MessageDTO>(
+					new MessageDTO("Successfully canceled reservation.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
+		}
 		FlightReservation fr = flightReservationRepository.getOne(id);
 		if (fr == null) {
 			return new ResponseEntity<MessageDTO>(
@@ -723,5 +746,38 @@ public class ReservationService {
 		userReservationRepository.delete(fr.getUser());
 		return new ResponseEntity<MessageDTO>(
 				new MessageDTO("Successfully canceled reservation.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
+	}
+
+	public MessageDTO reserveQuickFlightReservation(FlightReservationDTO flightRes) {
+		QuickFlightReservation qfr = quickFlightReservationRepository.findById(flightRes.getQuickReservationID())
+				.orElse(null);
+		if (qfr == null)
+			return new MessageDTO("Quick flight reservation does not exist.", ToasterType.ERROR.toString());
+		if (qfr.getUser() != null) {
+			return new MessageDTO("Quick flight reservation is already taken.", ToasterType.ERROR.toString());
+		}
+		qfr.setDone(false);
+		qfr.setDateOfReservation(new Date());
+		String userPassport = flightRes.getPassengers()[0].getPassport();
+		int numOfBags = flightRes.getPassengers()[0].getNumberOfBags();
+		double price = numOfBags * qfr.getFlight().getPricePerBag();
+		qfr.getPassengerSeats().forEach(p -> {
+			p.setName(flightRes.getPassengers()[0].getFirstName());
+			p.setSurname(flightRes.getPassengers()[0].getLastName());
+			p.setPassport(userPassport);
+			p.setReservation(qfr);
+		});
+		qfr.setPrice(qfr.getPrice() + price);
+		UserReservation ur = new UserReservation();
+		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		ur.setUser(ru);
+		ur.setReservation(qfr);
+		ur.setGrade(0);
+		qfr.setUser(ur);
+		userReservationRepository.save(ur);
+		quickFlightReservationRepository.save(qfr);
+		userRepository.save(ru);
+		mailService.sendFlightReservationMail(ru, qfr);
+		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
 	}
 }

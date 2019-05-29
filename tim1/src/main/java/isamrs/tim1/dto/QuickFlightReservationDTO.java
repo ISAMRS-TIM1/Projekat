@@ -16,7 +16,7 @@ public class QuickFlightReservationDTO implements Serializable {
 	private String flightCode;
 	private String seat;
 	private String discount;
-	private Double realPrice;
+	private Double discountedPrice;
 	private String startDestination;
 	private String endDestination;
 	private String departureTime;
@@ -34,7 +34,7 @@ public class QuickFlightReservationDTO implements Serializable {
 		this.departureTime = sdf.format(fr.getFlight().getDepartureTime());
 		this.landingTime = sdf.format(fr.getFlight().getLandingTime());
 		this.discount = fr.getDiscount().toString();
-		this.realPrice = fr.getPrice();
+		this.discountedPrice = fr.getPrice();
 		ArrayList<PassengerSeat> ps = new ArrayList<PassengerSeat>(fr.getPassengerSeats());
 		this.seat = ps.get(0).getSeat().getRow() + "_" + ps.get(0).getSeat().getColumn();
 		this.seatClass = ps.get(0).getSeat().getPlaneSegment().getSegmentClass();
@@ -58,11 +58,11 @@ public class QuickFlightReservationDTO implements Serializable {
 	public void setDiscount(String discount) {
 		this.discount = discount;
 	}
-	public Double getRealPrice() {
-		return realPrice;
+	public Double getDiscountedPrice() {
+		return discountedPrice;
 	}
-	public void setRealPrice(Double realPrice) {
-		this.realPrice = realPrice;
+	public void setDiscountedPrice(Double discountedPrice) {
+		this.discountedPrice = discountedPrice;
 	}
 	public PlaneSegmentClass getSeatClass() {
 		return seatClass;

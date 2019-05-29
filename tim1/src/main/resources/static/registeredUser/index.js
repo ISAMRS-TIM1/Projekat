@@ -66,7 +66,11 @@ $(document)
             setUpToastr();
             getDestinations();
             getReservations();
-
+            
+            localStorage.removeItem("flightReservation");
+            localStorage.removeItem("flightRes");
+            localStorage.removeItem("quickFlightReservation");
+            
             $('#friendsTable').DataTable({
                 "paging": false,
                 "info": false,
@@ -129,6 +133,22 @@ $(document)
                 $("#reserveDivFriends").hide();
                 $("#reserveDiv").show();
                 seatsToReserve = [];
+            });
+            
+            $('#showAirlineModal').on('shown.bs.modal', function() {
+                setTimeout(function() {
+                    airlineMap.invalidateSize()
+                }, 100);
+                setTimeout(function() {
+                    airlineMap.invalidateSize()
+                }, 1000);
+            });
+
+            $('#showAirlineModal').on('hidden.bs.modal', function() {
+                airlinesTable.$('tr.selected').removeClass('selected');
+                airlineMap.off();
+                airlineMap.remove();
+                airlineMap = null;
             });
 
             $('#flightsTable tbody').on('click', 'tr', function() {
@@ -474,24 +494,6 @@ $(document)
                 .DataTable().columns.adjust();
             });*/
         });
-
-function setUpShowAirlineModal() {
-    $('#showAirlineModal').on('shown.bs.modal', function() {
-        setTimeout(function() {
-            airlineMap.invalidateSize()
-        }, 100);
-        setTimeout(function() {
-            airlineMap.invalidateSize()
-        }, 1000);
-    });
-
-    $('#showAirlineModal').on('hidden.bs.modal', function() {
-        airlinesTable.$('tr.selected').removeClass('selected');
-        airlineMap.off();
-        airlineMap.remove();
-        airlineMap = null;
-    });
-}
 
 function getAirlines() {
 	$.ajax({
@@ -1944,6 +1946,7 @@ function getReservations() {
         success: function(data) {
             if (data != null) {
                 var table = $("#reservationsTable").DataTable();
+                table.clear().draw();
                 var cancel = "<button id='cancelResButton' class='btn btn-default'>Cancel</button>";
                 $.each(data, function(i, val) {
                     table.row.add([val.id, val.reservationInf, val.dateOfReservation, val.price, val.grade, cancel ]).draw(false);
@@ -1982,7 +1985,7 @@ function renderQuickFlightReservations(data) {
 	quickFlightResTable.clear().draw();
 	$.each(data, function(i, val) {
 		quickFlightResTable.row.add([	val.id,
-										val.realPrice,
+										val.discountedPrice,
 										val.discount,
 										val.startDestination + "-" + val.endDestination,
 										val.departureTime,
