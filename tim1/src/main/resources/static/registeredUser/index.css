@@ -416,7 +416,7 @@ input, select {
 	border-radius: 4vw 1.6vw;
 }
 
-#hotelMapDiv {
+#hotelMapDiv, #airlineMapDiv {
 	width: 45vw;
 	height: 30vh;
 	border-radius: 2vw 2vw 2vw 2vw;
@@ -448,7 +448,6 @@ input, select {
 #showAirlineTable > tbody > tr >  td {
 	padding: 30px;
 	text-align: center;
-	color:white;
 }
 
 #showAirlineTable {
@@ -537,4 +536,19 @@ input, select {
 	font-size: 1.6vw;
 	border: 0.16vw solid #B27A00;
 	border-radius: 2vw 2vw 2vw 2vw;
+}
+
+#airlineDescription {
+	background-color: transparent;
+	text-align: left;
+	color: white;
+}
+#airlineGrade {
+	color:white;
+}
+#airlineName {
+	color:white;
+	font-size: 4.5vw;
+	text-align: center;
+	background-color: transparent;
 }

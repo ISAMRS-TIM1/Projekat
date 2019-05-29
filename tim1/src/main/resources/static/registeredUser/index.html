@@ -511,7 +511,7 @@
 							class="textInput" readonly></td>
 					</tr>
 					<tr>
-						<td colspan="2">Average grade:
+						<td colspan="2" style="color:white;">Average grade:
 							<p id="airlineGrade"></p>
 						</td>
 					</tr>
@@ -529,6 +529,11 @@
 										<th>Reservation ID</th>
 										<th>Discounted price</th>
 										<th>Discount</th>
+										<th>Flight</th>
+										<th>Departure time</th>
+										<th>Landing time</th>
+										<th>Seat</th>
+										<th>Seat class</th>
 										<th></th>
 									</tr>
 								</thead>
@@ -679,6 +684,40 @@
 							</tr>
 						</thead>
 						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- PASSPORT/BAGS MODAL -->
+	<div id="passportBagsModal" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-body">
+					<table id="passportBagsTable">
+						<thead></thead>
+						<tbody>
+							<tr>
+								<td>
+									<label class="searchLabel">Passport number </label>
+								</td>
+								<td>
+									<input type="text" class="form-control" id="modalPass">
+								</td>
+								<td>
+									<label class="searchLabel">Number of bags </label>
+								</td>
+								<td>
+									<input type="number" min="0" class="form-control" id="modalBags">
+								</td>
+							</tr>
+							<tr>
+								<td colspan="4">
+									<button class="btn btn-default" id="passBagsButton" onclick="getPassportAndBags(event)">Confirm</button>
+								</td>
+							</tr>
 						</tbody>
 					</table>
 				</div>

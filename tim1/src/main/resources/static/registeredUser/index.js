@@ -20,6 +20,7 @@ const getReservationsURL = "/api/getReservations";
 const cancelReservationURL = "/api/cancelReservation";
 const getAirlinesURL = "/api/getAirlines";
 const getDetailedAirlineURL = "../api/getDetailedAirline";
+const reserveQuickFlightReservationURL = "/api/reserveQuickFlightReservation";
 
 const searchHotelsURL = "/api/searchHotels";
 const getHotelURL = "../api/getHotel";
@@ -29,7 +30,7 @@ const searchRoomsURL = '/api/searchRooms/';
 
 const getVehicleProducersURL = "/api/getVehicleProducers";
 const getModelsForProducerURL = "/api/getModels/";
-const getAllVehicleTypesURL = "/api/getVehicleTypes";
+const getAllVehicleTypesURL = "/api/getVehicleTypes";	
 const getAllFuelTypesURL = "/api/getFuelTypes";
 const searchVehiclesURL = "/api/searchVehicles";
 const getQuickReservationsForVehicleURL = "/api/getQuickReservationsForVehicle/";
@@ -61,6 +62,7 @@ $(document)
             });
 
             loadData();
+            getAirlines();
             setUpToastr();
             getDestinations();
             getReservations();
@@ -113,6 +115,13 @@ $(document)
                 "retrieve": true,
                 "orderCellsTop": true
             });
+            
+            $('#quickAirlineReservationsTable').DataTable({
+        		"paging" : false,
+        		"info" : false,
+        		"orderCellsTop" : true,
+        		"fixedHeader" : true
+        	});
 
             $('#showFlightModal').on('hidden.bs.modal', function() {
                 flightsTable.$('tr.selected').removeClass('selected');
@@ -1574,7 +1583,7 @@ function setUpMap(latitude, longitude, div, draggable) {
             $("#longitude").val(marker.getLatLng().lng);
         });
     }
-    return retval
+    return retval;
 }
 
 function setUpTableFilter(tableID, exceptColumn=""){
@@ -1636,6 +1645,7 @@ function showFriendsStep(e) {
     if (flightReservation["seatsLeft"] == 0) {
         toastr["success"]("Successfully added flight reservation to cart.");
         $('#showFlightModal').modal('toggle');
+        localStorage.removeItem("quickFlightReservation");
         localStorage.setItem("flightReservation", JSON.stringify(flightReservation));
         var startDest = localStorage.getItem("startDest");
         var endDest = localStorage.getItem("endDest");
@@ -1682,6 +1692,7 @@ function showLastStep(e) {
 	if (flightReservation["seatsLeft"] == 0) {
 		toastr["success"]("Successfully added flight reservation to cart.");
 		$('#showFlightModal').modal('toggle');
+		localStorage.removeItem("quickFlightReservation");
 		localStorage.setItem("flightReservation", JSON.stringify(flightReservation));
 		var startDest = localStorage.getItem("startDest");
 		var endDest = localStorage.getItem("endDest");
@@ -1727,7 +1738,7 @@ function endReservation(e) {
             toastr["error"]("Invalid data for passengers.");
             return;
         }
-        if (isNaN(bags[i]) || bags[i] <= 0) {
+        if (isNaN(bags[i]) || bags[i] < 0) {
             toastr["error"]("Invalid number of bags.");
             return;
         }
@@ -1743,6 +1754,7 @@ function endReservation(e) {
     }
     toastr["success"]("Successfully added flight reservation to cart.");
     $('#showFlightModal').modal('toggle');
+    localStorage.removeItem("quickFlightReservation");
     localStorage.setItem("flightReservation", JSON.stringify(flightReservation));
     var startDest = localStorage.getItem("startDest");
     var endDest = localStorage.getItem("endDest");
@@ -1753,9 +1765,43 @@ function endReservation(e) {
 
 function confirmReservation(e) {
     e.preventDefault();
+    var quickFlightReservation = JSON.parse(localStorage.getItem("quickFlightReservation"));
     var flightRes = localStorage.getItem("flightRes");
     var hotelRes = JSON.parse(localStorage.getItem("hotelRes"));
     var carRes = JSON.parse(localStorage.getItem("carRes"));
+    if (quickFlightReservation != null) {
+    	if (hotelRes != null || carRes != null) {
+    		toastr["error"]("You can not reserve hotel or car with quick flight reservation.")
+    		return;
+    	}
+    	var userPass = quickFlightReservation["passengers"][0]["passport"];
+    	if (userPass === "") {
+    		toastr["error"]("You did not give a passport number. Please reserve again.");
+    		return;
+    	}
+    	$.ajax({
+            type: 'POST',
+            url: reserveQuickFlightReservationURL,
+            headers: createAuthorizationTokenHeader(tokenKey),
+            data: JSON.stringify({
+                "quickReservationID": quickFlightReservation["quickReservationID"],
+                "passengers": quickFlightReservation["passengers"]
+            }),
+            success: function(data) {
+                if (data != null) {
+                    toastr[data.toastType](data.message);
+                    localStorage.removeItem("quickFlightReservation");
+                    $("#flightRes").html("No flight reserved");
+                    getReservations();
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("AJAX ERROR: " + textStatus);
+            }
+        });
+    	return;
+    }
+    
     if (flightRes === null) {
         toastr["error"]("You have to reserve flight first.");
         return;
@@ -1929,4 +1975,58 @@ function cancelReservation(id) {
             alert("AJAX ERROR: " + textStatus);
         }
     });
+}
+
+function renderQuickFlightReservations(data) {
+	var quickFlightResTable = $("#quickAirlineReservationsTable").DataTable();
+	quickFlightResTable.clear().draw();
+	$.each(data, function(i, val) {
+		quickFlightResTable.row.add([	val.id,
+										val.realPrice,
+										val.discount,
+										val.startDestination + "-" + val.endDestination,
+										val.departureTime,
+										val.landingTime,
+										val.seat,
+										val.seatClass,
+										`<button onclick="reserveQuickFlightReservation('${val.id}', 
+											'${val.startDestination}', '${val.endDestination}', '${val.departureTime}')" class="btn btn-default">Reserve</a>` ])
+						.draw(false);
+			});
+}
+
+function reserveQuickFlightReservation(quickID, startDest, endDest, flightDate){
+	var quickFlightReservation = {
+	        "quickReservationID" : quickID,
+	        "passengers": [{
+	            "firstName": "",
+	            "lastName": "",
+	            "passport": "",
+	            "numberOfBags": 0
+	        }]
+	    };
+	localStorage.removeItem("flightReservation");
+	localStorage.removeItem("flightRes");
+	localStorage.setItem("quickFlightReservation", JSON.stringify(quickFlightReservation));
+	$("#flightRes").html(startDest + "-" + endDest + " " + flightDate);
+	$("#passportBagsModal").modal('show');
+}
+
+function getPassportAndBags(e) {
+	e.preventDefault();
+	var userPass = $("#modalPass").val();
+    if (userPass == "" || userPass == undefined) {
+        toastr["error"]("Invalid passport number.");
+        return;
+    }
+    var numOfBags = $("#modalBags").val();
+    if (isNaN(numOfBags) || numOfBags < 0) {
+        toastr["error"]("Invalid number of bags.");
+        return;
+    }
+    var quickFlightReservation = JSON.parse(localStorage.getItem("quickFlightReservation"));
+    quickFlightReservation["passengers"][0]["passport"] = userPass;
+    quickFlightReservation["passengers"][0]["numberOfBags"] = numOfBags;
+    localStorage.setItem("quickFlightReservation", JSON.stringify(quickFlightReservation));
+    $("#passportBagsModal").modal('hide');
 }
