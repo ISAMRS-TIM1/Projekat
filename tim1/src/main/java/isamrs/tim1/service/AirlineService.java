@@ -183,4 +183,8 @@ public class AirlineService {
 		}
 		return flights;
 	}
+
+	public AirlineDTO getDetailedAirline(String name) {
+		return new AirlineDTO(airlineRepository.findOneByName(name));
+	}
 }

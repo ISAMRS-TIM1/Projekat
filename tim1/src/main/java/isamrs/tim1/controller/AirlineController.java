@@ -51,7 +51,7 @@ public class AirlineController {
 				HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasRole('SYSADMIN')")
+	@PreAuthorize("hasRole('SYSADMIN') or hasRole('REGISTEREDUSER')")
 	@RequestMapping(value = "/api/getAirlines", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArrayList<ServiceViewDTO>> getAirlines() {
 		return new ResponseEntity<ArrayList<ServiceViewDTO>>(airlineService.getAirlines(), HttpStatus.OK);
@@ -61,6 +61,11 @@ public class AirlineController {
 	@RequestMapping(value = "/api/getAirline", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DetailedServiceDTO> getAirline(@RequestParam String name) {
 		return new ResponseEntity<DetailedServiceDTO>(airlineService.getAirline(name), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/api/getDetailedAirline", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<AirlineDTO> getDetailedAirline(@RequestParam String name) {
+		return new ResponseEntity<AirlineDTO>(airlineService.getDetailedAirline(name), HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/api/getIncomeOfAirline", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)

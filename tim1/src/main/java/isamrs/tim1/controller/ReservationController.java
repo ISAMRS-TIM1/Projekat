@@ -133,4 +133,11 @@ public class ReservationController {
 				reservationService.checkVehicleForPeriod(vehicle.getVehicleID(), vehicle.getStart(), vehicle.getEnd()),
 				HttpStatus.OK);
 	}
+	
+	@PreAuthorize("hasRole('REGISTEREDUSER')")
+	@RequestMapping(value = "/api/reserveQuickFlightReservation", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MessageDTO> reserveQuickFlightReservation(@RequestBody FlightReservationDTO flightRes) {
+		return new ResponseEntity<MessageDTO>(reservationService.reserveQuickFlightReservation(flightRes), HttpStatus.OK);
+	}
+	
 }

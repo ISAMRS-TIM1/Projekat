@@ -341,7 +341,7 @@ input, button {
 
 #searchFlightsDiv {
 	width: 70%;
-	height: 38vw;
+	height: 90vh;
 	margin-left: 13%;
 	margin-top: 5%;
 	background: #5994FF;
@@ -355,6 +355,10 @@ input, button {
 	text-align: left;
 	color: white;
 	margin: 0 auto;
+}
+
+#serviceTable {
+	margin-top: 5%;
 }
 
 #serviceTable tbody, #cartTable tbody {
@@ -405,14 +409,14 @@ input, select {
 	padding: 5px;
 }
 
-#showHotelDiv, #showFlightDiv {
+#showHotelDiv, #showFlightDiv, #showAirlineDiv {
 	margin: 0;
 	background: #5994FF;
 	border: 0.24vw solid #B27A00;
 	border-radius: 4vw 1.6vw;
 }
 
-#hotelMapDiv {
+#hotelMapDiv, #airlineMapDiv {
 	width: 45vw;
 	height: 30vh;
 	border-radius: 2vw 2vw 2vw 2vw;
@@ -438,6 +442,15 @@ input, select {
 }
 
 #showHotelTable {
+	margin: auto;
+}
+
+#showAirlineTable > tbody > tr >  td {
+	padding: 30px;
+	text-align: center;
+}
+
+#showAirlineTable {
 	margin: auto;
 }
 
@@ -523,4 +536,19 @@ input, select {
 	font-size: 1.6vw;
 	border: 0.16vw solid #B27A00;
 	border-radius: 2vw 2vw 2vw 2vw;
+}
+
+#airlineDescription {
+	background-color: transparent;
+	text-align: left;
+	color: white;
+}
+#airlineGrade {
+	color:white;
+}
+#airlineName {
+	color:white;
+	font-size: 4.5vw;
+	text-align: center;
+	background-color: transparent;
 }
