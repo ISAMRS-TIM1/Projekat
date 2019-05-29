@@ -1758,7 +1758,7 @@ function getQuickReservations() {
 				var table = $("#quickReservationsTable").DataTable();
 				table.clear().draw();
 				$.each(data, function(i, val) {
-					table.row.add([ val.flightCode, val.seat, val.seatClass, val.discount, val.realPrice ]).draw(false);
+					table.row.add([ val.flightCode, val.seat, val.seatClass, val.discount, val.discountedPrice ]).draw(false);
 				});
 			}
 		}

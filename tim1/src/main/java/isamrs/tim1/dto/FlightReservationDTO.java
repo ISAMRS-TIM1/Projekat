@@ -11,7 +11,8 @@ public class FlightReservationDTO {
 	private String dateOfReservation;
 	private Double price;
 	private Integer grade;
-
+	private Long quickReservationID;
+	
 	public FlightReservationDTO() {
 	}
 
@@ -101,5 +102,13 @@ public class FlightReservationDTO {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public Long getQuickReservationID() {
+		return quickReservationID;
+	}
+
+	public void setQuickReservationID(Long quickReservationID) {
+		this.quickReservationID = quickReservationID;
 	}
 }
