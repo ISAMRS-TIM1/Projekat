@@ -2,12 +2,17 @@ package isamrs.tim1.repository;
 
 import java.util.ArrayList;
 
+import javax.persistence.LockModeType;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 
 import isamrs.tim1.model.Vehicle;
 
 public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
+	
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	Vehicle findOneByModelAndProducer(String model, String producer);
 
 	@Query(value = "select distinct v.producer from vehicles v", nativeQuery = true)

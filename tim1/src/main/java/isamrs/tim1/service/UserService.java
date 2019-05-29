@@ -2,6 +2,8 @@ package isamrs.tim1.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.MessageDTO.ToasterType;
@@ -9,6 +11,7 @@ import isamrs.tim1.model.User;
 import isamrs.tim1.repository.UserRepository;
 
 @Service
+@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 public class UserService {
 
 	@Autowired
@@ -18,6 +21,7 @@ public class UserService {
 		return userRepository.findByToken(token);
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO editProfile(User user) throws Exception {
 		User userToEdit = userRepository.findOneByEmail(user.getEmail());
 		if (userToEdit == null) {

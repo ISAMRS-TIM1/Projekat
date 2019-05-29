@@ -2,6 +2,8 @@ package isamrs.tim1.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim1.dto.HotelAdditionalServiceDTO;
 import isamrs.tim1.dto.MessageDTO;
@@ -13,6 +15,7 @@ import isamrs.tim1.repository.HotelAdditionalServicesRepository;
 import isamrs.tim1.repository.HotelRepository;
 
 @Service
+@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 public class HotelAdditionalServicesService {
 
 	@Autowired
@@ -21,6 +24,7 @@ public class HotelAdditionalServicesService {
 	@Autowired
 	HotelAdditionalServicesRepository hotelAdditionalServicesRepository;
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO addAdditionalService(HotelAdditionalServiceDTO additionalService, Hotel hotel) {
 		if (hotelAdditionalServicesRepository.findOneByNameAndHotel(additionalService.getName(), hotel.getId()) != null)
 			return new MessageDTO("Hotel additional service with same name already exists",
@@ -35,6 +39,7 @@ public class HotelAdditionalServicesService {
 				hotelAdditionalServicesRepository.findOneByNameAndHotel(name, hotel.getId()));
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO editAdditionalService(HotelAdditionalServiceDTO additionalService, String name, Hotel hotel) {
 		HotelAdditionalService has = hotelAdditionalServicesRepository.findOneByNameAndHotel(name, hotel.getId());
 		if (has == null)
@@ -53,6 +58,7 @@ public class HotelAdditionalServicesService {
 		return new MessageDTO("Hotel additional service edited successfully", ToasterType.SUCCESS.toString());
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO deleteAdditionalService(String name, Hotel hotel) {
 		HotelAdditionalService has = hotelAdditionalServicesRepository.findOneByNameAndHotel(name, hotel.getId());
 		if (has == null)

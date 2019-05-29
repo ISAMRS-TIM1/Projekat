@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim1.dto.FriendDTO;
 import isamrs.tim1.dto.MessageDTO;
@@ -20,6 +22,7 @@ import isamrs.tim1.model.User;
 import isamrs.tim1.repository.RegisteredUserRepository;
 
 @Service
+@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 public class RegisteredUserService {
 
 	@Autowired
@@ -61,6 +64,7 @@ public class RegisteredUserService {
 		return usersDTO;
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public ResponseEntity<MessageDTO> sendInvitation(String invitedUser) {
 		RegisteredUser inviter = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		RegisteredUser invited = registeredUserRepository.findOneByEmail(invitedUser);
@@ -76,6 +80,7 @@ public class RegisteredUserService {
 				new MessageDTO("Friend invitation is sent.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public ResponseEntity<MessageDTO> acceptInvitation(String acceptedUser) {
 		RegisteredUser currUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication()
 				.getPrincipal();
@@ -108,6 +113,7 @@ public class RegisteredUserService {
 				new MessageDTO("Friend invitation accepted.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public ResponseEntity<MessageDTO> declineInvitation(String declinedUser) {
 		RegisteredUser currUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication()
 				.getPrincipal();

@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim1.dto.FlightDTO;
 import isamrs.tim1.dto.FlightUserViewDTO;
@@ -31,6 +33,7 @@ import isamrs.tim1.repository.SeatRepository;
 import isamrs.tim1.repository.ServiceRepository;
 
 @Service
+@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 public class FlightService {
 
 	@Autowired
@@ -45,6 +48,7 @@ public class FlightService {
 	@Autowired
 	SeatRepository seatRepository;
 	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public ResponseEntity<String> addFlight(FlightDTO flightDTO) {
 		Airline a = (Airline) serviceRepository.findOneByName(flightDTO.getAirlineName());
 		if (a == null)
@@ -112,6 +116,7 @@ public class FlightService {
 		return flightsList;
 	}
 	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO saveSeats(PlaneSeatsDTO seats) {
 		Flight f = flightRepository.findOneByFlightCode(seats.getFlightCode());
 		if (f == null) {
@@ -179,6 +184,7 @@ public class FlightService {
 		return new FlightDTO(f);
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO editFlight(FlightDTO flightDTO) {
 		Flight flight = flightRepository.findOneByFlightCode(flightDTO.getFlightCode());
 		if (flight == null) {
