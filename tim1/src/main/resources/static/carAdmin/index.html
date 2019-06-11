@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>RentACar Admin</title>
-<link rel="shortcut icon" type="image/png" href="common/images/favicon.png" />
+<link rel="shortcut icon" type="image/png"
+	href="common/images/favicon.png" />
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <link rel="stylesheet"
@@ -38,7 +39,8 @@
 	src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
 <link rel="stylesheet"
 	href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 <script
 	src="http://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
@@ -160,42 +162,32 @@
 				<div id="quickDiv">
 					<table id="quickTable">
 						<tr>
-							<td>
-								<label>Branch office:</label>
+							<td><label>Branch office:</label></td>
+							<td><select class="form-control" id="selectBranch"></select>
 							</td>
-							<td>
-								<select class="form-control" id="selectBranch"></select>
-							</td>
-							<td>
-								<label>Vehicle:</label>
-							</td>
-							<td>
-								<select class="form-control" id="selectVehicle"></select>
+							<td><label>Vehicle:</label></td>
+							<td><select class="form-control" id="selectVehicle"></select>
 							</td>
 						</tr>
 						<tr>
-							<td>
-								<label>Discount:</label>
-							</td>
-							<td>
-								<input type="number" class="form-control" id="discount" value="0" min="0" max="80">
-							</td>
-							<td>
-								<label>Active in period:</label>
-							</td>
-							<td>
-								<input type="text" id="quickPeriod" class="form-control">
+							<td><label>Discount:</label></td>
+							<td><input type="number" class="form-control" id="discount"
+								value="0" min="0" max="80"></td>
+							<td><label>Active in period:</label></td>
+							<td><input type="text" id="quickPeriod" class="form-control">
 							</td>
 						</tr>
 						<tr>
 							<td id="quickCreateTD">
-								<button class="btn btn-default" id="quickCreate">Create quick reservation</button>
+								<button class="btn btn-default" id="quickCreate">Create
+									quick reservation</button>
 							</td>
 						</tr>
 					</table>
 				</div>
 				<div id="quickReservationsTableDiv">
-					<table id="quickReservationsTable" class="table display table-bordered">
+					<table id="quickReservationsTable"
+						class="table display table-bordered">
 						<thead>
 							<tr>
 								<th>Branch office name</th>
@@ -280,6 +272,8 @@
 											placeholder="Name" required autofocus>
 									</div>
 								</div>
+								<input type="hidden" id="addBranchLatitude" value="45" required>
+								<input type="hidden" id="addBranchLongitude" value="0" required>
 								<button class="btn btn-default" id="addBranch">Add</button>
 							</form>
 						</div>

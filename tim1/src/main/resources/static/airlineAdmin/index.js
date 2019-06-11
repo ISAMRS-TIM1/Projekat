@@ -68,7 +68,7 @@ $(document).ready(function() {
 	
 	$('#destinationModalDialog').on('shown.bs.modal', function() {
 		setTimeout(function() {
-			destMap = setUpMap(30, 0, 'destMapDiv', true, destMap, '#destMapDivLatitude', '#destMapDivLongitude', 2);
+			destMap = setUpMap(45, 0, 'destMapDiv', true, destMap, '#destMapDivLatitude', '#destMapDivLongitude', 2);
 		}, 10);
 	});
 	

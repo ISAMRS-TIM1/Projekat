@@ -9,7 +9,8 @@ const MAP_ID = 'mapbox.streets';
 
 /* MAP VARIABLES */
 var racMap = null;
-var branchMap = null;
+var editBranchMap = null;
+var addBranchMap = null;
 
 /* URLs */
 const basicInfoURL = "/api/getRentACarInfo"
@@ -46,8 +47,6 @@ $(document).ready(function() {
 	setUpTable("branchTable");
 	setUpTable("vehicleTable");
 	setUpTable("quickReservationsTable");
-	setUpMap(45.267136, 19.833549, 'basicMapDiv');
-	setUpMap(45.267136, 19.833549, 'branchMapDiv');
 	setUpDatePicker("showIncomeDateRange");
 	setUpDatePicker("quickPeriod");
 
@@ -63,7 +62,7 @@ $(document).ready(function() {
 		document.location.href = logoutURL;
 	});
 	
-	/* SWITCHING TAB EVENTS*/
+	/* SWITCHING TAB EVENTS */
 	$('a[href="#branch"]').click(function(){
 		loadBranchOffices();
 	});
@@ -98,6 +97,12 @@ $(document).ready(function() {
 	});
 	
 	/* BRANCH OFFICE EVENTS */
+	$('#addBranchModalDialog').on('shown.bs.modal', function() {
+	    setTimeout(function() {
+	      addBranchMap = setUpMap(45, 0, 'addBranchOfficeMap', true, addBranchMap, '#addBranchLatitude', '#addBranchLongitude');
+	    }, 10);
+	  });
+	
 	$(document).on('click', '#addBranch', function(e) {
 		e.preventDefault();
 		addBranchOffice();
@@ -109,7 +114,7 @@ $(document).ready(function() {
 		$("#editBranchOfficeForm input[name='name']").val(oldName);
 		lat = e.target.parentNode.childNodes[2].innerText;
 		long = e.target.parentNode.childNodes[3].innerText;
-		branchMap = setUpMap(lat, long, 'branchMapDiv', true, branchMap, '#branchLatitude', '#branchLongitude');
+		editBranchMap = setUpMap(lat, long, 'branchMapDiv', true, editBranchMap, '#branchLatitude', '#branchLongitude');
 		$('#editBranchModalDialog').modal('show');
 	});
 	
@@ -190,10 +195,10 @@ $(document).ready(function() {
 	/* BRANCH MAP EVENTS */
 	$('#editBranchModalDialog').on('shown.bs.modal', function() {
 		setTimeout(function() {
-			branchMap.invalidateSize()
+			editBranchMap.invalidateSize()
 		}, 10);
 		setTimeout(function() {
-			branchMap.invalidateSize()
+			editBranchMap.invalidateSize()
 		}, 1000);
 	});
 	
@@ -316,7 +321,7 @@ function addBranchOffice() {
 		url : addBranchOfficeURL,
 		contentType: "application/json",
 		dataType : "json",
-		data: branchOfficeFormToJSON(name, 14, 14/* latitude, longitude */),
+		data: branchOfficeFormToJSON(name, $('#addBranchLatitude').val(), $('#addBranchLongitude').val()),
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
 			toastr[data.toastType](data.message);
