@@ -41,7 +41,6 @@ import isamrs.tim1.security.TokenUtils;
 import isamrs.tim1.security.auth.JwtAuthenticationRequest;
 
 @Service
-@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 public class AuthenticationService {
 
 	@Autowired
@@ -62,7 +61,7 @@ public class AuthenticationService {
 	@Autowired
 	private ServiceRepository serviceRepository;
 
-	public RedirectView confirmRegistration(String token) {
+	public RedirectView confirmRegistration(String	 token) {
 		User ru = userService.findUserByToken(token);
 		if (ru != null) {
 			ru.setVerified(true);
@@ -72,6 +71,7 @@ public class AuthenticationService {
 		return null;
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public Object register(User user) {
 		if (this.userDetailsService.usernameTaken(user.getEmail()) == true) {
 			return new MessageDTO("Email is taken.", "Error");
@@ -151,7 +151,8 @@ public class AuthenticationService {
 		return new UserTokenState(jwt, expiresIn, userType, valid);
 	}
 
-	public MessageDTO registerAirlineAdmin(User user, String serviceName) {
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+	public MessageDTO registerServiceAdmin(User user, String serviceName) {
 
 		isamrs.tim1.model.Service service = serviceRepository.findOneByName(serviceName);
 		if (service == null)

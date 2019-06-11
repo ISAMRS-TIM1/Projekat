@@ -47,7 +47,7 @@ public class AuthenticationController {
 	@RequestMapping(value = "auth/registerAdmin/{serviceName}", method = RequestMethod.POST)
 	public ResponseEntity<MessageDTO> registerAdmin(@Valid @RequestBody User user,
 			@PathVariable("serviceName") String serviceName) {
-		return new ResponseEntity<MessageDTO>(authenticationService.registerAirlineAdmin(user, serviceName),
+		return new ResponseEntity<MessageDTO>(authenticationService.registerServiceAdmin(user, serviceName),
 				HttpStatus.OK);
 	}
 
