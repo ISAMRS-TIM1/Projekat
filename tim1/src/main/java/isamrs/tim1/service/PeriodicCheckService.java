@@ -85,12 +85,12 @@ public class PeriodicCheckService {
 	
 	@Scheduled(cron = "${deleteExpiredFlightInvitations.cron}")
 	public void deleteExpiredFlightInvitations() {
-		
+		// TODO
 	}
 	
 	@Scheduled(cron = "${calculateAverageGrades.cron}")
 	public void calculateAverageGrades() {
-		
+		// TODO
 	}
 
 }
