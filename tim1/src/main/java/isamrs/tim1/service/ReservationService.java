@@ -802,7 +802,7 @@ public class ReservationService {
 
 	public DetailedReservationDTO getDetailedReservation(String resID) {
 		Long id = Long.parseLong(resID);
-		FlightReservation flightRes = flightReservationRepository.getOne(id);
+		FlightReservation flightRes = flightReservationRepository.findById(id).orElse(null);
 		if (flightRes == null) {
 			return null;
 		}
