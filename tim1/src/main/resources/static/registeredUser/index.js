@@ -2111,8 +2111,8 @@ function loadReservation(res_id) {
                 }
                 /* CAR RESERVATION */
                 if (data["vehicleRes"] != null) {
-                	$("#fromDateCarRes").text(data["vehicleRes"]["fromDate"]);
-                	$("#toDateCarRes").text(data["vehicleRes"]["toDate"]);
+                	$("#fromDateCarRes").text(moment(data["vehicleRes"]["fromDate"]).format('DD.MM.YYYY'));
+                	$("#toDateCarRes").text(moment(data["vehicleRes"]["toDate"]).format('DD.MM.YYYY'));
                 	$("#bOfficeRes").text(data["vehicleRes"]["branchOfficeName"]);
                 	$("#modelCarRes").text(data["vehicleRes"]["vehicleModel"]);
                 	$("#prodCarRes").text(data["vehicleRes"]["vehicleProducer"]);

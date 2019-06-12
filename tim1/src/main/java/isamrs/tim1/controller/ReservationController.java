@@ -143,7 +143,7 @@ public class ReservationController {
 	}
 	
 	@RequestMapping(value = "/api/getDetailedReservation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<DetailedReservationDTO> getDetailedAirline(@RequestParam String resID) {
+	public ResponseEntity<DetailedReservationDTO> getDetailedReservation(@RequestParam String resID) {
 		return new ResponseEntity<DetailedReservationDTO>(reservationService.getDetailedReservation(resID), HttpStatus.OK);
 	}
 }
