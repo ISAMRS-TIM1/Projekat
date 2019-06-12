@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import isamrs.tim1.dto.CheckVehicleReservationDTO;
+import isamrs.tim1.dto.DetailedReservationDTO;
 import isamrs.tim1.dto.FlightHotelReservationDTO;
 import isamrs.tim1.dto.FlightHotelVehicleReservationDTO;
 import isamrs.tim1.dto.FlightReservationDTO;
@@ -140,4 +142,8 @@ public class ReservationController {
 		return new ResponseEntity<MessageDTO>(reservationService.reserveQuickFlightReservation(flightRes), HttpStatus.OK);
 	}
 	
+	@RequestMapping(value = "/api/getDetailedReservation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<DetailedReservationDTO> getDetailedReservation(@RequestParam String resID) {
+		return new ResponseEntity<DetailedReservationDTO>(reservationService.getDetailedReservation(resID), HttpStatus.OK);
+	}
 }

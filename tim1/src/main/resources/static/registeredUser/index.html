@@ -724,5 +724,90 @@
 			</div>
 		</div>
 	</div>
+	
+	<!-- RESERVATION DETAILS MODAL -->
+	<div class="modal fade" id="showReservationModal" tabindex="-1"
+		role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content" id="showReservationDiv">
+				<div id="reserveDiv">
+					<h2 style="color:white; text-align:center;">Flight reservation</h2>
+					<table id="showReservationTable">
+						<tr>
+							<td>Start destination</td>
+							<td><span id="startDestRes"></span></td>
+							<td>End destination</td>
+							<td><span id="endDestRes"></span></td>
+						</tr>
+						<tr>
+							<td>Departure time</td>
+							<td><span id="depTimeRes"></span></td>
+							<td>Landing time</td>
+							<td><span id="landTimeRes"></span></td>
+						</tr>
+						<tr>
+							<td>Airline</td>
+							<td><span id="flightAirlineRes"></span></td>
+							<td>Flight duration</td>
+							<td><span id="flightDurationRes"></span></td>
+						</tr>
+						<tr>
+							<td>Flight distance</td>
+							<td><span id="flightDistanceRes"></span></td>
+							<td>Locations of connections</td>
+							<td><select id="flightConnectionsRes"></select></td>
+						</tr>
+						<tr>
+							<td>Number of seats</td>
+							<td><span id="numOfSeatsRes"></span></td>
+							<td>Seats</td>
+							<td><select id="seatsRes"></select></td>
+						</tr>
+					</table>
+					<br> <br>
+					<h2 id="hotelResHeader" style="color:white; text-align:center;">Hotel reservation</h2>
+					<table id="showHotelReservationTable">
+						<tr>
+							<td>From date</td>
+							<td><span id="fromDateRes"></span></td>
+							<td>To date</td>
+							<td><span id="toDateRes"></span></td>
+						</tr>
+						<tr>
+							<td>Room number</td>
+							<td><span id="roomNumberRes"></span></td>
+							<td>Hotel</td>
+							<td><span id="hotelResId"></span></td>
+						</tr>
+						<tr>
+							<td>Additional services</td>
+							<td><select id="addServRes"></select></td>
+						</tr>
+					</table>
+					<br> <br>
+					<h2 id="carResHeader" style="color:white; text-align:center;">Car reservation</h2>
+					<table id="showCarReservationTable">
+						<tr>
+							<td>From date</td>
+							<td><span id="fromDateCarRes"></span></td>
+							<td>To date</td>
+							<td><span id="toDateCarRes"></span></td>
+						</tr>
+						<tr>
+							<td>Branch office</td>
+							<td><span id="bOfficeRes"></span></td>
+							<td>Producer</td>
+							<td><span id="prodCarRes"></span></td>
+						</tr>
+						<tr>
+							<td>Model</td>
+							<td><span id="modelCarRes"></span></td>
+						</tr>
+					</table>
+					<br> <br>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>
