@@ -2065,6 +2065,7 @@ function loadReservation(res_id) {
                 var diff = date2.diff(date1, 'minutes');
                 $("#flightDurationRes").text(diff);
                 $("#flightDistanceRes").text(data["flightDistance"]);
+                $('#flightConnectionsRes').find('option').remove();
                 var conn = $("#flightConnectionsRes");
                 if (data["connections"].length == 0) {
                     conn.append("<option value=''></option>");
@@ -2075,6 +2076,7 @@ function loadReservation(res_id) {
                     });
                 }
                 $("#numOfSeatsRes").text(data["numOfFlightSeats"]);
+                $('#seatsRes').find('option').remove();
                 var flightSeats = $("#seatsRes");
                 if (data["seats"].length == 0) {
                     flightSeats.append("<option value=''></option>");
@@ -2085,17 +2087,17 @@ function loadReservation(res_id) {
                     });
                 }
                 /* HOTEL RESERVATION */
-                if (data["hotelResExists"] == true) {
-                	$("#fromDateRes").text(data["fromDateHotel"]);
-                	$("#toDateRes").text(data["toDateHotel"]);
-                	$("#roomNumberRes").text(data["roomNumber"]);
-                	$("#numOfPeopleRes").text(data["numOfPeople"]);
-                	$("#hotelResId").text(data["hotel"]);
+                if (data["hotelRes"] != null) {
+                	$("#fromDateRes").text(moment(data["hotelRes"]["fromDate"]).format('DD.MM.YYYY'));
+                	$("#toDateRes").text(moment(data["hotelRes"]["toDate"]).format('DD.MM.YYYY'));
+                	$("#roomNumberRes").text(data["hotelRes"]["hotelRoomNumber"]);
+                	$("#hotelResId").text(data["hotelRes"]["hotelName"]);
+                	$('#addServRes').find('option').remove();
                 	var addServices = $("#addServRes");
-                    if (data["additionalServices"].length == 0) {
+                    if (data["hotelRes"]["additionalServiceNames"].length == 0) {
                         addServices.append("<option value=''></option>");
                     } else {
-                        $.each(data["additionalServices"], function(i, val) {
+                        $.each(data["hotelRes"]["additionalServiceNames"], function(i, val) {
                             addServices.append("<option value=" + val + ">" + val +
                                 "</option>");
                         });
@@ -2108,15 +2110,12 @@ function loadReservation(res_id) {
                 	$("#showHotelReservationTable").hide();
                 }
                 /* CAR RESERVATION */
-                if (data["carResExists"] == true) {
-                	$("#fromDateCarRes").text(data["fromDateCar"]);
-                	$("#toDateCarRes").text(data["toDateCar"]);
-                	$("#rentacarRes").text(data["rentacar"]);
-                	$("#bOfficeRes").text(data["branchOffice"]);
-                	$("#modelCarRes").text(data["modelCar"]);
-                	$("#prodCarRes").text(data["producerCar"]);
-                	$("#yearRes").text(data["yearCar"]);
-                	$("#numOfSeatsCarRes").text(data["numberOfSeatsCar"]);
+                if (data["vehicleRes"] != null) {
+                	$("#fromDateCarRes").text(data["vehicleRes"]["fromDate"]);
+                	$("#toDateCarRes").text(data["vehicleRes"]["toDate"]);
+                	$("#bOfficeRes").text(data["vehicleRes"]["branchOfficeName"]);
+                	$("#modelCarRes").text(data["vehicleRes"]["vehicleModel"]);
+                	$("#prodCarRes").text(data["vehicleRes"]["vehicleProducer"]);
                 	$("#carResHeader").show();
                 	$("#showCarReservationTable").show();
                 }

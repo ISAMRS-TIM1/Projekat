@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import isamrs.tim1.dto.AirlineDTO;
 import isamrs.tim1.dto.CheckVehicleReservationDTO;
 import isamrs.tim1.dto.DetailedReservationDTO;
 import isamrs.tim1.dto.FlightHotelReservationDTO;

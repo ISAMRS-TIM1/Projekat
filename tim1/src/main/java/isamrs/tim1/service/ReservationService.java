@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import isamrs.tim1.dto.DetailedReservationDTO;
 import isamrs.tim1.dto.FlightHotelReservationDTO;
 import isamrs.tim1.dto.FlightHotelVehicleReservationDTO;
 import isamrs.tim1.dto.FlightReservationDTO;
@@ -797,5 +798,14 @@ public class ReservationService {
 		userRepository.save(ru);
 		mailService.sendFlightReservationMail(ru, qfr);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
+	}
+
+	public DetailedReservationDTO getDetailedReservation(String resID) {
+		Long id = Long.parseLong(resID);
+		FlightReservation flightRes = flightReservationRepository.getOne(id);
+		if (flightRes == null) {
+			return null;
+		}
+		return new DetailedReservationDTO(flightRes);
 	}
 }
