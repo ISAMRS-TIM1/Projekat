@@ -42,6 +42,12 @@ public class HotelReservation implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "hotelRoom")
 	protected HotelRoom hotelRoom;
+	
+	@Column(name = "done", unique = false, nullable = false)
+	protected Boolean done = false;
+
+	@Column(name = "grade", unique = false, nullable = true)
+	protected Integer grade = null;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "reservation_additionalservices", joinColumns = @JoinColumn(name = "reservation", referencedColumnName = "reservation_id"), inverseJoinColumns = @JoinColumn(name = "additionalservice", referencedColumnName = "additionalservice_id"))
@@ -124,6 +130,24 @@ public class HotelReservation implements Serializable {
 	public void setPrice(Double price) {
 		this.price = price;
 	}
+	
+
+	public Boolean getDone() {
+		return done;
+	}
+
+	public void setDone(Boolean done) {
+		this.done = done;
+	}
+
+	public Integer getGrade() {
+		return grade;
+	}
+
+	public void setGrade(Integer grade) {
+		this.grade = grade;
+	}
+
 
 	private static final long serialVersionUID = 2735432254411939871L;
 

@@ -3,7 +3,6 @@ package isamrs.tim1.service;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import javax.naming.AuthenticationException;
@@ -31,9 +30,7 @@ import isamrs.tim1.model.HotelAdmin;
 import isamrs.tim1.model.RegisteredUser;
 import isamrs.tim1.model.RentACar;
 import isamrs.tim1.model.RentACarAdmin;
-import isamrs.tim1.model.ServiceGrade;
 import isamrs.tim1.model.User;
-import isamrs.tim1.model.UserReservation;
 import isamrs.tim1.model.UserTokenState;
 import isamrs.tim1.model.UserType;
 import isamrs.tim1.repository.ServiceRepository;
@@ -91,13 +88,10 @@ public class AuthenticationService {
 		ru.setEnabled(true);
 		ru.setPasswordChanged(true);
 		ru.setVerified(false);
-		ru.setFriends(new HashSet<RegisteredUser>());
 		ru.setFirstName(user.getFirstName());
 		ru.setLastName(user.getLastName());
 		ru.setLastPasswordResetDate(new Timestamp(System.currentTimeMillis()));
 		ru.setPhoneNumber(user.getPhoneNumber());
-		ru.setUserReservations(new HashSet<UserReservation>());
-		ru.setServiceGrades(new HashSet<ServiceGrade>());
 
 		if (this.userDetailsService.saveUser(ru)) {
 			mailService.sendMailAsync(ru);
