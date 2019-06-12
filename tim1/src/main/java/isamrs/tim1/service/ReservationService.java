@@ -49,7 +49,6 @@ import isamrs.tim1.model.RegisteredUser;
 import isamrs.tim1.model.RentACar;
 import isamrs.tim1.model.RentACarAdmin;
 import isamrs.tim1.model.Seat;
-import isamrs.tim1.model.UserReservation;
 import isamrs.tim1.model.Vehicle;
 import isamrs.tim1.model.VehicleReservation;
 import isamrs.tim1.repository.BranchOfficeRepository;
@@ -64,7 +63,6 @@ import isamrs.tim1.repository.QuickVehicleReservationRepository;
 import isamrs.tim1.repository.RentACarRepository;
 import isamrs.tim1.repository.ServiceRepository;
 import isamrs.tim1.repository.UserRepository;
-import isamrs.tim1.repository.UserReservationRepository;
 import isamrs.tim1.repository.VehicleRepository;
 import isamrs.tim1.repository.VehicleReservationRepository;
 
@@ -80,9 +78,6 @@ public class ReservationService {
 
 	@Autowired
 	UserRepository userRepository;
-
-	@Autowired
-	UserReservationRepository userReservationRepository;
 
 	@Autowired
 	ServiceRepository serviceRepository;
@@ -125,31 +120,26 @@ public class ReservationService {
 
 	public ArrayList<FlightReservationDTO> getReservations() {
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		Set<UserReservation> ur = userReservationRepository.getByUser(ru.getId());
-		ArrayList<FlightReservationDTO> fr = new ArrayList<FlightReservationDTO>();
-		for (UserReservation u : ur) {
-			if (u.getReservation() instanceof FlightReservation) {
-				FlightReservation flightRes = (FlightReservation) u.getReservation();
-				String res = flightRes.getFlight().getStartDestination().getName() + "-"
-						+ flightRes.getFlight().getEndDestination().getName();
-				SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-				String date = sdf.format(flightRes.getFlight().getDepartureTime());
-				fr.add(new FlightReservationDTO(flightRes.getId(), res, date, flightRes.getPrice(), u.getGrade()));
-			}
+		Set<FlightReservation> frs = flightReservationRepository.getByUser(ru.getId());
+		ArrayList<FlightReservationDTO> frDTOs = new ArrayList<FlightReservationDTO>();
+		for (FlightReservation flightRes : frs) {
+			String res = flightRes.getFlight().getStartDestination().getName() + "-"
+					+ flightRes.getFlight().getEndDestination().getName();
+			SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+			String date = sdf.format(flightRes.getFlight().getDepartureTime());
+			frDTOs.add(new FlightReservationDTO(flightRes.getId(), res, date, flightRes.getPrice(), flightRes.getGrade()));
 		}
-		return fr;
+		return frDTOs;
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
 	public MessageDTO reserveFlight(FlightReservationDTO flightRes) {
-		UserReservation ur = new UserReservation();
 		FlightReservation fr = new FlightReservation();
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		MessageDTO retval = reserveFlightNoSave(flightRes, ur, fr, ru);
+		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru);
 		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
 			return retval;
-		//userReservationRepository.save(ur);
-		//flightReservationRepository.save(fr);
+		
 		userRepository.save(ru);
 		mailService.sendFlightReservationMail(ru, fr);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
@@ -159,20 +149,17 @@ public class ReservationService {
 	public MessageDTO reserveFlightHotel(FlightHotelReservationDTO flightHotelRes) {
 		FlightReservationDTO flightRes = flightHotelRes.getFlightReservation();
 		HotelReservationDTO hotelRes = flightHotelRes.getHotelReservation();
-		UserReservation ur = new UserReservation();
 		FlightReservation fr = new FlightReservation();
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-		MessageDTO retval = reserveFlightNoSave(flightRes, ur, fr, ru);
+		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru);
 		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
 			return retval;
 
 		retval = reserveHotelNoSave(hotelRes, fr);
 		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
 			return retval;
-
-		//userReservationRepository.save(ur);
-		//flightReservationRepository.save(fr);
+		
 		userRepository.save(ru);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
 	}
@@ -181,18 +168,17 @@ public class ReservationService {
 	public MessageDTO reserveFlightVehicle(FlightVehicleReservationDTO flightVehicleRes) {
 		FlightReservationDTO flightRes = flightVehicleRes.getFlightReservation();
 		VehicleReservationDTO vehicleRes = flightVehicleRes.getVehicleReservation();
-		UserReservation ur = new UserReservation();
 		FlightReservation fr = new FlightReservation();
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-		MessageDTO retval = reserveFlightNoSave(flightRes, ur, fr, ru);
+		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru);
 		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
 			return retval;
 
 		retval = reserveVehicleNoSave(vehicleRes, fr);
 		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
 			return retval;
-		
+
 		userRepository.save(ru);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
 	}
@@ -203,11 +189,10 @@ public class ReservationService {
 		HotelReservationDTO hotelRes = flightHotelVehicleRes.getHotelReservation();
 		VehicleReservationDTO vehicleRes = flightHotelVehicleRes.getVehicleReservation();
 
-		UserReservation ur = new UserReservation();
 		FlightReservation fr = new FlightReservation();
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-		MessageDTO retval = reserveFlightNoSave(flightRes, ur, fr, ru);
+		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru);
 		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
 			return retval;
 
@@ -224,7 +209,7 @@ public class ReservationService {
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
-	private MessageDTO reserveFlightNoSave(FlightReservationDTO flightRes, UserReservation ur, FlightReservation fr,
+	private MessageDTO reserveFlightNoSave(FlightReservationDTO flightRes, FlightReservation fr,
 			RegisteredUser ru) {
 		Flight f = flightRepository.findOneByFlightCode(flightRes.getFlightCode());
 		if (f == null) {
@@ -273,11 +258,8 @@ public class ReservationService {
 			counter++;
 		}
 		fr.setPrice(price);
-		ur.setGrade(0);
-		ur.setReservation(fr);
-		ur.setUser(ru);
-		ru.getUserReservations().add(ur);
-		fr.setUser(ur);
+		fr.setUser(ru);
+		ru.getFlightReservations().add(fr);
 		f.getAirline().getReservations().add(fr);
 		return new MessageDTO("", ToasterType.SUCCESS.toString());
 	}
@@ -288,7 +270,7 @@ public class ReservationService {
 			QuickHotelReservation qhr = quickHotelReservationRepository.findOneById(hotelRes.getQuickReservationID());
 			if (qhr == null)
 				return new MessageDTO("Quick hotel reservation does not exist", ToasterType.ERROR.toString());
-			if(qhr.getFlightReservation()!=null)
+			if (qhr.getFlightReservation() != null)
 				return new MessageDTO("Quick hotel reservation is already taken", ToasterType.ERROR.toString());
 			qhr.setFlightReservation(fr);
 			fr.setHotelReservation(qhr);
@@ -414,15 +396,9 @@ public class ReservationService {
 		PassengerSeat ps = new PassengerSeat(new PassengerDTO(friend.getFirstName(), friend.getLastName(), "", 0), st);
 		ps.setReservation(fRes);
 		fRes.setPrice(price);
-		UserReservation ur = new UserReservation();
-		ur.setGrade(0);
-		ur.setReservation(fRes);
-		ur.setUser(null);
-		fRes.setUser(ur);
 		fRes.getPassengerSeats().add(ps);
 		friend.getInvitingReservations().add(fRes);
 		f.getAirline().getReservations().add(fRes);
-		userReservationRepository.save(ur);
 		flightReservationRepository.save(fRes);
 		userRepository.save(friend);
 		mailService.sendMailToFriend(friend, fRes, inviter);
@@ -445,18 +421,9 @@ public class ReservationService {
 			return new ResponseEntity<MessageDTO>(
 					new MessageDTO("Reservation does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
 		}
-		/* removed in merging
-		UserReservation ur = new UserReservation();
-		ur.setGrade(0);
-		ur.setReservation(fr);
-		ur.setUser(ru);
-		fr.setUser(ur);
-		// userReservationRepository.save(ur);
-		// flightReservationRepository.save(fr);
-		*/
-		fr.getUser().setUser(ru);
-		userReservationRepository.save(fr.getUser());
-		flightReservationRepository.save(fr);
+		
+		fr.setUser(ru);
+		ru.getFlightReservations().add(fr);
 		userRepository.save(ru);
 		return new ResponseEntity<MessageDTO>(
 				new MessageDTO("Successfully accepted reservation.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
@@ -492,11 +459,10 @@ public class ReservationService {
 			return new ResponseEntity<MessageDTO>(
 					new MessageDTO("Reservation does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
 		}
-		userRepository.save(ru);
 		Airline a = fr.getFlight().getAirline();
 		a.getReservations().removeIf(r -> r.getId().longValue() == resID);
+		userRepository.save(ru);
 		serviceRepository.save(a);
-		userReservationRepository.delete(fr.getUser());
 		return new ResponseEntity<MessageDTO>(
 				new MessageDTO("Successfully declined reservation.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
 	}
@@ -687,16 +653,17 @@ public class ReservationService {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public ResponseEntity<MessageDTO> cancelReservation(String resID) {
 		Long id = Long.parseLong(resID);
-		QuickFlightReservation qfr = quickFlightReservationRepository.getOne(id);
+		QuickFlightReservation qfr = quickFlightReservationRepository.findById(id).orElse(null);
 		if (qfr != null) {
 			if (qfr.getDone()) {
-				return new ResponseEntity<MessageDTO>(new MessageDTO("You can not cancel flight reservation which is done.", 
-						ToasterType.ERROR.toString()), HttpStatus.OK);
+				return new ResponseEntity<MessageDTO>(
+						new MessageDTO("You can not cancel flight reservation which is done.",
+								ToasterType.ERROR.toString()),
+						HttpStatus.OK);
 			}
 			RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-			ru.getUserReservations().removeIf(u -> u.getId().longValue() == qfr.getUser().getId().longValue());
+			ru.getFlightReservations().removeIf(u -> u.getId().longValue() == qfr.getId().longValue());
 			userRepository.save(ru);
-			UserReservation ur = qfr.getUser();
 			qfr.setUser(null);
 			qfr.setDateOfReservation(null);
 			qfr.getPassengerSeats().forEach(p -> {
@@ -704,26 +671,24 @@ public class ReservationService {
 				p.setSurname("");
 				p.setPassport("");
 			});
-			ur.setUser(null);
-			userReservationRepository.save(ur);
 			quickFlightReservationRepository.save(qfr);
-			userReservationRepository.delete(ur);
 			return new ResponseEntity<MessageDTO>(
-					new MessageDTO("Successfully canceled reservation.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
+					new MessageDTO("Successfully canceled reservation.", ToasterType.SUCCESS.toString()),
+					HttpStatus.OK);
 		}
-		FlightReservation fr = flightReservationRepository.getOne(id);
+		FlightReservation fr = flightReservationRepository.findById(id).orElse(null);
 		if (fr == null) {
 			return new ResponseEntity<MessageDTO>(
 					new MessageDTO("Reservation does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
 		}
 		if (fr.getDone()) {
-			return new ResponseEntity<MessageDTO>(new MessageDTO("You can not cancel flight reservation which is done.", 
+			return new ResponseEntity<MessageDTO>(new MessageDTO("You can not cancel flight reservation which is done.",
 					ToasterType.ERROR.toString()), HttpStatus.OK);
 		}
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Airline a = fr.getFlight().getAirline();
 		a.getReservations().removeIf(f -> f.getId().longValue() == fr.getId().longValue());
-		
+
 		if (fr.getHotelReservation() != null) {
 			Hotel hotel = fr.getHotelReservation().getHotelRoom().getHotel();
 			hotel.getReservations().removeIf(h -> {
@@ -731,8 +696,7 @@ public class ReservationService {
 					if (quickHotelReservationRepository.existsById(h.getId())) {
 						h.setFlightReservation(null);
 						return false;
-					}
-					else {
+					} else {
 						return true;
 					}
 				}
@@ -740,7 +704,7 @@ public class ReservationService {
 			});
 			serviceRepository.save(hotel);
 		}
-		
+
 		if (fr.getVehicleReservation() != null) {
 			RentACar rac = fr.getVehicleReservation().getVehicle().getRentACar();
 			rac.getReservations().removeIf(r -> {
@@ -748,8 +712,7 @@ public class ReservationService {
 					if (quickVehicleReservationRepository.existsById(r.getId())) {
 						r.setFlightReservation(null);
 						return false;
-					}
-					else {
+					} else {
 						return true;
 					}
 				}
@@ -757,11 +720,10 @@ public class ReservationService {
 			});
 			serviceRepository.save(rac);
 		}
-		
-		ru.getUserReservations().removeIf(u -> u.getId().longValue() == fr.getUser().getId().longValue());
+
+		ru.getFlightReservations().removeIf(u -> u.getId().longValue() == fr.getId().longValue());
 		userRepository.save(ru);
 		serviceRepository.save(a);
-		userReservationRepository.delete(fr.getUser());
 		return new ResponseEntity<MessageDTO>(
 				new MessageDTO("Successfully canceled reservation.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
 	}
@@ -786,14 +748,9 @@ public class ReservationService {
 			p.setReservation(qfr);
 		});
 		qfr.setPrice(qfr.getPrice() + price);
-		UserReservation ur = new UserReservation();
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		ur.setUser(ru);
-		ur.setReservation(qfr);
-		ur.setGrade(0);
-		qfr.setUser(ur);
-		userReservationRepository.save(ur);
-		quickFlightReservationRepository.save(qfr);
+		ru.getFlightReservations().add(qfr);
+		qfr.setUser(ru);
 		userRepository.save(ru);
 		mailService.sendFlightReservationMail(ru, qfr);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());

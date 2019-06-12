@@ -5,3 +5,5 @@
 tim1/database.mv.db
 tim1/database.trace.db
 *.db
+/.metadata/
+/.recommenders/

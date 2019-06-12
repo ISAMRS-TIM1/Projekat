@@ -31,6 +31,12 @@ public class VehicleReservation implements Serializable {
 
 	@Column(name = "toDate", unique = false, nullable = false)
 	protected Date toDate;
+	
+	@Column(name = "done", unique = false, nullable = false)
+	protected Boolean done = false;
+
+	@Column(name = "grade", unique = false, nullable = true)
+	protected Integer grade = null;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "vehicle")
@@ -84,6 +90,22 @@ public class VehicleReservation implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Boolean getDone() {
+		return done;
+	}
+
+	public void setDone(Boolean done) {
+		this.done = done;
+	}
+
+	public Integer getGrade() {
+		return grade;
+	}
+
+	public void setGrade(Integer grade) {
+		this.grade = grade;
 	}
 
 	public FlightReservation getFlightReservation() {
