@@ -21,7 +21,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "FlightReservations")
+@Table(name = "flight_reservations")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class FlightReservation implements Serializable {
 
@@ -35,15 +35,18 @@ public class FlightReservation implements Serializable {
 	@Column(name = "dateOfReservation", unique = false, nullable = true)
 	protected Date dateOfReservation;
 
-	@Column(name = "done", unique = false, nullable = true)
+	@Column(name = "done", unique = false, nullable = false)
 	protected Boolean done;
 
+	@Column(name = "grade", unique = false, nullable = true)
+	private Integer grade;
+	
 	@Column(name = "price", unique = false, nullable = true)
 	protected Double price;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user")
-	protected UserReservation user;
+	protected RegisteredUser user;
 
 	@OneToMany(mappedBy = "reservations", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	protected Set<PassengerSeat> passengerSeats;
@@ -102,11 +105,19 @@ public class FlightReservation implements Serializable {
 		this.price = price;
 	}
 
-	public UserReservation getUser() {
+	public Integer getGrade() {
+		return grade;
+	}
+
+	public void setGrade(Integer grade) {
+		this.grade = grade;
+	}
+
+	public RegisteredUser getUser() {
 		return user;
 	}
 
-	public void setUser(UserReservation user) {
+	public void setUser(RegisteredUser user) {
 		this.user = user;
 	}
 

@@ -18,18 +18,18 @@ public class RegisteredUser extends User {
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "friends", joinColumns = @JoinColumn(name = "user", referencedColumnName = "user_id"), inverseJoinColumns = @JoinColumn(name = "friend", referencedColumnName = "user_id"))
 	private Set<RegisteredUser> friends;
-	
+
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinTable(name = "invitedUsers", joinColumns = @JoinColumn(name = "inviter", referencedColumnName = "user_id"), inverseJoinColumns = @JoinColumn(name = "invited", referencedColumnName = "user_id"))
 	private Set<RegisteredUser> invitedUsers;
-	
+
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "inviters", joinColumns = @JoinColumn(name = "invited", referencedColumnName = "user_id"), inverseJoinColumns = @JoinColumn(name = "inviter", referencedColumnName = "user_id"))
 	private Set<RegisteredUser> inviters;
-	
+
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<UserReservation> userReservations;
-	
+	private Set<FlightReservation> flightReservations;
+
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<FlightReservation> invitingReservations;
 
@@ -41,7 +41,7 @@ public class RegisteredUser extends User {
 
 	public RegisteredUser() {
 		friends = new HashSet<RegisteredUser>();
-		userReservations = new HashSet<UserReservation>();
+		flightReservations = new HashSet<FlightReservation>();
 		serviceGrades = new HashSet<ServiceGrade>();
 		invitingReservations = new HashSet<FlightReservation>();
 		discountPoints = 0;
@@ -63,12 +63,12 @@ public class RegisteredUser extends User {
 		this.friends = friends;
 	}
 
-	public Set<UserReservation> getUserReservations() {
-		return userReservations;
+	public Set<FlightReservation> getFlightReservations() {
+		return flightReservations;
 	}
 
-	public void setUserReservations(Set<UserReservation> userReservations) {
-		this.userReservations = userReservations;
+	public void setFlightReservations(Set<FlightReservation> flightReservations) {
+		this.flightReservations = flightReservations;
 	}
 
 	public static long getSerialversionuid() {
@@ -106,8 +106,6 @@ public class RegisteredUser extends User {
 	public void setInvitingReservations(Set<FlightReservation> invitingReservations) {
 		this.invitingReservations = invitingReservations;
 	}
-
-
 
 	private static final long serialVersionUID = 4453092532257405053L;
 }

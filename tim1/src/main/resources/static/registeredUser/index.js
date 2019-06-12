@@ -21,6 +21,7 @@ const cancelReservationURL = "/api/cancelReservation";
 const getAirlinesURL = "/api/getAirlines";
 const getDetailedAirlineURL = "../api/getDetailedAirline";
 const reserveQuickFlightReservationURL = "/api/reserveQuickFlightReservation";
+const getDetailedReservationURL = "/api/getDetailedReservation";
 
 const searchHotelsURL = "/api/searchHotels";
 const getHotelURL = "../api/getHotel";
@@ -46,7 +47,7 @@ var hotelMap = null;
 var airlineMap = null;
 
 var shownHotel = null;
-
+var shownReservation = null;
 var hotelReservation = null;
 
 $(document)
@@ -79,7 +80,7 @@ $(document)
                 "retrieve": true,
             });
 
-            $('#reservationsTable').DataTable({
+            var reservationsTable = $('#reservationsTable').DataTable({
                 "paging": false,
                 "info": false,
                 "scrollY": "17vw",
@@ -157,6 +158,14 @@ $(document)
                 shownFlight = flightsTable.row(this).data()[0];
                 loadFlight(shownFlight);
                 $("#showFlightModal").modal();
+            });
+            
+            $('#reservationsTable tbody').on('click', 'tr', function() {
+                reservationsTable.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+                shownReservation = reservationsTable.row(this).data()[0];
+                loadReservation(shownReservation);
+                $("#showReservationModal").modal();
             });
             
             $('#airlinesTable tbody').on('click', 'tr', function() {
@@ -2032,4 +2041,92 @@ function getPassportAndBags(e) {
     quickFlightReservation["passengers"][0]["numberOfBags"] = numOfBags;
     localStorage.setItem("quickFlightReservation", JSON.stringify(quickFlightReservation));
     $("#passportBagsModal").modal('hide');
+}
+
+function loadReservation(res_id) {
+	$.ajax({
+        type: 'GET',
+        url: getDetailedReservationURL,
+        contentType: "application/json",
+        data: {
+            'resID': res_id
+        },
+        dataType: "json",
+        headers: createAuthorizationTokenHeader(tokenKey),
+        success: function(data) {
+            if (data != null) {
+                $("#startDestRes").text(data["startDestination"]);
+                $("#endDestRes").text(data["endDestination"]);
+                $("#depTimeRes").text(data["departureTime"]);
+                $("#landTimeRes").text(data["landingTime"]);
+                $("#flightAirlineRes").text(data["airlineName"]);
+                var date1 = moment(data["departureTime"], 'DD.MM.YYYY hh:mm');
+                var date2 = moment(data["landingTime"], 'DD.MM.YYYY hh:mm');
+                var diff = date2.diff(date1, 'minutes');
+                $("#flightDurationRes").text(diff);
+                $("#flightDistanceRes").text(data["flightDistance"]);
+                $('#flightConnectionsRes').find('option').remove();
+                var conn = $("#flightConnectionsRes");
+                if (data["connections"].length == 0) {
+                    conn.append("<option value=''></option>");
+                } else {
+                    $.each(data["connections"], function(i, val) {
+                        conn.append("<option value=" + val + ">" + val +
+                            "</option>");
+                    });
+                }
+                $("#numOfSeatsRes").text(data["numOfFlightSeats"]);
+                $('#seatsRes').find('option').remove();
+                var flightSeats = $("#seatsRes");
+                if (data["seats"].length == 0) {
+                    flightSeats.append("<option value=''></option>");
+                } else {
+                    $.each(data["seats"], function(i, val) {
+                        flightSeats.append("<option value=" + val + ">" + val +
+                            "</option>");
+                    });
+                }
+                /* HOTEL RESERVATION */
+                if (data["hotelRes"] != null) {
+                	$("#fromDateRes").text(moment(data["hotelRes"]["fromDate"]).format('DD.MM.YYYY'));
+                	$("#toDateRes").text(moment(data["hotelRes"]["toDate"]).format('DD.MM.YYYY'));
+                	$("#roomNumberRes").text(data["hotelRes"]["hotelRoomNumber"]);
+                	$("#hotelResId").text(data["hotelRes"]["hotelName"]);
+                	$('#addServRes').find('option').remove();
+                	var addServices = $("#addServRes");
+                    if (data["hotelRes"]["additionalServiceNames"].length == 0) {
+                        addServices.append("<option value=''></option>");
+                    } else {
+                        $.each(data["hotelRes"]["additionalServiceNames"], function(i, val) {
+                            addServices.append("<option value=" + val + ">" + val +
+                                "</option>");
+                        });
+                    }
+                    $("#hotelResHeader").show();
+                	$("#showHotelReservationTable").show();
+                }
+                else {
+                	$("#hotelResHeader").hide();
+                	$("#showHotelReservationTable").hide();
+                }
+                /* CAR RESERVATION */
+                if (data["vehicleRes"] != null) {
+                	$("#fromDateCarRes").text(moment(data["vehicleRes"]["fromDate"]).format('DD.MM.YYYY'));
+                	$("#toDateCarRes").text(moment(data["vehicleRes"]["toDate"]).format('DD.MM.YYYY'));
+                	$("#bOfficeRes").text(data["vehicleRes"]["branchOfficeName"]);
+                	$("#modelCarRes").text(data["vehicleRes"]["vehicleModel"]);
+                	$("#prodCarRes").text(data["vehicleRes"]["vehicleProducer"]);
+                	$("#carResHeader").show();
+                	$("#showCarReservationTable").show();
+                }
+                else {
+                	$("#carResHeader").hide();
+                	$("#showCarReservationTable").hide();
+                }
+            }
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            alert("AJAX ERROR: " + textStatus);
+        }
+    });
 }

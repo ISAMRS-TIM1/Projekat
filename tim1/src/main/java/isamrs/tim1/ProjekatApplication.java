@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import isamrs.tim1.model.Authority;
@@ -21,6 +23,8 @@ import isamrs.tim1.service.CustomUserDetailsService;
 
 @SpringBootApplication
 @EnableTransactionManagement
+@EnableAsync
+@EnableScheduling
 public class ProjekatApplication implements CommandLineRunner {
 
 	@Autowired
