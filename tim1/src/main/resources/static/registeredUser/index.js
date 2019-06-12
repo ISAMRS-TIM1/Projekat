@@ -21,6 +21,7 @@ const cancelReservationURL = "/api/cancelReservation";
 const getAirlinesURL = "/api/getAirlines";
 const getDetailedAirlineURL = "../api/getDetailedAirline";
 const reserveQuickFlightReservationURL = "/api/reserveQuickFlightReservation";
+const getDetailedReservationURL = "/api/getDetailedReservation";
 
 const searchHotelsURL = "/api/searchHotels";
 const getHotelURL = "../api/getHotel";
@@ -46,7 +47,7 @@ var hotelMap = null;
 var airlineMap = null;
 
 var shownHotel = null;
-
+var shownReservation = null;
 var hotelReservation = null;
 
 $(document)
@@ -79,7 +80,7 @@ $(document)
                 "retrieve": true,
             });
 
-            $('#reservationsTable').DataTable({
+            var reservationsTable = $('#reservationsTable').DataTable({
                 "paging": false,
                 "info": false,
                 "scrollY": "17vw",
@@ -157,6 +158,14 @@ $(document)
                 shownFlight = flightsTable.row(this).data()[0];
                 loadFlight(shownFlight);
                 $("#showFlightModal").modal();
+            });
+            
+            $('#reservationsTable tbody').on('click', 'tr', function() {
+                reservationsTable.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+                shownReservation = reservationsTable.row(this).data()[0];
+                loadReservation(shownReservation);
+                $("#showReservationModal").modal();
             });
             
             $('#airlinesTable tbody').on('click', 'tr', function() {
@@ -2032,4 +2041,93 @@ function getPassportAndBags(e) {
     quickFlightReservation["passengers"][0]["numberOfBags"] = numOfBags;
     localStorage.setItem("quickFlightReservation", JSON.stringify(quickFlightReservation));
     $("#passportBagsModal").modal('hide');
+}
+
+function loadReservation(res_id) {
+	$.ajax({
+        type: 'GET',
+        url: getDetailedReservationURL,
+        contentType: "application/json",
+        data: {
+            'resID': res_id
+        },
+        dataType: "json",
+        headers: createAuthorizationTokenHeader(tokenKey),
+        success: function(data) {
+            if (data != null) {
+                $("#startDestRes").text(data["startDestination"]);
+                $("#endDestRes").text(data["endDestination"]);
+                $("#depTimeRes").text(data["departureTime"]);
+                $("#landTimeRes").text(data["landingTime"]);
+                $("#flightAirlineRes").text(data["airlineName"]);
+                var date1 = moment(data["departureTime"], 'DD.MM.YYYY hh:mm');
+                var date2 = moment(data["landingTime"], 'DD.MM.YYYY hh:mm');
+                var diff = date2.diff(date1, 'minutes');
+                $("#flightDurationRes").text(diff);
+                $("#flightDistanceRes").text(data["flightDistance"]);
+                var conn = $("#flightConnectionsRes");
+                if (data["connections"].length == 0) {
+                    conn.append("<option value=''></option>");
+                } else {
+                    $.each(data["connections"], function(i, val) {
+                        conn.append("<option value=" + val + ">" + val +
+                            "</option>");
+                    });
+                }
+                $("#numOfSeatsRes").text(data["numOfFlightSeats"]);
+                var flightSeats = $("#seatsRes");
+                if (data["seats"].length == 0) {
+                    flightSeats.append("<option value=''></option>");
+                } else {
+                    $.each(data["seats"], function(i, val) {
+                        flightSeats.append("<option value=" + val + ">" + val +
+                            "</option>");
+                    });
+                }
+                /* HOTEL RESERVATION */
+                if (data["hotelResExists"] == true) {
+                	$("#fromDateRes").text(data["fromDateHotel"]);
+                	$("#toDateRes").text(data["toDateHotel"]);
+                	$("#roomNumberRes").text(data["roomNumber"]);
+                	$("#numOfPeopleRes").text(data["numOfPeople"]);
+                	$("#hotelResId").text(data["hotel"]);
+                	var addServices = $("#addServRes");
+                    if (data["additionalServices"].length == 0) {
+                        addServices.append("<option value=''></option>");
+                    } else {
+                        $.each(data["additionalServices"], function(i, val) {
+                            addServices.append("<option value=" + val + ">" + val +
+                                "</option>");
+                        });
+                    }
+                    $("#hotelResHeader").show();
+                	$("#showHotelReservationTable").show();
+                }
+                else {
+                	$("#hotelResHeader").hide();
+                	$("#showHotelReservationTable").hide();
+                }
+                /* CAR RESERVATION */
+                if (data["carResExists"] == true) {
+                	$("#fromDateCarRes").text(data["fromDateCar"]);
+                	$("#toDateCarRes").text(data["toDateCar"]);
+                	$("#rentacarRes").text(data["rentacar"]);
+                	$("#bOfficeRes").text(data["branchOffice"]);
+                	$("#modelCarRes").text(data["modelCar"]);
+                	$("#prodCarRes").text(data["producerCar"]);
+                	$("#yearRes").text(data["yearCar"]);
+                	$("#numOfSeatsCarRes").text(data["numberOfSeatsCar"]);
+                	$("#carResHeader").show();
+                	$("#showCarReservationTable").show();
+                }
+                else {
+                	$("#carResHeader").hide();
+                	$("#showCarReservationTable").hide();
+                }
+            }
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            alert("AJAX ERROR: " + textStatus);
+        }
+    });
 }
