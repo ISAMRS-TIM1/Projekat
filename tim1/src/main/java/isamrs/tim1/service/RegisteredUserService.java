@@ -31,7 +31,7 @@ public class RegisteredUserService {
 	@Autowired
 	private RegisteredUserRepository registeredUserRepository;
 
-	public ArrayList<UserDTO> searchUsers(String firstName, String lastName, String email) {
+	public ArrayList<UserDTO> searchUsers(String firstName, String lastName) {
 		if (firstName.equals(""))
 			firstName = "%";
 		else {
@@ -52,13 +52,14 @@ public class RegisteredUserService {
 				lastName = lastName.substring(0, 1);
 			}
 		}
-		RegisteredUser regUser = registeredUserRepository.findOneByEmail(email);
+		RegisteredUser regUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if (regUser == null)
 			return null;
-		Set<RegisteredUser> users = registeredUserRepository.findByFirstAndLastName(firstName, lastName, email);
+		Set<RegisteredUser> users = registeredUserRepository.findByFirstAndLastName(firstName, lastName, regUser.getEmail());
 		ArrayList<UserDTO> usersDTO = new ArrayList<UserDTO>();
 		for (User us : users) {
-			if (!(regUser.getInvitedUsers().contains(us)) && !(regUser.getInviters().contains(us)))
+			if (!(regUser.getInvitedUsers().contains(us)) && !(regUser.getInviters().contains(us))
+					&& !(regUser.getFriends().contains(us)))
 				usersDTO.add(new UserDTO(us));
 		}
 		return usersDTO;
