@@ -36,6 +36,7 @@ const getAllFuelTypesURL = "/api/getFuelTypes";
 const searchVehiclesURL = "/api/searchVehicles";
 const getQuickReservationsForVehicleURL = "/api/getQuickReservationsForVehicle/";
 const checkVehicleForPeriodURL = "/api/checkVehicleForPeriod";
+const getBranchOfficesForVehicleURL = "/api/getBranchOfficesForVehicle/";
 
 const reserveFlightURL = "/api/reserveFlight";
 const reserveFlightHotelURL = "/api/reserveFlightHotel";
@@ -437,6 +438,7 @@ $(document)
         		currentVehicleModel = rowData[2];
         		$("#quickReservationsModalTitle").text(title);
         		getQuickReservationsForVehicle(rowData[0]);
+        		getBranchOfficesForVehicle(rowData[0]);
         		$('#quickVehicleReservationsModal').modal('show');
         	});
             
@@ -479,12 +481,26 @@ $(document)
             	
             	checkVehicleForPeriod(currentVehicleID, start, end, currentVehicleProducer, currentVehicleModel);
             });
-            
-            /*$('#quickVehicleReservationsModal').on('shown.bs.modal', function () {
-            	$($.fn.dataTable.tables(true))
-                .DataTable().columns.adjust();
-            });*/
         });
+
+function getBranchOfficesForVehicle(id){
+	$.ajax({
+        type: 'GET',
+        url: getBranchOfficesForVehicleURL + id,
+        headers: createAuthorizationTokenHeader(tokenKey),
+        contentType: "application/json",
+        success: function(data) {
+        	var select = $("#vehicleBranchOffices");
+        	select.empty();
+        	for(var branch of data){
+        		select.append(new Option(branch, branch));
+        	}
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            alert("AJAX ERROR: " + textStatus);
+        }
+    });
+}
 
 function getAirlines() {
 	$.ajax({
@@ -522,7 +538,8 @@ function checkVehicleForPeriod(vehicleID, start, end, vehicleProducer, vehicleMo
         				'toDate' : end,
         				'vehicleProducer' : vehicleProducer,
         				'vehicleModel' : vehicleModel,
-        				'branchOfficeName' : null, // will be added after reverse geocoding
+        				'branchOfficeName' : null, // will be added after
+													// reverse geocoding
         				'discount': null,
         				'quickVehicleReservationID': null
         				};
@@ -1417,7 +1434,7 @@ function loadFlight(code) {
                 localStorage.setItem("flightCode", code);
                 localStorage.setItem("startDest", data["startDestination"]);
                 localStorage.setItem("endDest", data["endDestination"]);
-                localStorage.setItem("flightDate", data["departureTime"]);
+                $("#vehicleCountry").val(data["endDestination"]);
                 $("#startDest").text(data["startDestination"]);
                 $("#endDest").text(data["endDestination"]);
                 $("#depTime").text(data["departureTime"]);

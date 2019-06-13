@@ -95,12 +95,13 @@ public class VehicleService {
 		double minGrade = vehicle.getMinGrade();
 		double maxGrade = vehicle.getMaxGrade();
 		String country = vehicle.getCountry();
-
+		
+		if("".equals(country)) {
+			country = "%";
+		}
+		
 		Set<Vehicle> searchResultsBranch = vehicleRepository.searchByParametersBranch(producers, models, fuelTypes,
 				vehicleTypes, maxPrice, minYear, maxYear, minGrade, maxGrade, seats, country);
-
-		searchResultsBranch.addAll(vehicleRepository.searchByParametersRentacar(producers, models, fuelTypes,
-				vehicleTypes, maxPrice, minYear, maxYear, minGrade, maxGrade, seats, country));
 
 		ArrayList<VehicleDTO> returnValue = new ArrayList<VehicleDTO>();
 
@@ -289,5 +290,9 @@ public class VehicleService {
 		}
 
 		return typesAsStrings;
+	}
+
+	public Set<String> getBranchOfficesForVehicle(Integer vehicleID) {
+		return vehicleRepository.branchOfficesForVehicle(vehicleID);
 	}
 }

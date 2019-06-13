@@ -1,6 +1,8 @@
 package isamrs.tim1.controller;
 
 import java.util.ArrayList;
+import java.util.Set;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,5 +83,11 @@ public class VehicleController {
 	@RequestMapping(value = "/api/getModels/{producer}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArrayList<String>> getModelsForProducer(@PathVariable("producer") String producer) {
 		return new ResponseEntity<ArrayList<String>>(vehicleService.getModelsForProducer(producer), HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasRole('REGISTEREDUSER')")
+	@RequestMapping(value = "/api/getBranchOfficesForVehicle/{vehicle}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Set<String>> getBranchOfficesForVehicle(@PathVariable("vehicle") Integer id) {
+		return new ResponseEntity<Set<String>>(vehicleService.getBranchOfficesForVehicle(id), HttpStatus.OK);
 	}
 }
