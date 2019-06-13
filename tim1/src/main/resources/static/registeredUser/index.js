@@ -160,14 +160,6 @@ $(document)
                 $("#showFlightModal").modal();
             });
             
-            $('#reservationsTable tbody').on('click', 'tr', function() {
-                reservationsTable.$('tr.selected').removeClass('selected');
-                $(this).addClass('selected');
-                shownReservation = reservationsTable.row(this).data()[0];
-                loadReservation(shownReservation);
-                $("#showReservationModal").modal();
-            });
-            
             $('#airlinesTable tbody').on('click', 'tr', function() {
             	airlinesTable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
@@ -183,6 +175,17 @@ $(document)
             		var res = resTable.row(this).data()[0];
             		cancelReservation(res);
             	}
+            	else {
+            		reservationsTable.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                    shownReservation = reservationsTable.row(this).data()[0];
+                    loadReservation(shownReservation);
+                    $("#showReservationModal").modal();
+            	}
+            });
+            
+            $('#showReservationModal').on('hidden.bs.modal', function() {
+            	reservationsTable.$('tr.selected').removeClass('selected');
             });
 
             $(".nav li").click(function() {
