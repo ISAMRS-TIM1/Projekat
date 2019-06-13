@@ -243,21 +243,19 @@ public class ReservationService {
 			if (idx[2].equalsIgnoreCase(PlaneSegmentClass.FIRST.toString().substring(0, 1))) {
 				planeSegment = f.getPlaneSegments().stream().
 						filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.FIRST).findFirst().get();
-				st = seatRepository.findOneByRowAndColumnAndPlaneSegment(row, column, planeSegment);
 				price += f.getFirstClassPrice();
 			} else if (idx[2].equalsIgnoreCase(PlaneSegmentClass.BUSINESS.toString().substring(0, 1))) {
 				planeSegment = f.getPlaneSegments().stream().
 						filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.BUSINESS).findFirst().get();
-				st = seatRepository.findOneByRowAndColumnAndPlaneSegment(row, column, planeSegment);
 				price += f.getBusinessClassPrice();
 			} else if (idx[2].equalsIgnoreCase(PlaneSegmentClass.ECONOMY.toString().substring(0, 1))) {
 				planeSegment = f.getPlaneSegments().stream().
 						filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.ECONOMY).findFirst().get();
-				st = seatRepository.findOneByRowAndColumnAndPlaneSegment(row, column, planeSegment);
 				price += f.getEconomyClassPrice();
 			} else {
 				return null;
 			}
+			st = seatRepository.findOneByRowAndColumnAndPlaneSegment(row, column, planeSegment);
 			PassengerSeat ps = new PassengerSeat(p, st);
 			ps.setReservation(fr);
 			fr.getPassengerSeats().add(ps);
@@ -495,21 +493,19 @@ public class ReservationService {
 		if (idx[2].equalsIgnoreCase(PlaneSegmentClass.FIRST.toString().substring(0, 1))) {
 			planeSegment = f.getPlaneSegments().stream().
 					filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.FIRST).findFirst().get();
-			st = seatRepository.findOneByRowAndColumnAndPlaneSegment(row, column, planeSegment);
 			price += f.getFirstClassPrice();
 		} else if (idx[2].equalsIgnoreCase(PlaneSegmentClass.BUSINESS.toString().substring(0, 1))) {
 			planeSegment = f.getPlaneSegments().stream().
 					filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.BUSINESS).findFirst().get();
-			st = seatRepository.findOneByRowAndColumnAndPlaneSegment(row, column, planeSegment);
 			price += f.getBusinessClassPrice();
 		} else if (idx[2].equalsIgnoreCase(PlaneSegmentClass.ECONOMY.toString().substring(0, 1))) {
 			planeSegment = f.getPlaneSegments().stream().
 					filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.ECONOMY).findFirst().get();
-			st = seatRepository.findOneByRowAndColumnAndPlaneSegment(row, column, planeSegment);
 			price += f.getEconomyClassPrice();
 		} else {
 			return null;
 		}
+		st = seatRepository.findOneByRowAndColumnAndPlaneSegment(row, column, planeSegment);
 		PassengerSeat ps = new PassengerSeat(new PassengerDTO("", "", "", 0), st);
 		qfr.setFlight(f);
 		qfr.setDone(false);
