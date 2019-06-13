@@ -92,7 +92,7 @@ public class ReservationController {
 
 	@PreAuthorize("hasRole('HOTELADMIN')")
 	@RequestMapping(value = "/api/createQuickHotelReservation", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MessageDTO> createQuickHotelReservation(QuickHotelReservationDTO hotelRes) {
+	public ResponseEntity<MessageDTO> createQuickHotelReservation(@RequestBody QuickHotelReservationDTO hotelRes) {
 		return new ResponseEntity<MessageDTO>(reservationService.createQuickHotelReservation(hotelRes), HttpStatus.OK);
 	}
 

@@ -11,7 +11,7 @@ public interface RegisteredUserRepository extends JpaRepository<RegisteredUser, 
 
 	RegisteredUser findOneByEmail(String email);
 
-	@Query(value = "select * from users u where u.first_name like ?1 and u.last_name like ?2 and u.email not like ?3", nativeQuery = true)
+	@Query(value = "select * from users u where u.first_name like ?1 and u.last_name like ?2 and u.email not like ?3 and dtype like 'RegisteredUser'", nativeQuery = true)
 	Set<RegisteredUser> findByFirstAndLastName(String firstName, String lastName, String email);
 	
 }

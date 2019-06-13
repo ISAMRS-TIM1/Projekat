@@ -25,9 +25,8 @@ public class RegisteredUserController {
 
 	@PreAuthorize("hasRole('REGISTEREDUSER')")
 	@RequestMapping(value = "/api/searchUsers", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ArrayList<UserDTO> searchUsers(@RequestParam String firstName, @RequestParam String lastName,
-			@RequestParam String email) {
-		return registeredUserService.searchUsers(firstName, lastName, email);
+	public ArrayList<UserDTO> searchUsers(@RequestParam String firstName, @RequestParam String lastName) {
+		return registeredUserService.searchUsers(firstName, lastName);
 	}
 
 	@PreAuthorize("hasRole('REGISTEREDUSER')")

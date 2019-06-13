@@ -62,6 +62,7 @@ import isamrs.tim1.repository.QuickFlightReservationRepository;
 import isamrs.tim1.repository.QuickHotelReservationRepository;
 import isamrs.tim1.repository.QuickVehicleReservationRepository;
 import isamrs.tim1.repository.RentACarRepository;
+import isamrs.tim1.repository.SeatRepository;
 import isamrs.tim1.repository.ServiceRepository;
 import isamrs.tim1.repository.UserRepository;
 import isamrs.tim1.repository.VehicleRepository;
@@ -118,6 +119,9 @@ public class ReservationService {
 
 	@Autowired
 	RentACarRepository rentACarRepository;
+	
+	@Autowired
+	SeatRepository seatRepository;
 
 	public ArrayList<FlightReservationDTO> getReservations() {
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -234,21 +238,24 @@ public class ReservationService {
 			if (checkIfSeatIsReserved(f, row, column)) {
 				return new MessageDTO("One of the seats is already reserved.", ToasterType.ERROR.toString());
 			}
-			Seat st = new Seat();
-			st.setRow(row);
-			st.setColumn(column);
+			Seat st = null;
+			PlaneSegment planeSegment;
 			if (idx[2].equalsIgnoreCase(PlaneSegmentClass.FIRST.toString().substring(0, 1))) {
-				st.setPlaneSegment(new PlaneSegment(PlaneSegmentClass.FIRST));
+				planeSegment = f.getPlaneSegments().stream().
+						filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.FIRST).findFirst().get();
 				price += f.getFirstClassPrice();
 			} else if (idx[2].equalsIgnoreCase(PlaneSegmentClass.BUSINESS.toString().substring(0, 1))) {
-				st.setPlaneSegment(new PlaneSegment(PlaneSegmentClass.BUSINESS));
+				planeSegment = f.getPlaneSegments().stream().
+						filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.BUSINESS).findFirst().get();
 				price += f.getBusinessClassPrice();
 			} else if (idx[2].equalsIgnoreCase(PlaneSegmentClass.ECONOMY.toString().substring(0, 1))) {
-				st.setPlaneSegment(new PlaneSegment(PlaneSegmentClass.ECONOMY));
+				planeSegment = f.getPlaneSegments().stream().
+						filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.ECONOMY).findFirst().get();
 				price += f.getEconomyClassPrice();
 			} else {
 				return null;
 			}
+			st = seatRepository.findOneByRowAndColumnAndPlaneSegment(row, column, planeSegment);
 			PassengerSeat ps = new PassengerSeat(p, st);
 			ps.setReservation(fr);
 			fr.getPassengerSeats().add(ps);
@@ -260,7 +267,6 @@ public class ReservationService {
 		}
 		fr.setPrice(price);
 		fr.setUser(ru);
-		ru.getFlightReservations().add(fr);
 		f.getAirline().getReservations().add(fr);
 		return new MessageDTO("", ToasterType.SUCCESS.toString());
 	}
@@ -482,19 +488,24 @@ public class ReservationService {
 		if (checkIfSeatIsReserved(f, row, column)) {
 			return new MessageDTO("One of the seats is already reserved.", ToasterType.ERROR.toString());
 		}
-		Seat st = new Seat();
-		st.setRow(row);
-		st.setColumn(column);
+		Seat st = null;
+		PlaneSegment planeSegment;
 		if (idx[2].equalsIgnoreCase(PlaneSegmentClass.FIRST.toString().substring(0, 1))) {
-			st.setPlaneSegment(new PlaneSegment(PlaneSegmentClass.FIRST));
-			price = f.getFirstClassPrice();
+			planeSegment = f.getPlaneSegments().stream().
+					filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.FIRST).findFirst().get();
+			price += f.getFirstClassPrice();
 		} else if (idx[2].equalsIgnoreCase(PlaneSegmentClass.BUSINESS.toString().substring(0, 1))) {
-			st.setPlaneSegment(new PlaneSegment(PlaneSegmentClass.BUSINESS));
-			price = f.getBusinessClassPrice();
+			planeSegment = f.getPlaneSegments().stream().
+					filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.BUSINESS).findFirst().get();
+			price += f.getBusinessClassPrice();
 		} else if (idx[2].equalsIgnoreCase(PlaneSegmentClass.ECONOMY.toString().substring(0, 1))) {
-			st.setPlaneSegment(new PlaneSegment(PlaneSegmentClass.ECONOMY));
-			price = f.getEconomyClassPrice();
+			planeSegment = f.getPlaneSegments().stream().
+					filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.ECONOMY).findFirst().get();
+			price += f.getEconomyClassPrice();
+		} else {
+			return null;
 		}
+		st = seatRepository.findOneByRowAndColumnAndPlaneSegment(row, column, planeSegment);
 		PassengerSeat ps = new PassengerSeat(new PassengerDTO("", "", "", 0), st);
 		qfr.setFlight(f);
 		qfr.setDone(false);
@@ -686,7 +697,6 @@ public class ReservationService {
 			return new ResponseEntity<MessageDTO>(new MessageDTO("You can not cancel flight reservation which is done.",
 					ToasterType.ERROR.toString()), HttpStatus.OK);
 		}
-		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Airline a = fr.getFlight().getAirline();
 		a.getReservations().removeIf(f -> f.getId().longValue() == fr.getId().longValue());
 
@@ -722,13 +732,14 @@ public class ReservationService {
 			serviceRepository.save(rac);
 		}
 
-		ru.getFlightReservations().removeIf(u -> u.getId().longValue() == fr.getId().longValue());
-		userRepository.save(ru);
+		fr.getPassengerSeats().stream().forEach(passSeat -> passengerSeatRepository.delete(passSeat));
+		flightReservationRepository.delete(fr);
 		serviceRepository.save(a);
 		return new ResponseEntity<MessageDTO>(
 				new MessageDTO("Successfully canceled reservation.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
 	}
 
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
 	public MessageDTO reserveQuickFlightReservation(FlightReservationDTO flightRes) {
 		QuickFlightReservation qfr = quickFlightReservationRepository.findById(flightRes.getQuickReservationID())
 				.orElse(null);

@@ -160,14 +160,6 @@ $(document)
                 $("#showFlightModal").modal();
             });
             
-            $('#reservationsTable tbody').on('click', 'tr', function() {
-                reservationsTable.$('tr.selected').removeClass('selected');
-                $(this).addClass('selected');
-                shownReservation = reservationsTable.row(this).data()[0];
-                loadReservation(shownReservation);
-                $("#showReservationModal").modal();
-            });
-            
             $('#airlinesTable tbody').on('click', 'tr', function() {
             	airlinesTable.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
@@ -183,6 +175,17 @@ $(document)
             		var res = resTable.row(this).data()[0];
             		cancelReservation(res);
             	}
+            	else {
+            		reservationsTable.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                    shownReservation = reservationsTable.row(this).data()[0];
+                    loadReservation(shownReservation);
+                    $("#showReservationModal").modal();
+            	}
+            });
+            
+            $('#showReservationModal').on('hidden.bs.modal', function() {
+            	reservationsTable.$('tr.selected').removeClass('selected');
             });
 
             $(".nav li").click(function() {
@@ -210,45 +213,24 @@ $(document)
                                 'readonly', 'true');
                         }
                     });
+            
+            $('#friendsTable tbody').on('click', 'tr', function(event) {
+            	var tgt = $(event.target);
+            	var table = $("#friendsTable").DataTable();
+            	if (tgt[0].innerHTML == "Accept") {
+                    acceptInvitation(table.row(this).data()[0], table.row(this).index());
+                } else if (tgt[0].innerHTML == "Decline") {
+                	declineInvitation(table.row(this).data()[0], table.row(this).index());
+                }
+            });
 
-            $('#friendsTable tbody')
-                .on(
-                    'click',
-                    'td',
-                    function(event) {
-                        var tgt = $(event.target);
-                        if (tgt[0].innerHTML == "Accept") {
-                            var table = $("#friendsTable")
-                                .DataTable();
-                            var rowData = table.cell(this)
-                                .row().data();
-                            acceptInvitation(rowData[0], table
-                                .cell(this).row().index());
-                        } else if (tgt[0].innerHTML == "Decline") {
-                            var table = $("#friendsTable")
-                                .DataTable();
-                            var rowData = table.cell(this)
-                                .row().data();
-                            declineInvitation(rowData[0], table
-                                .cell(this).row().index());
-                        }
-                    });
-
-            $('#usersTable tbody')
-                .on(
-                    'click',
-                    'td',
-                    function(event) {
-                        var tgt = $(event.target);
-                        if (tgt[0].id == "sendInvButton") {
-                            var table = $("#usersTable")
-                                .DataTable();
-                            var rowData = table.cell(this)
-                                .row().data();
-                            friendInvitation(rowData[0],
-                                tgt[0].parentElement.id);
-                        }
-                    });
+            $('#usersTable tbody').on('click', 'tr', function(event) {
+            	var tgt = $(event.target);
+                if (tgt[0].id == "sendInvButton") {
+                    var table = $("#usersTable").DataTable();
+                    friendInvitation(table.row(this).data()[0], tgt[0].parentElement.id);
+                }
+            });
 
             $("#searchUserForm")
                 .submit(
@@ -265,8 +247,7 @@ $(document)
                                 contentType: 'application/json',
                                 data: {
                                     "firstName": firstName,
-                                    "lastName": lastName,
-                                    "email": userMail
+                                    "lastName": lastName
                                 },
                                 success: function(data) {
                                     var table = $(

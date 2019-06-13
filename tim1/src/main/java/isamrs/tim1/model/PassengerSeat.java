@@ -2,7 +2,6 @@ package isamrs.tim1.model;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,7 +29,7 @@ public class PassengerSeat implements Serializable {
 	@JoinColumn(name = "reservations")
 	private FlightReservation reservations;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "seat")
 	private Seat seat;
 
