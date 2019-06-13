@@ -414,8 +414,9 @@ $(document)
                 let endDate = emptyToNull($('#endYear').val());
                 let minGrade = $("#vehicleGrade").slider('getValue')[0];
                 let maxGrade = $("#vehicleGrade").slider('getValue')[1];
-
-                searchVehicles(producer, models, vehicleTypes, fuelTypes, priceTo, numberOfSeats, startDate, endDate, minGrade, maxGrade);
+                let country = $("#vehicleCountry").val();
+                
+                searchVehicles(producer, models, vehicleTypes, fuelTypes, priceTo, numberOfSeats, startDate, endDate, minGrade, maxGrade, country);
             });
 
             $('#vehiclesTable').DataTable({
@@ -618,7 +619,7 @@ function emptyToNull(value) {
     }
 }
 
-function vehicleSearchFormToJSON(producer, models, vehicleTypes, fuelTypes, priceMax, numberOfSeats, startDate, endDate, minGrade, maxGrade) {
+function vehicleSearchFormToJSON(producer, models, vehicleTypes, fuelTypes, priceMax, numberOfSeats, startDate, endDate, minGrade, maxGrade, country) {
     return JSON.stringify({
         "producer": producer,
         "models": models,
@@ -629,17 +630,18 @@ function vehicleSearchFormToJSON(producer, models, vehicleTypes, fuelTypes, pric
         "startDate": startDate,
         "endDate": endDate,
         "minGrade": minGrade,
-        "maxGrade": maxGrade
+        "maxGrade": maxGrade,
+        "country": country
     });
 }
 
-function searchVehicles(producer, models, vehicleTypes, fuelTypes, priceMax, numberOfSeats, startDate, endDate, minGrade, maxGrade) {
+function searchVehicles(producer, models, vehicleTypes, fuelTypes, priceMax, numberOfSeats, startDate, endDate, minGrade, maxGrade, country) {
     $.ajax({
         type: 'POST',
         url: searchVehiclesURL,
         headers : createAuthorizationTokenHeader(tokenKey),
         contentType: "application/json",
-        data: vehicleSearchFormToJSON(producer, models, vehicleTypes, fuelTypes, priceMax, numberOfSeats, startDate, endDate, minGrade, maxGrade),
+        data: vehicleSearchFormToJSON(producer, models, vehicleTypes, fuelTypes, priceMax, numberOfSeats, startDate, endDate, minGrade, maxGrade, country),
         success: function(data) {
             if (data != null) {
                 let table = $('#vehiclesTable').DataTable();

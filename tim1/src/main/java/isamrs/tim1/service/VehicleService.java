@@ -92,11 +92,19 @@ public class VehicleService {
 			maxYear = vehicle.getEndDate().intValue();
 		}
 
-		ArrayList<Vehicle> searchResults = vehicleRepository.searchByParameters(producers, models, fuelTypes,
-				vehicleTypes, maxPrice, minYear, maxYear, vehicle.getMinGrade(), vehicle.getMaxGrade(), seats);
+		double minGrade = vehicle.getMinGrade();
+		double maxGrade = vehicle.getMaxGrade();
+		String country = vehicle.getCountry();
+
+		Set<Vehicle> searchResultsBranch = vehicleRepository.searchByParametersBranch(producers, models, fuelTypes,
+				vehicleTypes, maxPrice, minYear, maxYear, minGrade, maxGrade, seats, country);
+
+		searchResultsBranch.addAll(vehicleRepository.searchByParametersRentacar(producers, models, fuelTypes,
+				vehicleTypes, maxPrice, minYear, maxYear, minGrade, maxGrade, seats, country));
 
 		ArrayList<VehicleDTO> returnValue = new ArrayList<VehicleDTO>();
-		for (Vehicle v : searchResults) {
+
+		for (Vehicle v : searchResultsBranch) {
 			returnValue.add(new VehicleDTO(v));
 		}
 

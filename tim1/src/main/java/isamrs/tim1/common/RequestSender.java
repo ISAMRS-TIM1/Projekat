@@ -28,6 +28,7 @@ public class RequestSender {
 		url.set("lon", longitude);
 		url.set("zoom", "18");
 		url.set("addressdetails", "1");
+		url.set("accept-language", "en-gb");
 		HttpRequest request = requestFactory.buildGetRequest(url);
 		try {
 			GeoResponse response = request.execute().parseAs(GeoResponse.class);

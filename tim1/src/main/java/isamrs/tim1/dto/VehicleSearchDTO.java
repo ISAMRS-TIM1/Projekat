@@ -1,8 +1,13 @@
 package isamrs.tim1.dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class VehicleSearchDTO {
+public class VehicleSearchDTO implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6050883421806931996L;
 	private String producer;
 	private ArrayList<String> models;
 	private ArrayList<String> vehicleTypes;
@@ -13,6 +18,7 @@ public class VehicleSearchDTO {
 	private Integer endDate;
 	private double minGrade;
 	private double maxGrade;
+	private String country;
 
 	public VehicleSearchDTO() {
 		super();
@@ -96,5 +102,13 @@ public class VehicleSearchDTO {
 
 	public void setEndDate(Integer endDate) {
 		this.endDate = endDate;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
 	}
 }
