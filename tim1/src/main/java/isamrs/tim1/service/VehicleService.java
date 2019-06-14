@@ -95,11 +95,11 @@ public class VehicleService {
 		double minGrade = vehicle.getMinGrade();
 		double maxGrade = vehicle.getMaxGrade();
 		String country = vehicle.getCountry();
-		
-		if("".equals(country)) {
+
+		if ("".equals(country)) {
 			country = "%";
 		}
-		
+
 		Set<Vehicle> searchResultsBranch = vehicleRepository.searchByParametersBranch(producers, models, fuelTypes,
 				vehicleTypes, maxPrice, minYear, maxYear, minGrade, maxGrade, seats, country);
 
@@ -294,5 +294,9 @@ public class VehicleService {
 
 	public Set<String> getBranchOfficesForVehicle(Integer vehicleID) {
 		return vehicleRepository.branchOfficesForVehicle(vehicleID);
+	}
+
+	public String checkCountry(String branch, Integer vehicle) {
+		return vehicleRepository.checkCountry(branch, vehicle);
 	}
 }

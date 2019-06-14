@@ -37,6 +37,7 @@ const searchVehiclesURL = "/api/searchVehicles";
 const getQuickReservationsForVehicleURL = "/api/getQuickReservationsForVehicle/";
 const checkVehicleForPeriodURL = "/api/checkVehicleForPeriod";
 const getBranchOfficesForVehicleURL = "/api/getBranchOfficesForVehicle/";
+const checkCountryURL = "/api/checkCountry/";
 
 const reserveFlightURL = "/api/reserveFlight";
 const reserveFlightHotelURL = "/api/reserveFlightHotel";
@@ -465,6 +466,13 @@ $(document)
             $("#rvButton").click(function(e) {
             	e.preventDefault();
             	
+            	let branch = $("#vehicleBranchOffices").val();
+            	
+            	if(!checkCountry(branch, currentVehicleID)){
+            		toastr["error"]("Branch office country must be same as flight destination country");
+            		return;
+            	}
+            	
             	let start = $("#vrstartDate").val();
             	
             	if(start == null) {
@@ -479,9 +487,27 @@ $(document)
             		return;
             	}
             	
-            	checkVehicleForPeriod(currentVehicleID, start, end, currentVehicleProducer, currentVehicleModel);
+            	checkVehicleForPeriod(currentVehicleID, start, end, currentVehicleProducer, currentVehicleModel, branch);
             });
         });
+
+function checkCountry(branchOffice, vehicle){
+	$.ajax({
+        type: 'GET',
+        url: checkCountryURL + branchOffice + "/" + vehicle,
+        headers: createAuthorizationTokenHeader(tokenKey),
+        contentType: "application/json",
+        dataType: "text",
+        success: function(data) {
+        	if(localStorage.get("countryName") !== null && data === localStorage.get("countryName"))
+        		return true;
+        	return false;
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            alert("AJAX ERROR: " + textStatus);
+        }
+    });
+}
 
 function getBranchOfficesForVehicle(id){
 	$.ajax({
@@ -489,6 +515,7 @@ function getBranchOfficesForVehicle(id){
         url: getBranchOfficesForVehicleURL + id,
         headers: createAuthorizationTokenHeader(tokenKey),
         contentType: "application/json",
+        dataType: "json",
         success: function(data) {
         	var select = $("#vehicleBranchOffices");
         	select.empty();
@@ -524,7 +551,7 @@ function getAirlines() {
     });
 }
 
-function checkVehicleForPeriod(vehicleID, start, end, vehicleProducer, vehicleModel) {
+function checkVehicleForPeriod(vehicleID, start, end, vehicleProducer, vehicleModel, branch) {
 	$.ajax({
         type: 'POST',
         url: checkVehicleForPeriodURL,
@@ -538,8 +565,7 @@ function checkVehicleForPeriod(vehicleID, start, end, vehicleProducer, vehicleMo
         				'toDate' : end,
         				'vehicleProducer' : vehicleProducer,
         				'vehicleModel' : vehicleModel,
-        				'branchOfficeName' : null, // will be added after
-													// reverse geocoding
+        				'branchOfficeName' : branch,
         				'discount': null,
         				'quickVehicleReservationID': null
         				};
@@ -582,7 +608,7 @@ function getQuickReservationsForVehicle(id) {
                     	moment(quickReservation.fromDate).format("DD/MM/YYYY"),
                     	moment(quickReservation.toDate).format("DD/MM/YYYY"),
                     	quickReservation.discount,
-                    	"<button onclick='reserveQuickVehicleReservation(" + quickReservation.quickVehicleReservationID + ")' class='btn btn-default reserve' type='button'>Reserve</a>"
+                    	"<button onclick='reserveQuickVehicleReservation(" + quickReservation.quickVehicleReservationID + "," + quickReservation.branchOfficeName + ")' class='btn btn-default reserve' type='button'>Reserve</a>"
                     ]).draw(false);
         		}
         },
@@ -592,7 +618,12 @@ function getQuickReservationsForVehicle(id) {
     });
 }
 
-function reserveQuickVehicleReservation(reservationID) {
+function reserveQuickVehicleReservation(reservationID, branchOffice) {
+	if(!checkCountry(branchOffice, currentVehicleID)){
+		toastr["error"]("Branch office country must be same as flight destination country");
+		return;
+	}
+		
 	var carRes = {
 			'fromDate' : null,
 			'toDate' : null,

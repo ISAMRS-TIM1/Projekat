@@ -90,4 +90,11 @@ public class VehicleController {
 	public ResponseEntity<Set<String>> getBranchOfficesForVehicle(@PathVariable("vehicle") Integer id) {
 		return new ResponseEntity<Set<String>>(vehicleService.getBranchOfficesForVehicle(id), HttpStatus.OK);
 	}
+
+	@PreAuthorize("hasRole('REGISTEREDUSER')")
+	@RequestMapping(value = "/api/checkCountry/{branch}/{vehicle}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+	public ResponseEntity<String> getBranchOfficesForVehicle(@PathVariable("branch") String branch,
+			@PathVariable("vehicle") Integer vehicle) {
+		return new ResponseEntity<String>(vehicleService.checkCountry(branch, vehicle), HttpStatus.OK);
+	}
 }

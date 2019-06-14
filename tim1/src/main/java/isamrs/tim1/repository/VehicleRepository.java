@@ -32,4 +32,7 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 
 	@Query(value = "select distinct bo.name from vehicles v inner join branch_offices bo on v.rentacar = bo.rentacar where v.vehicle_id = ?1 and bo.deleted = false", nativeQuery = true)
 	Set<String> branchOfficesForVehicle(Integer vehicleId);
+
+	@Query(value = "select l.country from vehicles v inner join branch_offices bo on v.rentacar = bo.rentacar inner join locations l on bo.location = l.location_id where v.vehicle_id = ?2 and bo.name = ?1", nativeQuery = true)
+	String checkCountry(String branch, Integer vehicle);
 }
