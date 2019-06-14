@@ -34,6 +34,7 @@ import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.AirlineAdmin;
 import isamrs.tim1.model.BranchOffice;
 import isamrs.tim1.model.Flight;
+import isamrs.tim1.model.FlightInvitation;
 import isamrs.tim1.model.FlightReservation;
 import isamrs.tim1.model.Hotel;
 import isamrs.tim1.model.HotelAdditionalService;
@@ -53,6 +54,7 @@ import isamrs.tim1.model.Seat;
 import isamrs.tim1.model.Vehicle;
 import isamrs.tim1.model.VehicleReservation;
 import isamrs.tim1.repository.BranchOfficeRepository;
+import isamrs.tim1.repository.FlightInvitationRepository;
 import isamrs.tim1.repository.FlightRepository;
 import isamrs.tim1.repository.FlightReservationRepository;
 import isamrs.tim1.repository.HotelAdditionalServicesRepository;
@@ -122,6 +124,9 @@ public class ReservationService {
 	
 	@Autowired
 	SeatRepository seatRepository;
+	
+	@Autowired
+	FlightInvitationRepository flightInvitationRepository;
 
 	public ArrayList<FlightReservationDTO> getReservations() {
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -262,7 +267,7 @@ public class ReservationService {
 			counter++;
 		}
 		for (String email : flightRes.getInvitedFriends()) {
-			inviteFriendToFlight(email, flightRes, f, counter, ru.getEmail());
+			inviteFriendToFlight(email, flightRes, f.getFlightCode(), counter, ru.getEmail());
 			counter++;
 		}
 		fr.setPrice(price);
@@ -378,33 +383,44 @@ public class ReservationService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-	private void inviteFriendToFlight(String email, FlightReservationDTO flightRes, Flight f, int counter,
+	private void inviteFriendToFlight(String email, FlightReservationDTO flightRes, String flightCode, int counter,
 			String inviter) {
 		RegisteredUser friend = (RegisteredUser) userRepository.findOneByEmail(email);
 		FlightReservation fRes = new FlightReservation();
+		Flight f = flightRepository.findOneByFlightCode(flightCode);
 		fRes.setFlight(f);
 		fRes.setDone(false);
 		fRes.setDateOfReservation(new Date());
 		double price = 0.0;
 		String[] idx = flightRes.getSeats()[counter].split("_");
-		Seat st = new Seat();
-		st.setRow(Integer.parseInt(idx[0]));
-		st.setColumn(Integer.parseInt(idx[1]));
+		int row = Integer.parseInt(idx[0]);
+		int column = Integer.parseInt(idx[1]);
+		Seat st = null;
+		PlaneSegment planeSegment = null;
 		if (idx[2].equalsIgnoreCase(PlaneSegmentClass.FIRST.toString().substring(0, 1))) {
-			st.setPlaneSegment(new PlaneSegment(PlaneSegmentClass.FIRST));
+			planeSegment = f.getPlaneSegments().stream().
+					filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.FIRST).findFirst().get();
 			price += f.getFirstClassPrice();
 		} else if (idx[2].equalsIgnoreCase(PlaneSegmentClass.BUSINESS.toString().substring(0, 1))) {
-			st.setPlaneSegment(new PlaneSegment(PlaneSegmentClass.BUSINESS));
+			planeSegment = f.getPlaneSegments().stream().
+					filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.BUSINESS).findFirst().get();
 			price += f.getBusinessClassPrice();
 		} else if (idx[2].equalsIgnoreCase(PlaneSegmentClass.ECONOMY.toString().substring(0, 1))) {
-			st.setPlaneSegment(new PlaneSegment(PlaneSegmentClass.ECONOMY));
+			planeSegment = f.getPlaneSegments().stream().
+					filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.ECONOMY).findFirst().get();
 			price += f.getEconomyClassPrice();
 		}
+		st = seatRepository.findOneByRowAndColumnAndPlaneSegment(row, column, planeSegment);
 		PassengerSeat ps = new PassengerSeat(new PassengerDTO(friend.getFirstName(), friend.getLastName(), "", 0), st);
 		ps.setReservation(fRes);
 		fRes.setPrice(price);
 		fRes.getPassengerSeats().add(ps);
-		friend.getInvitingReservations().add(fRes);
+		FlightInvitation flightInv = new FlightInvitation();
+		flightInv.setDateOfInviting(new Date());
+		flightInv.setFlightReservation(fRes);
+		flightInv.setInviter((RegisteredUser) userRepository.findOneByEmail(inviter));
+		flightInv.setInvited(friend);
+		friend.getInvitingReservations().add(flightInv);
 		f.getAirline().getReservations().add(fRes);
 		flightReservationRepository.save(fRes);
 		userRepository.save(friend);
@@ -412,15 +428,17 @@ public class ReservationService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-	public ResponseEntity<MessageDTO> acceptFlightInvitation(String id) {
-		Long resID = Long.parseLong(id);
+	public ResponseEntity<MessageDTO> acceptFlightInvitation(FlightReservationDTO fRes) {
+		Long resID = fRes.getId();
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		FlightReservation fr = null;
-		Set<FlightReservation> res = ru.getInvitingReservations();
-		for (FlightReservation fRes : res) {
-			if (fRes.getId().longValue() == resID) {
-				fr = fRes;
-				res.remove(fRes);
+		FlightInvitation fInvit = null;
+		Set<FlightInvitation> res = ru.getInvitingReservations();
+		for (FlightInvitation fInv : res) {
+			if (fInv.getFlightReservation().getId().longValue() == resID) {
+				fr = fInv.getFlightReservation();
+				fInvit = fInv;
+				res.remove(fInv);
 				break;
 			}
 		}
@@ -428,10 +446,14 @@ public class ReservationService {
 			return new ResponseEntity<MessageDTO>(
 					new MessageDTO("Reservation does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
 		}
-		
+		fr.getPassengerSeats().forEach(p -> {
+			p.setPassport(fRes.getPassengers()[0].getPassport());
+		});
+		fr.setPrice(fr.getPrice() + fRes.getPassengers()[0].getNumberOfBags() * fr.getFlight().getPricePerBag());
 		fr.setUser(ru);
 		ru.getFlightReservations().add(fr);
 		userRepository.save(ru);
+		flightInvitationRepository.delete(fInvit);
 		return new ResponseEntity<MessageDTO>(
 				new MessageDTO("Successfully accepted reservation.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
 	}
@@ -440,11 +462,11 @@ public class ReservationService {
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		ArrayList<InvitingReservationDTO> invitingReservations = new ArrayList<InvitingReservationDTO>();
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-		for (FlightReservation fr : ru.getInvitingReservations()) {
-			String description = fr.getFlight().getStartDestination().getName() + "-"
-					+ fr.getFlight().getEndDestination().getName() + " "
-					+ sdf.format(fr.getFlight().getDepartureTime());
-			invitingReservations.add(new InvitingReservationDTO(fr.getId(), description));
+		for (FlightInvitation fInv : ru.getInvitingReservations()) {
+			String description = fInv.getFlightReservation().getFlight().getStartDestination().getName() + "-"
+					+ fInv.getFlightReservation().getFlight().getEndDestination().getName() + " "
+					+ sdf.format(fInv.getFlightReservation().getFlight().getDepartureTime());
+			invitingReservations.add(new InvitingReservationDTO(fInv.getFlightReservation().getId(), description));
 		}
 		return invitingReservations;
 	}
@@ -454,11 +476,13 @@ public class ReservationService {
 		long resID = Long.parseLong(id);
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		FlightReservation fr = null;
-		Set<FlightReservation> res = ru.getInvitingReservations();
-		for (FlightReservation fRes : res) {
-			if (fRes.getId().longValue() == resID) {
-				fr = fRes;
-				res.remove(fRes);
+		FlightInvitation fInvit = null;
+		Set<FlightInvitation> res = ru.getInvitingReservations();
+		for (FlightInvitation fInv : res) {
+			if (fInv.getFlightReservation().getId().longValue() == resID) {
+				fr = fInv.getFlightReservation();
+				fInvit = fInv;
+				res.remove(fInv);
 				break;
 			}
 		}
@@ -470,6 +494,7 @@ public class ReservationService {
 		a.getReservations().removeIf(r -> r.getId().longValue() == resID);
 		userRepository.save(ru);
 		serviceRepository.save(a);
+		flightInvitationRepository.delete(fInvit);
 		return new ResponseEntity<MessageDTO>(
 				new MessageDTO("Successfully declined reservation.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
 	}
@@ -748,19 +773,20 @@ public class ReservationService {
 		if (qfr.getUser() != null) {
 			return new MessageDTO("Quick flight reservation is already taken.", ToasterType.ERROR.toString());
 		}
+		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		qfr.setDone(false);
 		qfr.setDateOfReservation(new Date());
 		String userPassport = flightRes.getPassengers()[0].getPassport();
 		int numOfBags = flightRes.getPassengers()[0].getNumberOfBags();
 		double price = numOfBags * qfr.getFlight().getPricePerBag();
 		qfr.getPassengerSeats().forEach(p -> {
-			p.setName(flightRes.getPassengers()[0].getFirstName());
-			p.setSurname(flightRes.getPassengers()[0].getLastName());
+			p.setName(ru.getFirstName());
+			p.setSurname(ru.getLastName());
 			p.setPassport(userPassport);
 			p.setReservation(qfr);
 		});
 		qfr.setPrice(qfr.getPrice() + price);
-		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
 		ru.getFlightReservations().add(qfr);
 		qfr.setUser(ru);
 		userRepository.save(ru);

@@ -66,7 +66,6 @@ $(document)
             getAirlines();
             setUpToastr();
             getDestinations();
-            getReservations();
             
             localStorage.removeItem("flightReservation");
             localStorage.removeItem("flightRes");
@@ -317,6 +316,10 @@ $(document)
 
             $('a[href="#profile"]').click(function() {
                 loadData();
+            });
+            
+            $('a[href="#reservations"]').click(function() {
+                getReservations();
             });
 
             $('a[data-toggle="tab"]')
@@ -2017,6 +2020,9 @@ function getPassportAndBags(e) {
     if (isNaN(numOfBags) || numOfBags < 0) {
         toastr["error"]("Invalid number of bags.");
         return;
+    }
+    if (numOfBags === "") {
+    	numOfBags = 0;
     }
     var quickFlightReservation = JSON.parse(localStorage.getItem("quickFlightReservation"));
     quickFlightReservation["passengers"][0]["passport"] = userPass;
