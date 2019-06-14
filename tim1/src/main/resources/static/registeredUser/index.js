@@ -1415,6 +1415,7 @@ function loadFlight(code) {
                 localStorage.setItem("flightCode", code);
                 localStorage.setItem("startDest", data["startDestination"]);
                 localStorage.setItem("endDest", data["endDestination"]);
+                localStorage.setItem("countryName", data["countryName"]);
                 localStorage.setItem("flightDate", data["departureTime"]);
                 $("#startDest").text(data["startDestination"]);
                 $("#endDest").text(data["endDestination"]);

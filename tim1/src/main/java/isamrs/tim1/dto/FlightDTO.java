@@ -25,6 +25,7 @@ public class FlightDTO implements Serializable {
 	private String endDestination;
 	private Double averageGrade;
 	private String flightCode;
+	private String countryName;
 	private ArrayList<String> reservedSeats;
 	private ArrayList<PlaneSegment> planeSegments;
 	
@@ -48,6 +49,7 @@ public class FlightDTO implements Serializable {
 		this.connections = f.getLocationsOfConnecting().toArray(this.connections);
 		this.averageGrade = f.getAverageGrade();
 		this.flightCode = f.getFlightCode();
+		this.countryName = f.getEndDestination().getLocation().getCountry();
 		this.planeSegments = new ArrayList<PlaneSegment>(f.getPlaneSegments());
 		this.reservedSeats = new ArrayList<String>();
 		for (FlightReservation r : f.getAirline().getReservations()) {
@@ -198,6 +200,14 @@ public class FlightDTO implements Serializable {
 
 	public void setPlaneSegments(ArrayList<PlaneSegment> planeSegments) {
 		this.planeSegments = planeSegments;
+	}
+
+	public String getCountryName() {
+		return countryName;
+	}
+
+	public void setCountryName(String countryName) {
+		this.countryName = countryName;
 	}
 
 	public PlaneSegment getPlaneSegmentByClass(PlaneSegmentClass segmentClass) {
