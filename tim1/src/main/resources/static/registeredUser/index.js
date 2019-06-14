@@ -66,7 +66,6 @@ $(document)
             getAirlines();
             setUpToastr();
             getDestinations();
-            getReservations();
             
             localStorage.removeItem("flightReservation");
             localStorage.removeItem("flightRes");
@@ -317,6 +316,10 @@ $(document)
 
             $('a[href="#profile"]').click(function() {
                 loadData();
+            });
+            
+            $('a[href="#reservations"]').click(function() {
+                getReservations();
             });
 
             $('a[data-toggle="tab"]')

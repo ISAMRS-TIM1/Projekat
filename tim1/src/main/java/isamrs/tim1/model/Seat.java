@@ -1,7 +1,5 @@
 package isamrs.tim1.model;
 
-import java.io.Serializable;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,9 +15,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Seat implements Serializable {
-
-	private static final long serialVersionUID = -577061793806755543L;
+public class Seat {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

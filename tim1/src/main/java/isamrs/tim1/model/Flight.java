@@ -1,6 +1,5 @@
 package isamrs.tim1.model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -21,9 +20,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "Flights")
-public class Flight implements Serializable {
+public class Flight {
 
-	private static final long serialVersionUID = 1677775975446148913L;
 
 	public Flight() {
 		super();
