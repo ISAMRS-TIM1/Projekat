@@ -95,6 +95,18 @@ public class FlightService {
 		flight.setNumberOfFlightConnections(flightDTO.getConnections().length);
 		flight.setLocationsOfConnecting(new ArrayList<String>(Arrays.asList(flightDTO.getConnections())));
 		flight.setAverageGrade(0.0);
+		if (flightDTO.isRoundTrip()) {
+			flight.setRoundTrip(true);
+			try {
+				flight.setReturningDepartureTime(sdf.parse(flightDTO.getReturningDepartureTime()));
+				flight.setReturningLandingTime(sdf.parse(flightDTO.getReturningLandingTime()));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		else {
+			flight.setRoundTrip(false);
+		}
 		flight.setAirline(a);
 		a.getFlights().add(flight);
 		flightRepository.save(flight);

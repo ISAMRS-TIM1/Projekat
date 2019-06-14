@@ -83,6 +83,15 @@ public class Flight {
 	
 	@OneToMany(mappedBy = "flight", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<PlaneSegment> planeSegments;
+	
+	@Column(name = "roundTrip", unique = false, nullable = false)
+	private boolean roundTrip;
+	
+	@Column(name = "returningDepartureTime", unique = false, nullable = true)
+	private Date returningDepartureTime;
+
+	@Column(name = "returningLandingTime", unique = false, nullable = true)
+	private Date returningLandingTime;
 
 	public Long getId() {
 		return id;
@@ -218,5 +227,29 @@ public class Flight {
 
 	public void setPlaneSegments(Set<PlaneSegment> planeSegments) {
 		this.planeSegments = planeSegments;
+	}
+
+	public boolean isRoundTrip() {
+		return roundTrip;
+	}
+
+	public void setRoundTrip(boolean roundTrip) {
+		this.roundTrip = roundTrip;
+	}
+
+	public Date getReturningDepartureTime() {
+		return returningDepartureTime;
+	}
+
+	public void setReturningDepartureTime(Date returningDepartureTime) {
+		this.returningDepartureTime = returningDepartureTime;
+	}
+
+	public Date getReturningLandingTime() {
+		return returningLandingTime;
+	}
+
+	public void setReturningLandingTime(Date returningLandingTime) {
+		this.returningLandingTime = returningLandingTime;
 	}
 }

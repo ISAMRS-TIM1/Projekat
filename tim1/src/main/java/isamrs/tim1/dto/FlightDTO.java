@@ -28,6 +28,9 @@ public class FlightDTO implements Serializable {
 	private String countryName;
 	private ArrayList<String> reservedSeats;
 	private ArrayList<PlaneSegment> planeSegments;
+	private boolean roundTrip;
+	private String returningDepartureTime;
+	private String returningLandingTime;
 	
 	public FlightDTO() {
 		super();
@@ -45,6 +48,9 @@ public class FlightDTO implements Serializable {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 		this.landingTime = sdf.format(f.getLandingTime());
 		this.departureTime = sdf.format(f.getDepartureTime());
+		this.roundTrip = f.isRoundTrip();
+		this.returningDepartureTime = sdf.format(f.getReturningDepartureTime());
+		this.returningLandingTime = sdf.format(f.getReturningLandingTime());
 		this.connections = new String[f.getLocationsOfConnecting().size()];
 		this.connections = f.getLocationsOfConnecting().toArray(this.connections);
 		this.averageGrade = f.getAverageGrade();
@@ -208,6 +214,30 @@ public class FlightDTO implements Serializable {
 
 	public void setCountryName(String countryName) {
 		this.countryName = countryName;
+	}
+
+	public boolean isRoundTrip() {
+		return roundTrip;
+	}
+
+	public void setRoundTrip(boolean roundTrip) {
+		this.roundTrip = roundTrip;
+	}
+
+	public String getReturningDepartureTime() {
+		return returningDepartureTime;
+	}
+
+	public void setReturningDepartureTime(String returningDepartureTime) {
+		this.returningDepartureTime = returningDepartureTime;
+	}
+
+	public String getReturningLandingTime() {
+		return returningLandingTime;
+	}
+
+	public void setReturningLandingTime(String returningLandingTime) {
+		this.returningLandingTime = returningLandingTime;
 	}
 
 	public PlaneSegment getPlaneSegmentByClass(PlaneSegmentClass segmentClass) {
