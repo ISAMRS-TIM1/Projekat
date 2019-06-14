@@ -2,6 +2,10 @@ body {
 	background: #0D63FF;
 }
 
+.modal-body, .modal-header {
+	background: #548cf1;	
+}
+
 #content {
 	width: 70% !important;
 	height: 30vw !important;
