@@ -52,6 +52,8 @@ var shownHotel = null;
 var shownReservation = null;
 var hotelReservation = null;
 
+var error = false;
+
 $(document)
     .ready(
         function() {
@@ -468,21 +470,26 @@ $(document)
             	
             	let branch = $("#vehicleBranchOffices").val();
             	
-            	if(!checkCountry(branch, currentVehicleID)){
-            		toastr["error"]("Branch office country must be same as flight destination country");
+            	checkCountry(branch, currentVehicleID);
+            	
+            	if(error){
+            		error = false;
             		return;
             	}
             	
             	let start = $("#vrstartDate").val();
             	
-            	if(start == null) {
+            	if(start === null || start === "") {
             		toastr["error"]("Start date must have a value");
+            		return;
+            	} else if(!moment(localStorage.getItem("landingTime")).isSame(start)){
+            		toastr["error"]("Vehicle reservation start date must be same as flight landing date");
             		return;
             	}
             	
             	let end = $("#vrendDate").val();
             	
-            	if(end == null) {
+            	if(end === null || end === "") {
             		toastr["error"]("End date must have a value");
             		return;
             	}
@@ -498,10 +505,17 @@ function checkCountry(branchOffice, vehicle){
         headers: createAuthorizationTokenHeader(tokenKey),
         contentType: "application/json",
         dataType: "text",
+        async: false,
         success: function(data) {
-        	if(localStorage.get("countryName") !== null && data === localStorage.get("countryName"))
-        		return true;
-        	return false;
+        	var country = localStorage.getItem("countryName");
+        	
+        	if(country === null){
+        		toastr["error"]("Flight must be reserved first");
+        		error = true;
+        	} else if(data !== country){
+        		toastr["error"]("Branch office country must be same as flight destination country");
+        		error = true;
+        	}
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
             alert("AJAX ERROR: " + textStatus);
@@ -586,8 +600,8 @@ function checkVehicleForPeriod(vehicleID, start, end, vehicleProducer, vehicleMo
 function checkVehicleToJSON(vehicleID, start, end) {
 	return JSON.stringify({
         "vehicleID": vehicleID,
-        "start": start,
-        "end": end
+        "start": moment(start, "YYYY-MM-DD"),
+        "end": moment(end, "YYYY-MM-DD")
     });
 }
 
@@ -619,11 +633,13 @@ function getQuickReservationsForVehicle(id) {
 }
 
 function reserveQuickVehicleReservation(reservationID, branchOffice) {
-	if(!checkCountry(branchOffice, currentVehicleID)){
-		toastr["error"]("Branch office country must be same as flight destination country");
+	checkCountry(branch, currentVehicleID);
+	
+	if(error){
+		error = false;
 		return;
 	}
-		
+	
 	var carRes = {
 			'fromDate' : null,
 			'toDate' : null,
@@ -1475,6 +1491,7 @@ function loadFlight(code) {
                 $("#flightAirline").text(data["airlineName"]);
                 var date1 = moment(data["departureTime"], 'DD.MM.YYYY hh:mm');
                 var date2 = moment(data["landingTime"], 'DD.MM.YYYY hh:mm');
+                localStorage.setItem("landingTime", moment(data["landingTime"], "DD/MM/YYYY"));
                 var diff = date2.diff(date1, 'minutes');
                 $("#flightDuration").text(diff);
                 $("#flightDistance").text(data["flightDistance"]);
