@@ -93,7 +93,7 @@ public class VehicleController {
 
 	@PreAuthorize("hasRole('REGISTEREDUSER')")
 	@RequestMapping(value = "/api/checkCountry/{branch}/{vehicle}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-	public ResponseEntity<String> getBranchOfficesForVehicle(@PathVariable("branch") String branch,
+	public ResponseEntity<String> checkCountry(@PathVariable("branch") String branch,
 			@PathVariable("vehicle") Integer vehicle) {
 		return new ResponseEntity<String>(vehicleService.checkCountry(branch, vehicle), HttpStatus.OK);
 	}
