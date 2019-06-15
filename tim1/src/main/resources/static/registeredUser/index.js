@@ -36,6 +36,8 @@ const getAllFuelTypesURL = "/api/getFuelTypes";
 const searchVehiclesURL = "/api/searchVehicles";
 const getQuickReservationsForVehicleURL = "/api/getQuickReservationsForVehicle/";
 const checkVehicleForPeriodURL = "/api/checkVehicleForPeriod";
+const getBranchOfficesForVehicleURL = "/api/getBranchOfficesForVehicle/";
+const checkCountryURL = "/api/checkCountry/";
 
 const reserveFlightURL = "/api/reserveFlight";
 const reserveFlightHotelURL = "/api/reserveFlightHotel";
@@ -49,6 +51,8 @@ var airlineMap = null;
 var shownHotel = null;
 var shownReservation = null;
 var hotelReservation = null;
+
+var error = false;
 
 $(document)
     .ready(
@@ -398,8 +402,9 @@ $(document)
                 let endDate = emptyToNull($('#endYear').val());
                 let minGrade = $("#vehicleGrade").slider('getValue')[0];
                 let maxGrade = $("#vehicleGrade").slider('getValue')[1];
-
-                searchVehicles(producer, models, vehicleTypes, fuelTypes, priceTo, numberOfSeats, startDate, endDate, minGrade, maxGrade);
+                let country = $("#vehicleCountry").val();
+                
+                searchVehicles(producer, models, vehicleTypes, fuelTypes, priceTo, numberOfSeats, startDate, endDate, minGrade, maxGrade, country);
             });
 
             $('#vehiclesTable').DataTable({
@@ -439,6 +444,7 @@ $(document)
         		currentVehicleModel = rowData[2];
         		$("#quickReservationsModalTitle").text(title);
         		getQuickReservationsForVehicle(rowData[0]);
+        		getBranchOfficesForVehicle(rowData[0]);
         		$('#quickVehicleReservationsModal').modal('show');
         	});
             
@@ -465,28 +471,80 @@ $(document)
             $("#rvButton").click(function(e) {
             	e.preventDefault();
             	
+            	let branch = $("#vehicleBranchOffices").val();
+            	
+            	checkCountry(branch, currentVehicleID);
+            	
+            	if(error){
+            		error = false;
+            		return;
+            	}
+            	
             	let start = $("#vrstartDate").val();
             	
-            	if(start == null) {
+            	if(start === null || start === "") {
             		toastr["error"]("Start date must have a value");
+            		return;
+            	} else if(!moment(localStorage.getItem("landingTime")).isSame(start)){
+            		toastr["error"]("Vehicle reservation start date must be same as flight landing date");
             		return;
             	}
             	
             	let end = $("#vrendDate").val();
             	
-            	if(end == null) {
+            	if(end === null || end === "") {
             		toastr["error"]("End date must have a value");
             		return;
             	}
             	
-            	checkVehicleForPeriod(currentVehicleID, start, end, currentVehicleProducer, currentVehicleModel);
+            	checkVehicleForPeriod(currentVehicleID, start, end, currentVehicleProducer, currentVehicleModel, branch);
             });
-            
-            /*$('#quickVehicleReservationsModal').on('shown.bs.modal', function () {
-            	$($.fn.dataTable.tables(true))
-                .DataTable().columns.adjust();
-            });*/
         });
+
+function checkCountry(branchOffice, vehicle){
+	$.ajax({
+        type: 'GET',
+        url: checkCountryURL + branchOffice + "/" + vehicle,
+        headers: createAuthorizationTokenHeader(tokenKey),
+        contentType: "application/json",
+        dataType: "text",
+        async: false,
+        success: function(data) {
+        	var country = localStorage.getItem("countryName");
+        	
+        	if(country === null){
+        		toastr["error"]("Flight must be reserved first");
+        		error = true;
+        	} else if(data !== country){
+        		toastr["error"]("Branch office country must be same as flight destination country");
+        		error = true;
+        	}
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            alert("AJAX ERROR: " + textStatus);
+        }
+    });
+}
+
+function getBranchOfficesForVehicle(id){
+	$.ajax({
+        type: 'GET',
+        url: getBranchOfficesForVehicleURL + id,
+        headers: createAuthorizationTokenHeader(tokenKey),
+        contentType: "application/json",
+        dataType: "json",
+        success: function(data) {
+        	var select = $("#vehicleBranchOffices");
+        	select.empty();
+        	for(var branch of data){
+        		select.append(new Option(branch, branch));
+        	}
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            alert("AJAX ERROR: " + textStatus);
+        }
+    });
+}
 
 function getAirlines() {
 	$.ajax({
@@ -510,7 +568,7 @@ function getAirlines() {
     });
 }
 
-function checkVehicleForPeriod(vehicleID, start, end, vehicleProducer, vehicleModel) {
+function checkVehicleForPeriod(vehicleID, start, end, vehicleProducer, vehicleModel, branch) {
 	$.ajax({
         type: 'POST',
         url: checkVehicleForPeriodURL,
@@ -524,7 +582,7 @@ function checkVehicleForPeriod(vehicleID, start, end, vehicleProducer, vehicleMo
         				'toDate' : end,
         				'vehicleProducer' : vehicleProducer,
         				'vehicleModel' : vehicleModel,
-        				'branchOfficeName' : null, // will be added after reverse geocoding
+        				'branchOfficeName' : branch,
         				'discount': null,
         				'quickVehicleReservationID': null
         				};
@@ -545,8 +603,8 @@ function checkVehicleForPeriod(vehicleID, start, end, vehicleProducer, vehicleMo
 function checkVehicleToJSON(vehicleID, start, end) {
 	return JSON.stringify({
         "vehicleID": vehicleID,
-        "start": start,
-        "end": end
+        "start": moment(start, "YYYY-MM-DD"),
+        "end": moment(end, "YYYY-MM-DD")
     });
 }
 
@@ -567,7 +625,7 @@ function getQuickReservationsForVehicle(id) {
                     	moment(quickReservation.fromDate).format("DD/MM/YYYY"),
                     	moment(quickReservation.toDate).format("DD/MM/YYYY"),
                     	quickReservation.discount,
-                    	"<button onclick='reserveQuickVehicleReservation(" + quickReservation.quickVehicleReservationID + ")' class='btn btn-default reserve' type='button'>Reserve</a>"
+                    	"<button onclick='reserveQuickVehicleReservation(" + quickReservation.quickVehicleReservationID + "," + quickReservation.branchOfficeName + ")' class='btn btn-default reserve' type='button'>Reserve</a>"
                     ]).draw(false);
         		}
         },
@@ -577,7 +635,14 @@ function getQuickReservationsForVehicle(id) {
     });
 }
 
-function reserveQuickVehicleReservation(reservationID) {
+function reserveQuickVehicleReservation(reservationID, branchOffice) {
+	checkCountry(branch, currentVehicleID);
+	
+	if(error){
+		error = false;
+		return;
+	}
+	
 	var carRes = {
 			'fromDate' : null,
 			'toDate' : null,
@@ -602,7 +667,7 @@ function emptyToNull(value) {
     }
 }
 
-function vehicleSearchFormToJSON(producer, models, vehicleTypes, fuelTypes, priceMax, numberOfSeats, startDate, endDate, minGrade, maxGrade) {
+function vehicleSearchFormToJSON(producer, models, vehicleTypes, fuelTypes, priceMax, numberOfSeats, startDate, endDate, minGrade, maxGrade, country) {
     return JSON.stringify({
         "producer": producer,
         "models": models,
@@ -613,17 +678,18 @@ function vehicleSearchFormToJSON(producer, models, vehicleTypes, fuelTypes, pric
         "startDate": startDate,
         "endDate": endDate,
         "minGrade": minGrade,
-        "maxGrade": maxGrade
+        "maxGrade": maxGrade,
+        "country": country
     });
 }
 
-function searchVehicles(producer, models, vehicleTypes, fuelTypes, priceMax, numberOfSeats, startDate, endDate, minGrade, maxGrade) {
+function searchVehicles(producer, models, vehicleTypes, fuelTypes, priceMax, numberOfSeats, startDate, endDate, minGrade, maxGrade, country) {
     $.ajax({
         type: 'POST',
         url: searchVehiclesURL,
         headers : createAuthorizationTokenHeader(tokenKey),
         contentType: "application/json",
-        data: vehicleSearchFormToJSON(producer, models, vehicleTypes, fuelTypes, priceMax, numberOfSeats, startDate, endDate, minGrade, maxGrade),
+        data: vehicleSearchFormToJSON(producer, models, vehicleTypes, fuelTypes, priceMax, numberOfSeats, startDate, endDate, minGrade, maxGrade, country),
         success: function(data) {
             if (data != null) {
                 let table = $('#vehiclesTable').DataTable();
@@ -1418,6 +1484,7 @@ function loadFlight(code) {
                 localStorage.setItem("flightCode", code);
                 localStorage.setItem("startDest", data["startDestination"]);
                 localStorage.setItem("endDest", data["endDestination"]);
+                $("#vehicleCountry").val(data["countryName"]);
                 localStorage.setItem("countryName", data["countryName"]);
                 localStorage.setItem("flightDate", data["departureTime"]);
                 $("#startDest").text(data["startDestination"]);
@@ -1427,6 +1494,7 @@ function loadFlight(code) {
                 $("#flightAirline").text(data["airlineName"]);
                 var date1 = moment(data["departureTime"], 'DD.MM.YYYY hh:mm');
                 var date2 = moment(data["landingTime"], 'DD.MM.YYYY hh:mm');
+                localStorage.setItem("landingTime", moment(data["landingTime"], "DD/MM/YYYY"));
                 var diff = date2.diff(date1, 'minutes');
                 $("#flightDuration").text(diff);
                 $("#flightDistance").text(data["flightDistance"]);

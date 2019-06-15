@@ -82,7 +82,7 @@ a[data-toggle="tab"] {
 	border-radius: 2vw 2vw 2vw 2vw;
 }
 
-#branchMapDiv{
+#branchMapDiv, #addBranchOfficeMap, #editBranchOfficeMap{
 	width: 35vw;	
 	height: 35vh;
 	margin-bottom: 2vh;

@@ -121,7 +121,7 @@ public class ReservationService {
 
 	@Autowired
 	RentACarRepository rentACarRepository;
-	
+
 	@Autowired
 	SeatRepository seatRepository;
 	
@@ -137,7 +137,8 @@ public class ReservationService {
 					+ flightRes.getFlight().getEndDestination().getName();
 			SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 			String date = sdf.format(flightRes.getFlight().getDepartureTime());
-			frDTOs.add(new FlightReservationDTO(flightRes.getId(), res, date, flightRes.getPrice(), flightRes.getGrade()));
+			frDTOs.add(
+					new FlightReservationDTO(flightRes.getId(), res, date, flightRes.getPrice(), flightRes.getGrade()));
 		}
 		return frDTOs;
 	}
@@ -149,7 +150,7 @@ public class ReservationService {
 		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru);
 		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
 			return retval;
-		
+
 		userRepository.save(ru);
 		mailService.sendFlightReservationMail(ru, fr);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
@@ -169,7 +170,7 @@ public class ReservationService {
 		retval = reserveHotelNoSave(hotelRes, fr);
 		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
 			return retval;
-		
+
 		userRepository.save(ru);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
 	}
@@ -219,8 +220,7 @@ public class ReservationService {
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
-	private MessageDTO reserveFlightNoSave(FlightReservationDTO flightRes, FlightReservation fr,
-			RegisteredUser ru) {
+	private MessageDTO reserveFlightNoSave(FlightReservationDTO flightRes, FlightReservation fr, RegisteredUser ru) {
 		Flight f = flightRepository.findOneByFlightCode(flightRes.getFlightCode());
 		if (f == null) {
 			return new MessageDTO("Flight does not exist.", ToasterType.ERROR.toString());
@@ -246,16 +246,16 @@ public class ReservationService {
 			Seat st = null;
 			PlaneSegment planeSegment;
 			if (idx[2].equalsIgnoreCase(PlaneSegmentClass.FIRST.toString().substring(0, 1))) {
-				planeSegment = f.getPlaneSegments().stream().
-						filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.FIRST).findFirst().get();
+				planeSegment = f.getPlaneSegments().stream()
+						.filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.FIRST).findFirst().get();
 				price += f.getFirstClassPrice();
 			} else if (idx[2].equalsIgnoreCase(PlaneSegmentClass.BUSINESS.toString().substring(0, 1))) {
-				planeSegment = f.getPlaneSegments().stream().
-						filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.BUSINESS).findFirst().get();
+				planeSegment = f.getPlaneSegments().stream()
+						.filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.BUSINESS).findFirst().get();
 				price += f.getBusinessClassPrice();
 			} else if (idx[2].equalsIgnoreCase(PlaneSegmentClass.ECONOMY.toString().substring(0, 1))) {
-				planeSegment = f.getPlaneSegments().stream().
-						filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.ECONOMY).findFirst().get();
+				planeSegment = f.getPlaneSegments().stream()
+						.filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.ECONOMY).findFirst().get();
 				price += f.getEconomyClassPrice();
 			} else {
 				return null;
@@ -330,6 +330,13 @@ public class ReservationService {
 
 			if (qvr == null) {
 				return new MessageDTO("Quick vehicle reservation does not exist", ToasterType.ERROR.toString());
+			} else if (!qvr.getFromDate().equals(fr.getFlight().getLandingTime())) {
+				return new MessageDTO("Vehicle reservation start date must be same as flight landing date",
+						ToasterType.ERROR.toString());
+			} else if (!qvr.getBranchOffice().getLocation().getCountry()
+					.equals(fr.getFlight().getEndDestination().getLocation().getCountry())) {
+				return new MessageDTO("Branch office country must be same as flight destination country",
+						ToasterType.ERROR.toString());
 			}
 			fr.setVehicleReservation(qvr);
 			qvr.setFlightReservation(fr);
@@ -340,6 +347,10 @@ public class ReservationService {
 
 		if (bo == null) {
 			return new MessageDTO("Branch office does not exist", ToasterType.ERROR.toString());
+		} else if (!bo.getLocation().getCountry()
+				.equals(fr.getFlight().getEndDestination().getLocation().getCountry())) {
+			return new MessageDTO("Branch office country must be same as flight destination country",
+					ToasterType.ERROR.toString());
 		}
 
 		Vehicle v = vehicleRepository.findOneByModelAndProducer(vehicleRes.getVehicleModel(),
@@ -351,6 +362,9 @@ public class ReservationService {
 
 		if (!this.checkVehicleForPeriod(v.getId(), vehicleRes.getFromDate(), vehicleRes.getToDate())) {
 			return new MessageDTO("Vehicle is taken in given period", ToasterType.ERROR.toString());
+		} else if (!vehicleRes.getFromDate().equals(fr.getFlight().getLandingTime())) {
+			return new MessageDTO("Vehicle reservation start date must be same as flight landing date",
+					ToasterType.ERROR.toString());
 		}
 
 		VehicleReservation vr = new VehicleReservation();
@@ -446,6 +460,7 @@ public class ReservationService {
 			return new ResponseEntity<MessageDTO>(
 					new MessageDTO("Reservation does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
 		}
+
 		fr.getPassengerSeats().forEach(p -> {
 			p.setPassport(fRes.getPassengers()[0].getPassport());
 		});
@@ -516,16 +531,16 @@ public class ReservationService {
 		Seat st = null;
 		PlaneSegment planeSegment;
 		if (idx[2].equalsIgnoreCase(PlaneSegmentClass.FIRST.toString().substring(0, 1))) {
-			planeSegment = f.getPlaneSegments().stream().
-					filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.FIRST).findFirst().get();
+			planeSegment = f.getPlaneSegments().stream()
+					.filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.FIRST).findFirst().get();
 			price += f.getFirstClassPrice();
 		} else if (idx[2].equalsIgnoreCase(PlaneSegmentClass.BUSINESS.toString().substring(0, 1))) {
-			planeSegment = f.getPlaneSegments().stream().
-					filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.BUSINESS).findFirst().get();
+			planeSegment = f.getPlaneSegments().stream()
+					.filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.BUSINESS).findFirst().get();
 			price += f.getBusinessClassPrice();
 		} else if (idx[2].equalsIgnoreCase(PlaneSegmentClass.ECONOMY.toString().substring(0, 1))) {
-			planeSegment = f.getPlaneSegments().stream().
-					filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.ECONOMY).findFirst().get();
+			planeSegment = f.getPlaneSegments().stream()
+					.filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.ECONOMY).findFirst().get();
 			price += f.getEconomyClassPrice();
 		} else {
 			return null;
