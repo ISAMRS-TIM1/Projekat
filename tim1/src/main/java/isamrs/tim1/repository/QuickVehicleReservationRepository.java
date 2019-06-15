@@ -11,10 +11,10 @@ import org.springframework.data.jpa.repository.Query;
 import isamrs.tim1.model.QuickVehicleReservation;
 
 public interface QuickVehicleReservationRepository extends JpaRepository<QuickVehicleReservation, Long> {
-	
-	@Lock(LockModeType.PESSIMISTIC_WRITE)
+
+	@Lock(LockModeType.OPTIMISTIC_FORCE_INCREMENT)
 	QuickVehicleReservation findOneById(Long id);
-	
+
 	@Query(value = "select * from vehicle_reservations vr where vr.vehicle = ?1", nativeQuery = true)
 	ArrayList<QuickVehicleReservation> findAllByVehicle(int vehicle);
 }

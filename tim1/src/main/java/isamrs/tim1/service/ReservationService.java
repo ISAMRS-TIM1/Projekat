@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.OptimisticLockException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -124,7 +126,7 @@ public class ReservationService {
 
 	@Autowired
 	SeatRepository seatRepository;
-	
+
 	@Autowired
 	FlightInvitationRepository flightInvitationRepository;
 
@@ -325,9 +327,14 @@ public class ReservationService {
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
 	private MessageDTO reserveVehicleNoSave(VehicleReservationDTO vehicleRes, FlightReservation fr) {
 		if (vehicleRes.getQuickVehicleReservationID() != null) {
-			QuickVehicleReservation qvr = quickVehicleReservationRepository
-					.findOneById(vehicleRes.getQuickVehicleReservationID());
+			QuickVehicleReservation qvr;
 
+			try {
+				qvr = quickVehicleReservationRepository.findOneById(vehicleRes.getQuickVehicleReservationID());
+			} catch (OptimisticLockException e) {
+				return new MessageDTO("Quick vehicle reservation has already been reserved",
+						ToasterType.ERROR.toString());
+			}
 			if (qvr == null) {
 				return new MessageDTO("Quick vehicle reservation does not exist", ToasterType.ERROR.toString());
 			} else if (!qvr.getFromDate().equals(fr.getFlight().getLandingTime())) {
@@ -412,16 +419,16 @@ public class ReservationService {
 		Seat st = null;
 		PlaneSegment planeSegment = null;
 		if (idx[2].equalsIgnoreCase(PlaneSegmentClass.FIRST.toString().substring(0, 1))) {
-			planeSegment = f.getPlaneSegments().stream().
-					filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.FIRST).findFirst().get();
+			planeSegment = f.getPlaneSegments().stream()
+					.filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.FIRST).findFirst().get();
 			price += f.getFirstClassPrice();
 		} else if (idx[2].equalsIgnoreCase(PlaneSegmentClass.BUSINESS.toString().substring(0, 1))) {
-			planeSegment = f.getPlaneSegments().stream().
-					filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.BUSINESS).findFirst().get();
+			planeSegment = f.getPlaneSegments().stream()
+					.filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.BUSINESS).findFirst().get();
 			price += f.getBusinessClassPrice();
 		} else if (idx[2].equalsIgnoreCase(PlaneSegmentClass.ECONOMY.toString().substring(0, 1))) {
-			planeSegment = f.getPlaneSegments().stream().
-					filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.ECONOMY).findFirst().get();
+			planeSegment = f.getPlaneSegments().stream()
+					.filter(planeSeg -> planeSeg.getSegmentClass() == PlaneSegmentClass.ECONOMY).findFirst().get();
 			price += f.getEconomyClassPrice();
 		}
 		st = seatRepository.findOneByRowAndColumnAndPlaneSegment(row, column, planeSegment);
@@ -801,7 +808,7 @@ public class ReservationService {
 			p.setReservation(qfr);
 		});
 		qfr.setPrice(qfr.getPrice() + price);
-		
+
 		ru.getFlightReservations().add(qfr);
 		qfr.setUser(ru);
 		userRepository.save(ru);

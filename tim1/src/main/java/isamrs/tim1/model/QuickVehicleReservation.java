@@ -2,6 +2,7 @@ package isamrs.tim1.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Version;
 
 @Entity
 public class QuickVehicleReservation extends VehicleReservation {
@@ -9,6 +10,9 @@ public class QuickVehicleReservation extends VehicleReservation {
 
 	@Column(name = "discount", unique = false, nullable = true)
 	private Integer discount;
+
+	@Version
+	private Integer version;
 
 	public QuickVehicleReservation() {
 		super();
