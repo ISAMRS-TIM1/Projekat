@@ -32,26 +32,8 @@ public class RegisteredUserService {
 	private RegisteredUserRepository registeredUserRepository;
 
 	public ArrayList<UserDTO> searchUsers(String firstName, String lastName) {
-		if (firstName.equals(""))
-			firstName = "%";
-		else {
-			try {
-				firstName = firstName.toLowerCase();
-				firstName = firstName.substring(0, 1).toUpperCase() + firstName.substring(1);
-			} catch (Exception ex) {
-				firstName = firstName.substring(0, 1);
-			}
-		}
-		if (lastName.equals(""))
-			lastName = "%";
-		else {
-			try {
-				lastName = lastName.toLowerCase();
-				lastName = lastName.substring(0, 1).toUpperCase() + lastName.substring(1);
-			} catch (Exception ex) {
-				lastName = lastName.substring(0, 1);
-			}
-		}
+		firstName = firstName.toLowerCase() + "%";
+		lastName = lastName.toLowerCase() + "%";
 		RegisteredUser regUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if (regUser == null)
 			return null;

@@ -74,8 +74,8 @@ public class ReservationController {
 
 	@PreAuthorize("hasRole('REGISTEREDUSER')")
 	@RequestMapping(value = "/api/acceptFlightInvitation", method = RequestMethod.POST)
-	public ResponseEntity<MessageDTO> acceptFlightInvitation(@RequestBody String resID) {
-		return reservationService.acceptFlightInvitation(resID);
+	public ResponseEntity<MessageDTO> acceptFlightInvitation(@RequestBody FlightReservationDTO fRes) {
+		return reservationService.acceptFlightInvitation(fRes);
 	}
 
 	@PreAuthorize("hasRole('REGISTEREDUSER')")

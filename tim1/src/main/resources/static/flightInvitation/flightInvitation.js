@@ -16,18 +16,19 @@ $(document).ready(function() {
 		"retrieve" : true,
 	});
 	
-	$('#reservationsTable tbody').on('click', 'td', function(event) {
-		var tgt = $(event.target);
+	$('#reservationsTable tbody').on('click', 'tr', function() {
+    	var tgt = $(event.target);
 		var table = $("#reservationsTable").DataTable();
 		var rowData;
 		if (tgt[0].innerHTML == "Accept") {
-			rowData = table.row(this.parentNode).data();
-			acceptInvitation(rowData[0]);
+			rowData = table.row(this).data();
+			localStorage.setItem("invID", rowData[0]);
+			$("#passportBagsModal").modal('show');
 		} else if (tgt[0].innerHTML == "Decline") {
-			rowData = table.row(this.parentNode).data();
+			rowData = table.row(this).data();
 			declineInvitation(rowData[0]);
 		}
-	});
+    });
 });
 	
 function setUpToastr() {
@@ -72,15 +73,31 @@ function getReservations() {
 	});
 }
 
-function acceptInvitation(resID) {
+function acceptInvitation(e) {
+	e.preventDefault();
+	var userPass = $("#modalPass").val();
+    if (userPass == "" || userPass == undefined) {
+        toastr["error"]("Invalid passport number.");
+        return;
+    }
+    var numOfBags = $("#modalBags").val();
+    if (isNaN(numOfBags) || numOfBags < 0 || numOfBags === "") {
+        toastr["error"]("Invalid number of bags.");
+        return;
+    }
+    var resID = localStorage.getItem("invID");
+    localStorage.removeItem("invID");
 	$.ajax({
 		type : 'POST',
 		url : acceptFlightInvitationURL,
 		headers : createAuthorizationTokenHeader(TOKEN_KEY),
-		data : resID.toString(),
+		data : JSON.stringify({"id" : resID, 
+							   "passengers" : [{"firstName" : "", "lastName" : "",
+								   "passport" : userPass, "numberOfBags" : numOfBags}]}),
 		success : function(data) {
 			if (data.toastType == "success") {
 				toastr[data.toastType](data.message);
+				$("#passportBagsModal").modal('hide');
 				getReservations();
 			} else {
 				toastr[data.toastType](data.message);
