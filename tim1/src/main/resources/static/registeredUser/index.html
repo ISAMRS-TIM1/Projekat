@@ -112,8 +112,14 @@
 							<tr>
 								<td>Departure time</td>
 								<td><input type="date" id="departureTime" /></td>
-								<td>Landing time</td>
-								<td><input type="date" id="landingTime" /></td>
+								<td>Multi city</td>
+								<td><input type="checkbox" id="multicity" /></td>
+							</tr>
+							<tr>
+								<td>Round trip</td>
+								<td><input type="checkbox" id="srcRoundTrip" /></td>
+								<td class="retTripSrc">Returning departure time</td>
+								<td class="retTripSrc"><input type="date" id="srcRetDepTime" /></td>
 							</tr>
 						</table>
 						<br>
@@ -584,6 +590,20 @@
 							<td>Locations of connections</td>
 							<td><select id="flightConnections"></select>
 						</tr>
+						<tr class="retTrip">
+							<td>
+								Returning departure time
+							</td>
+							<td>
+								<span id="retDepartureTime"></span>
+							</td>
+							<td>
+								Returning landing time
+							</td>
+							<td>
+								<span id="retLandingTime"></span>
+							</td>
+						</tr>
 						<tr>
 							<td>Price per bag</td>
 							<td><span id="pricePerBag"></span></td>
@@ -765,6 +785,12 @@
 							<td><span id="flightDistanceRes"></span></td>
 							<td>Locations of connections</td>
 							<td><select id="flightConnectionsRes"></select></td>
+						</tr>
+						<tr class="resRoundTrip">
+							<td>Returning departure time</td>
+							<td><span id="resRetDepTime"></span></td>
+							<td>Returning landing time</td>
+							<td><span id="resRetLandTime"></span></td>
 						</tr>
 						<tr>
 							<td>Number of seats</td>

@@ -553,3 +553,6 @@ input, select {
 	text-align: center;
 	background-color: transparent;
 }
+.retTripSrc {
+	display: none;
+}

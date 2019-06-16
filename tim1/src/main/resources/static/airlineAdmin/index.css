@@ -441,3 +441,6 @@ input, select {
     top: 175%;
     left: 80%;
 }
+.retTrip {
+	display: none;
+}

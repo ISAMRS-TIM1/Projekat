@@ -137,6 +137,7 @@ $(document)
                 $("#reserveDivFriends").hide();
                 $("#reserveDiv").show();
                 seatsToReserve = [];
+                $("#flightConnections").find('option').remove();
             });
             
             $('#showAirlineModal').on('shown.bs.modal', function() {
@@ -190,6 +191,16 @@ $(document)
             $('#showReservationModal').on('hidden.bs.modal', function() {
             	reservationsTable.$('tr.selected').removeClass('selected');
             });
+            
+            $("#srcRoundTrip").change(function() {
+        	    if(this.checked) {
+        	        $(".retTripSrc").show();
+        	    }
+        	    else {
+        	    	$(".retTripSrc").hide();
+        	    	$("#srcRetDepTime").val("");
+        	    }
+        	});
 
             $(".nav li").click(function() {
                 $(this).addClass("active");
@@ -857,19 +868,27 @@ function searchFlights(e) {
     }
     var departureTime = $("#departureTime").val();
     if (departureTime == null || departureTime == "") {
-        toastr["error"]("Departure time is not valid.")
+        toastr["error"]("Departure time is not valid.");
         return;
     }
-    var landingTime = $("#landingTime").val();
-    if (landingTime == null || landingTime == "") {
-        toastr["error"]("Landing time is not valid.")
-        return;
+    if (moment(departureTime).isBefore(moment(), 'day')) {
+    	toastr["error"]("Departure time can not be before today's date.");
+    	return;
     }
-    if (moment(landingTime).isBefore(departureTime)) {
-        toastr["error"]
-            ("Landing time must be after or same as the departure time.");
-        return;
-    }
+    var multiCity = $("#multicity:checked").length > 0;
+    var roundTrip = $("#srcRoundTrip:checked").length > 0;
+    var retDepTime;
+    if (roundTrip) {
+		retDepTime = $("#srcRetDepTime").val();
+		if (retDepTime == null || retDepTime == "") {
+			toastr["error"]("Returning departure time is not valid.");
+			return;
+		}
+		/*if (moment(retDepTime).isBefore(departureTime)) {
+			toastr["error"]("Returning departure time must be after the departure time.");
+			return;
+		}*/
+	}
     $.ajax({
         type: 'POST',
         url: searchFlightsURL,
@@ -879,16 +898,21 @@ function searchFlights(e) {
             "startDestination": startDestination,
             "endDestination": endDestination,
             "departureTime": departureTime,
-            "landingTime": landingTime
+            "multiCity": multiCity,
+            "roundTrip": roundTrip,
+            "returningDepartureTime": retDepTime
         }),
         success: function(data) {
-            if (data != null) {
+            if (data !== "") {
                 var table = $('#flightsTable').DataTable();
                 table.clear().draw();
                 $.each(data, function(i, val) {
                     table.row.add(
                         [val.flightCode, val.departureTime, val.landingTime, val.airline ]).draw(false);
                 });
+            }
+            else {
+            	toastr["error"]("Departure time can not be before today's date.");
             }
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -1492,6 +1516,14 @@ function loadFlight(code) {
                 $("#depTime").text(data["departureTime"]);
                 $("#landTime").text(data["landingTime"]);
                 $("#flightAirline").text(data["airlineName"]);
+                if (data["roundTrip"]) {
+                	$("#retDepartureTime").text(data["returningDepartureTime"]);
+                    $("#retLandingTime").text(data["returningLandingTime"]);
+					$(".retTrip").show();
+				}
+                else {
+                	$(".retTrip").hide();
+                }
                 var date1 = moment(data["departureTime"], 'DD.MM.YYYY hh:mm');
                 var date2 = moment(data["landingTime"], 'DD.MM.YYYY hh:mm');
                 localStorage.setItem("landingTime", moment(data["landingTime"], "DD/MM/YYYY"));
@@ -2115,6 +2147,14 @@ function loadReservation(res_id) {
                 $("#endDestRes").text(data["endDestination"]);
                 $("#depTimeRes").text(data["departureTime"]);
                 $("#landTimeRes").text(data["landingTime"]);
+                if (data["roundTrip"]) {
+                	$("#resRetDepTime").text(data["returningDepartureTime"]);
+                	$("#resRetLandTime").text(data["returningLandingTime"]);
+                	$(".resRoundTrip").show();
+                }
+                else {
+                	$(".resRoundTrip").hide();
+                }
                 $("#flightAirlineRes").text(data["airlineName"]);
                 var date1 = moment(data["departureTime"], 'DD.MM.YYYY hh:mm');
                 var date2 = moment(data["landingTime"], 'DD.MM.YYYY hh:mm');
