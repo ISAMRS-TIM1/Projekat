@@ -22,7 +22,6 @@ import javax.persistence.Table;
 @Table(name = "Flights")
 public class Flight {
 
-
 	public Flight() {
 		super();
 		locationsOfConnecting = new ArrayList<String>();

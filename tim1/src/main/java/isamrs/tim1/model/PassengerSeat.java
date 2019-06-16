@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import isamrs.tim1.dto.PassengerDTO;
@@ -29,9 +30,8 @@ public class PassengerSeat implements Serializable {
 	@JoinColumn(name = "reservations")
 	private FlightReservation reservations;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "seat")
-	private Seat seat;
+	@OneToOne(mappedBy = "passengerSeat")
+    private Seat seat;
 
 	@Column(name = "name", unique = false, nullable = false)
 	private String name;

@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Version;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -21,6 +23,9 @@ public class Seat {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "seat_id", unique = true, nullable = false)
 	private Long id;
+	
+	@Version
+	private Integer version;
 
 	@Column(name = "row", unique = false, nullable = false)
 	private Integer row;
@@ -32,6 +37,10 @@ public class Seat {
 	@JoinColumn(name = "planeSegment")
 	@JsonIgnore
 	private PlaneSegment planeSegment;
+	
+	@OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "passengerSeat_id", referencedColumnName = "passengerSeat_id")
+    private PassengerSeat passengerSeat;
 
 	public Seat() {
 		super();
@@ -57,7 +66,7 @@ public class Seat {
 		return column;
 	}
 
-	public void setColumn(int i) {
+	public void setColumn(Integer i) {
 		this.column = i;
 	}
 
@@ -69,4 +78,11 @@ public class Seat {
 		this.planeSegment = planeSegment;
 	}
 
+	public PassengerSeat getPassengerSeat() {
+		return passengerSeat;
+	}
+
+	public void setPassengerSeat(PassengerSeat passengerSeat) {
+		this.passengerSeat = passengerSeat;
+	}
 }
