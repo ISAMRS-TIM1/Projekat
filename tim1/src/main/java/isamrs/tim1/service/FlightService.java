@@ -177,6 +177,7 @@ public class FlightService {
 						st.setRow(Integer.parseInt(idx[0]));
 						st.setColumn(Integer.parseInt(idx[1]));
 						st.setPlaneSegment(p);
+						st.setPassengerSeat(null);
 						p.getSeats().add(st);
 					}
 				}
@@ -193,20 +194,28 @@ public class FlightService {
 					st.setRow(row);
 					st.setColumn(column);
 					st.setPlaneSegment(p);
+					st.setPassengerSeat(null);
 					p.getSeats().add(st);
 				}
 			}
 		}
 		ArrayList<Seat> seatForDelete = new ArrayList<Seat>();
+		Iterator<Seat> it;
+		Seat seat;
+		List<String> st;
+		String ste;
 		for (PlaneSegment p : planeSegments) {
-			Iterator<Seat> it = p.getSeats().iterator();
+			it = p.getSeats().iterator();
 			while (it.hasNext()) {
-				Seat s = it.next();
-				List<String> st = Arrays.asList(seats.getSavedSeats());
-				String ste = s.getRow() + "_" + s.getColumn() + "_"
+				seat = it.next();
+				if (seat.getPassengerSeat() != null) {
+					continue;
+				}
+				st = Arrays.asList(seats.getSavedSeats());
+				ste = seat.getRow() + "_" + seat.getColumn() + "_"
 						+ p.getSegmentClass().toString().toLowerCase().charAt(0);
 				if (!(st.contains(ste))) {
-					seatForDelete.add(s);
+					seatForDelete.add(seat);
 					it.remove();
 				}
 			}

@@ -11,8 +11,8 @@ public class QuickVehicleReservation extends VehicleReservation {
 	@Column(name = "discount", unique = false, nullable = true)
 	private Integer discount;
 
-	/*@Version
-	private Integer version;*/
+	@Version
+	private Integer version;
 
 	public QuickVehicleReservation() {
 		super();

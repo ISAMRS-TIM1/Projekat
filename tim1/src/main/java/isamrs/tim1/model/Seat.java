@@ -40,6 +40,7 @@ public class Seat {
 	
 	@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "passengerSeat_id", referencedColumnName = "passengerSeat_id")
+	@JsonIgnore
     private PassengerSeat passengerSeat;
 
 	public Seat() {
