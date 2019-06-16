@@ -245,6 +245,8 @@ $(document)
                     friendInvitation(table.row(this).data()[0], tgt[0].parentElement.id);
                 }
             });
+            
+            setUpSearchHotelsForm();
 
             $("#searchUserForm")
                 .submit(
@@ -400,7 +402,7 @@ $(document)
                 }
             });
 
-            $('#searchVehiclesButton').click(function(e) {
+            $('#searchVehiclesForm').submit(function(e) {
                 e.preventDefault();
 
                 let producer = $('#selectProducer').val();
@@ -884,10 +886,11 @@ function searchFlights(e) {
 			toastr["error"]("Returning departure time is not valid.");
 			return;
 		}
-		/*if (moment(retDepTime).isBefore(departureTime)) {
-			toastr["error"]("Returning departure time must be after the departure time.");
-			return;
-		}*/
+		/*
+		 * if (moment(retDepTime).isBefore(departureTime)) {
+		 * toastr["error"]("Returning departure time must be after the departure
+		 * time."); return; }
+		 */
 	}
     $.ajax({
         type: 'POST',
@@ -1398,25 +1401,30 @@ function setUpTablesHotelsTab() {
 	});
 }
 
-function searchHotels(e) {
-    e.preventDefault();
-    $.ajax({
-        type: "GET",
-        url: searchHotelsURL,
-        contentType: "application/json",
-        data: {
-            'name': $("#searchHotelName").val(),
-            'fromGrade': $("#searchHotelGrade").slider('getValue')[0],
-            'toGrade': $("#searchHotelGrade").slider('getValue')[1]
-        },
-        dataType: "json",
-        headers: createAuthorizationTokenHeader(tokenKey),
-        success: function(data) {
-            renderHotels(data);
-        },
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
-            alert("AJAX ERROR: " + textStatus);
-        }
+function setUpSearchHotelsForm(e) {
+	$("#searchHotelsForm")
+    .submit(
+        function(e) {
+            e.preventDefault();
+		    $.ajax({
+		        type: "GET",
+		        url: searchHotelsURL,
+		        contentType: "application/json",
+		        data: {
+		            'name': $("#searchHotelName").val(),
+		            'fromGrade': $("#searchHotelGrade").slider('getValue')[0],
+		            'toGrade': $("#searchHotelGrade").slider('getValue')[1],
+		            'country': $("#searchHotelCountry").val()
+		        },
+		        dataType: "json",
+		        headers: createAuthorizationTokenHeader(tokenKey),
+		        success: function(data) {
+		            renderHotels(data);
+		        },
+		        error: function(XMLHttpRequest, textStatus, errorThrown) {
+		            alert("AJAX ERROR: " + textStatus);
+		        }
+		    });
     });
 }
 
@@ -1508,7 +1516,6 @@ function loadFlight(code) {
                 localStorage.setItem("flightCode", code);
                 localStorage.setItem("startDest", data["startDestination"]);
                 localStorage.setItem("endDest", data["endDestination"]);
-                $("#vehicleCountry").val(data["countryName"]);
                 localStorage.setItem("countryName", data["countryName"]);
                 localStorage.setItem("flightDate", data["departureTime"]);
                 $("#startDest").text(data["startDestination"]);
@@ -1747,6 +1754,8 @@ function showFriendsStep(e) {
         var endDest = localStorage.getItem("endDest");
         var flightDate = localStorage.getItem("flightDate");
         $("#flightRes").html(startDest + "-" + endDest + " " + flightDate);
+        $("#vehicleCountry").val(localStorage.getItem("countryName"));
+        $("#searchHotelCountry").val(localStorage.getItem("countryName"));
         localStorage.setItem("flightRes", "true");
     }
     $.ajax({
@@ -1794,6 +1803,8 @@ function showLastStep(e) {
 		var endDest = localStorage.getItem("endDest");
 		var flightDate = localStorage.getItem("flightDate");
 		$("#flightRes").html(startDest + "-" + endDest + " " + flightDate);
+		$("#vehicleCountry").val(localStorage.getItem("countryName"));
+	    $("#searchHotelCountry").val(localStorage.getItem("countryName"));
 		localStorage.setItem("flightRes", "true");
 	}
 	else {
@@ -1856,6 +1867,8 @@ function endReservation(e) {
     var endDest = localStorage.getItem("endDest");
     var flightDate = localStorage.getItem("flightDate");
     $("#flightRes").html(startDest + "-" + endDest + " " + flightDate);
+    $("#vehicleCountry").val(localStorage.getItem("countryName"));
+    $("#searchHotelCountry").val(localStorage.getItem("countryName"));
     localStorage.setItem("flightRes", "true");
 }
 

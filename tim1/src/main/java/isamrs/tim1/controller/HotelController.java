@@ -75,8 +75,8 @@ public class HotelController {
 	@PreAuthorize("hasRole('REGISTEREDUSER')")
 	@RequestMapping(value = "api/searchHotels", method = RequestMethod.GET)
 	public ResponseEntity<ArrayList<ServiceViewDTO>> searchHotels(@RequestParam String name,
-			@RequestParam double fromGrade, @RequestParam double toGrade) {
-		return new ResponseEntity<ArrayList<ServiceViewDTO>>(hotelService.searchHotels(name, fromGrade, toGrade),
+			@RequestParam double fromGrade, @RequestParam double toGrade, @RequestParam String country) {
+		return new ResponseEntity<ArrayList<ServiceViewDTO>>(hotelService.searchHotels(name, fromGrade, toGrade, country),
 				HttpStatus.OK);
 	}
 
