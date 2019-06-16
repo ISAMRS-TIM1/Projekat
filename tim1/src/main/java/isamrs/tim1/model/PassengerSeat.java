@@ -2,6 +2,7 @@ package isamrs.tim1.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import isamrs.tim1.dto.PassengerDTO;
@@ -25,13 +27,12 @@ public class PassengerSeat implements Serializable {
 	@Column(name = "passengerSeat_id", unique = true, nullable = false)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@OneToOne(mappedBy = "passengerSeat", cascade = CascadeType.ALL)
+    private Seat seat;
+	
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "reservations")
 	private FlightReservation reservations;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "seat")
-	private Seat seat;
 
 	@Column(name = "name", unique = false, nullable = false)
 	private String name;
