@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -114,16 +115,48 @@ public class FlightService {
 	}
 
 	public ArrayList<FlightUserViewDTO> searchFlights(FlightDTO flight) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date d = null;
+		Date t = null;
+		try {
+			d = sdf.parse(flight.getDepartureTime());
+			t = sdf.parse(sdf.format(new Date()));
+		} catch (ParseException e1) {
+			e1.printStackTrace();
+		}
+		if (d.compareTo(t) < 0) {
+			return null;
+		}
 		Long startID = destinationRepository.findOneByName(flight.getStartDestination()).getId();
 		Long endID = destinationRepository.findOneByName(flight.getEndDestination()).getId();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Set<Flight> flights = flightRepository.searchFlightsByDestinations(startID, endID);
+		boolean roundTrip = flight.isRoundTrip();
+		boolean multiCity = flight.isMultiCity();
+		Set<Flight> flights = null;
+		try {
+			flights = flightRepository.searchFlights(startID, 
+					endID, sdf.parse(flight.getDepartureTime()), roundTrip);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		if (multiCity) {
+			flights.removeIf(f -> {
+				if (f.getNumberOfFlightConnections() > 0) {
+					return false;
+				}
+				return true;
+			});
+		}
+		if (roundTrip) {
+			flights.removeIf(f -> {
+				if (flight.getReturningDepartureTime().equals(sdf.format(f.getReturningDepartureTime()))) {
+					return false;
+				}
+				return true;
+			});
+		}
 		ArrayList<FlightUserViewDTO> flightsList = new ArrayList<FlightUserViewDTO>();
 		for (Flight f : flights) {
-			if (flight.getDepartureTime().equals(sdf.format(f.getDepartureTime())) && 
-					flight.getLandingTime().equals(sdf.format(f.getLandingTime()))) {
-				flightsList.add(new FlightUserViewDTO(f));
-			}
+			flightsList.add(new FlightUserViewDTO(f));
 		}
 		return flightsList;
 	}
@@ -221,7 +254,18 @@ public class FlightService {
 		flight.setPricePerBag(flightDTO.getPricePerBag());
 		flight.setNumberOfFlightConnections(flightDTO.getConnections().length);
 		flight.setLocationsOfConnecting(new ArrayList<String>(Arrays.asList(flightDTO.getConnections())));
-		flight.setAverageGrade(0.0);
+		if (flightDTO.isRoundTrip()) {
+			flight.setRoundTrip(true);
+			try {
+				flight.setReturningDepartureTime(sdf.parse(flightDTO.getReturningDepartureTime()));
+				flight.setReturningLandingTime(sdf.parse(flightDTO.getReturningLandingTime()));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		else {
+			flight.setRoundTrip(false);
+		}
 		flightRepository.save(flight);
 		return new MessageDTO("Flight successfully edited.", ToasterType.SUCCESS.toString());
 	}

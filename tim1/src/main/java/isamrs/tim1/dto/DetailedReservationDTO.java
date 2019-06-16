@@ -21,6 +21,9 @@ public class DetailedReservationDTO implements Serializable {
 	private ArrayList<String> connections;
 	private Integer numOfFlightSeats;
 	private ArrayList<String> seats;
+	private boolean roundTrip;
+	private String returningDepartureTime;
+	private String returningLandingTime;
 	private HotelReservationDTO hotelRes;
 	private VehicleReservationDTO vehicleRes;
 	
@@ -34,6 +37,11 @@ public class DetailedReservationDTO implements Serializable {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 		this.departureTime = sdf.format(flightRes.getFlight().getDepartureTime());
 		this.landingTime = sdf.format(flightRes.getFlight().getLandingTime());
+		this.roundTrip = flightRes.getFlight().isRoundTrip();
+		if (this.roundTrip) {
+			this.returningDepartureTime = sdf.format(flightRes.getFlight().getReturningDepartureTime());
+			this.returningLandingTime = sdf.format(flightRes.getFlight().getReturningLandingTime());
+		}
 		this.airlineName = flightRes.getFlight().getAirline().getName();
 		this.flightDistance = flightRes.getFlight().getFlightLength();
 		this.numOfFlightSeats = flightRes.getPassengerSeats().size();
@@ -157,6 +165,30 @@ public class DetailedReservationDTO implements Serializable {
 
 	public void setVehicleRes(VehicleReservationDTO vehicleRes) {
 		this.vehicleRes = vehicleRes;
+	}
+
+	public boolean isRoundTrip() {
+		return roundTrip;
+	}
+
+	public void setRoundTrip(boolean roundTrip) {
+		this.roundTrip = roundTrip;
+	}
+
+	public String getReturningDepartureTime() {
+		return returningDepartureTime;
+	}
+
+	public void setReturningDepartureTime(String returningDepartureTime) {
+		this.returningDepartureTime = returningDepartureTime;
+	}
+
+	public String getReturningLandingTime() {
+		return returningLandingTime;
+	}
+
+	public void setReturningLandingTime(String returningLandingTime) {
+		this.returningLandingTime = returningLandingTime;
 	}
 
 	public static long getSerialversionuid() {

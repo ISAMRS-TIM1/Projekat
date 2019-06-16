@@ -126,6 +126,7 @@ function setUpTables() {
 		"info" : false,
 		"scrollY" : "17vw",
 		"scrollCollapse" : true,
+		"scrollX": true,
 		"retrieve" : true,
 	});
 	$('#quickReservationsTable').DataTable({
@@ -243,12 +244,16 @@ function renderFlights(data) {
 			conn += "<option>" + val + "</option>";
 		});
 		conn += "</select>";
+		var isRoundTrip = "No";
+		if (val.roundTrip) {
+			isRoundTrip = "Yes";
+		}
 		table.row.add(
 				[ val.flightCode, val.startDestination, val.endDestination, val.departureTime,
-					val.landingTime ]).draw(false);
+					val.landingTime, isRoundTrip ]).draw(false);
 		tableRes.row.add(
 				[ val.flightCode, val.startDestination, val.endDestination, val.departureTime,
-					val.landingTime ]).draw(false);
+					val.landingTime, isRoundTrip ]).draw(false);
 	});
 }
 
@@ -1063,6 +1068,114 @@ function addFlight(e) {
 		toastr["error"]("Departure time is not valid.")
 		return;
 	}
+	if (moment(departureTime).isBefore(moment(), 'day')) {
+    	toastr["error"]("Departure time can not be before today's date.");
+    	return;
+    }
+	var landingTime = $("#landingTime").val();
+	if (landingTime == null || landingTime == "") {
+		toastr["error"]("Landing time is not valid.")
+		return;
+	}
+	if (moment(landingTime).isBefore(departureTime) || moment(landingTime).isSame(departureTime)) {
+		toastr["error"]("Landing time must be after the departure time.");
+		return;
+	}
+	var flightDistance = $("#flightDistance").val();
+	if (isNaN(flightDistance) || flightDistance <= 0 || flightDistance == "") {
+		toastr["error"]("Invalid flight distance.");
+		return;
+	}
+	var connections = $("#connections").val();
+	if (connections.includes(startDestination) || connections.includes(endDestination)) {
+		toastr["error"]("Start and end destination can not be in locations of connections");
+		return;
+	}
+	var pricePerBag = $("#pricePerBag").val();
+	if (isNaN(pricePerBag) || pricePerBag < 0 || pricePerBag == "") {
+		toastr["error"]("Invalid price per bag.");
+		return;
+	}
+	var firstPrice = $("#firstPrice").val();
+	if (isNaN(firstPrice) || firstPrice < 0 || firstPrice == "") {
+		toastr["error"]("Invalid first class seat price.");
+		return;
+	}
+	var businessPrice = $("#businessPrice").val();
+	if (isNaN(businessPrice) || businessPrice < 0 || businessPrice == "") {
+		toastr["error"]("Invalid business class seat price.");
+		return;
+	}
+	var economyPrice = $("#economyPrice").val();
+	if (isNaN(economyPrice) || economyPrice < 0 || economyPrice == "") {
+		toastr["error"]("Invalid economy class seat price.");
+		return;
+	}
+	var roundTrip = $("#roundTrip:checked").length > 0;
+	var retDepTime;
+	var retLandTime;
+	if (roundTrip) {
+		retDepTime = $("#retDepartureTime").val();
+		if (retDepTime == null || retDepTime == "") {
+			toastr["error"]("Returning departure time is not valid.")
+			return;
+		}
+		retLandTime = $("#retLandingTime").val();
+		if (retLandTime == null || retLandTime == "") {
+			toastr["error"]("Returning landing time is not valid.")
+			return;
+		}
+		if (moment(retLandTime).isBefore(retDepTime) || moment(retLandTime).isSame(retDepTime)) {
+			toastr["error"]("Returning landing time must be after the returning departure time.");
+			return;
+		}
+		if (moment(retDepTime).isBefore(landingTime) || moment(retDepTime).isSame(landingTime)) {
+			toastr["error"]("Returning departure time must be after the landing time.");
+			return;
+		}
+	}
+	$.ajax({
+		method : "POST",
+		url : addFlightURL,
+		headers : createAuthorizationTokenHeader(TOKEN_KEY),
+		contentType : "application/json",
+		data : flightToJSON("", startDestination, endDestination, departureTime, landingTime, flightDistance, connections, pricePerBag,
+				firstPrice, businessPrice, economyPrice, roundTrip, retDepTime, retLandTime),
+		success : function(data) {
+				var table = $('#flightsTable').DataTable();
+				var tableRes = $('#flightsResTable').DataTable();
+				var conn = "<select>";
+				$.each(connections, function(i, val) {
+					conn += "<option>" + val + "</option>";
+				});
+				conn += "</select>";
+				var isRoundTrip = "No";
+				if (roundTrip) {
+					isRoundTrip = "Yes";
+				}
+				table.row.add(
+						[ data, startDestination, endDestination, moment(new Date(departureTime)).format("DD.MM.YYYY HH:mm"),
+							moment(new Date(landingTime)).format("DD.MM.YYYY HH:mm"), isRoundTrip ]).draw(false);
+				tableRes.row.add(
+						[ data, startDestination, endDestination, moment(new Date(departureTime)).format("DD.MM.YYYY HH:mm"),
+							moment(new Date(landingTime)).format("DD.MM.YYYY HH:mm"), isRoundTrip ]).draw(false);
+				saveSeatsChanges(data);
+		}
+	});
+}
+
+function editFlight(code) {
+	var startDestination = $( "#startDestination option:selected" ).text();
+	var endDestination = $( "#endDestination  option:selected" ).text();
+	if (startDestination == endDestination) {
+		toastr["error"]("Start destination and end destination must not be the same.");
+		return;
+	}
+	var departureTime = $("#departureTime").val();
+	if (departureTime == null || departureTime == "") {
+		toastr["error"]("Departure time is not valid.")
+		return;
+	}
 	var landingTime = $("#landingTime").val();
 	if (landingTime == null || landingTime == "") {
 		toastr["error"]("Landing time is not valid.")
@@ -1122,85 +1235,12 @@ function addFlight(e) {
 		}
 	}
 	$.ajax({
-		method : "POST",
-		url : addFlightURL,
-		headers : createAuthorizationTokenHeader(TOKEN_KEY),
-		contentType : "application/json",
-		data : flightToJSON("", startDestination, endDestination, departureTime, landingTime, flightDistance, connections, pricePerBag,
-				firstPrice, businessPrice, economyPrice, roundTrip, retDepTime, retLandTime),
-		success : function(data) {
-				var table = $('#flightsTable').DataTable();
-				var tableRes = $('#flightsResTable').DataTable();
-				var conn = "<select>";
-				$.each(connections, function(i, val) {
-					conn += "<option>" + val + "</option>";
-				});
-				conn += "</select>";
-				table.row.add(
-						[ data, startDestination, endDestination, moment(new Date(departureTime)).format("DD.MM.YYYY HH:mm"),
-							moment(new Date(landingTime)).format("DD.MM.YYYY HH:mm") ]).draw(false);
-				tableRes.row.add(
-						[ data, startDestination, endDestination, moment(new Date(departureTime)).format("DD.MM.YYYY HH:mm"),
-							moment(new Date(landingTime)).format("DD.MM.YYYY HH:mm") ]).draw(false);
-				saveSeatsChanges(data);
-		}
-	});
-}
-
-function editFlight(code) {
-	var startDestination = $( "#startDestination option:selected" ).text();
-	var endDestination = $( "#endDestination  option:selected" ).text();
-	if (startDestination == endDestination) {
-		toastr["error"]("Start destination and end destination must not be the same.");
-		return;
-	}
-	var departureTime = $("#departureTime").val();
-	if (departureTime == null || departureTime == "") {
-		toastr["error"]("Departure time is not valid.")
-		return;
-	}
-	var landingTime = $("#landingTime").val();
-	if (landingTime == null || landingTime == "") {
-		toastr["error"]("Landing time is not valid.")
-		return;
-	}
-	if (moment(landingTime).isBefore(departureTime) || moment(landingTime).isSame(departureTime)) {
-		toastr["error"]("Landing time must be after the departure time.");
-		return;
-	}
-	var flightDistance = $("#flightDistance").val();
-	if (isNaN(flightDistance) || flightDistance <= 0 || flightDistance == "") {
-		toastr["error"]("Invalid flight distance.");
-		return;
-	}
-	var connections = $("#connections").val();
-	var pricePerBag = $("#pricePerBag").val();
-	if (isNaN(pricePerBag) || pricePerBag < 0 || pricePerBag == "") {
-		toastr["error"]("Invalid price per bag.");
-		return;
-	}
-	var firstPrice = $("#firstPrice").val();
-	if (isNaN(firstPrice) || firstPrice < 0 || firstPrice == "") {
-		toastr["error"]("Invalid first class seat price.");
-		return;
-	}
-	var businessPrice = $("#businessPrice").val();
-	if (isNaN(businessPrice) || businessPrice < 0 || businessPrice == "") {
-		toastr["error"]("Invalid business class seat price.");
-		return;
-	}
-	var economyPrice = $("#economyPrice").val();
-	if (isNaN(economyPrice) || economyPrice < 0 || economyPrice == "") {
-		toastr["error"]("Invalid economy class seat price.");
-		return;
-	}
-	$.ajax({
 		method : "PUT",
 		url : editFlightURL,
 		headers : createAuthorizationTokenHeader(TOKEN_KEY),
 		contentType : "application/json",
 		data : flightToJSON(code, startDestination, endDestination, departureTime, landingTime, flightDistance, connections, pricePerBag,
-				firstPrice, businessPrice, economyPrice),
+				firstPrice, businessPrice, economyPrice, roundTrip, retDepTime, retLandTime),
 		success : function(data) {
 			if (data.toastType == "success") {
 				saveSeatsChanges(code);

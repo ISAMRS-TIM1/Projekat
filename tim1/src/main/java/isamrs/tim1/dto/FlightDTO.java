@@ -31,6 +31,7 @@ public class FlightDTO implements Serializable {
 	private boolean roundTrip;
 	private String returningDepartureTime;
 	private String returningLandingTime;
+	private boolean multiCity;
 	
 	public FlightDTO() {
 		super();
@@ -49,8 +50,10 @@ public class FlightDTO implements Serializable {
 		this.landingTime = sdf.format(f.getLandingTime());
 		this.departureTime = sdf.format(f.getDepartureTime());
 		this.roundTrip = f.isRoundTrip();
-		this.returningDepartureTime = sdf.format(f.getReturningDepartureTime());
-		this.returningLandingTime = sdf.format(f.getReturningLandingTime());
+		if (f.isRoundTrip()) {
+			this.returningDepartureTime = sdf.format(f.getReturningDepartureTime());
+			this.returningLandingTime = sdf.format(f.getReturningLandingTime());
+		}
 		this.connections = new String[f.getLocationsOfConnecting().size()];
 		this.connections = f.getLocationsOfConnecting().toArray(this.connections);
 		this.averageGrade = f.getAverageGrade();
@@ -238,6 +241,14 @@ public class FlightDTO implements Serializable {
 
 	public void setReturningLandingTime(String returningLandingTime) {
 		this.returningLandingTime = returningLandingTime;
+	}
+
+	public boolean isMultiCity() {
+		return multiCity;
+	}
+
+	public void setMultiCity(boolean multiCity) {
+		this.multiCity = multiCity;
 	}
 
 	public PlaneSegment getPlaneSegmentByClass(PlaneSegmentClass segmentClass) {
