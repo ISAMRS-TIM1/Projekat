@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 @Entity
 @Table(name = "VehicleReservations")
@@ -31,7 +32,7 @@ public class VehicleReservation implements Serializable {
 
 	@Column(name = "toDate", unique = false, nullable = false)
 	protected Date toDate;
-	
+
 	@Column(name = "done", unique = false, nullable = false)
 	protected Boolean done = false;
 
@@ -51,6 +52,9 @@ public class VehicleReservation implements Serializable {
 
 	@Column(name = "price", unique = false, nullable = true)
 	protected Double price;
+	
+	@Version
+	private Integer version;
 
 	public Date getFromDate() {
 		return fromDate;
