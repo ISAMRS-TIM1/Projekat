@@ -207,8 +207,8 @@ a[data-toggle="tab"] {
 
 #graphicLevel {
 	width: auto;
-    margin-left: auto;
-    margin-right: auto;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 /* TABLES */
@@ -259,7 +259,7 @@ a[data-toggle="tab"] {
 	text-align: center;
 }
 
-#addSeasonalPriceButton{
+#addSeasonalPriceButton {
 	margin: auto;
 }
 
@@ -327,7 +327,6 @@ a[data-toggle="tab"] {
 }
 
 /* QUICK RESERVATIONS */
-
 #createQuickReservationlDiv {
 	margin: 0;
 	background: #5994FF;
@@ -344,14 +343,37 @@ a[data-toggle="tab"] {
 	margin: auto;
 }
 
-.reservedAdditionalService td{
+.reservedAdditionalService td {
 	background-color: #00ff00 !important;
 }
 
 /* BIG MODAL */
-@media (min-width: 768px) {
-  .modal-xl {
-    width: 90%;
-   max-width:1200px;
-  }
+@media ( min-width : 768px) {
+	.modal-xl {
+		width: 90%;
+		max-width: 1200px;
+	}
+}
+
+.star-ratings-sprite {
+	background:
+		url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/2605/star-rating-sprite.png")
+		repeat-x;
+	/*font-size: 0;*/
+	height: 21px;
+	line-height: 0;
+	overflow: hidden;
+	text-indent: -110em;
+	width: 110px;
+	margin: 0 auto;
+}
+
+.star-ratings-sprite-rating {
+	background:
+		url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/2605/star-rating-sprite.png")
+		repeat-x;
+	background-position: 0 100%;
+	float: left;
+	height: 21px;
+	display: block;
 }

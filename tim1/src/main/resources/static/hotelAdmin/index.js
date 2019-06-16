@@ -206,7 +206,15 @@ function loadHotel() {
 		headers : createAuthorizationTokenHeader(TOKEN_KEY),
 		success : function(data) {
 			$("#hotelName").val(data["name"]);
-			$("#hotelGrade").text(data["averageGrade"]);
+			var grade = data["averageGrade"];
+        	
+        	if(grade !== 0){
+        		grade = grade/5*100;
+        	}
+        	var roundedGrade = Math.round(data["averageGrade"]*10)/10;
+        	var rating = "<div class='star-ratings-sprite'><span style='width:" + grade 
+        	+ "%' class='star-ratings-sprite-rating'></span></div><p style='color:white'>" + roundedGrade + "/5.0";
+			$("#averageGrade").html(rating);
 			$("#hotelDescription").text(data["description"]);
 			setUpMap(data["latitude"], data["longitude"], 'basicMapDiv');
 			renderAdditionalServices(data["additionalServices"]);
@@ -270,9 +278,17 @@ function renderAdditionalServices(data) {
 function renderRooms(data) {
 	roomsTable.clear().draw();
 	$.each(data, function(i, val) {
+		var grade = val.averageGrade;
+    	
+    	if(grade !== 0){
+    		grade = grade/5*100;
+    	}
+    	var roundedGrade = Math.round(val.averageGrade * 10)/10;
+    	var rating = "<div class='star-ratings-sprite' title='" + roundedGrade + "/5.0'><span style='width:" + grade 
+    	+ "%' class='star-ratings-sprite-rating'></span></div>";
 		rowNode = roomsTable.row.add(
 				[ val.roomNumber, val.price, val.numberOfPeople,
-						val.averageGrade ]).draw(false).node();
+						rating]).draw(false).node();
 		if (val.roomNumber == shownRoom)
 			$(rowNode).addClass('selected');
 	});

@@ -230,7 +230,15 @@ function loadBasicData() {
 			if(data != null){
 				$("#rentACarName").val(data.name);
 				$("#rentACarDescription").text(data.description);
-				$("#rentACarGrade").text(data.averageGrade);
+				var grade = data["averageGrade"];
+	        	
+	        	if(grade !== 0){
+	        		grade = grade/5*100;
+	        	}
+	        	var roundedGrade = Math.round(data["averageGrade"]*10)/10;
+	        	var rating = "<div class='star-ratings-sprite'><span style='width:" + grade 
+	        	+ "%' class='star-ratings-sprite-rating'></span></div><p style='color:white'>" + roundedGrade + "/5.0";
+				$("#averageGrade").html(rating);
 				racMap = setUpMap(data["latitude"], data["longitude"], 'basicMapDiv', true, racMap, '#basicLatitude', '#basicLongitude');
 			}
 		},
@@ -434,6 +442,14 @@ function loadVehicles() {
 				$('#selectVehicle').empty();
 				for(let vehicle of data) {
 					$('#selectVehicle').append(new Option(vehicle.producer + " " + vehicle.model, vehicle.producer + "_" + vehicle.model));
+					var grade = vehicle.averageGrade;
+                	
+                	if(grade !== 0){
+                		grade = grade/5*100;
+                	}
+                	var roundedGrade = Math.round(vehicle.averageGrade * 10)/10;
+                	var rating = "<div class='star-ratings-sprite' title='" + roundedGrade + "/5.0'><span style='width:" + grade 
+                	+ "%' class='star-ratings-sprite-rating'></span></div>";
 					table.row.add([
 					               vehicle.producer,
 					               vehicle.model,
@@ -442,7 +458,7 @@ function loadVehicles() {
 					               vehicle.fuelType,
 					               vehicle.vehicleType,
 					               vehicle.pricePerDay,
-					               vehicle.averageGrade,
+					               rating,
 					               vehicle.deleted
 					               ]).draw(false);
 				}
