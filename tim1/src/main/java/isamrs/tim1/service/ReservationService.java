@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import isamrs.tim1.dto.DetailedReservationDTO;
 import isamrs.tim1.dto.FlightHotelReservationDTO;
@@ -152,8 +153,10 @@ public class ReservationService {
 		FlightReservation fr = new FlightReservation();
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru);
-		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
+		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString())) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return retval;
+		}
 
 		userRepository.save(ru);
 		mailService.sendFlightReservationMail(ru, fr);
@@ -168,12 +171,16 @@ public class ReservationService {
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru);
-		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
+		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString())) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return retval;
+		}
 
 		retval = reserveHotelNoSave(hotelRes, fr);
-		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
+		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString())) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return retval;
+		}
 
 		userRepository.save(ru);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
@@ -187,12 +194,16 @@ public class ReservationService {
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru);
-		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
+		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString())) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return retval;
+		}
 
 		retval = reserveVehicleNoSave(vehicleRes, fr);
-		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
+		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString())) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return retval;
+		}
 
 		userRepository.save(ru);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
@@ -208,16 +219,22 @@ public class ReservationService {
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru);
-		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
+		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString())) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return retval;
+		}
 
 		retval = reserveHotelNoSave(hotelRes, fr);
-		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
+		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString())) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return retval;
+		}
 
 		retval = reserveVehicleNoSave(vehicleRes, fr);
-		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
+		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString())) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return retval;
+		}
 
 		userRepository.save(ru);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
@@ -265,7 +282,8 @@ public class ReservationService {
 			}
 			st = seatRepository.findOneByRowAndColumnAndPlaneSegment(row, column, planeSegment);
 			if (st.getPassengerSeat() != null) {
-				return new MessageDTO("Seat " + row + "_" + column + " is already reserved.", ToasterType.ERROR.toString());
+				return new MessageDTO("Seat " + row + "_" + column + " is already reserved.",
+						ToasterType.ERROR.toString());
 			}
 			PassengerSeat ps = new PassengerSeat(p, st);
 			st.setPassengerSeat(ps);
@@ -305,7 +323,7 @@ public class ReservationService {
 
 		HotelRoom room = hotelRoomRepository.findOneByNumberAndHotelName(hotelRes.getHotelRoomNumber(),
 				hotelRes.getHotelName());
-		
+
 		if (!sdf.format(hotelRes.getFromDate()).equals(sdf.format(fr.getFlight().getLandingTime())))
 			return new MessageDTO("Hotel reservation start day must be same as flight landing day",
 					ToasterType.ERROR.toString());
