@@ -2,6 +2,8 @@ package isamrs.tim1.dto;
 
 import java.io.Serializable;
 
+import isamrs.tim1.model.Destination;
+
 public class DestinationDTO implements Serializable {
 	
 	private String nameOfDest;
@@ -13,6 +15,13 @@ public class DestinationDTO implements Serializable {
 		super();
 	}
 	
+	public DestinationDTO(Destination d) {
+		this.nameOfDest = d.getName();
+		this.airlineName = d.getAirline().getName();
+		this.longitude = d.getLocation().getLongitude();
+		this.latitude = d.getLocation().getLatitude();
+	}
+
 	public String getNameOfDest() {
 		return nameOfDest;
 	}

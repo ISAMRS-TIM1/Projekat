@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import isamrs.tim1.dto.DestinationDTO;
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.model.Airline;
+import isamrs.tim1.model.AirlineAdmin;
 import isamrs.tim1.model.Destination;
 import isamrs.tim1.model.Location;
 import isamrs.tim1.repository.DestinationRepository;
@@ -34,7 +36,8 @@ public class DestinationService {
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public ResponseEntity<MessageDTO> addDestination(DestinationDTO destDTO) {
-	    Airline a = (Airline) serviceRepository.findOneByName(destDTO.getAirlineName());
+		AirlineAdmin admin = (AirlineAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	    Airline a = admin.getAirline();
 	    if (a == null)
 			return new ResponseEntity<MessageDTO>(new MessageDTO("Airline does not exist.", ""), HttpStatus.BAD_REQUEST);
 	    Destination dest = destinationRepository.findOneByName(destDTO.getNameOfDest());
@@ -62,5 +65,10 @@ public class DestinationService {
 			}
 		}
 		return destList;
+	}
+
+	public ResponseEntity<DestinationDTO> loadDestination(String dest) {
+		Destination d = destinationRepository.findOneByName(dest);
+		return new ResponseEntity<DestinationDTO>(new DestinationDTO(d), HttpStatus.OK);
 	}
 }

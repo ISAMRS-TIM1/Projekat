@@ -109,11 +109,37 @@ $(document)
                 "paging": false,
                 "info": false,
                 "scrollCollapse": true,
-                "retrieve": true,
+                "retrieve": true
             });
-
+            
+            var destinationsTable = $('#airlineDestinationsTable').DataTable({
+                "paging": false,
+                "info": false,
+                "scrollY": "200px",
+                "scrollCollapse": true,
+                "retrieve": true,
+                "columnDefs": [
+                    {
+                        "targets": [ 1 ],
+                        "visible": false
+                    },
+                    {
+                        "targets": [ 2 ],
+                        "visible": false
+                    }
+                ]
+            });
+            
+            $('#airlineDestinationsTable tbody').on('click', 'tr', function() {
+                destinationsTable.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+                var longitude = destinationsTable.row(this).data()[1];
+                var latitude = destinationsTable.row(this).data()[2];
+                // NAMESTITI MAPU NA LONG I LAT
+            });
+            
             setUpTableFilter("#flightsTable");
-
+            
             var flightsTable = $('#flightsTable').DataTable({
                 "paging": false,
                 "info": false,
@@ -1484,6 +1510,7 @@ function loadAirline(name) {
 				}
 				airlineMap = setUpMap(data["latitude"], data["longitude"],
 						'airlineMapDiv', false);
+				renderDestinations(data["destinations"]);
 				renderQuickFlightReservations(data["quickReservations"]);
 			}
 		},
@@ -2072,6 +2099,14 @@ function cancelReservation(id) {
             alert("AJAX ERROR: " + textStatus);
         }
     });
+}
+
+function renderDestinations(data) {
+	var destTable = $("#airlineDestinationsTable").DataTable();
+	destTable.clear().draw();
+	$.each(data, function(i, val) {
+		destTable.row.add([ val.nameOfDest, val.longitude, val.latitude ]).draw(false);
+	});
 }
 
 function renderQuickFlightReservations(data) {

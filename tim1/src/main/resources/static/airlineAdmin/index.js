@@ -25,6 +25,7 @@ const logoutURL = "../logout";
 const loadUserInfoURL = "../api/getUserInfo";
 const editUserInfoURL = "../api/editUser";
 const changePasswordURL = "../changePassword";
+const loadDestinationURL = "/api/loadDestination";
 var airlineName = "";
 var timeFormat = 'DD/MM/YYYY';
 
@@ -90,6 +91,18 @@ $(document).ready(function() {
 		shownFlight = flightsTable.row(this).data()[0];
 		loadFlight(shownFlight);
 		$("#quickReserveDiv").show();
+	});
+	
+	$('#destinationsTable tbody').on('click', 'tr', function() {
+		var destTable = $('#destinationsTable').DataTable();
+		var destToShow = destTable.row(this).data()[0];
+		loadDestination(destToShow);
+		$("#modalDestButton").attr("onclick", "editDestination('" + destToShow + "')");
+		$("#destinationModalDialog").modal('show');
+	});
+	
+	$("#destinationModalDialog").on('hidden.bs.modal', function() {
+		$("#modalDestButton").attr("onclick", "addDestination(event)");
 	});
 	
 	$('#flightModalDialog').on('hidden.bs.modal', function() {
@@ -223,7 +236,7 @@ function loadAirline() {
 function renderDestinations(data) {
 	var table = $('#destinationsTable').DataTable();
 	$.each(data, function(i, val) {
-		table.row.add([ val.name ]).draw(false);
+		table.row.add([ val.nameOfDest ]).draw(false);
 	});
 	var start = $("#startDestination");
 	var end = $("#endDestination");
@@ -1172,6 +1185,25 @@ function addFlight(e) {
 							moment(new Date(landingTime)).format("DD.MM.YYYY HH:mm"), isRoundTrip ]).draw(false);
 				saveSeatsChanges(data);
 				$("#flightModalDialog").modal("hide");
+		}
+	});
+}
+
+function loadDestination(dest) {
+	$.ajax({
+		type : 'GET',
+		url : loadDestinationURL,
+		contentType : "application/json",
+		data : {
+			'dest' : dest
+		},
+		success : function(data) {
+			if (data != null) {
+				$("#destinationName").val(data["nameOfDest"]);
+				setTimeout(function() {
+					destMap = setUpMap(data["latitude"], data["longitude"] , 'destMapDiv', true, destMap, '#destMapDivLatitude', '#destMapDivLongitude', 2);
+				}, 500);
+			}
 		}
 	});
 }
