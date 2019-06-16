@@ -51,7 +51,7 @@ public class AirlineController {
 				HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasRole('SYSADMIN') or hasRole('REGISTEREDUSER')")
+	// everyone
 	@RequestMapping(value = "/api/getAirlines", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArrayList<ServiceViewDTO>> getAirlines() {
 		return new ResponseEntity<ArrayList<ServiceViewDTO>>(airlineService.getAirlines(), HttpStatus.OK);

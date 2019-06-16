@@ -54,7 +54,7 @@ public class HotelController {
 				HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasRole('REGISTEREDUSER')")
+	// everyone
 	@RequestMapping(value = "/api/getDetailedHotel", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<HotelDTO> getDetailedHotel(@RequestParam String name) {
 		return new ResponseEntity<HotelDTO>(hotelService.getDetailedHotel(name), HttpStatus.OK);
@@ -72,7 +72,7 @@ public class HotelController {
 		return new ResponseEntity<DetailedServiceDTO>(hotelService.getHotel(name), HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasRole('REGISTEREDUSER')")
+	// everyone
 	@RequestMapping(value = "api/searchHotels", method = RequestMethod.GET)
 	public ResponseEntity<ArrayList<ServiceViewDTO>> searchHotels(@RequestParam String name,
 			@RequestParam double fromGrade, @RequestParam double toGrade, @RequestParam String country) {

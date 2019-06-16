@@ -28,13 +28,13 @@ public class VehicleController {
 	@Autowired
 	private VehicleService vehicleService;
 
-	@PreAuthorize("hasRole('RENTADMIN') or hasRole('REGISTEREDUSER')")
+	// everyone
 	@RequestMapping(value = "/api/getVehicleTypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<VehicleType[]> getVehicleTypes() {
 		return new ResponseEntity<VehicleType[]>(VehicleType.values(), HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasRole('RENTADMIN') or hasRole('REGISTEREDUSER')")
+	// everyone
 	@RequestMapping(value = "/api/getFuelTypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<FuelType[]> getFuelTypes() {
 		return new ResponseEntity<FuelType[]>(FuelType.values(), HttpStatus.OK);
@@ -46,7 +46,7 @@ public class VehicleController {
 		return new ResponseEntity<ArrayList<VehicleDTO>>(vehicleService.getAllVehicles(), HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasRole('REGISTEREDUSER')")
+	// everyone
 	@RequestMapping(value = "/api/searchVehicles", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArrayList<VehicleDTO>> searchVehicles(@RequestBody VehicleSearchDTO searchFields) {
 		return new ResponseEntity<ArrayList<VehicleDTO>>(vehicleService.searchVehicles(searchFields), HttpStatus.OK);
@@ -73,19 +73,19 @@ public class VehicleController {
 		return new ResponseEntity<MessageDTO>(vehicleService.deleteVehicle(producer, model), HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasRole('REGISTEREDUSER')")
+	// everyone
 	@RequestMapping(value = "/api/getVehicleProducers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArrayList<String>> getAllProducers() {
 		return new ResponseEntity<ArrayList<String>>(vehicleService.getAllProducers(), HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasRole('REGISTEREDUSER')")
+	// everyone
 	@RequestMapping(value = "/api/getModels/{producer}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArrayList<String>> getModelsForProducer(@PathVariable("producer") String producer) {
 		return new ResponseEntity<ArrayList<String>>(vehicleService.getModelsForProducer(producer), HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasRole('REGISTEREDUSER')")
+	// everyone
 	@RequestMapping(value = "/api/getBranchOfficesForVehicle/{vehicle}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Set<String>> getBranchOfficesForVehicle(@PathVariable("vehicle") Integer id) {
 		return new ResponseEntity<Set<String>>(vehicleService.getBranchOfficesForVehicle(id), HttpStatus.OK);

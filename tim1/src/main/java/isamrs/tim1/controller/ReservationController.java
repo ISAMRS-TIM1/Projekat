@@ -111,7 +111,7 @@ public class ReservationController {
 				reservationService.getQuickVehicleReservations(), HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasRole('REGISTEREDUSER')")
+	// everyone
 	@RequestMapping(value = "/api/getQuickReservationsForVehicle/{vehicleId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArrayList<VehicleReservationDTO>> getQuickVehicleReservationsForVehicle(
 			@PathVariable("vehicleId") int vehicleId) {
@@ -124,6 +124,7 @@ public class ReservationController {
 		return new ResponseEntity<MessageDTO>(reservationService.createQuickFlightReservation(quickDTO), HttpStatus.OK);
 	}
 
+	// everyone
 	@RequestMapping(value = "/api/getQuickFlightReservations", method = RequestMethod.GET)
 	public ArrayList<QuickFlightReservationDTO> getQuickFlightReservations() {
 		return reservationService.getQuickFlightReservations();
