@@ -11,6 +11,6 @@ public interface HotelRepository extends JpaRepository<Hotel, Integer> {
 
 	Hotel findOneByName(String name);
 	
-	@Query(value = "select * from hotels h where h.name like %?1% and h.average_grade between ?2 and ?3", nativeQuery = true)
-	ArrayList<Hotel> findByNameGrade(String name, double fromGrade, double toGrade);
+	@Query(value = "select * from hotels h inner join locations l on h.location = l.location_id where h.name like %?1% and h.average_grade between ?2 and ?3 and l.country like ?4", nativeQuery = true)
+	ArrayList<Hotel> findByNameGradeCountry(String name, double fromGrade, double toGrade, String country);
 }

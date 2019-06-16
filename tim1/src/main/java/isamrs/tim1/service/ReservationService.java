@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import isamrs.tim1.dto.DetailedReservationDTO;
 import isamrs.tim1.dto.FlightHotelReservationDTO;
@@ -130,6 +131,8 @@ public class ReservationService {
 	@Autowired
 	FlightInvitationRepository flightInvitationRepository;
 
+	private SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+
 	public ArrayList<FlightReservationDTO> getReservations() {
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Set<FlightReservation> frs = flightReservationRepository.getByUser(ru.getId());
@@ -150,8 +153,10 @@ public class ReservationService {
 		FlightReservation fr = new FlightReservation();
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru);
-		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
+		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString())) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return retval;
+		}
 
 		userRepository.save(ru);
 		mailService.sendFlightReservationMail(ru, fr);
@@ -166,12 +171,16 @@ public class ReservationService {
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru);
-		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
+		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString())) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return retval;
+		}
 
 		retval = reserveHotelNoSave(hotelRes, fr);
-		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
+		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString())) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return retval;
+		}
 
 		userRepository.save(ru);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
@@ -185,12 +194,16 @@ public class ReservationService {
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru);
-		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
+		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString())) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return retval;
+		}
 
 		retval = reserveVehicleNoSave(vehicleRes, fr);
-		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
+		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString())) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return retval;
+		}
 
 		userRepository.save(ru);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
@@ -206,16 +219,22 @@ public class ReservationService {
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru);
-		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
+		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString())) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return retval;
+		}
 
 		retval = reserveHotelNoSave(hotelRes, fr);
-		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
+		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString())) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return retval;
+		}
 
 		retval = reserveVehicleNoSave(vehicleRes, fr);
-		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString()))
+		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString())) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return retval;
+		}
 
 		userRepository.save(ru);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
@@ -263,7 +282,8 @@ public class ReservationService {
 			}
 			st = seatRepository.findOneByRowAndColumnAndPlaneSegment(row, column, planeSegment);
 			if (st.getPassengerSeat() != null) {
-				return new MessageDTO("Seat " + row + "_" + column + " is already reserved.", ToasterType.ERROR.toString());
+				return new MessageDTO("Seat " + row + "_" + column + " is already reserved.",
+						ToasterType.ERROR.toString());
 			}
 			PassengerSeat ps = new PassengerSeat(p, st);
 			st.setPassengerSeat(ps);
@@ -289,6 +309,13 @@ public class ReservationService {
 				return new MessageDTO("Quick hotel reservation does not exist", ToasterType.ERROR.toString());
 			if (qhr.getFlightReservation() != null)
 				return new MessageDTO("Quick hotel reservation is already taken", ToasterType.ERROR.toString());
+			if (!sdf.format(qhr.getFromDate()).equals(sdf.format(fr.getFlight().getLandingTime())))
+				return new MessageDTO("Quick hotel reservation start day must be same as flight landing day",
+						ToasterType.ERROR.toString());
+			if (!qhr.getHotelRoom().getHotel().getLocation().getCountry()
+					.equals(fr.getFlight().getEndDestination().getLocation().getCountry()))
+				return new MessageDTO("Hotel country must be same as flight destination country",
+						ToasterType.ERROR.toString());
 			qhr.setFlightReservation(fr);
 			fr.setHotelReservation(qhr);
 			return new MessageDTO("", ToasterType.SUCCESS.toString());
@@ -296,6 +323,14 @@ public class ReservationService {
 
 		HotelRoom room = hotelRoomRepository.findOneByNumberAndHotelName(hotelRes.getHotelRoomNumber(),
 				hotelRes.getHotelName());
+
+		if (!sdf.format(hotelRes.getFromDate()).equals(sdf.format(fr.getFlight().getLandingTime())))
+			return new MessageDTO("Hotel reservation start day must be same as flight landing day",
+					ToasterType.ERROR.toString());
+		if (!room.getHotel().getLocation().getCountry()
+				.equals(fr.getFlight().getEndDestination().getLocation().getCountry()))
+			return new MessageDTO("Hotel country must be same as flight destination country",
+					ToasterType.ERROR.toString());
 		if (checkRoomReservations(room, hotelRes.getFromDate(), hotelRes.getToDate())) {
 			return new MessageDTO("This hotel room already has reservations in this period",
 					ToasterType.ERROR.toString());
@@ -340,8 +375,8 @@ public class ReservationService {
 			}
 			if (qvr == null) {
 				return new MessageDTO("Quick vehicle reservation does not exist", ToasterType.ERROR.toString());
-			} else if (!qvr.getFromDate().equals(fr.getFlight().getLandingTime())) {
-				return new MessageDTO("Vehicle reservation start date must be same as flight landing date",
+			} else if (!sdf.format(qvr.getFromDate()).equals(sdf.format(fr.getFlight().getLandingTime()))) {
+				return new MessageDTO("Vehicle reservation start day must be same as flight landing day",
 						ToasterType.ERROR.toString());
 			} else if (!qvr.getBranchOffice().getLocation().getCountry()
 					.equals(fr.getFlight().getEndDestination().getLocation().getCountry())) {
@@ -372,8 +407,8 @@ public class ReservationService {
 
 		if (!this.checkVehicleForPeriod(v.getId(), vehicleRes.getFromDate(), vehicleRes.getToDate())) {
 			return new MessageDTO("Vehicle is taken in given period", ToasterType.ERROR.toString());
-		} else if (!vehicleRes.getFromDate().equals(fr.getFlight().getLandingTime())) {
-			return new MessageDTO("Vehicle reservation start date must be same as flight landing date",
+		} else if (!sdf.format(vehicleRes.getFromDate()).equals(sdf.format(fr.getFlight().getLandingTime()))) {
+			return new MessageDTO("Vehicle reservation start day must be same as flight landing day",
 					ToasterType.ERROR.toString());
 		}
 
