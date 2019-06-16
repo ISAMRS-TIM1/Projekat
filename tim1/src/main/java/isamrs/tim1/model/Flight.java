@@ -22,7 +22,6 @@ import javax.persistence.Table;
 @Table(name = "Flights")
 public class Flight {
 
-
 	public Flight() {
 		super();
 		locationsOfConnecting = new ArrayList<String>();
@@ -33,13 +32,13 @@ public class Flight {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "flight_id", unique = true, nullable = false)
 	private Long id;
-	
+
 	@Column(name = "flightCode", unique = true, nullable = false)
 	private String flightCode;
-	
+
 	@Column(name = "averageGrade", unique = false, nullable = false)
 	private Double averageGrade;
-	
+
 	@Column(name = "departureTime", unique = false, nullable = false)
 	private Date departureTime;
 
@@ -60,10 +59,10 @@ public class Flight {
 
 	@Column(name = "firstClassPrice", unique = false, nullable = false)
 	private Double firstClassPrice;
-	
+
 	@Column(name = "businessClassPrice", unique = false, nullable = false)
 	private Double businessClassPrice;
-	
+
 	@Column(name = "economyClassPrice", unique = false, nullable = false)
 	private Double economyClassPrice;
 
@@ -81,18 +80,21 @@ public class Flight {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "endDestination")
 	private Destination endDestination;
-	
+
 	@OneToMany(mappedBy = "flight", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<PlaneSegment> planeSegments;
-	
+
 	@Column(name = "roundTrip", unique = false, nullable = false)
 	private boolean roundTrip;
-	
+
 	@Column(name = "returningDepartureTime", unique = false, nullable = true)
 	private Date returningDepartureTime;
 
 	@Column(name = "returningLandingTime", unique = false, nullable = true)
 	private Date returningLandingTime;
+
+	@OneToMany(mappedBy = "flight", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<FlightReservation> reservations;
 
 	public Long getId() {
 		return id;
@@ -252,5 +254,13 @@ public class Flight {
 
 	public void setReturningLandingTime(Date returningLandingTime) {
 		this.returningLandingTime = returningLandingTime;
+	}
+
+	public Set<FlightReservation> getReservations() {
+		return reservations;
+	}
+
+	public void setReservations(Set<FlightReservation> reservations) {
+		this.reservations = reservations;
 	}
 }

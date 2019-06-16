@@ -54,8 +54,9 @@ a[data-toggle="tab"] {
 	margin-top: -6%;
 }
 
-#saveChanges, #searchFlights, #searchHotelsButton, #searchRoomsButton, 
-#nextButtonFlights, #nextButtonFlightsStep, #nextButtonFlightsFriends, #nextButtonFlightsLast {
+#saveChanges, #searchFlights, #searchHotelsButton, #searchRoomsButton,
+	#nextButtonFlights, #nextButtonFlightsStep, #nextButtonFlightsFriends,
+	#nextButtonFlightsLast {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
@@ -83,20 +84,20 @@ a[data-toggle="tab"] {
 
 #nextButtonFlights {
 	position: absolute;
-    top: 88%;
-    left: 76%;
+	top: 88%;
+	left: 76%;
 }
 
 #nextButtonFlightsFriends {
 	position: relative;
-    margin-left: 90%;
-    margin-bottom: 5%;
+	margin-left: 90%;
+	margin-bottom: 5%;
 }
 
 #nextButtonFlightsLast {
 	position: relative;
-    margin-left: 80%;
-    margin-bottom: 5%;
+	margin-left: 80%;
+	margin-bottom: 5%;
 }
 
 #email {
@@ -105,15 +106,15 @@ a[data-toggle="tab"] {
 
 #reservationCart {
 	width: 17.5vw;
-    height: 17.5vw;
-    position: fixed;
-    right: 0;
-    top: 9.5vw;
-    background: #5994FF;
-    border: 0.24vw solid #B27A00;
-    border-radius: 4vw 4vw;
-    padding: 2vw;
-    overflow:auto;
+	height: 17.5vw;
+	position: fixed;
+	right: 0;
+	top: 9.5vw;
+	background: #5994FF;
+	border: 0.24vw solid #B27A00;
+	border-radius: 4vw 4vw;
+	padding: 2vw;
+	overflow: auto;
 }
 
 #friendsTableDiv {
@@ -268,16 +269,20 @@ input, button {
 	font-size: 15px;
 }
 
-#showFlightTable, #passengersTable, #showReservationTable, #showHotelReservationTable, #showCarReservationTable {
-	text-align:left;
-	color:white;
+#showFlightTable, #passengersTable, #showReservationTable,
+	#showHotelReservationTable, #showCarReservationTable {
+	text-align: left;
+	color: white;
 	margin: 0 auto;
 }
-#showFlightTable tbody, #passengersTable tbody, #showReservationTable tbody, 
+
+#showFlightTable tbody, #passengersTable tbody, #showReservationTable tbody,
 	#showHotelReservationTable tbody, #showCarReservationTable tbody {
-	overflow-y : auto;
+	overflow-y: auto;
 }
-#showFlightTable td, #passengersTable td, #showReservationTable td, #showHotelReservationTable td, #showCarReservationTable td {
+
+#showFlightTable td, #passengersTable td, #showReservationTable td,
+	#showHotelReservationTable td, #showCarReservationTable td {
 	padding: 5px;
 }
 
@@ -432,12 +437,12 @@ input, select {
 	background-color: #5994FF;
 }
 
-#showHotelTable > tbody > tr >  td {
+#showHotelTable>tbody>tr>td {
 	padding: 30px;
 	text-align: center;
 }
 
-#hotelRoomsSearchTable > tbody > tr >  td {
+#hotelRoomsSearchTable>tbody>tr>td {
 	padding: 30px;
 	text-align: center;
 }
@@ -446,7 +451,7 @@ input, select {
 	margin: auto;
 }
 
-#showAirlineTable > tbody > tr >  td {
+#showAirlineTable>tbody>tr>td {
 	padding: 30px;
 	text-align: center;
 }
@@ -456,12 +461,11 @@ input, select {
 }
 
 /* hotels reservations */
-.reservedAdditionalService td{
+.reservedAdditionalService td {
 	background-color: #00ff00 !important;
 }
 
 /* CARS */
-
 .textInput {
 	border: none;
 	resize: none;
@@ -470,14 +474,14 @@ input, select {
 
 #reserveDivFriends {
 	margin-top: 5%;
-    margin-left: 5%;
-    margin-right: 5%;
+	margin-left: 5%;
+	margin-right: 5%;
 }
 
 #reserveDivPassengers {
 	margin-top: 5%;
-    margin-left: 5%;
-    margin-right: 5%;
+	margin-left: 5%;
+	margin-right: 5%;
 }
 
 #yearOfProductionDatepicker {
@@ -485,9 +489,9 @@ input, select {
 	max-width: 260px;
 }
 
-#searchCarsTable, #reserveCarsTable { 
-    border-spacing: 1.5vw;
-    border-collapse: separate;
+#searchCarsTable, #reserveCarsTable {
+	border-spacing: 1.5vw;
+	border-collapse: separate;
 }
 
 #searchVehiclesButton {
@@ -499,15 +503,15 @@ input, select {
 }
 
 #searchVehiclesButton {
-	width:100%;
+	width: 100%;
 }
 
 /* BIG MODAL */
-@media (min-width: 768px) {
-  .modal-xl {
-    width: 90%;
-   max-width:1200px;
-  }
+@media ( min-width : 768px) {
+	.modal-xl {
+		width: 90%;
+		max-width: 1200px;
+	}
 }
 
 .modal-header {
@@ -525,15 +529,15 @@ input, select {
 }
 
 .modal-body, .modal-header {
-	background: #548cf1;	
+	background: #548cf1;
 }
 
 #rvButton {
- 	width: 50%;
- 	margin-left: auto;
- 	margin-right: auto;
- 	display: block;
- 	color: white;
+	width: 50%;
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	color: white;
 	font-size: 1.6vw;
 	border: 0.16vw solid #B27A00;
 	border-radius: 2vw 2vw 2vw 2vw;
@@ -544,15 +548,41 @@ input, select {
 	text-align: left;
 	color: white;
 }
+
 #airlineGrade {
-	color:white;
+	color: white;
 }
+
 #airlineName {
-	color:white;
+	color: white;
 	font-size: 4.5vw;
 	text-align: center;
 	background-color: transparent;
 }
+
 .retTripSrc {
 	display: none;
+}
+
+.star-ratings-sprite {
+	background:
+		url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/2605/star-rating-sprite.png")
+		repeat-x;
+	/*font-size: 0;*/
+	height: 21px;
+	line-height: 0;
+	overflow: hidden;
+	text-indent: -110em;
+	width: 110px;
+	margin: 0 auto;
+}
+
+.star-ratings-sprite-rating {
+	background:
+		url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/2605/star-rating-sprite.png")
+		repeat-x;
+	background-position: 0 100%;
+	float: left;
+	height: 21px;
+	display: block;
 }

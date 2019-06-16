@@ -14,27 +14,34 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "ServiceGrades")
-public class ServiceGrade implements Serializable{
-
+public class ServiceGrade implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "serviceGrade_id", unique = true, nullable = false)
+	@Column(name = "service_grade_id", unique = true, nullable = false)
 	private Long id;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user")
 	RegisteredUser user;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "service")
 	Service service;
 
 	@Column(name = "grade", unique = false, nullable = false)
-	private Integer grade;
-	
+	private double grade;
+
 	public ServiceGrade() {
 		super();
+	}
+
+	public ServiceGrade(RegisteredUser user, Service service, double grade) {
+		super();
+		this.id = null;
+		this.user = user;
+		this.service = service;
+		this.grade = grade;
 	}
 
 	public Long getId() {
@@ -60,20 +67,19 @@ public class ServiceGrade implements Serializable{
 	public void setService(Service service) {
 		this.service = service;
 	}
-	
-	public Integer getGrade() {
-		return grade;
-	}
-
-	public void setGrade(Integer grade) {
-		this.grade = grade;
-	}
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
 
-
 	private static final long serialVersionUID = 9094460221911906645L;
-	
+
+	public double getGrade() {
+		return grade;
+	}
+
+	public void setGrade(double grade) {
+		this.grade = grade;
+	}
+
 }
