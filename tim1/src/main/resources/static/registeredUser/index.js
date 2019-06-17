@@ -126,6 +126,69 @@ $(document)
                         "scrollCollapse": true,
                         "retrieve": true,
                     });
+            
+                    var destinationsTable = $('#airlineDestinationsTable').DataTable({
+                        "paging": false,
+                        "info": false,
+                        "scrollY": "200px",
+                        "scrollCollapse": true,
+                        "retrieve": true,
+                        "columnDefs": [
+                            {
+                                "targets": [ 1 ],
+                                "visible": false
+                            },
+                            {
+                                "targets": [ 2 ],
+                                "visible": false
+                            }
+                        ]
+                    });
+                    
+                    $('#airlineDestinationsTable tbody').on('click', 'tr', function() {
+                        destinationsTable.$('tr.selected').removeClass('selected');
+                        $(this).addClass('selected');
+                        var longitude = destinationsTable.row(this).data()[1];
+                        var latitude = destinationsTable.row(this).data()[2];
+                        // NAMESTITI MAPU NA LONG I LAT
+                    });
+                    
+                    setUpTableFilter("#flightsTable");
+                    
+                    var flightsTable = $('#flightsTable').DataTable({
+                        "paging": false,
+                        "info": false,
+                        "scrollY": "17vw",
+                        "scrollX": true,
+                        "scrollCollapse": true,
+                        "retrieve": true,
+                        "orderCellsTop": true
+                    });
+                    
+                    $('#quickAirlineReservationsTable').DataTable({
+                		"paging" : false,
+                		"info" : false,
+                		"orderCellsTop" : true,
+                		"fixedHeader" : true
+                	});
+
+                    $('#showFlightModal').on('hidden.bs.modal', function() {
+                        flightsTable.$('tr.selected').removeClass('selected');
+                        $("#reserveDivPassengers").hide();
+                        $("#reserveDivFriends").hide();
+                        $("#reserveDiv").show();
+                        seatsToReserve = [];
+                        $("#flightConnections").find('option').remove();
+                    });
+                    
+                    $('#showAirlineModal').on('shown.bs.modal', function() {
+                        setTimeout(function() {
+                            airlineMap.invalidateSize()
+                        }, 100);
+                        setTimeout(function() {
+                            airlineMap.invalidateSize()
+                        }, 1000);
+                    });
 
                     setUpTableFilter("#flightsTable");
 
@@ -1601,6 +1664,7 @@ function loadAirline(name) {
 				}
 				airlineMap = setUpMap(data["latitude"], data["longitude"],
 						'airlineMapDiv', false);
+				renderDestinations(data["destinations"]);
 				renderQuickFlightReservations(data["quickReservations"]);
 			}
 		},
@@ -1908,7 +1972,8 @@ function showFriendsStep(e) {
 	}
     e.preventDefault();
     var userPass = $("#userPassNumber").val();
-    if (userPass == "" || userPass == undefined) {
+    var passRegEx = /[0-9]{9}/;
+    if (userPass == "" || userPass == undefined || passRegEx.test(userPass) == false) {
         toastr["error"]("Invalid passport number.");
         return;
     }
@@ -2047,6 +2112,21 @@ function endReservation(e) {
     var passports = $("input[name='passportNumber']").map(function() {
         return $(this).val();
     }).get();
+	var passRegEx = /[0-9]{9}/;
+	var invalid = false;
+    $.each(passports, function(i, val) {
+        if (val == "" || val == undefined || passRegEx.test(val) == false) {
+            invalid = true;
+        }
+    });
+    if (invalid) {
+    	toastr["error"]("Invalid passport number.");
+    	return;
+    }
+    if (new Set(passports).size !== passports.length) {
+    	toastr["error"]("Two persons can not have same passport number.");
+    	return;
+    }
     var bags = $("input[name='bags']").map(function() {
         return $(this).val();
     }).get();
@@ -2055,7 +2135,7 @@ function endReservation(e) {
             toastr["error"]("Invalid data for passengers.");
             return;
         }
-        if (isNaN(bags[i]) || bags[i] < 0) {
+        if (isNaN(bags[i]) || bags[i] < 0 || bags[i] == "") {
             toastr["error"]("Invalid number of bags.");
             return;
         }
@@ -2488,6 +2568,14 @@ function cancelReservation(id) {
     });
 }
 
+function renderDestinations(data) {
+	var destTable = $("#airlineDestinationsTable").DataTable();
+	destTable.clear().draw();
+	$.each(data, function(i, val) {
+		destTable.row.add([ val.nameOfDest, val.longitude, val.latitude ]).draw(false);
+	});
+}
+
 function renderQuickFlightReservations(data) {
 	var quickFlightResTable = $("#quickAirlineReservationsTable").DataTable();
 	quickFlightResTable.clear().draw();
@@ -2559,7 +2647,8 @@ function reserveQuickFlightReservation(quickID, startDest, endDest, flightDate){
 function getPassportAndBags(e) {
 	e.preventDefault();
 	var userPass = $("#modalPass").val();
-    if (userPass == "" || userPass == undefined) {
+	var passRegEx = /[0-9]{9}/;
+    if (userPass == "" || userPass == undefined || passRegEx.test(userPass) == false) {
         toastr["error"]("Invalid passport number.");
         return;
     }
