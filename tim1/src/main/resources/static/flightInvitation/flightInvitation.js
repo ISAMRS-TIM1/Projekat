@@ -76,7 +76,8 @@ function getReservations() {
 function acceptInvitation(e) {
 	e.preventDefault();
 	var userPass = $("#modalPass").val();
-    if (userPass == "" || userPass == undefined) {
+	var passRegEx = /[0-9]{9}/;
+    if (userPass == "" || userPass == undefined || passRegEx.test(userPass) == false) {
         toastr["error"]("Invalid passport number.");
         return;
     }
