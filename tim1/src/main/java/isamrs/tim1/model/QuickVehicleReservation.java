@@ -9,7 +9,7 @@ public class QuickVehicleReservation extends VehicleReservation {
 
 	@Column(name = "discount", unique = false, nullable = true)
 	private Integer discount;
-	
+
 	public QuickVehicleReservation() {
 		super();
 	}

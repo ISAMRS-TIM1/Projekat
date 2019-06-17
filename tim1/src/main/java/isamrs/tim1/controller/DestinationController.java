@@ -24,6 +24,7 @@ public class DestinationController {
 		return destinationService.addDestination(d);
 	}
 	
+	// everyone
 	@RequestMapping(value = "/api/getDestinations", method = RequestMethod.GET)
 	public ArrayList<String> getDestinations() {
 		return destinationService.getDestinations();

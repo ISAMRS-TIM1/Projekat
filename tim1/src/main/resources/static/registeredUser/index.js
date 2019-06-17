@@ -1,4 +1,8 @@
 const tokenKey = "jwtToken";
+var isVisitor = false;
+const loginPageURL = "../login";
+const checkIfRegisteredUserURL = "../auth/checkIfRegisteredUser";
+
 const tileLayerURL = "https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw";
 const MAP_ZOOM = 8;
 const MAX_MAP_ZOOM = 19;
@@ -57,460 +61,507 @@ var error = false;
 $(document)
     .ready(
         function() {
-            var socket = new SockJS('/friendsEndpoint');
-            var stompClient = Stomp.over(socket);
-            stompClient.connect({}, function(frame) {
-                stompClient.subscribe("/friendsInvitation/" + userMail,
-                    function(data) {
-                        getFriends();
+        	$.ajax({
+        		type: "GET",
+        		url: checkIfRegisteredUserURL,
+        		dataType: "json",
+        		headers: createAuthorizationTokenHeader(tokenKey),
+        		success: function(data) {
+        			isVisitor = !data;
+        			if(!isVisitor){
+        	            var socket = new SockJS('/friendsEndpoint');
+        	            var stompClient = Stomp.over(socket);
+        	            stompClient.connect({}, function(frame) {
+        	                stompClient.subscribe("/friendsInvitation/" + userMail,
+        	                    function(data) {
+        	                        getFriends();
+        	                    });
+        	            });
+        	            loadProfileData();
+        	        }
+
+                    getAirlines();
+                    setUpToastr();
+                    getDestinations();
+                    
+                    localStorage.removeItem("flightReservation");
+                    localStorage.removeItem("flightRes");
+                    localStorage.removeItem("quickFlightReservation");
+                    
+                    $('#friendsTable').DataTable({
+                        "paging": false,
+                        "info": false,
+                        "scrollY": "17vw",
+                        "scrollCollapse": true,
+                        "retrieve": true,
                     });
-            });
 
-            loadData();
-            getAirlines();
-            setUpToastr();
-            getDestinations();
-            
-            localStorage.removeItem("flightReservation");
-            localStorage.removeItem("flightRes");
-            localStorage.removeItem("quickFlightReservation");
-            
-            $('#friendsTable').DataTable({
-                "paging": false,
-                "info": false,
-                "scrollY": "17vw",
-                "scrollCollapse": true,
-                "retrieve": true,
-            });
-
-            var reservationsTable = $('#reservationsTable').DataTable({
-                "paging": false,
-                "info": false,
-                "scrollY": "17vw",
-                "scrollCollapse": true,
-                "retrieve": true,
-            });
-
-            $('#usersTable').DataTable({
-                "paging": false,
-                "info": false,
-                "scrollCollapse": true,
-                "retrieve": true,
-            });
-
-            $('#inviteFriendsTable').DataTable({
-                "paging": false,
-                "info": false,
-                "scrollCollapse": true,
-                "retrieve": true,
-            });
-            
-            var airlinesTable = $('#airlinesTable').DataTable({
-                "paging": false,
-                "info": false,
-                "scrollCollapse": true,
-                "retrieve": true,
-            });
-
-            setUpTableFilter("#flightsTable");
-
-            var flightsTable = $('#flightsTable').DataTable({
-                "paging": false,
-                "info": false,
-                "scrollY": "17vw",
-                "scrollX": true,
-                "scrollCollapse": true,
-                "retrieve": true,
-                "orderCellsTop": true
-            });
-            
-            $('#quickAirlineReservationsTable').DataTable({
-        		"paging" : false,
-        		"info" : false,
-        		"orderCellsTop" : true,
-        		"fixedHeader" : true
-        	});
-
-            $('#showFlightModal').on('hidden.bs.modal', function() {
-                flightsTable.$('tr.selected').removeClass('selected');
-                $("#reserveDivPassengers").hide();
-                $("#reserveDivFriends").hide();
-                $("#reserveDiv").show();
-                seatsToReserve = [];
-                $("#flightConnections").find('option').remove();
-            });
-            
-            $('#showAirlineModal').on('shown.bs.modal', function() {
-                setTimeout(function() {
-                    airlineMap.invalidateSize()
-                }, 100);
-                setTimeout(function() {
-                    airlineMap.invalidateSize()
-                }, 1000);
-            });
-
-            $('#showAirlineModal').on('hidden.bs.modal', function() {
-                airlinesTable.$('tr.selected').removeClass('selected');
-                airlineMap.off();
-                airlineMap.remove();
-                airlineMap = null;
-            });
-
-            $('#flightsTable tbody').on('click', 'tr', function() {
-                flightsTable.$('tr.selected').removeClass('selected');
-                $(this).addClass('selected');
-                shownFlight = flightsTable.row(this).data()[0];
-                loadFlight(shownFlight);
-                $("#showFlightModal").modal();
-            });
-            
-            $('#airlinesTable tbody').on('click', 'tr', function() {
-            	airlinesTable.$('tr.selected').removeClass('selected');
-                $(this).addClass('selected');
-                shownAirline = airlinesTable.row(this).data()[0];
-                loadAirline(shownAirline);
-                $("#showAirlineModal").modal();
-            });
-            
-            $('#reservationsTable tbody').on('click', 'tr', function() {
-            	var tgt = $(event.target);
-            	var resTable = $("#reservationsTable").DataTable();
-            	if (tgt[0].id == "cancelResButton") {
-            		var res = resTable.row(this).data()[0];
-            		cancelReservation(res);
-            	}
-            	else {
-            		reservationsTable.$('tr.selected').removeClass('selected');
-                    $(this).addClass('selected');
-                    shownReservation = reservationsTable.row(this).data()[0];
-                    loadReservation(shownReservation);
-                    $("#showReservationModal").modal();
-            	}
-            });
-            
-            $('#showReservationModal').on('hidden.bs.modal', function() {
-            	reservationsTable.$('tr.selected').removeClass('selected');
-            });
-            
-            $("#srcRoundTrip").change(function() {
-        	    if(this.checked) {
-        	        $(".retTripSrc").show();
-        	    }
-        	    else {
-        	    	$(".retTripSrc").hide();
-        	    	$("#srcRetDepTime").val("");
-        	    }
-        	});
-
-            $(".nav li").click(function() {
-                $(this).addClass("active");
-                $(this).siblings().removeClass("active");
-            });
-
-            $("#logout").click(function() {
-                document.location.href = logoutURL;
-            });
-
-            $('.nav-tabs a').click(function() {
-                $(this).tab('show');
-            });
-
-            $('.edit')
-                .click(
-                    function() {
-                        if ($(this).siblings().first().is(
-                                '[readonly]')) {
-                            $(this).siblings().first()
-                                .removeAttr('readonly');
-                        } else {
-                            $(this).siblings().first().prop(
-                                'readonly', 'true');
-                        }
+                    var reservationsTable = $('#reservationsTable').DataTable({
+                        "paging": false,
+                        "info": false,
+                        "scrollY": "17vw",
+                        "scrollCollapse": true,
+                        "retrieve": true,
                     });
-            
-            $('#friendsTable tbody').on('click', 'tr', function(event) {
-            	var tgt = $(event.target);
-            	var table = $("#friendsTable").DataTable();
-            	if (tgt[0].innerHTML == "Accept") {
-                    acceptInvitation(table.row(this).data()[0], table.row(this).index());
-                } else if (tgt[0].innerHTML == "Decline") {
-                	declineInvitation(table.row(this).data()[0], table.row(this).index());
-                }
-            });
 
-            $('#usersTable tbody').on('click', 'tr', function(event) {
-            	var tgt = $(event.target);
-                if (tgt[0].id == "sendInvButton") {
-                    var table = $("#usersTable").DataTable();
-                    friendInvitation(table.row(this).data()[0], tgt[0].parentElement.id);
-                }
-            });
+                    $('#usersTable').DataTable({
+                        "paging": false,
+                        "info": false,
+                        "scrollCollapse": true,
+                        "retrieve": true,
+                    });
 
-            $("#searchUserForm")
-                .submit(
-                    function(e) {
-                        e.preventDefault();
-                        let firstName = $("#userFirstName")
-                            .val();
-                        let lastName = $("#userLastName").val();
-                        $
-                            .ajax({
-                                type: 'GET',
-                                url: searchUsersURL,
-                                headers: createAuthorizationTokenHeader(tokenKey),
-                                contentType: 'application/json',
-                                data: {
-                                    "firstName": firstName,
-                                    "lastName": lastName
-                                },
-                                success: function(data) {
-                                    var table = $(
-                                            '#usersTable')
-                                        .DataTable();
-                                    table.clear().draw();
-                                    $
-                                        .each(
-                                            data,
-                                            function(
-                                                i,
-                                                val) {
-                                                var sendInv = "<div id='status" +
-                                                    i +
-                                                    "'><button id='sendInvButton'" +
-                                                    " class='btn btn-default'>Send invitation</button></div>";
-                                                table.row
-                                                    .add(
-                                                        [
-                                                            val.email,
-                                                            val.firstName,
-                                                            val.lastName,
-                                                            sendInv
-                                                        ])
-                                                    .draw(
-                                                        false);
-                                            });
-                                },
-                                error: function(
-                                    XMLHttpRequest,
-                                    textStatus,
-                                    errorThrown) {
-                                    alert("AJAX ERROR: " +
-                                        textStatus);
+                    $('#inviteFriendsTable').DataTable({
+                        "paging": false,
+                        "info": false,
+                        "scrollCollapse": true,
+                        "retrieve": true,
+                    });
+                    
+                    var airlinesTable = $('#airlinesTable').DataTable({
+                        "paging": false,
+                        "info": false,
+                        "scrollCollapse": true,
+                        "retrieve": true,
+                    });
+
+                    setUpTableFilter("#flightsTable");
+
+                    var flightsTable = $('#flightsTable').DataTable({
+                        "paging": false,
+                        "info": false,
+                        "scrollY": "17vw",
+                        "scrollX": true,
+                        "scrollCollapse": true,
+                        "retrieve": true,
+                        "orderCellsTop": true
+                    });
+                    
+                    $('#quickAirlineReservationsTable').DataTable({
+                		"paging" : false,
+                		"info" : false,
+                		"orderCellsTop" : true,
+                		"fixedHeader" : true
+                	});
+
+                    $('#showFlightModal').on('hidden.bs.modal', function() {
+                        flightsTable.$('tr.selected').removeClass('selected');
+                        $("#reserveDivPassengers").hide();
+                        $("#reserveDivFriends").hide();
+                        $("#reserveDiv").show();
+                        seatsToReserve = [];
+                        $("#flightConnections").find('option').remove();
+                    });
+                    
+                    $('#showAirlineModal').on('shown.bs.modal', function() {
+                        setTimeout(function() {
+                            airlineMap.invalidateSize()
+                        }, 100);
+                        setTimeout(function() {
+                            airlineMap.invalidateSize()
+                        }, 1000);
+                    });
+
+                    $('#showAirlineModal').on('hidden.bs.modal', function() {
+                        airlinesTable.$('tr.selected').removeClass('selected');
+                        airlineMap.off();
+                        airlineMap.remove();
+                        airlineMap = null;
+                    });
+
+                    $('#flightsTable tbody').on('click', 'tr', function() {
+                        flightsTable.$('tr.selected').removeClass('selected');
+                        $(this).addClass('selected');
+                        shownFlight = flightsTable.row(this).data()[0];
+                        loadFlight(shownFlight);
+                        $("#showFlightModal").modal();
+                    });
+                    
+                    $('#airlinesTable tbody').on('click', 'tr', function() {
+                    	airlinesTable.$('tr.selected').removeClass('selected');
+                        $(this).addClass('selected');
+                        shownAirline = airlinesTable.row(this).data()[0];
+                        loadAirline(shownAirline);
+                        $("#showAirlineModal").modal();
+                    });
+                    
+                    $('#reservationsTable tbody').on('click', 'tr', function() {
+                    	var tgt = $(event.target);
+                    	var resTable = $("#reservationsTable").DataTable();
+                    	if (tgt[0].id == "cancelResButton") {
+                    		var res = resTable.row(this).data()[0];
+                    		cancelReservation(res);
+                    	}
+                    	else {
+                    		reservationsTable.$('tr.selected').removeClass('selected');
+                            $(this).addClass('selected');
+                            shownReservation = reservationsTable.row(this).data()[0];
+                            loadReservation(shownReservation);
+                            $("#showReservationModal").modal();
+                    	}
+                    });
+                    
+                    $('#showReservationModal').on('hidden.bs.modal', function() {
+                    	reservationsTable.$('tr.selected').removeClass('selected');
+                    });
+                    
+                    $("#srcRoundTrip").change(function() {
+                	    if(this.checked) {
+                	        $(".retTripSrc").show();
+                	    }
+                	    else {
+                	    	$(".retTripSrc").hide();
+                	    	$("#srcRetDepTime").val("");
+                	    }
+                	});
+
+                    $(".nav li").click(function() {
+                        $(this).addClass("active");
+                        $(this).siblings().removeClass("active");
+                    });
+
+                    $("#logout").click(function() {
+                        document.location.href = logoutURL;
+                    });
+
+                    $('.nav-tabs a').click(function() {
+                        $(this).tab('show');
+                    });
+
+                    $('.edit')
+                        .click(
+                            function() {
+                                if ($(this).siblings().first().is(
+                                        '[readonly]')) {
+                                    $(this).siblings().first()
+                                        .removeAttr('readonly');
+                                } else {
+                                    $(this).siblings().first().prop(
+                                        'readonly', 'true');
                                 }
                             });
-                    });
-
-            $('#userEditForm').on(
-                'submit',
-                function(e) {
-                    e.preventDefault();
-                    let firstName = $('input[name="fname"]').val();
-                    let lastName = $('input[name="lname"]').val();
-                    let phone = $('input[name="phone"]').val();
-                    let address = $('input[name="address"]').val();
-                    let email = $('#email').text();
-
-                    $.ajax({
-                        type: 'PUT',
-                        url: saveChangesURL,
-                        contentType: 'application/json',
-                        dataType: "html",
-                        data: formToJSON(firstName, lastName,
-                            phone, address, email),
-                        success: function(data) {
-                            if (data != "") {
-                                toastr["error"](data);
-                            }
-                        },
-                        error: function(XMLHttpRequest,
-                            textStatus, errorThrown) {
-                            alert("AJAX ERROR: " + textStatus);
+                    
+                    $('#friendsTable tbody').on('click', 'tr', function(event) {
+                    	var tgt = $(event.target);
+                    	var table = $("#friendsTable").DataTable();
+                    	if (tgt[0].innerHTML == "Accept") {
+                            acceptInvitation(table.row(this).data()[0], table.row(this).index());
+                        } else if (tgt[0].innerHTML == "Decline") {
+                        	declineInvitation(table.row(this).data()[0], table.row(this).index());
                         }
                     });
-                });
 
-            $('a[href="#profile"]').click(function() {
-                loadData();
-            });
-            
-            $('a[href="#reservations"]').click(function() {
-                getReservations();
-            });
-
-            $('a[data-toggle="tab"]')
-                .on(
-                    'shown.bs.tab',
-                    function(e) {
-                        $($.fn.dataTable.tables(true))
-                            .DataTable().columns.adjust();
+                    $('#usersTable tbody').on('click', 'tr', function(event) {
+                    	var tgt = $(event.target);
+                        if (tgt[0].id == "sendInvButton") {
+                            var table = $("#usersTable").DataTable();
+                            friendInvitation(table.row(this).data()[0], tgt[0].parentElement.id);
+                        }
+                    });
+                    
+                    setUpSearchHotelsForm();
+                    
+                    if(!isVisitor){
+        	            $("#searchUserForm")
+        	                .submit(
+        	                    function(e) {
+        	                        e.preventDefault();
+        	                        let firstName = $("#userFirstName")
+        	                            .val();
+        	                        let lastName = $("#userLastName").val();
+        	                        $
+        	                            .ajax({
+        	                                type: 'GET',
+        	                                url: searchUsersURL,
+        	                                headers: createAuthorizationTokenHeader(tokenKey),
+        	                                contentType: 'application/json',
+        	                                data: {
+        	                                    "firstName": firstName,
+        	                                    "lastName": lastName
+        	                                },
+        	                                success: function(data) {
+        	                                    var table = $(
+        	                                            '#usersTable')
+        	                                        .DataTable();
+        	                                    table.clear().draw();
+        	                                    $
+        	                                        .each(
+        	                                            data,
+        	                                            function(
+        	                                                i,
+        	                                                val) {
+        	                                                var sendInv = "<div id='status" +
+        	                                                    i +
+        	                                                    "'><button id='sendInvButton'" +
+        	                                                    " class='btn btn-default'>Send invitation</button></div>";
+        	                                                table.row
+        	                                                    .add(
+        	                                                        [
+        	                                                            val.email,
+        	                                                            val.firstName,
+        	                                                            val.lastName,
+        	                                                            sendInv
+        	                                                        ])
+        	                                                    .draw(
+        	                                                        false);
+        	                                            });
+        	                                },
+        	                                error: function(
+        	                                    XMLHttpRequest,
+        	                                    textStatus,
+        	                                    errorThrown) {
+        	                                    alert("AJAX ERROR: " +
+        	                                        textStatus);
+        	                                }
+        	                            });
+        	                    });
+        	
+        	            $('#userEditForm').on(
+        	                'submit',
+        	                function(e) {
+        	                    e.preventDefault();
+        	                    let firstName = $('input[name="fname"]').val();
+        	                    let lastName = $('input[name="lname"]').val();
+        	                    let phone = $('input[name="phone"]').val();
+        	                    let address = $('input[name="address"]').val();
+        	                    let email = $('#email').text();
+        	
+        	                    $.ajax({
+        	                        type: 'PUT',
+        	                        url: saveChangesURL,
+        	                        contentType: 'application/json',
+        	                        dataType: "html",
+        	                        data: formToJSON(firstName, lastName,
+        	                            phone, address, email),
+        	                        success: function(data) {
+        	                            if (data != "") {
+        	                                toastr["error"](data);
+        	                            }
+        	                        },
+        	                        error: function(XMLHttpRequest,
+        	                            textStatus, errorThrown) {
+        	                            alert("AJAX ERROR: " + textStatus);
+        	                        }
+        	                    });
+        	                });
+                    }
+                    
+                    $('a[href="#profile"]').click(function() {
+                    	loadProfileData();
+                    });
+                    
+                    $('a[href="#reservations"]').click(function() {
+                        getReservations();
                     });
 
-            setUpHotelsTab();
+                    $('a[data-toggle="tab"]')
+                        .on(
+                            'shown.bs.tab',
+                            function(e) {
+                                $($.fn.dataTable.tables(true))
+                                    .DataTable().columns.adjust();
+                            });
 
-            $("#reserveDivFriends").hide();
-            $("#reserveDivPassengers").hide();
+                    setUpHotelsTab();
 
-            $('#startYear').datepicker({
-                format: 'yyyy',
-                minViewMode: 'years',
-                autoclose: true
-            }).on('changeDate', function(selected) {
-                startDate = $("#startYear").val();
-                $('#endYear').datepicker('setStartDate', startDate);
-            });
+                    $("#reserveDivFriends").hide();
+                    $("#reserveDivPassengers").hide();
 
-            $('#endYear').datepicker({
-                format: 'yyyy',
-                minViewMode: 'years',
-                autoclose: true
-            });
+                    $('#startYear').datepicker({
+                        format: 'yyyy',
+                        minViewMode: 'years',
+                        autoclose: true
+                    }).on('changeDate', function(selected) {
+                        startDate = $("#startYear").val();
+                        $('#endYear').datepicker('setStartDate', startDate);
+                    });
 
-            $('#selectModel').multiselect({
-                includeSelectAllOption: true,
-                nonSelectedText: 'Select model'
-            });
+                    $('#endYear').datepicker({
+                        format: 'yyyy',
+                        minViewMode: 'years',
+                        autoclose: true
+                    });
 
-            $("#vehicleGrade").slider({});
+                    $('#selectModel').multiselect({
+                        includeSelectAllOption: true,
+                        nonSelectedText: 'Select model'
+                    });
 
-            $('#vehicleType').multiselect({
-                includeSelectAllOption: true,
-                nonSelectedText: 'Select car body type'
-            });
+                    $("#vehicleGrade").slider({});
 
-            $('#fuelType').multiselect({
-                includeSelectAllOption: true,
-                nonSelectedText: 'Select fuel type'
-            });
+                    $('#vehicleType').multiselect({
+                        includeSelectAllOption: true,
+                        nonSelectedText: 'Select car body type'
+                    });
 
-            $('a[href="#cars"]').click(function() {
-                getVehicleProducers();
-                getAllVehicleTypes();
-                getAllFuelTypes();
-            });
+                    $('#fuelType').multiselect({
+                        includeSelectAllOption: true,
+                        nonSelectedText: 'Select fuel type'
+                    });
 
-            $('#selectProducer').change(function() {
-                let value = $('#selectProducer').val();
+                    $('a[href="#cars"]').click(function() {
+                        getVehicleProducers();
+                        getAllVehicleTypes();
+                        getAllFuelTypes();
+                    });
 
-                if (value == "all") {
-                    $('#selectModel').prop('disabled', 'disabled');
-                    $('#selectModel').multiselect('dataprovider', []);
-                } else {
-                    getModelsForProducer(value);
-                    $('#selectModel').prop('disabled', 'false');
-                }
-            });
+                    $('#selectProducer').change(function() {
+                        let value = $('#selectProducer').val();
 
-            $('#searchVehiclesButton').click(function(e) {
-                e.preventDefault();
+                        if (value == "all") {
+                            $('#selectModel').prop('disabled', 'disabled');
+                            $('#selectModel').multiselect('dataprovider', []);
+                        } else {
+                            getModelsForProducer(value);
+                            $('#selectModel').prop('disabled', 'false');
+                        }
+                    });
 
-                let producer = $('#selectProducer').val();
-                let models = $('#selectModel').val();
-                let vehicleTypes = $('#vehicleType').val();
-                let fuelTypes = $('#fuelType').val();
-                let priceTo = emptyToNull($('#priceTo').val());
-                let numberOfSeats = emptyToNull($('#numberOfSeats').val());
-                let startDate = emptyToNull($('#startYear').val());
-                let endDate = emptyToNull($('#endYear').val());
-                let minGrade = $("#vehicleGrade").slider('getValue')[0];
-                let maxGrade = $("#vehicleGrade").slider('getValue')[1];
-                let country = $("#vehicleCountry").val();
-                
-                searchVehicles(producer, models, vehicleTypes, fuelTypes, priceTo, numberOfSeats, startDate, endDate, minGrade, maxGrade, country);
-            });
+                    $('#searchVehiclesForm').submit(function(e) {
+                        e.preventDefault();
 
-            $('#vehiclesTable').DataTable({
-                "paging": false,
-                "info": false,
-                "orderCellsTop": true,
-                "fixedHeader": true,
-                "scrollY": "200px",
-                "scrollCollapse": true,
-                "columnDefs": [
-                	{
-                		"targets": [ 0 ],
-                		"visible": false,
-                		"searchable": true
-                	}
-                ]
-            });
-            
-            $('#quickReservationsTable').DataTable({
-                "paging": false,
-                "info": false,
-                "orderCellsTop": true,
-                "fixedHeader": true,
-                "scrollY": "200px",
-                "scrollCollapse": true,
-            });
-            
-            var currentVehicleID = null;
-            var currentVehicleProducer = null;
-            var currentVehicleModel = null;
-            $(document).on('click', '#vehiclesTable tbody tr', function() {
-            	let table = $("#vehiclesTable").DataTable();
-            	let rowData = table.row(this).data();
-        		let title = rowData[1] + " " + rowData[2];
-        		currentVehicleID = rowData[0];
-        		currentVehicleProducer = rowData[1];
-        		currentVehicleModel = rowData[2];
-        		$("#quickReservationsModalTitle").text(title);
-        		getQuickReservationsForVehicle(rowData[0]);
-        		getBranchOfficesForVehicle(rowData[0]);
-        		$('#quickVehicleReservationsModal').modal('show');
-        	});
-            
-            $('#vrstartDate').datepicker({
-                format: "dd/mm/yyyy",
-                minViewMode: 'days',
-                autoclose: true,
-                startDate: new Date()
-            });
-            
-            $('#vrendDate').datepicker({
-            	format: "dd/mm/yyyy",
-                minViewMode: 'days',
-                autoclose: true,
-                startDate: new Date()
-            });
-            
-            $("#vrstartDate").change(function() {
-            	let date = $("#vrstartDate").datepicker('getDate', '+1d');
-            	date.setDate(date.getDate()+1);
-            	$("#vrendDate").datepicker('setStartDate', date);
-            });
-            
-            $("#rvButton").click(function(e) {
-            	e.preventDefault();
-            	
-            	let branch = $("#vehicleBranchOffices").val();
-            	
-            	checkCountry(branch, currentVehicleID);
-            	
-            	if(error){
-            		error = false;
-            		return;
-            	}
-            	
-            	let start = $("#vrstartDate").val();
-            	
-            	if(start === null || start === "") {
-            		toastr["error"]("Start date must have a value");
-            		return;
-            	} else if(!moment(localStorage.getItem("landingTime")).isSame(start)){
-            		toastr["error"]("Vehicle reservation start date must be same as flight landing date");
-            		return;
-            	}
-            	
-            	let end = $("#vrendDate").val();
-            	
-            	if(end === null || end === "") {
-            		toastr["error"]("End date must have a value");
-            		return;
-            	}
-            	
-            	checkVehicleForPeriod(currentVehicleID, start, end, currentVehicleProducer, currentVehicleModel, branch);
-            });
+                        let producer = $('#selectProducer').val();
+                        let models = $('#selectModel').val();
+                        let vehicleTypes = $('#vehicleType').val();
+                        let fuelTypes = $('#fuelType').val();
+                        let priceTo = emptyToNull($('#priceTo').val());
+                        let numberOfSeats = emptyToNull($('#numberOfSeats').val());
+                        let startDate = emptyToNull($('#startYear').val());
+                        let endDate = emptyToNull($('#endYear').val());
+                        let minGrade = $("#vehicleGrade").slider('getValue')[0];
+                        let maxGrade = $("#vehicleGrade").slider('getValue')[1];
+                        let country = $("#vehicleCountry").val();
+                        
+                        searchVehicles(producer, models, vehicleTypes, fuelTypes, priceTo, numberOfSeats, startDate, endDate, minGrade, maxGrade, country);
+                    });
+
+                    $('#vehiclesTable').DataTable({
+                        "paging": false,
+                        "info": false,
+                        "orderCellsTop": true,
+                        "fixedHeader": true,
+                        "scrollY": "200px",
+                        "scrollCollapse": true,
+                        "columnDefs": [
+                        	{
+                        		"targets": [ 0 ],
+                        		"visible": false,
+                        		"searchable": true
+                        	}
+                        ]
+                    });
+                    
+                    $('#quickReservationsTable').DataTable({
+                        "paging": false,
+                        "info": false,
+                        "orderCellsTop": true,
+                        "fixedHeader": true,
+                        "scrollY": "200px",
+                        "scrollCollapse": true,
+                    });
+                    
+                    var currentVehicleID = null;
+                    var currentVehicleProducer = null;
+                    var currentVehicleModel = null;
+                    var currentVehiclePrice = null;
+                    $(document).on('click', '#vehiclesTable tbody tr', function() {
+                    	let table = $("#vehiclesTable").DataTable();
+                    	let rowData = table.row(this).data();
+                		let title = rowData[1] + " " + rowData[2];
+                		currentVehicleID = rowData[0];
+                		currentVehicleProducer = rowData[1];
+                		currentVehicleModel = rowData[2];
+                		currentVehiclePrice = rowData[6];
+                		$("#quickReservationsModalTitle").text(title);
+                		getQuickReservationsForVehicle(rowData[0]);
+                		getBranchOfficesForVehicle(rowData[0]);
+                		$('#quickVehicleReservationsModal').modal('show');
+                	});
+                    
+                    $('#vrstartDate').datepicker({
+                        format: "dd/mm/yyyy",
+                        minViewMode: 'days',
+                        autoclose: true,
+                        startDate: new Date()
+                    });
+                    
+                    $('#vrendDate').datepicker({
+                    	format: "dd/mm/yyyy",
+                        minViewMode: 'days',
+                        autoclose: true,
+                        startDate: new Date()
+                    });
+                    
+                    $("#vrstartDate").change(function() {
+                    	let date = $("#vrstartDate").datepicker('getDate', '+1d');
+                    	date.setDate(date.getDate()+1);
+                    	$("#vrendDate").datepicker('setStartDate', date);
+                    });
+                    
+                    $("#rvButton").click(function(e) {
+                    	if(isVisitor){
+                    		warnVisitorToLogIn();
+                    		return;
+                    	}
+                    	e.preventDefault();
+                    	
+                    	let branch = $("#vehicleBranchOffices").val();
+                    	
+                    	checkCountry(branch, currentVehicleID);
+                    	
+                    	if(error){
+                    		error = false;
+                    		return;
+                    	}
+                    	
+                    	let start = $("#vrstartDate").datepicker('getDate');
+                    	
+                    	if(start === null || start === "") {
+                    		toastr["error"]("Start date must have a value");
+                    		return;
+                    	} else if(!moment(localStorage.getItem("landingTime")).isSame(start, 'date')){
+                    		toastr["error"]("Vehicle reservation start date must be same as flight landing date");
+                    		return;
+                    	}
+                    	
+                    	let end = $("#vrendDate").datepicker('getDate');
+                    	
+                    	if(end === null || end === "") {
+                    		toastr["error"]("End date must have a value");
+                    		return;
+                    	}
+                    	
+                    	checkVehicleForPeriod(currentVehicleID, currentVehiclePrice, start, end, currentVehicleProducer, currentVehicleModel, branch);
+                    });
+                    
+                    
+                    
+                    if(isVisitor) // after whole setup, we adjust the page for
+									// visitor
+                    	adjustPageForVisitor(); 
+        		},
+        		error: function(XMLHttpRequest, textStatus, errorThrown) {
+        			alert("AJAX ERROR: " + textStatus);
+        		}
+        	});        	
         });
+
+function adjustPageForVisitor(){
+	$('[href="#friends"]').closest('li').hide();
+	$('[href="#reservations"]').closest('li').hide();
+	$('[href="#profile"]').closest('li').hide();
+	$("#reservationCart").hide();
+	
+	$("#logout").text("Log in");
+	$("#logout").click(function(){
+		document.location.href = loginPageURL;
+	});
+}
+
+function warnVisitorToLogIn(){
+	toastr["error"](`You must <u><a href=${loginPageURL}>log in</a></u> to be able to do this`);
+}
+
 
 function checkCountry(branchOffice, vehicle){
 	$.ajax({
@@ -587,7 +638,7 @@ function getAirlines() {
     });
 }
 
-function checkVehicleForPeriod(vehicleID, start, end, vehicleProducer, vehicleModel, branch) {
+function checkVehicleForPeriod(vehicleID, price, start, end, vehicleProducer, vehicleModel, branch) {
 	$.ajax({
         type: 'POST',
         url: checkVehicleForPeriodURL,
@@ -602,7 +653,7 @@ function checkVehicleForPeriod(vehicleID, start, end, vehicleProducer, vehicleMo
         				'vehicleProducer' : vehicleProducer,
         				'vehicleModel' : vehicleModel,
         				'branchOfficeName' : branch,
-        				'discount': null,
+        				'price': price*Math.round((end-start)/(1000*60*60*24)),
         				'quickVehicleReservationID': null
         				};
         		localStorage.setItem("carRes", JSON.stringify(carRes));
@@ -638,12 +689,14 @@ function getQuickReservationsForVehicle(id) {
         		table.clear().draw();
         		for(let quickReservation of data) {
         			table.row.add([
+        				quickReservation.quickVehicleReservationID,
                     	quickReservation.branchOfficeName,
                     	quickReservation.vehicleProducer,
                     	quickReservation.vehicleModel,
                     	moment(quickReservation.fromDate).format("DD/MM/YYYY"),
                     	moment(quickReservation.toDate).format("DD/MM/YYYY"),
                     	quickReservation.discount,
+                    	quickReservation.price,
                     	"<button onclick='reserveQuickVehicleReservation(" + quickReservation.quickVehicleReservationID + "," + quickReservation.branchOfficeName + ")' class='btn btn-default reserve' type='button'>Reserve</a>"
                     ]).draw(false);
         		}
@@ -655,20 +708,33 @@ function getQuickReservationsForVehicle(id) {
 }
 
 function reserveQuickVehicleReservation(reservationID, branchOffice) {
+	if(isVisitor){
+		warnVisitorToLogIn();
+		return;
+	}
 	checkCountry(branch, currentVehicleID);
 	
 	if(error){
 		error = false;
 		return;
 	}
+	let table = $('#quickReservationsTable').DataTable();
+	var val = null;
+	table.rows().every(function ( rowIdx, tableLoop, rowLoop ) {
+	    if(this.data()[0] == reservationID){
+	    	val = this.data(); 
+	    	return;
+	    }
+	} );
+	
 	
 	var carRes = {
-			'fromDate' : null,
-			'toDate' : null,
-			'vehicleProducer' : null,
-			'vehicleModel' : null,
-			'branchOfficeName' : null,
-			'discount': null,
+			'fromDate' : moment(val[4], "DD.MM.YYYY HH:mm").toDate(),
+			'toDate' : moment(val[5], "DD.MM.YYYY HH:mm").toDate(),
+			'vehicleProducer' : val[2],
+			'vehicleModel' : val[3],
+			'branchOfficeName' : val[1],
+			'price' : val[7],
 			'quickVehicleReservationID' :parseInt(reservationID)
 			};
 	console.log(carRes);
@@ -892,10 +958,11 @@ function searchFlights(e) {
 			toastr["error"]("Returning departure time is not valid.");
 			return;
 		}
-		/*if (moment(retDepTime).isBefore(departureTime)) {
-			toastr["error"]("Returning departure time must be after the departure time.");
-			return;
-		}*/
+		/*
+		 * if (moment(retDepTime).isBefore(departureTime)) {
+		 * toastr["error"]("Returning departure time must be after the departure
+		 * time."); return; }
+		 */
 	}
     $.ajax({
         type: 'POST',
@@ -1075,8 +1142,7 @@ function getPlaneSeats(code) {
     });
 }
 
-function loadData() {
-    let token = getJwtToken("jwtToken");
+function loadProfileData() {
     $
         .ajax({
             type: 'GET',
@@ -1406,25 +1472,30 @@ function setUpTablesHotelsTab() {
 	});
 }
 
-function searchHotels(e) {
-    e.preventDefault();
-    $.ajax({
-        type: "GET",
-        url: searchHotelsURL,
-        contentType: "application/json",
-        data: {
-            'name': $("#searchHotelName").val(),
-            'fromGrade': $("#searchHotelGrade").slider('getValue')[0],
-            'toGrade': $("#searchHotelGrade").slider('getValue')[1]
-        },
-        dataType: "json",
-        headers: createAuthorizationTokenHeader(tokenKey),
-        success: function(data) {
-            renderHotels(data);
-        },
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
-            alert("AJAX ERROR: " + textStatus);
-        }
+function setUpSearchHotelsForm(e) {
+	$("#searchHotelsForm")
+    .submit(
+        function(e) {
+            e.preventDefault();
+		    $.ajax({
+		        type: "GET",
+		        url: searchHotelsURL,
+		        contentType: "application/json",
+		        data: {
+		            'name': $("#searchHotelName").val(),
+		            'fromGrade': $("#searchHotelGrade").slider('getValue')[0],
+		            'toGrade': $("#searchHotelGrade").slider('getValue')[1],
+		            'country': $("#searchHotelCountry").val()
+		        },
+		        dataType: "json",
+		        headers: createAuthorizationTokenHeader(tokenKey),
+		        success: function(data) {
+		            renderHotels(data);
+		        },
+		        error: function(XMLHttpRequest, textStatus, errorThrown) {
+		            alert("AJAX ERROR: " + textStatus);
+		        }
+		    });
     });
 }
 
@@ -1524,7 +1595,6 @@ function loadFlight(code) {
                 localStorage.setItem("flightCode", code);
                 localStorage.setItem("startDest", data["startDestination"]);
                 localStorage.setItem("endDest", data["endDestination"]);
-                $("#vehicleCountry").val(data["countryName"]);
                 localStorage.setItem("countryName", data["countryName"]);
                 localStorage.setItem("flightDate", data["departureTime"]);
                 $("#startDest").text(data["startDestination"]);
@@ -1572,7 +1642,7 @@ function renderRooms(data) {
 	$.each(data, function(i, val) {
 		roomsTable.row.add(
 				[ val.roomNumber, val.price, val.numberOfPeople, val.averageGrade,
-					`<button onclick="reserveRoomNumber('${val.roomNumber}')" class="btn btn-default">Reserve</a>` ]).draw(false);
+					`<button onclick="reserveRoomNumber('${val.roomNumber}', ${val.price})" class="btn btn-default">Reserve</a>` ]).draw(false);
 	});
 }
 
@@ -1586,6 +1656,10 @@ function renderAdditionalServices(data) {
 }
 
 function reserveAdditionalService(name) {
+	if(isVisitor){
+		warnVisitorToLogIn();
+		return;
+	}
     var indexes = additionalServicesTable.rows().eq(0).filter(function(rowIdx) {
         return additionalServicesTable.cell(rowIdx, 0).data() === name ? true : false;
     });
@@ -1609,7 +1683,6 @@ function renderQuickHotelReservations(data){
 	quickHotelReservationsTable.clear().draw();
 	$.each(data, function(i, val) {
 		var additionalServiceNames = val.additionalServiceNames.join('<br>');
-		console.log(additionalServiceNames);
 		quickHotelReservationsTable.row.add([
 										val.id,
 										val.discountedPrice,
@@ -1618,22 +1691,30 @@ function renderQuickHotelReservations(data){
 										moment(val.toDate).format("DD.MM.YYYY HH:mm"),
 										val.hotelRoomNumber,
 										additionalServiceNames,
-										`<button onclick="reserveQuickHotelReservation('${val.id}')" class="btn btn-default">Reserve</a>` ])
+										`<button onclick="reserveQuickHotelReservation('${val.id}')" class="btn btn-default">Reserve</button>` ])
 						.draw(false);
 			});
 }
 
-function reserveRoomNumber(roomNumber){
+function reserveRoomNumber(roomNumber, roomPrice){
+	if(isVisitor){
+		warnVisitorToLogIn();
+		return;
+	}
+	var price = 0;
 	additionalServiceNames = [];
 	additionalServicesTable.rows('.reservedAdditionalService').every(function ( rowIdx, tableLoop, rowLoop ) {
 	    additionalServiceNames.push(this.data()[0]);
+	    price += this.data()[1];
 	} );
 	var drp = $('#searchRoomsDateRange').data('daterangepicker');
+	price += roomPrice*Math.round((drp.endDate.toDate()-drp.startDate.toDate())/(1000*60*60*24));
 	var hotelRes = {'fromDate' : drp.startDate.toDate(),
 					'toDate' : drp.endDate.toDate(),
 					'hotelRoomNumber' : roomNumber,
 					'additionalServiceNames' : additionalServiceNames,
 					'hotelName' : shownHotel,
+					'price' : price,
 					'quickReservationID' : null};
 	localStorage.setItem("hotelRes", JSON.stringify(hotelRes));
 	$('#hotelRes').text(shownHotel);
@@ -1641,11 +1722,24 @@ function reserveRoomNumber(roomNumber){
 }
 
 function reserveQuickHotelReservation(quickID){
-	var hotelRes = {'fromDate' : null,
-			'toDate' : null,
-			'hotelRoomNumber' : null,
-			'additionalServiceNames' : null,
-			'hotelName' : null,
+	if(isVisitor){
+		warnVisitorToLogIn();
+		return;
+	}
+	var val = null;
+	quickHotelReservationsTable.rows().every(function ( rowIdx, tableLoop, rowLoop ) {
+	    if(this.data()[0] == quickID){
+	    	val = this.data(); 
+	    	return;
+	    }
+	} );
+	
+	var hotelRes = {'fromDate' : moment(val[3], "DD.MM.YYYY HH:mm").toDate(),
+			'toDate' : moment(val[4], "DD.MM.YYYY HH:mm").toDate(),
+			'hotelRoomNumber' : val[5],
+			'additionalServiceNames' : val[6],
+			'hotelName' : shownHotel,
+			'price' : val[1],
 			'quickReservationID' : quickID};
 	localStorage.setItem("hotelRes", JSON.stringify(hotelRes));
 	$('#hotelRes').text(shownHotel);
@@ -1724,6 +1818,10 @@ function setUpTableFilter(tableID, exceptColumn=""){
 /* FLIGHT RESERVATION */
 
 function showFriendsStep(e) {
+	if(isVisitor){
+		warnVisitorToLogIn();
+		return;
+	}
     e.preventDefault();
     var userPass = $("#userPassNumber").val();
     if (userPass == "" || userPass == undefined) {
@@ -1763,6 +1861,8 @@ function showFriendsStep(e) {
         var endDest = localStorage.getItem("endDest");
         var flightDate = localStorage.getItem("flightDate");
         $("#flightRes").html(startDest + "-" + endDest + " " + flightDate);
+        $("#vehicleCountry").val(localStorage.getItem("countryName"));
+        $("#searchHotelCountry").val(localStorage.getItem("countryName"));
         localStorage.setItem("flightRes", "true");
     }
     $.ajax({
@@ -1810,6 +1910,8 @@ function showLastStep(e) {
 		var endDest = localStorage.getItem("endDest");
 		var flightDate = localStorage.getItem("flightDate");
 		$("#flightRes").html(startDest + "-" + endDest + " " + flightDate);
+		$("#vehicleCountry").val(localStorage.getItem("countryName"));
+	    $("#searchHotelCountry").val(localStorage.getItem("countryName"));
 		localStorage.setItem("flightRes", "true");
 	}
 	else {
@@ -1872,11 +1974,58 @@ function endReservation(e) {
     var endDest = localStorage.getItem("endDest");
     var flightDate = localStorage.getItem("flightDate");
     $("#flightRes").html(startDest + "-" + endDest + " " + flightDate);
+    $("#vehicleCountry").val(localStorage.getItem("countryName"));
+    $("#searchHotelCountry").val(localStorage.getItem("countryName"));
     localStorage.setItem("flightRes", "true");
 }
 
-function confirmReservation(e) {
+function continueReservation(e) {
     e.preventDefault();
+    var hotelRes = JSON.parse(localStorage.getItem("hotelRes"));
+    if(hotelRes != null){
+		$("#fromDateRes").text(moment(hotelRes["fromDate"]).format('DD.MM.YYYY'));
+		$("#toDateRes").text(moment(hotelRes["toDate"]).format('DD.MM.YYYY'));
+		$("#roomNumberRes").text(hotelRes["hotelRoomNumber"]);
+		$("#hotelResId").text(hotelRes["hotelName"]);
+		$('#addServRes').find('option').remove();
+		var addServices = $("#addServRes");
+	    if (hotelRes["additionalServiceNames"].length == 0) {
+	        addServices.append("<option value=''></option>");
+	    } else {
+	        $.each(hotelRes["additionalServiceNames"], function(i, val) {
+	            addServices.append("<option value=" + val + ">" + val +
+	                "</option>");
+	        });
+	    }
+	    $("#hotelPriceRes").text(hotelRes["price"]);
+	    $("#hotelResHeader").show();
+		$("#showHotelReservationTable").show();
+    }
+    else {
+    	$("#hotelResHeader").hide();
+    	$("#showHotelReservationTable").hide();
+    }
+    
+    var carRes = JSON.parse(localStorage.getItem("carRes"));
+    if (carRes != null) {
+    	$("#fromDateCarRes").text(moment(carRes["fromDate"]).format('DD.MM.YYYY'));
+    	$("#toDateCarRes").text(moment(carRes["toDate"]).format('DD.MM.YYYY'));
+    	$("#bOfficeRes").text(carRes["branchOfficeName"]);
+    	$("#modelCarRes").text(carRes["vehicleModel"]);
+    	$("#prodCarRes").text(carRes["vehicleProducer"]);
+    	$("#carPriceRes").text(carRes["price"]);
+    	$("#carResHeader").show();
+    	$("#showCarReservationTable").show();
+    }
+    else {
+    	$("#carResHeader").hide();
+    	$("#showCarReservationTable").hide();
+    }
+	
+	
+    $("#showReservationModal").modal();   
+}
+function confirmReservation(){
     var quickFlightReservation = JSON.parse(localStorage.getItem("quickFlightReservation"));
     var flightRes = localStorage.getItem("flightRes");
     var hotelRes = JSON.parse(localStorage.getItem("hotelRes"));

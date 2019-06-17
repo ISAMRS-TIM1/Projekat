@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class RegisteredUserHomepageController {
-	@GetMapping("/registeredUser")
+	@GetMapping(value = { "/registeredUser", "/" })
 	public String showUserHomepage(Map<String, Object> model) {
 		return "registeredUser/index.html";
 	}

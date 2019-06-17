@@ -5,10 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import isamrs.tim1.model.Flight;
-import isamrs.tim1.model.FlightReservation;
-import isamrs.tim1.model.PassengerSeat;
 import isamrs.tim1.model.PlaneSegment;
 import isamrs.tim1.model.PlaneSegmentClass;
+import isamrs.tim1.model.Seat;
 
 public class FlightDTO implements Serializable {
 
@@ -61,12 +60,10 @@ public class FlightDTO implements Serializable {
 		this.countryName = f.getEndDestination().getLocation().getCountry();
 		this.planeSegments = new ArrayList<PlaneSegment>(f.getPlaneSegments());
 		this.reservedSeats = new ArrayList<String>();
-		for (FlightReservation r : f.getAirline().getReservations()) {
-			if (r.getFlight().getFlightCode().equals(f.getFlightCode())) {
-				for (PassengerSeat ps : r.getPassengerSeats()) {
-					if (ps.getSeat() != null) {
-						this.reservedSeats.add(ps.getSeat().getRow() + "_" + ps.getSeat().getColumn());
-					}
+		for (PlaneSegment pSeg : f.getPlaneSegments()) {
+			for (Seat s : pSeg.getSeats()) {
+				if (s.getPassengerSeat() != null) {
+					this.reservedSeats.add(s.getRow() + "_" + s.getColumn());
 				}
 			}
 		}

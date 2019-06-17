@@ -385,7 +385,7 @@ function renderPlaneSeats(planeSegments, reserved, mapNum) {
 			showPlaneSeatsSecondMap([]);
 		}
 	} else {
-		reservedSeats = [];
+		reservedSeats = reserved;
 		var maxRowFirst = 0;
 		var segment;
 		for (var i = 0; i < planeSegments.length; i++) {
@@ -647,6 +647,9 @@ function deleteSeatsIndividually(e) {
 		toastr["error"]("No seats chosen.");
 		return;
 	}
+	var numOfFirst = 0;
+	var numOfBusiness = 0;
+	var numOfEconomy = 0;
 	$.each(seatsForDelete, function(i, val) {
 		if (invalid)
 			return;
@@ -654,20 +657,28 @@ function deleteSeatsIndividually(e) {
 		var row;
 		if (idx[0] <= firstClass.length) {
 			row = firstClass[idx[0] - 1].split("");
+			numOfFirst++;
 		} else if (idx[0] > firstClass.length
 				&& idx[0] <= businessClass.length + firstClass.length) {
 			row = businessClass[idx[0] - firstClass.length - 1].split("");
+			numOfBusiness++;
 		} else if (idx[0] > businessClass.length
 				&& idx[0] <= firstClass.length + businessClass.length
 						+ economyClass.length) {
 			row = economyClass[idx[0] - firstClass.length
 					- businessClass.length - 1].split("");
+			numOfEconomy++;
 		}
 		if (row[idx[1] - 1] == 'l')
 			invalid = true;
 	});
 	if (invalid) {
 		toastr["error"]("Empty seats can not be deleted.");
+		return;
+	}
+	if (numOfFirst >= numberOfSeatsPerClass[0] || numOfBusiness >= numberOfSeatsPerClass[1]
+				|| numOfEconomy >= numberOfSeatsPerClass[2]) {
+		toastr["error"]("You can not delete all seats in the class.");
 		return;
 	}
 	$.each(seatsForDelete,
@@ -722,8 +733,8 @@ function deleteSeats(e, cat) {
 			toastr["error"]("Invalid number.");
 			return;
 		}
-		if (number > numberOfSeatsPerClass[cat - 1]) {
-			toastr["error"]("Number is greather than number of seats.");
+		if (number >= numberOfSeatsPerClass[cat - 1]) {
+			toastr["error"]("Number is greather than or equals to the number of seats in class.");
 			return;
 		}
 		var tempNumber = number;
@@ -777,8 +788,8 @@ function deleteSeats(e, cat) {
 			toastr["error"]("Invalid number.");
 			return;
 		}
-		if (number > numberOfSeatsPerClass[cat - 1]) {
-			toastr["error"]("Number is greather than number of seats.");
+		if (number >= numberOfSeatsPerClass[cat - 1]) {
+			toastr["error"]("Number is greather than or equals to the number of seats in class.");
 			return;
 		}
 		var tempNumber = number;
@@ -832,8 +843,8 @@ function deleteSeats(e, cat) {
 			toastr["error"]("Invalid number.");
 			return;
 		}
-		if (number > numberOfSeatsPerClass[cat - 1]) {
-			toastr["error"]("Number is greather than number of seats.");
+		if (number >= numberOfSeatsPerClass[cat - 1]) {
+			toastr["error"]("Number is greather than or equals to the number of seats in class.");
 			return;
 		}
 		var tempNumber = number;
@@ -1168,6 +1179,7 @@ function addFlight(e) {
 						[ data, startDestination, endDestination, moment(new Date(departureTime)).format("DD.MM.YYYY HH:mm"),
 							moment(new Date(landingTime)).format("DD.MM.YYYY HH:mm"), isRoundTrip ]).draw(false);
 				saveSeatsChanges(data);
+				$("#flightModalDialog").modal("hide");
 		}
 	});
 }
@@ -1252,6 +1264,7 @@ function editFlight(code) {
 		success : function(data) {
 			if (data.toastType == "success") {
 				saveSeatsChanges(code);
+				$("#flightModalDialog").modal("hide");
 				getFlights();
 			}
 			toastr[data.toastType](data.message);
@@ -1803,6 +1816,11 @@ function resetFlightsModal() {
 	$('.seat-map,.seat-map *').unbind().removeData();
 	$("#saveSeatButton").text("Add flight");
 	$("#saveSeatButton").attr("onclick", "addFlight(event)");
+	firstClass = [];
+	businessClass = [];
+	economyClass = [];
+	firstSeatLabel = 1;
+	reservedSeats = [];
 }
 
 function createQuickReservation(e) {

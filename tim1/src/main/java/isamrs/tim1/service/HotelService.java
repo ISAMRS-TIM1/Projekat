@@ -80,9 +80,9 @@ public class HotelService {
 		return new DetailedServiceDTO(hotelRepository.findOneByName(name));
 	}
 
-	public ArrayList<ServiceViewDTO> searchHotels(String name, double fromGrade, double toGrade) {
+	public ArrayList<ServiceViewDTO> searchHotels(String name, double fromGrade, double toGrade, String country) {
 		ArrayList<ServiceViewDTO> retval = new ArrayList<ServiceViewDTO>();
-		for (Hotel h : hotelRepository.findByNameGrade(name, fromGrade, toGrade)) {
+		for (Hotel h : hotelRepository.findByNameGradeCountry(name, fromGrade, toGrade, country)) {
 			retval.add(new ServiceViewDTO(h));
 		}
 		return retval;

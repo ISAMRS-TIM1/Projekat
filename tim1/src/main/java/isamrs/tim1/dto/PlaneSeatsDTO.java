@@ -4,9 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import isamrs.tim1.model.Flight;
-import isamrs.tim1.model.FlightReservation;
-import isamrs.tim1.model.PassengerSeat;
 import isamrs.tim1.model.PlaneSegment;
+import isamrs.tim1.model.Seat;
 
 public class PlaneSeatsDTO implements Serializable {
 	
@@ -31,12 +30,10 @@ public class PlaneSeatsDTO implements Serializable {
 		this.firstClassPrice = flight.getFirstClassPrice();
 		this.businessClassPrice = flight.getBusinessClassPrice();
 		this.economyClassPrice = flight.getEconomyClassPrice();
-		for (FlightReservation r : flight.getAirline().getReservations()) {
-			if (r.getFlight().getFlightCode().equals(flight.getFlightCode())) {
-				for (PassengerSeat ps : r.getPassengerSeats()) {
-					if (ps.getSeat() != null) {
-						this.reservedSeats.add(ps.getSeat().getRow() + "_" + ps.getSeat().getColumn());
-					}
+		for (PlaneSegment pSeg : flight.getPlaneSegments()) {
+			for (Seat s : pSeg.getSeats()) {
+				if (s.getPassengerSeat() != null) {
+					this.reservedSeats.add(s.getRow() + "_" + s.getColumn());
 				}
 			}
 		}
