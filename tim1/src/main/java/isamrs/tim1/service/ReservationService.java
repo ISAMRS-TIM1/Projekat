@@ -105,6 +105,9 @@ public class ReservationService {
 	HotelReservationService hotelReservationService;
 
 	@Autowired
+	VehicleReservationService vehicleReservationService;
+
+	@Autowired
 	QuickHotelReservationRepository quickHotelReservationRepository;
 
 	@Autowired
@@ -419,6 +422,7 @@ public class ReservationService {
 		vr.setFromDate(vehicleRes.getFromDate());
 		vr.setToDate(vehicleRes.getToDate());
 		vr.setVehicle(v);
+		vr.setPrice(vehicleReservationService.calculateReservationPrice(vr));
 		fr.setVehicleReservation(vr);
 
 		return new MessageDTO("", ToasterType.SUCCESS.toString());

@@ -855,7 +855,6 @@
 									<th>Flight</th>
 									<th>Date</th>
 									<th>Price</th>
-									<th>Grade</th>
 									<th></th>
 								</tr>
 							</thead>
@@ -1324,6 +1323,7 @@
 						<tr>
 							<td>Airline</td>
 							<td><span id="flightAirlineRes"></span></td>
+							<td id="airlineRating"></td>
 							<td>Flight duration</td>
 							<td><span id="flightDurationRes"></span></td>
 						</tr>
@@ -1348,7 +1348,8 @@
 						<tr>
 							<td>Price</td>
 							<td><span id="flightPriceRes"></span></td>
-							<td colspan='2'><button id="cancelFlightReservationButton"
+							<td id="flightRating"></td>
+							<td><button id="cancelFlightReservationButton"
 									class="btn btn-default">Cancel</button></td>
 						</tr>
 					</table>
@@ -1367,6 +1368,7 @@
 							<td><span id="roomNumberRes"></span></td>
 							<td>Hotel</td>
 							<td><span id="hotelResId"></span></td>
+							<td id="hotelRating"></td>
 						</tr>
 						<tr>
 							<td>Additional services</td>
@@ -1375,6 +1377,7 @@
 						<tr>
 							<td>Price</td>
 							<td><span id="hotelPriceRes"></span></td>
+							<td id="roomRating"></td>
 							<td colspan='2'><button id="cancelHotelReservationButton"
 									class="btn btn-default">Cancel</button></td>
 						</tr>
@@ -1392,6 +1395,9 @@
 						<tr>
 							<td>Branch office</td>
 							<td><span id="bOfficeRes"></span></td>
+							<td>Rentacar</td>
+							<td><span id="rentRes"></span></td>
+							<td id="rentacarRating"></td>
 							<td>Producer</td>
 							<td><span id="prodCarRes"></span></td>
 						</tr>
@@ -1402,6 +1408,7 @@
 						<tr>
 							<td>Price</td>
 							<td><span id="carPriceRes"></span></td>
+							<td id="vehicleRating"></td>
 							<td colspan='2'><button id="cancelCarReservationButton"
 									class="btn btn-default">Cancel</button></td>
 						</tr>

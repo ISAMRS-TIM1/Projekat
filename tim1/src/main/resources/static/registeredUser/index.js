@@ -528,7 +528,7 @@ $(document)
                     		toastr["error"]("Start date must have a value");
                     		return;
                     	} else if(!moment(JSON.parse(localStorage.getItem("flightReservation"))["other"]["landingTime"], 'DD.MM.YYYY hh:mm')
-                    			.isSame(start, 'date')){
+                    			.isSame(start, 'day')){
                     		toastr["error"]("Vehicle reservation start date must be same as flight landing date");
                     		return;
                     	}
@@ -1940,7 +1940,7 @@ function showFriendsStep(e) {
         "other" : {"startDestination" : shownFlight["startDestination"],
         			"endDestination" : shownFlight["endDestination"],
         			"departureTime" : shownFlight["departureTime"],
-        			"landingTime" : shownFlight["departureTime"],
+        			"landingTime" : shownFlight["landingTime"],
         			"airlineName" : shownFlight["airlineName"],
         			"flightDistance" : shownFlight["flightDistance"],
         			"connections" : shownFlight["connections"],
@@ -2457,7 +2457,7 @@ function getReservations() {
                 table.clear().draw();
                 var cancel = "<button id='cancelResButton' class='btn btn-default'>Cancel</button>";
                 $.each(data, function(i, val) {
-                    table.row.add([val.id, val.reservationInf, val.dateOfReservation, val.price, val.grade, cancel ]).draw(false);
+                    table.row.add([val.id, val.reservationInf, val.dateOfReservation, val.price, cancel ]).draw(false);
                 });
             }
         },

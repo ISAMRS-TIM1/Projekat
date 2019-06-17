@@ -10,7 +10,7 @@ public class VehicleReservationDTO implements Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -8136623023450172437L;
+	private static final long serialVersionUID = 8979382260323221717L;
 	private Date fromDate;
 	private Date toDate;
 	private String vehicleProducer;
@@ -19,6 +19,8 @@ public class VehicleReservationDTO implements Serializable {
 	private Long quickVehicleReservationID;
 	private Integer discount;
 	private double price;
+	private Boolean done;
+	private String rentacar;
 
 	public VehicleReservationDTO() {
 		super();
@@ -33,10 +35,13 @@ public class VehicleReservationDTO implements Serializable {
 		this.quickVehicleReservationID = qvr.getId();
 		this.discount = qvr.getDiscount();
 		this.price = qvr.getPrice();
+		this.rentacar = qvr.getBranchOffice().getRentACar().getName();
+		this.setDone(qvr.getDone());
 	}
 
 	public VehicleReservationDTO(VehicleReservation vr) {
 		this.fromDate = vr.getFromDate();
+		this.rentacar = vr.getBranchOffice().getRentACar().getName();
 		this.toDate = vr.getToDate();
 		this.vehicleProducer = vr.getVehicle().getProducer();
 		this.vehicleModel = vr.getVehicle().getModel();
@@ -44,6 +49,7 @@ public class VehicleReservationDTO implements Serializable {
 		this.quickVehicleReservationID = null;
 		this.discount = null;
 		this.price = vr.getPrice();
+		this.done = vr.getDone();
 	}
 
 	public Date getFromDate() {
@@ -110,9 +116,20 @@ public class VehicleReservationDTO implements Serializable {
 		this.price = price;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public String getRentacar() {
+		return rentacar;
 	}
-	
+
+	public void setRentacar(String rentacar) {
+		this.rentacar = rentacar;
+	}
+
+	public Boolean getDone() {
+		return done;
+	}
+
+	public void setDone(Boolean done) {
+		this.done = done;
+	}
 
 }

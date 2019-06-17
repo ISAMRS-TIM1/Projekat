@@ -83,7 +83,7 @@ public class ReservationController {
 	public ResponseEntity<MessageDTO> declineFlightInvitation(@RequestBody String resID) {
 		return reservationService.declineFlightInvitation(resID);
 	}
-	
+
 	@PreAuthorize("hasRole('REGISTEREDUSER')")
 	@RequestMapping(value = "/api/cancelReservation", method = RequestMethod.DELETE)
 	public ResponseEntity<MessageDTO> cancelReservation(@RequestBody String resID) {
@@ -136,15 +136,17 @@ public class ReservationController {
 				reservationService.checkVehicleForPeriod(vehicle.getVehicleID(), vehicle.getStart(), vehicle.getEnd()),
 				HttpStatus.OK);
 	}
-	
+
 	@PreAuthorize("hasRole('REGISTEREDUSER')")
 	@RequestMapping(value = "/api/reserveQuickFlightReservation", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MessageDTO> reserveQuickFlightReservation(@RequestBody FlightReservationDTO flightRes) {
-		return new ResponseEntity<MessageDTO>(reservationService.reserveQuickFlightReservation(flightRes), HttpStatus.OK);
+		return new ResponseEntity<MessageDTO>(reservationService.reserveQuickFlightReservation(flightRes),
+				HttpStatus.OK);
 	}
-	
+
 	@RequestMapping(value = "/api/getDetailedReservation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DetailedReservationDTO> getDetailedReservation(@RequestParam String resID) {
-		return new ResponseEntity<DetailedReservationDTO>(reservationService.getDetailedReservation(resID), HttpStatus.OK);
+		return new ResponseEntity<DetailedReservationDTO>(reservationService.getDetailedReservation(resID),
+				HttpStatus.OK);
 	}
 }
