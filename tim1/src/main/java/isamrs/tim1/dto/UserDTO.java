@@ -20,6 +20,7 @@ public class UserDTO implements Serializable {
 	private String address;
 	private String email;
 	private ArrayList<FriendDTO> friends;
+	private int availablePoints;
 
 	public UserDTO() {
 		super();
@@ -47,6 +48,7 @@ public class UserDTO implements Serializable {
 			for (User us : ((RegisteredUser) u).getInviters()) {
 				this.friends.add(new FriendDTO(us, "Invitation pending"));
 			}
+			this.availablePoints = ((RegisteredUser) u).getDiscountPoints();
 		}
 	}
 
@@ -123,6 +125,15 @@ public class UserDTO implements Serializable {
 
 	public void setFriends(ArrayList<FriendDTO> friends) {
 		this.friends = friends;
+	}
+	
+
+	public int getAvailablePoints() {
+		return availablePoints;
+	}
+
+	public void setAvailablePoints(int availablePoints) {
+		this.availablePoints = availablePoints;
 	}
 
 	public static long getSerialversionuid() {

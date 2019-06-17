@@ -49,6 +49,12 @@ public class ProjekatApplication implements CommandLineRunner {
 
 	@Value("${discount.kmsNeededForPoint}")
 	private double kmsNeededForPoint;
+	
+	@Value("${discount.maxDiscountPoints}")
+	private double maxDiscountPoints;
+
+	@Value("${discount.discountPerExtraReservation}")
+	private double discountPerExtraReservation;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ProjekatApplication.class, args);
@@ -81,6 +87,8 @@ public class ProjekatApplication implements CommandLineRunner {
 			di.setId(null);
 			di.setDiscountPercentagePerPoint(discountPercentagePerPoint);
 			di.setKmsNeededForPoint(kmsNeededForPoint);
+			di.setMaxDiscountPoints(maxDiscountPoints);
+			di.setDiscountPerExtraReservation(discountPerExtraReservation);
 			discountInfoRepository.save(di);
 		}
 

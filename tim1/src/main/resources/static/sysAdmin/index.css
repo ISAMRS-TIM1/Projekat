@@ -135,12 +135,12 @@ a[data-toggle="tab"] {
 	width: 100%;
 }
 
-#kmsNeededForPoint, #discountPercentagePerPoint {
+#kmsNeededForPoint, #discountPercentagePerPoint, #maxDiscountPoints, #discountPerExtraReservation {
 	font-size: 1.6vw;
 	margin-left: 3vw;
 }
 
-label[for=kmsNeededForPoint], label[for=discountPercentagePerPoint] {
+label[for=kmsNeededForPoint], label[for=discountPercentagePerPoint], label[for=maxDiscountPoints], label[for=discountPerExtraReservation] {
 	font-size: 1.6vw;
 	margin-left: 10vw;
 }

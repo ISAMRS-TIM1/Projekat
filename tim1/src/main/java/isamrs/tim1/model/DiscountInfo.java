@@ -21,6 +21,13 @@ public class DiscountInfo {
 
 	@Column(name = "kmsNeededForPoint", unique = false, nullable = false)
 	private double kmsNeededForPoint;
+	
+	@Column(name = "maxDiscountPoints", unique = false, nullable = false)
+	private double maxDiscountPoints;
+
+	@Column(name = "discountPerExtraReservation", unique = false, nullable = false)
+	private double discountPerExtraReservation;
+
 
 	public DiscountInfo() {
 		super();
@@ -49,5 +56,22 @@ public class DiscountInfo {
 	public void setId(Long id) {
 		this.id = id;
 	}
+
+	public double getMaxDiscountPoints() {
+		return maxDiscountPoints;
+	}
+
+	public void setMaxDiscountPoints(double maxDiscountPoints) {
+		this.maxDiscountPoints = maxDiscountPoints;
+	}
+
+	public double getDiscountPerExtraReservation() {
+		return discountPerExtraReservation;
+	}
+
+	public void setDiscountPerExtraReservation(double discountPerExtraReservation) {
+		this.discountPerExtraReservation = discountPerExtraReservation;
+	}
+
 
 }
