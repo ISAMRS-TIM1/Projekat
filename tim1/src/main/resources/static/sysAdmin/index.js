@@ -107,6 +107,8 @@ function loadDiscountInfo(){
 			if (data != null) {
 				$('#discountPercentagePerPoint').val(data.discountPercentagePerPoint);
 				$('#kmsNeededForPoint').val(data.kmsNeededForPoint);
+				$('#maxDiscountPoints').val(data.maxDiscountPoints);
+				$('#discountPerExtraReservation').val(data.discountPerExtraReservation);
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
@@ -310,6 +312,7 @@ function setUpRegistrationForm(){
 							lastName, phone, address),
 					success : function(data) {
 						if (data != null) {
+							loadData();
 							loadService(currentService, currentServiceURL);
 							toastr[data.toastType](data.message);
 							if (data.toastType=="success") {
@@ -336,13 +339,17 @@ function setUpEditDiscountInfoForm(){
 				e.preventDefault();
 				let discountPercentagePerPoint = $('#discountPercentagePerPoint').val();
 				let kmsNeededForPoint = $('#kmsNeededForPoint').val();
+				let maxDiscountPoints = $('#maxDiscountPoints').val();
+				let discountPerExtraReservation = $('#discountPerExtraReservation').val();
+				
 				$.ajax({
 					type : 'PUT',
 					headers: createAuthorizationTokenHeader(tokenKey),
 					url : editDiscountInfoURL,
 					contentType : 'application/json',
 					dataType : 'json',
-					data : JSON.stringify({"discountPercentagePerPoint":discountPercentagePerPoint, "kmsNeededForPoint":kmsNeededForPoint}),
+					data : JSON.stringify({"discountPercentagePerPoint":discountPercentagePerPoint, "kmsNeededForPoint":kmsNeededForPoint, 
+						"maxDiscountPoints" : maxDiscountPoints, "discountPerExtraReservation" : discountPerExtraReservation}),
 					success : function(data) {
 						loadData();
 						if (data != null) {

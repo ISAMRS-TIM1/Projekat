@@ -44,12 +44,6 @@ public class ProjekatApplication implements CommandLineRunner {
 	@Value("${sysadmin.pass}")
 	private String sysadminPassword;
 
-	@Value("${discount.percentagePerPoint}")
-	private double discountPercentagePerPoint;
-
-	@Value("${discount.kmsNeededForPoint}")
-	private double kmsNeededForPoint;
-
 	public static void main(String[] args) {
 		SpringApplication.run(ProjekatApplication.class, args);
 	}
@@ -75,13 +69,6 @@ public class ProjekatApplication implements CommandLineRunner {
 			authorities.add(a);
 			sysadmin.setAuthorities(authorities);
 			userRepository.save(sysadmin);
-		}
-		if (discountInfoRepository.findAll().isEmpty()) {
-			DiscountInfo di = new DiscountInfo();
-			di.setId(null);
-			di.setDiscountPercentagePerPoint(discountPercentagePerPoint);
-			di.setKmsNeededForPoint(kmsNeededForPoint);
-			discountInfoRepository.save(di);
 		}
 
 	}

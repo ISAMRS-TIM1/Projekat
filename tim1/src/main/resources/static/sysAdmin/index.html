@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Flights</title>
-<link rel="shortcut icon" type="image/png" href="common/images/favicon.png" />
+<link rel="shortcut icon" type="image/png"
+	href="common/images/favicon.png" />
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <link rel="stylesheet"
@@ -119,6 +120,16 @@
 								<td><label for="kmsNeededForPoint">Kilometers
 										needed for discount point:</label><input type="number"
 									id="kmsNeededForPoint" step="0.01" min="0" max="100000000"
+									oninput="validity.valid||(value='');"></td>
+							</tr>
+							<tr>
+								<td><label for="maxDiscountPoints">Max discount points:</label><input type="number"
+									id="maxDiscountPoints" step="1" min="0" max="50"
+									oninput="validity.valid||(value='');"></td>
+							</tr>
+							<tr>
+								<td><label for="discountPerExtraReservation">Discount per extra reservation:</label><input type="number"
+									id="discountPerExtraReservation" step="1" min="0" max="30"
 									oninput="validity.valid||(value='');"></td>
 							</tr>
 							<tr>
