@@ -1109,7 +1109,7 @@
 							</table>
 						</td>
 					</tr>
-					<tr><td colspan="2"><!-- OVDE STAVITI MAPU --><td></tr>
+					<tr><td colspan="2"><div id="destinationsMapDiv"></div>><td></tr>
 					<tr>
 						<td colspan="2">
 							<table id="quickAirlineReservationsTable"
@@ -1428,29 +1428,29 @@
 					<div id="cartDiv" hidden>
 						<table id="discountTable">
 							<tr>
-								<td><label for="usedDiscountPoints">Used points:</td>
-								<td></label><input type="number" id="usedDiscountPoints" step="1"
+								<td><label for="usedDiscountPoints">Used points:</label></td>
+								<td><input type="number" id="usedDiscountPoints" step="1"
 									min="0" value="0"
 									oninput="validity.valid||(value='0');recalculatePrices();"></td>
 								<td><label for="discountPercentagePerPoint">Discount
-										percentage per discount point:</td>
-								<td></label><input type="number" id="discountPercentagePerPoint"
+										percentage per discount point:</label></td>
+								<td><input type="number" id="discountPercentagePerPoint"
 									readonly></td>
 							</tr>
 							<tr>
 								<td><label for="availableDiscountPoints">Available
-										discount points:</td>
-								<td></label><input type="number" id="availableDiscountPoints"
+										discount points:</label></td>
+								<td><input type="number" id="availableDiscountPoints"
 									readonly></td>
 								<td><label for="discountPerExtraReservation">Discount
-										per extra reservation:</td>
-								<td></label><input type="number" id="discountPerExtraReservation"
+										per extra reservation:</label></td>
+								<td><input type="number" id="discountPerExtraReservation"
 									readonly></td>
 							</tr>
 							<tr>
 								<td colspan="2"><label for="totalPrice">Total
-										price:</td>
-								<td colspan="2"></label><input type="number" id="totalPrice"
+										price:</label></td>
+								<td colspan="2"><input type="number" id="totalPrice"
 									readonly></td>
 							</tr>
 						</table>

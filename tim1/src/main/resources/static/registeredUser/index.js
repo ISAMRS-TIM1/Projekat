@@ -53,6 +53,7 @@ const getDiscountInfoURL = "/api/getDiscountInfo";
 var userMail = "";
 var hotelMap = null;
 var airlineMap = null;
+var destinationsMap = null;
 
 var shownHotel = null;
 var shownReservation = null;
@@ -152,7 +153,9 @@ $(document)
                         $(this).addClass('selected');
                         var longitude = destinationsTable.row(this).data()[1];
                         var latitude = destinationsTable.row(this).data()[2];
-                        // NAMESTITI MAPU NA LONG I LAT
+                        destinationsMap = setUpMap(destinationsMap, latitude, longitude, 
+        						'destinationsMapDiv', false, 2, true);
+                        destinationsMap.invalidateSize();
                     });
                     
                     setUpTableFilter("#flightsTable");
@@ -184,11 +187,15 @@ $(document)
                     });
                     
                     $('#showAirlineModal').on('shown.bs.modal', function() {
+                    	destinationsMap = setUpMap(destinationsMap, 0, 0, 
+        						'destinationsMapDiv', false, 2, false);
                         setTimeout(function() {
-                            airlineMap.invalidateSize()
+                            airlineMap.invalidateSize();
+                            destinationsMap.invalidateSize();
                         }, 100);
                         setTimeout(function() {
-                            airlineMap.invalidateSize()
+                            airlineMap.invalidateSize();
+                            destinationsMap.invalidateSize();
                         }, 1000);
                     });
 
@@ -1621,7 +1628,7 @@ function loadHotel(name) {
 					hotelMap.remove();
 					hotelMap = null;
 				}
-				hotelMap = setUpMap(data["latitude"], data["longitude"],
+				hotelMap = setUpMap(hotelMap, data["latitude"], data["longitude"],
 						'hotelMapDiv', false);
 				renderAdditionalServices(data["additionalServices"]);
 				renderQuickHotelReservations(data["quickReservations"]);
@@ -1653,7 +1660,7 @@ function loadAirline(name) {
 					airlineMap.remove();
 					airlineMap = null;
 				}
-				airlineMap = setUpMap(data["latitude"], data["longitude"],
+				airlineMap = setUpMap(airlineMap, data["latitude"], data["longitude"],
 						'airlineMapDiv', false);
 				renderDestinations(data["destinations"]);
 				renderQuickFlightReservations(data["quickReservations"]);
@@ -1913,22 +1920,28 @@ function searchRooms(e) {
 
 /* UTILITY */
 
-function setUpMap(latitude, longitude, div, draggable) {
-    var retval = L.map(div).setView([latitude, longitude], MAP_ZOOM);
+function setUpMap(destMap, latitude, longitude, div, draggable, zoom=MAP_ZOOM, addPin = true) {
+	if (destMap != null) {
+		destMap.off();
+		destMap.remove();
+	}
+	destMap = L.map(div).setView([latitude, longitude], zoom);
     L.tileLayer(tileLayerURL, {
         maxZoom: MAX_MAP_ZOOM,
         id: MAP_ID
-    }).addTo(retval);
-    var marker = L.marker([latitude, longitude], {
-        draggable: draggable
-    }).addTo(retval);
-    if (draggable) {
-        marker.on('dragend', function(e) {
-            $("#latitude").val(marker.getLatLng().lat);
-            $("#longitude").val(marker.getLatLng().lng);
-        });
+    }).addTo(destMap);
+    if(addPin){
+	    var marker = L.marker([latitude, longitude], {
+	        draggable: draggable
+	    }).addTo(destMap);
+	    if (draggable) {
+	        marker.on('dragend', function(e) {
+	            $("#latitude").val(marker.getLatLng().lat);
+	            $("#longitude").val(marker.getLatLng().lng);
+	        });
+	    }
     }
-    return retval;
+    return destMap;
 }
 
 function setUpTableFilter(tableID, exceptColumn=""){

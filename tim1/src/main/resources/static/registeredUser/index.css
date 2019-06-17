@@ -417,7 +417,7 @@ input, select {
 	border-radius: 4vw 1.6vw;
 }
 
-#hotelMapDiv, #airlineMapDiv {
+#hotelMapDiv, #airlineMapDiv, #destinationsMapDiv {
 	width: 45vw;
 	height: 30vh;
 	border-radius: 2vw 2vw 2vw 2vw;
