@@ -1737,7 +1737,8 @@ function setUpTableFilter(tableID, exceptColumn=""){
 function showFriendsStep(e) {
     e.preventDefault();
     var userPass = $("#userPassNumber").val();
-    if (userPass == "" || userPass == undefined) {
+    var passRegEx = /[0-9]{9}/;
+    if (userPass == "" || userPass == undefined || passRegEx.test(userPass) == false) {
         toastr["error"]("Invalid passport number.");
         return;
     }
@@ -1853,6 +1854,21 @@ function endReservation(e) {
     var passports = $("input[name='passportNumber']").map(function() {
         return $(this).val();
     }).get();
+	var passRegEx = /[0-9]{9}/;
+	var invalid = false;
+    $.each(passports, function(i, val) {
+        if (val == "" || val == undefined || passRegEx.test(val) == false) {
+            invalid = true;
+        }
+    });
+    if (invalid) {
+    	toastr["error"]("Invalid passport number.");
+    	return;
+    }
+    if (new Set(passports).size !== passports.length) {
+    	toastr["error"]("Two persons can not have same passport number.");
+    	return;
+    }
     var bags = $("input[name='bags']").map(function() {
         return $(this).val();
     }).get();
@@ -1861,7 +1877,7 @@ function endReservation(e) {
             toastr["error"]("Invalid data for passengers.");
             return;
         }
-        if (isNaN(bags[i]) || bags[i] < 0) {
+        if (isNaN(bags[i]) || bags[i] < 0 || bags[i] == "") {
             toastr["error"]("Invalid number of bags.");
             return;
         }
@@ -2147,7 +2163,8 @@ function reserveQuickFlightReservation(quickID, startDest, endDest, flightDate){
 function getPassportAndBags(e) {
 	e.preventDefault();
 	var userPass = $("#modalPass").val();
-    if (userPass == "" || userPass == undefined) {
+	var passRegEx = /[0-9]{9}/;
+    if (userPass == "" || userPass == undefined || passRegEx.test(userPass) == false) {
         toastr["error"]("Invalid passport number.");
         return;
     }

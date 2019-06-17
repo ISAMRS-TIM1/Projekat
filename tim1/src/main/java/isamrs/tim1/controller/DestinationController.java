@@ -25,9 +25,19 @@ public class DestinationController {
 		return destinationService.addDestination(d);
 	}
 	
+	@RequestMapping(value = "/api/editDestination", method = RequestMethod.PUT)
+	public ResponseEntity<MessageDTO> editDestination(@RequestBody DestinationDTO d) {
+		return destinationService.editDestination(d);
+	}
+	
 	@RequestMapping(value = "/api/getDestinations", method = RequestMethod.GET)
 	public ArrayList<String> getDestinations() {
 		return destinationService.getDestinations();
+	}
+	
+	@RequestMapping(value = "/api/getDestinationsOfAirline", method = RequestMethod.GET)
+	public ResponseEntity<ArrayList<DestinationDTO>> getDestinationsOfAirline() {
+		return destinationService.getDestinationsOfAirline();
 	}
 	
 	@RequestMapping(value = "/api/loadDestination", method = RequestMethod.GET)

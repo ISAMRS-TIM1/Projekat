@@ -6,7 +6,8 @@ const MAX_MAP_ZOOM = 19;
 const MAP_ID = 'mapbox.streets';
 
 const editAirlineURL = "/api/editAirline";
-const getDestinationsURL = "/api/getDestinations";
+const getDestinationsOfAirlineURL = "/api/getDestinationsOfAirline";
+const editDestinationURL = "/api/editDestination";
 const getFlightsURL = "/api/getFlights";
 const getAirlineOfAdminURL = "/api/getAirlineOfAdmin";
 const saveSeatsChangesURL = "/api/saveSeats";
@@ -242,9 +243,9 @@ function renderDestinations(data) {
 	var end = $("#endDestination");
 	var con = $("#connections");
 	$.each(data, function(i, val) {
-		start.append("<option value=" + val.name + ">" + val.name + "</option>");
-		end.append("<option value=" + val.name + ">" + val.name + "</option>");
-		con.append("<option value=" + val.name + ">" + val.name + "</option>");
+		start.append("<option value=" + val.nameOfDest + ">" + val.nameOfDest + "</option>");
+		end.append("<option value=" + val.nameOfDest + ">" + val.nameOfDest + "</option>");
+		con.append("<option value=" + val.nameOfDest + ">" + val.nameOfDest + "</option>");
 	});
 }
 
@@ -1364,9 +1365,72 @@ function addDestination(e) {
 				end.append("<option value=" + nameOfDest + ">" + nameOfDest + "</option>");
 				con.append("<option value=" + nameOfDest + ">" + nameOfDest + "</option>");
 				toastr[data.toastType](data.message);
+				$("#destinationModalDialog").modal("hide");
 			}
 			else {
 				toastr["error"](data.message);
+			}
+		}
+	});
+}
+
+function editDestination(dest) {
+	var nameOfDest = $("#destinationName").val();
+	if (nameOfDest == null || nameOfDest == "") {
+		toastr["error"]("Invalid name of destination.");
+		return;
+	}
+	var latitude = $("#destMapDivLatitude").val();
+	var longitude = $("#destMapDivLongitude").val();
+	$.ajax({
+		method : "PUT",
+		url : editDestinationURL,
+		headers : createAuthorizationTokenHeader(TOKEN_KEY),
+		contentType : "application/json",
+		data : JSON.stringify({
+			"nameOfDest": nameOfDest,
+			"latitude": latitude,
+			"longitude": longitude,
+			"airlineName": airlineName,
+			"oldName": dest
+		}),
+		success : function(data) {
+			if (data.toastType == "success") {
+				getDestinationsOfAirline();
+				toastr[data.toastType](data.message);
+				$("#destinationModalDialog").modal("hide");
+			}
+			else {
+				toastr[data.toastType](data.message);
+			}
+		}
+	});
+}
+
+function getDestinationsOfAirline() {
+	$.ajax({
+		method : "GET",
+		url : getDestinationsOfAirlineURL,
+		headers : createAuthorizationTokenHeader(TOKEN_KEY),
+		contentType : "application/json",
+		success : function(data) {
+			if (data != null) {
+				$("#startDestination").find("option").remove();
+				$("#endDestination").find("option").remove();
+				$("#connections").find("option").remove();
+				var table = $("#destinationsTable").DataTable();
+				table.clear().draw();
+				$.each(data, function(i, val) {
+					table.row.add([ val.nameOfDest ]).draw(false);
+				});
+				var start = $("#startDestination");
+				var end = $("#endDestination");
+				var con = $("#connections");
+				$.each(data, function(i, val) {
+					start.append("<option value=" + val.nameOfDest + ">" + val.nameOfDest + "</option>");
+					end.append("<option value=" + val.nameOfDest + ">" + val.nameOfDest + "</option>");
+					con.append("<option value=" + val.nameOfDest + ">" + val.nameOfDest + "</option>");
+				});
 			}
 		}
 	});

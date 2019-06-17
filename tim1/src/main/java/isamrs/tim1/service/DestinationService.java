@@ -1,6 +1,7 @@
 package isamrs.tim1.service;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,10 +40,12 @@ public class DestinationService {
 		AirlineAdmin admin = (AirlineAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	    Airline a = admin.getAirline();
 	    if (a == null)
-			return new ResponseEntity<MessageDTO>(new MessageDTO("Airline does not exist.", ""), HttpStatus.BAD_REQUEST);
-	    Destination dest = destinationRepository.findOneByName(destDTO.getNameOfDest());
-	    if (dest != null)
-	    	return new ResponseEntity<MessageDTO>(new MessageDTO("Destination with same name already exists.", ""), HttpStatus.OK);
+			return new ResponseEntity<MessageDTO>(new MessageDTO("Airline does not exist.", ToasterType.ERROR.toString()), HttpStatus.BAD_REQUEST);
+	    if (!destDTO.getNameOfDest().equals(destDTO.getOldName())) {
+	    	Destination dest = destinationRepository.findOneByName(destDTO.getNameOfDest());
+		    if (dest != null)
+		    	return new ResponseEntity<MessageDTO>(new MessageDTO("Destination with same name already exists.", ToasterType.ERROR.toString()), HttpStatus.OK);
+	    }
 		Destination d = new Destination();
 		d.setName(destDTO.getNameOfDest());
 		Location l = new Location();
@@ -70,5 +73,44 @@ public class DestinationService {
 	public ResponseEntity<DestinationDTO> loadDestination(String dest) {
 		Destination d = destinationRepository.findOneByName(dest);
 		return new ResponseEntity<DestinationDTO>(new DestinationDTO(d), HttpStatus.OK);
+	}
+
+	public ResponseEntity<ArrayList<DestinationDTO>> getDestinationsOfAirline() {
+		AirlineAdmin admin = (AirlineAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	    Airline a = admin.getAirline();
+	    if (a == null)
+			return null;
+	    Set<Destination> dests = destinationRepository.findByAirline(a);
+	    ArrayList<DestinationDTO> destList = new ArrayList<DestinationDTO>();
+	    for (Destination d : dests) {
+	    	destList.add(new DestinationDTO(d));
+	    }
+		return new ResponseEntity<ArrayList<DestinationDTO>>(destList, HttpStatus.OK);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+	public ResponseEntity<MessageDTO> editDestination(DestinationDTO destDTO) {
+		AirlineAdmin admin = (AirlineAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	    Airline a = admin.getAirline();
+	    if (a == null)
+			return new ResponseEntity<MessageDTO>(new MessageDTO("Airline does not exist.", ToasterType.ERROR.toString()), HttpStatus.BAD_REQUEST);
+	    Destination destNew = destinationRepository.findOneByName(destDTO.getNameOfDest());
+	    if (destNew != null)
+	    	return new ResponseEntity<MessageDTO>(new MessageDTO("Destination with same name already exists.", ToasterType.ERROR.toString()), HttpStatus.OK);
+	    Destination dest = destinationRepository.findOneByName(destDTO.getOldName());
+	    if (dest == null)
+	    	return new ResponseEntity<MessageDTO>(new MessageDTO("Destination does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
+	    if (destDTO.getNameOfDest() != null) {
+			dest.setName(destDTO.getNameOfDest());
+		}
+		Location l = dest.getLocation();
+		if (destDTO.getLatitude() != null) {
+			l.setLatitude(destDTO.getLatitude());
+		}
+		if (destDTO.getLongitude() != null) {
+			l.setLongitude(destDTO.getLongitude());
+		}
+		destinationRepository.save(dest);
+		return new ResponseEntity<MessageDTO>(new MessageDTO("Destination edited successfully", ToasterType.SUCCESS.toString()), HttpStatus.OK);
 	}
 }
