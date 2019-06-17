@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class SystemAdminPageController {
-	@PreAuthorize("hasRole('SYSADMIN')")
 	@GetMapping("/sysAdmin")
 	public String showAirlineAdminPage(Map<String, Object> model){
 		return "sysAdmin/index.html";

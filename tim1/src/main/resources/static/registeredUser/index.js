@@ -463,6 +463,7 @@ $(document)
                     var currentVehicleID = null;
                     var currentVehicleProducer = null;
                     var currentVehicleModel = null;
+                    var currentVehiclePrice = null;
                     $(document).on('click', '#vehiclesTable tbody tr', function() {
                     	let table = $("#vehiclesTable").DataTable();
                     	let rowData = table.row(this).data();
@@ -470,6 +471,7 @@ $(document)
                 		currentVehicleID = rowData[0];
                 		currentVehicleProducer = rowData[1];
                 		currentVehicleModel = rowData[2];
+                		currentVehiclePrice = rowData[6];
                 		$("#quickReservationsModalTitle").text(title);
                 		getQuickReservationsForVehicle(rowData[0]);
                 		getBranchOfficesForVehicle(rowData[0]);
@@ -512,24 +514,24 @@ $(document)
                     		return;
                     	}
                     	
-                    	let start = $("#vrstartDate").val();
+                    	let start = $("#vrstartDate").datepicker('getDate');
                     	
                     	if(start === null || start === "") {
                     		toastr["error"]("Start date must have a value");
                     		return;
-                    	} else if(!moment(localStorage.getItem("landingTime")).isSame(start)){
+                    	} else if(!moment(localStorage.getItem("landingTime")).isSame(start, 'date')){
                     		toastr["error"]("Vehicle reservation start date must be same as flight landing date");
                     		return;
                     	}
                     	
-                    	let end = $("#vrendDate").val();
+                    	let end = $("#vrendDate").datepicker('getDate');
                     	
                     	if(end === null || end === "") {
                     		toastr["error"]("End date must have a value");
                     		return;
                     	}
                     	
-                    	checkVehicleForPeriod(currentVehicleID, start, end, currentVehicleProducer, currentVehicleModel, branch);
+                    	checkVehicleForPeriod(currentVehicleID, currentVehiclePrice, start, end, currentVehicleProducer, currentVehicleModel, branch);
                     });
                     
                     
@@ -628,7 +630,7 @@ function getAirlines() {
     });
 }
 
-function checkVehicleForPeriod(vehicleID, start, end, vehicleProducer, vehicleModel, branch) {
+function checkVehicleForPeriod(vehicleID, price, start, end, vehicleProducer, vehicleModel, branch) {
 	$.ajax({
         type: 'POST',
         url: checkVehicleForPeriodURL,
@@ -643,7 +645,7 @@ function checkVehicleForPeriod(vehicleID, start, end, vehicleProducer, vehicleMo
         				'vehicleProducer' : vehicleProducer,
         				'vehicleModel' : vehicleModel,
         				'branchOfficeName' : branch,
-        				'discount': null,
+        				'price': price*Math.round((end-start)/(1000*60*60*24)),
         				'quickVehicleReservationID': null
         				};
         		localStorage.setItem("carRes", JSON.stringify(carRes));
@@ -679,12 +681,14 @@ function getQuickReservationsForVehicle(id) {
         		table.clear().draw();
         		for(let quickReservation of data) {
         			table.row.add([
+        				quickReservation.quickVehicleReservationID,
                     	quickReservation.branchOfficeName,
                     	quickReservation.vehicleProducer,
                     	quickReservation.vehicleModel,
                     	moment(quickReservation.fromDate).format("DD/MM/YYYY"),
                     	moment(quickReservation.toDate).format("DD/MM/YYYY"),
                     	quickReservation.discount,
+                    	quickReservation.price,
                     	"<button onclick='reserveQuickVehicleReservation(" + quickReservation.quickVehicleReservationID + "," + quickReservation.branchOfficeName + ")' class='btn btn-default reserve' type='button'>Reserve</a>"
                     ]).draw(false);
         		}
@@ -706,14 +710,23 @@ function reserveQuickVehicleReservation(reservationID, branchOffice) {
 		error = false;
 		return;
 	}
+	let table = $('#quickReservationsTable').DataTable();
+	var val = null;
+	table.rows().every(function ( rowIdx, tableLoop, rowLoop ) {
+	    if(this.data()[0] == reservationID){
+	    	val = this.data(); 
+	    	return;
+	    }
+	} );
+	
 	
 	var carRes = {
-			'fromDate' : null,
-			'toDate' : null,
-			'vehicleProducer' : null,
-			'vehicleModel' : null,
-			'branchOfficeName' : null,
-			'discount': null,
+			'fromDate' : moment(val[4], "DD.MM.YYYY HH:mm").toDate(),
+			'toDate' : moment(val[5], "DD.MM.YYYY HH:mm").toDate(),
+			'vehicleProducer' : val[2],
+			'vehicleModel' : val[3],
+			'branchOfficeName' : val[1],
+			'price' : val[7],
 			'quickVehicleReservationID' :parseInt(reservationID)
 			};
 	console.log(carRes);
@@ -1613,7 +1626,7 @@ function renderRooms(data) {
 	$.each(data, function(i, val) {
 		roomsTable.row.add(
 				[ val.roomNumber, val.price, val.numberOfPeople, val.averageGrade,
-					`<button onclick="reserveRoomNumber('${val.roomNumber}')" class="btn btn-default">Reserve</a>` ]).draw(false);
+					`<button onclick="reserveRoomNumber('${val.roomNumber}', ${val.price})" class="btn btn-default">Reserve</a>` ]).draw(false);
 	});
 }
 
@@ -1654,7 +1667,6 @@ function renderQuickHotelReservations(data){
 	quickHotelReservationsTable.clear().draw();
 	$.each(data, function(i, val) {
 		var additionalServiceNames = val.additionalServiceNames.join('<br>');
-		console.log(additionalServiceNames);
 		quickHotelReservationsTable.row.add([
 										val.id,
 										val.discountedPrice,
@@ -1663,26 +1675,30 @@ function renderQuickHotelReservations(data){
 										moment(val.toDate).format("DD.MM.YYYY HH:mm"),
 										val.hotelRoomNumber,
 										additionalServiceNames,
-										`<button onclick="reserveQuickHotelReservation('${val.id}')" class="btn btn-default">Reserve</a>` ])
+										`<button onclick="reserveQuickHotelReservation('${val.id}')" class="btn btn-default">Reserve</button>` ])
 						.draw(false);
 			});
 }
 
-function reserveRoomNumber(roomNumber){
+function reserveRoomNumber(roomNumber, roomPrice){
 	if(isVisitor){
 		warnVisitorToLogIn();
 		return;
 	}
+	var price = 0;
 	additionalServiceNames = [];
 	additionalServicesTable.rows('.reservedAdditionalService').every(function ( rowIdx, tableLoop, rowLoop ) {
 	    additionalServiceNames.push(this.data()[0]);
+	    price += this.data()[1];
 	} );
 	var drp = $('#searchRoomsDateRange').data('daterangepicker');
+	price += roomPrice*Math.round((drp.endDate.toDate()-drp.startDate.toDate())/(1000*60*60*24));
 	var hotelRes = {'fromDate' : drp.startDate.toDate(),
 					'toDate' : drp.endDate.toDate(),
 					'hotelRoomNumber' : roomNumber,
 					'additionalServiceNames' : additionalServiceNames,
 					'hotelName' : shownHotel,
+					'price' : price,
 					'quickReservationID' : null};
 	localStorage.setItem("hotelRes", JSON.stringify(hotelRes));
 	$('#hotelRes').text(shownHotel);
@@ -1694,11 +1710,20 @@ function reserveQuickHotelReservation(quickID){
 		warnVisitorToLogIn();
 		return;
 	}
-	var hotelRes = {'fromDate' : null,
-			'toDate' : null,
-			'hotelRoomNumber' : null,
-			'additionalServiceNames' : null,
-			'hotelName' : null,
+	var val = null;
+	quickHotelReservationsTable.rows().every(function ( rowIdx, tableLoop, rowLoop ) {
+	    if(this.data()[0] == quickID){
+	    	val = this.data(); 
+	    	return;
+	    }
+	} );
+	
+	var hotelRes = {'fromDate' : moment(val[3], "DD.MM.YYYY HH:mm").toDate(),
+			'toDate' : moment(val[4], "DD.MM.YYYY HH:mm").toDate(),
+			'hotelRoomNumber' : val[5],
+			'additionalServiceNames' : val[6],
+			'hotelName' : shownHotel,
+			'price' : val[1],
 			'quickReservationID' : quickID};
 	localStorage.setItem("hotelRes", JSON.stringify(hotelRes));
 	$('#hotelRes').text(shownHotel);
@@ -1938,8 +1963,53 @@ function endReservation(e) {
     localStorage.setItem("flightRes", "true");
 }
 
-function confirmReservation(e) {
+function continueReservation(e) {
     e.preventDefault();
+    var hotelRes = JSON.parse(localStorage.getItem("hotelRes"));
+    if(hotelRes != null){
+		$("#fromDateRes").text(moment(hotelRes["fromDate"]).format('DD.MM.YYYY'));
+		$("#toDateRes").text(moment(hotelRes["toDate"]).format('DD.MM.YYYY'));
+		$("#roomNumberRes").text(hotelRes["hotelRoomNumber"]);
+		$("#hotelResId").text(hotelRes["hotelName"]);
+		$('#addServRes').find('option').remove();
+		var addServices = $("#addServRes");
+	    if (hotelRes["additionalServiceNames"].length == 0) {
+	        addServices.append("<option value=''></option>");
+	    } else {
+	        $.each(hotelRes["additionalServiceNames"], function(i, val) {
+	            addServices.append("<option value=" + val + ">" + val +
+	                "</option>");
+	        });
+	    }
+	    $("#hotelPriceRes").text(hotelRes["price"]);
+	    $("#hotelResHeader").show();
+		$("#showHotelReservationTable").show();
+    }
+    else {
+    	$("#hotelResHeader").hide();
+    	$("#showHotelReservationTable").hide();
+    }
+    
+    var carRes = JSON.parse(localStorage.getItem("carRes"));
+    if (carRes != null) {
+    	$("#fromDateCarRes").text(moment(carRes["fromDate"]).format('DD.MM.YYYY'));
+    	$("#toDateCarRes").text(moment(carRes["toDate"]).format('DD.MM.YYYY'));
+    	$("#bOfficeRes").text(carRes["branchOfficeName"]);
+    	$("#modelCarRes").text(carRes["vehicleModel"]);
+    	$("#prodCarRes").text(carRes["vehicleProducer"]);
+    	$("#carPriceRes").text(carRes["price"]);
+    	$("#carResHeader").show();
+    	$("#showCarReservationTable").show();
+    }
+    else {
+    	$("#carResHeader").hide();
+    	$("#showCarReservationTable").hide();
+    }
+	
+	
+    $("#showReservationModal").modal();   
+}
+function confirmReservation(){
     var quickFlightReservation = JSON.parse(localStorage.getItem("quickFlightReservation"));
     var flightRes = localStorage.getItem("flightRes");
     var hotelRes = JSON.parse(localStorage.getItem("hotelRes"));
