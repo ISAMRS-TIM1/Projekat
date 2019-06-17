@@ -48,6 +48,8 @@ const reserveFlightHotelURL = "/api/reserveFlightHotel/";
 const reserveFlightVehicleURL = "/api/reserveFlightVehicle/";
 const reserveFlightHotelVehicleURL = "/api/reserveFlightHotelVehicle/";
 
+const getDiscountInfoURL = "/api/getDiscountInfo";
+
 var userMail = "";
 var hotelMap = null;
 var airlineMap = null;
@@ -354,6 +356,7 @@ $(document)
                     
                     $('a[href="#reservations"]').click(function() {
                         getReservations();
+                        loadProfileData();
                     });
 
                     $('a[data-toggle="tab"]')
@@ -542,6 +545,9 @@ $(document)
                     	
                     	checkVehicleForPeriod(currentVehicleID, currentVehiclePrice, start, end, currentVehicleProducer, currentVehicleModel, branch);
                     });
+                    $('#showReservationModal').on('hidden.bs.modal', function () {
+                    	$("#cartDiv").hide();
+                    	});
                     
                     
                     
@@ -1177,6 +1183,7 @@ function loadProfileData() {
                     $('input[name="phone"]').val(data.phone);
                     $('input[name="address"]').val(data.address);
                     $('#email').text(data.email);
+                    $('#availableDiscountPoints').val(data.availablePoints);
                     userMail = data.email;
                     var table = $('#friendsTable').DataTable();
                     table.clear().draw();
@@ -2067,8 +2074,87 @@ function endReservation(e) {
     localStorage.setItem("flightRes", "true");
 }
 
+function getDiscountInfo(){
+	$.ajax({
+		type : 'GET',
+		url : getDiscountInfoURL,
+		headers: createAuthorizationTokenHeader(tokenKey),
+		contentType : 'application/json',
+		dataType : "json",
+		headers : createAuthorizationTokenHeader(tokenKey),
+		success : function(data) {
+			if (data != null) {
+				$('#discountPercentagePerPoint').val(data.discountPercentagePerPoint);
+				$('#usedDiscountPoints').prop('max', Math.min(Number(data.maxDiscountPoints), Number($('#availableDiscountPoints').val())));
+				$('#discountPerExtraReservation').val(data.discountPerExtraReservation);
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
+
+function recalculatePrices(){
+	var discount = 0;
+	$("#flightPriceRes").val(0);
+	$("#hotelPriceRes").val(0);
+	$("#carPriceRes").val(0);
+	var flightReservation = JSON.parse(localStorage.getItem("flightReservation"));
+	var quickFlightReservation = JSON.parse(localStorage.getItem("quickFlightReservation"));
+	if(quickFlightReservation != null || flightReservation == null)
+		return;
+	var hotelRes = JSON.parse(localStorage.getItem("hotelRes"));
+	if(hotelRes != null)
+		discount += Number($('#discountPerExtraReservation').val());
+	var carRes = JSON.parse(localStorage.getItem("carRes"));
+	if(carRes != null)
+		discount += Number($('#discountPerExtraReservation').val());
+	discount += Number($('#usedDiscountPoints').val());
+	
+    var price = 0;
+    for(let pass of flightReservation["passengers"]){
+	    	price += pass["numberOfBags"]*flightReservation["other"]["pricePerBag"];
+	}
+	var dict = {'f':flightReservation["other"]["firstClassPrice"], 'b':flightReservation["other"]["businessClassPrice"],'e':flightReservation["other"]["economyClassPrice"]};
+		var seats = flightReservation["seats"]
+	seats.splice(1, 0 + flightReservation["invitedFriends"].length);
+	for(let seat of seats){
+		price += dict[seat.substr(-1)];
+	}
+	$("#flightPriceRes").val(price*(1-discount/100));
+
+	if(hotelRes !=null){
+		 if(hotelRes["quickReservationID"] != null)
+			 $("#hotelPriceRes").val(hotelRes["price"]);			 
+		 else
+			 $("#hotelPriceRes").val(hotelRes["price"]*(1-discount/100));			 
+			 
+	}
+	
+	if (carRes != null) {
+		if(carRes["quickVehicleReservationID"] != null)
+			 $("#carPriceRes").val(carRes["price"]);			 
+		 else
+			 $("#carPriceRes").val(carRes["price"]*(1-discount/100));	
+	}
+	
+	calculateTotalPrice();
+	
+}
+
 function continueReservation(e) {
     e.preventDefault();
+	if(isVisitor){
+		warnVisitorToLogIn();
+		return;
+	}
+    getDiscountInfo();
+    $("#flightPriceRes").val(0);
+    $("#hotelPriceRes").val(0);
+    $("#carPriceRes").val(0);
+    $('#discountTable').show();
     
     var flightReservation = JSON.parse(localStorage.getItem("flightReservation"));
     var quickFlightReservation = JSON.parse(localStorage.getItem("quickFlightReservation"));
@@ -2077,6 +2163,7 @@ function continueReservation(e) {
     }
     
     if(quickFlightReservation != null){
+    	$('#discountTable').hide();
     	var data = quickFlightReservation["other"];
     	$("#startDestRes").text(data["startDestination"]);
         $("#endDestRes").text(data["endDestination"]);
@@ -2119,12 +2206,14 @@ function continueReservation(e) {
             });
         }
 
-        $("#flightPriceRes").text(quickFlightReservation["price"]);
+        $("#flightPriceRes").val(quickFlightReservation["price"]);
         
         $("#cancelFlightReservationButton").click(function() {
         	localStorage.removeItem("quickFlightReservation");
             $("#flightRes").html("No flight reserved");
             getReservations();
+            loadProfileData();
+
             $('#showReservationModal').modal('hide');
         });
     	
@@ -2175,15 +2264,6 @@ function continueReservation(e) {
 	        });
 	    }
 	    
-	    var price = 0;
-	    for(let pass of flightReservation["passengers"]){
-	    	price += pass["numberOfBags"]*flightReservation["other"]["pricePerBag"];
-	    }
-	    var dict = {'f':flightReservation["other"]["firstClassPrice"], 'b':flightReservation["other"]["businessClassPrice"],'e':flightReservation["other"]["economyClassPrice"]};
-	    for(let seat of seats){
-	    	price += dict[seat.substr(-1)];
-	    }
-	    $("#flightPriceRes").text(price);
 	    
 	    $("#cancelFlightReservationButton").click(function() {
         	localStorage.removeItem("flightReservation");
@@ -2194,6 +2274,7 @@ function continueReservation(e) {
             $("#carRes").text("");
             $("#flightRes").html("No flight reserved");
             getReservations();
+            loadProfileData();
             $('#showReservationModal').modal('hide');
         });
 	    
@@ -2214,13 +2295,16 @@ function continueReservation(e) {
 		                "</option>");
 		        });
 		    }
-		    $("#hotelPriceRes").text(hotelRes["price"]);
+		   
+
 		    $("#cancelHotelReservationButton").click(function() {
 		    	localStorage.removeItem("hotelRes");
 		    	$("#hotelRes").text("");
 		    	getReservations();
+		    	loadProfileData();
 		    	$("#hotelResHeader").hide();
 				$("#showHotelReservationTable").hide();
+				recalculatePrices();
 	        });
 		    
 		    $("#hotelResHeader").show();
@@ -2238,13 +2322,15 @@ function continueReservation(e) {
 	    	$("#bOfficeRes").text(carRes["branchOfficeName"]);
 	    	$("#modelCarRes").text(carRes["vehicleModel"]);
 	    	$("#prodCarRes").text(carRes["vehicleProducer"]);
-	    	$("#carPriceRes").text(carRes["price"]);
+	    	$("#carPriceRes").val(carRes["price"]);
 	    	$("#cancelCarReservationButton").click(function() {
 	    		localStorage.removeItem("carRes");
 	    		$("#carRes").text("");
 	    		getReservations();
+	    		loadProfileData();
 	    		$("#carResHeader").hide();
 		    	$("#showCarReservationTable").hide();
+		    	recalculatePrices();
 	        });
 		    
 	    	$("#carResHeader").show();
@@ -2256,8 +2342,15 @@ function continueReservation(e) {
 	    }
     }
 	
-    $("#showReservationModal").modal();   
+    recalculatePrices();
+    $("#cartDiv").show();
+    $("#showReservationModal").modal();
 }
+
+function calculateTotalPrice(){
+	$('#totalPrice').val( Number($("#flightPriceRes").val()) + Number($("#hotelPriceRes").val()) +  Number($("#carPriceRes").val()));
+}
+
 function confirmReservation(){
     var quickFlightReservation = JSON.parse(localStorage.getItem("quickFlightReservation"));
     var flightRes = localStorage.getItem("flightRes");
@@ -2275,7 +2368,7 @@ function confirmReservation(){
     	}
     	$.ajax({
             type: 'POST',
-            url: reserveQuickFlightReservationURL,
+            url: reserveQuickFlightReservationURL + 0,
             headers: createAuthorizationTokenHeader(tokenKey),
             data: JSON.stringify({
                 "quickReservationID": quickFlightReservation["quickReservationID"],
@@ -2287,6 +2380,7 @@ function confirmReservation(){
                     localStorage.removeItem("quickFlightReservation");
                     $("#flightRes").html("No flight reserved");
                     getReservations();
+                    loadProfileData();
                 }
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -2304,7 +2398,7 @@ function confirmReservation(){
         var flightReservation = JSON.parse(localStorage.getItem("flightReservation"));
         $.ajax({
             type: 'POST',
-            url: reserveFlightURL,
+            url: reserveFlightURL + $('#usedDiscountPoints').val(),
             headers: createAuthorizationTokenHeader(tokenKey),
             data: JSON.stringify({
                 "flightCode": flightReservation["flightCode"],
@@ -2320,6 +2414,7 @@ function confirmReservation(){
                     localStorage.removeItem("flightRes");
                     $("#flightRes").html("No flight reserved");
                     getReservations();
+                    loadProfileData();
                 }
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -2338,7 +2433,7 @@ function confirmReservation(){
         };
         $.ajax({
             type: 'POST',
-            url: reserveFlightHotelURL,
+            url: reserveFlightHotelURL + $('#usedDiscountPoints').val(),
             headers: createAuthorizationTokenHeader(tokenKey),
             data: JSON.stringify({
                 'flightReservation': flightRes,
@@ -2353,6 +2448,7 @@ function confirmReservation(){
                     $("#flightRes").text("No flight reserved");
                     $("#hotelRes").text("");
                     getReservations();
+                    loadProfileData();
                 }
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -2370,7 +2466,7 @@ function confirmReservation(){
         };
         $.ajax({
             type: 'POST',
-            url: reserveFlightVehicleURL,
+            url: reserveFlightVehicleURL + $('#usedDiscountPoints').val(),
             headers: createAuthorizationTokenHeader(tokenKey),
             data: JSON.stringify({
                 'flightReservation': flightRes,
@@ -2385,6 +2481,7 @@ function confirmReservation(){
                     $("#flightRes").text("No flight reserved");
                     $("#carRes").text("");
                     getReservations();
+                    loadProfileData();
                 }
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -2403,7 +2500,7 @@ function confirmReservation(){
         };
         $.ajax({
             type: 'POST',
-            url: reserveFlightHotelVehicleURL,
+            url: reserveFlightHotelVehicleURL + $('#usedDiscountPoints').val(),
             headers: createAuthorizationTokenHeader(tokenKey),
             data: JSON.stringify({
                 'flightReservation': flightRes,
@@ -2421,6 +2518,7 @@ function confirmReservation(){
                     $("#carRes").text("");
                     $("#hotelRes").text("");
                     getReservations();
+                    loadProfileData();
                 }
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -2464,6 +2562,7 @@ function cancelReservation(id) {
             	var table = $("#reservationsTable").DataTable();
             	table.clear().draw();
             	getReservations();
+            	loadProfileData(); // TO UPDATE AVAILABLE DISCOUNT POINTS
             }
             toastr[data.toastType](data.message);
         },

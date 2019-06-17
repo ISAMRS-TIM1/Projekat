@@ -177,6 +177,7 @@ public class ReservationService {
 		double discountPercentage = discountPoints*di.getDiscountPercentagePerPoint();
 		
 		fr.setPrice(fr.getPrice()*(1 - discountPercentage/100));
+		fr.setUsedPoints(discountPoints);
 		userRepository.save(ru);
 		mailService.sendFlightReservationMail(ru, fr);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
@@ -214,7 +215,9 @@ public class ReservationService {
 		discountPercentage += di.getDiscountPerExtraReservation();
 		
 		fr.setPrice(fr.getPrice()*(1 - discountPercentage/100));
-		fr.getHotelReservation().setPrice(fr.getHotelReservation().getPrice()*(1 - discountPercentage/100));
+		if(hotelRes.getQuickReservationID() == null) // discount only on non quick res
+			fr.getHotelReservation().setPrice(fr.getHotelReservation().getPrice()*(1 - discountPercentage/100));
+		fr.setUsedPoints(discountPoints);
 		userRepository.save(ru);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
 	}
@@ -249,8 +252,9 @@ public class ReservationService {
 		discountPercentage += di.getDiscountPerExtraReservation();
 		
 		fr.setPrice(fr.getPrice()*(1 - discountPercentage/100));
-		fr.getVehicleReservation().setPrice(fr.getVehicleReservation().getPrice()*(1 - discountPercentage/100));
-		
+		if(vehicleRes.getQuickVehicleReservationID() == null) // discount only on non quick res
+			fr.getVehicleReservation().setPrice(fr.getVehicleReservation().getPrice()*(1 - discountPercentage/100));
+		fr.setUsedPoints(discountPoints);
 		userRepository.save(ru);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
 	}
@@ -295,9 +299,11 @@ public class ReservationService {
 		discountPercentage += 2*di.getDiscountPerExtraReservation();
 		
 		fr.setPrice(fr.getPrice()*(1 - discountPercentage/100));
-		fr.getHotelReservation().setPrice(fr.getHotelReservation().getPrice()*(1 - discountPercentage/100));
-		fr.getVehicleReservation().setPrice(fr.getVehicleReservation().getPrice()*(1 - discountPercentage/100));
-		
+		if(hotelRes.getQuickReservationID() == null) // discount only on non quick res
+			fr.getHotelReservation().setPrice(fr.getHotelReservation().getPrice()*(1 - discountPercentage/100));
+		if(vehicleRes.getQuickVehicleReservationID() == null) // discount only on non quick res
+			fr.getVehicleReservation().setPrice(fr.getVehicleReservation().getPrice()*(1 - discountPercentage/100));
+		fr.setUsedPoints(discountPoints);
 		userRepository.save(ru);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
 	}
@@ -893,17 +899,12 @@ public class ReservationService {
 			return new MessageDTO("Quick flight reservation is already taken.", ToasterType.ERROR.toString());
 		}
 		
-		if (discountPoints < 0)
-			return new MessageDTO("Discount points cannot be negative", ToasterType.ERROR.toString());
-		DiscountInfo di = discountInfoRepository.findAll().get(0);
-		if (discountPoints > di.getMaxDiscountPoints())
-			return new MessageDTO("Too much discount points used, max is " + di.getMaxDiscountPoints(),
-					ToasterType.ERROR.toString());
+		if (discountPoints != 0)
+			return new MessageDTO("Discount points cannot be used on quick reservation", ToasterType.ERROR.toString());
+
 
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if (discountPoints > ru.getDiscountPoints())
-			return new MessageDTO("Not enough discount points.", ToasterType.ERROR.toString());
-		
+
 		qfr.setDone(false);
 		qfr.setDateOfReservation(new Date());
 		String userPassport = flightRes.getPassengers()[0].getPassport();
@@ -919,9 +920,7 @@ public class ReservationService {
 
 		ru.getFlightReservations().add(qfr);
 		qfr.setUser(ru);
-		double discountPercentage = discountPoints*di.getDiscountPercentagePerPoint();
-		
-		qfr.setPrice(qfr.getPrice()*(1 - discountPercentage/100));
+
 		userRepository.save(ru);
 		mailService.sendFlightReservationMail(ru, qfr);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());

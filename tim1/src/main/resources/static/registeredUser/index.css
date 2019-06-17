@@ -268,16 +268,16 @@ input, button {
 	font-size: 15px;
 }
 
-#showFlightTable, #passengersTable, #showReservationTable, #showHotelReservationTable, #showCarReservationTable {
+#showFlightTable, #passengersTable, #showReservationTable, #showHotelReservationTable, #showCarReservationTable, #discountTable {
 	text-align:left;
 	color:white;
 	margin: 0 auto;
 }
 #showFlightTable tbody, #passengersTable tbody, #showReservationTable tbody, 
-	#showHotelReservationTable tbody, #showCarReservationTable tbody {
+	#showHotelReservationTable tbody, #showCarReservationTable tbody, #discountTable tbody {
 	overflow-y : auto;
 }
-#showFlightTable td, #passengersTable td, #showReservationTable td, #showHotelReservationTable td, #showCarReservationTable td {
+#showFlightTable td, #passengersTable td, #showReservationTable td, #showHotelReservationTable td, #showCarReservationTable td, #discountTable td {
 	padding: 5px;
 }
 

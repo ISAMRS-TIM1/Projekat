@@ -20,7 +20,7 @@ public class DiscountInfoController {
 	@Autowired
 	private DiscountInfoService discountInfoService;
 
-	@PreAuthorize("hasRole('SYSADMIN')")
+	@PreAuthorize("hasRole('SYSADMIN') or hasRole('REGISTEREDUSER')")
 	@RequestMapping(value = "/api/getDiscountInfo", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiscountInfo> getDiscountInfo() {
 		return new ResponseEntity<DiscountInfo>(discountInfoService.getDiscountInfo(), HttpStatus.OK);
