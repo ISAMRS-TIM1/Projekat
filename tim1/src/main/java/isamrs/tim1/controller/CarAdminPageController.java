@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class CarAdminPageController {
-	@PreAuthorize("hasRole('RENTADMIN')")
+	//@PreAuthorize("hasRole('RENTADMIN')")
 	@GetMapping("/carAdmin")
 	public String showMainPage(Map<String, Object> model) {
 		return "carAdmin/index.html";

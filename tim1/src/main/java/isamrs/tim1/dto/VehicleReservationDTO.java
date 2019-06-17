@@ -18,6 +18,7 @@ public class VehicleReservationDTO implements Serializable {
 	private String branchOfficeName;
 	private Long quickVehicleReservationID;
 	private Integer discount;
+	private double price;
 
 	public VehicleReservationDTO() {
 		super();
@@ -31,6 +32,7 @@ public class VehicleReservationDTO implements Serializable {
 		this.branchOfficeName = qvr.getBranchOffice().getName();
 		this.quickVehicleReservationID = qvr.getId();
 		this.discount = qvr.getDiscount();
+		this.price = qvr.getPrice();
 	}
 
 	public VehicleReservationDTO(VehicleReservation vr) {
@@ -41,6 +43,7 @@ public class VehicleReservationDTO implements Serializable {
 		this.branchOfficeName = vr.getBranchOffice().getName();
 		this.quickVehicleReservationID = null;
 		this.discount = null;
+		this.price = vr.getPrice();
 	}
 
 	public Date getFromDate() {
@@ -98,5 +101,18 @@ public class VehicleReservationDTO implements Serializable {
 	public void setDiscount(Integer discount) {
 		this.discount = discount;
 	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+	
 
 }
