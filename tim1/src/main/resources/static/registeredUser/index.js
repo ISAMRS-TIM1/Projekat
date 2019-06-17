@@ -509,6 +509,12 @@ $(document)
                     	
                     	let branch = $("#vehicleBranchOffices").val();
                     	
+                    	var quickFlightReservation = JSON.parse(localStorage.getItem("quickFlightReservation"));
+                    	if(quickFlightReservation != null){
+                    		toastr["error"]("Cannot reserve vehicle if quick flight is reserved");
+                    		return;
+                    	}
+                    	
                     	checkCountry(branch, currentVehicleID);
                     	
                     	if(error){
@@ -710,6 +716,12 @@ function reserveQuickVehicleReservation(reservationID, branchOffice) {
 		warnVisitorToLogIn();
 		return;
 	}
+	var quickFlightReservation = JSON.parse(localStorage.getItem("quickFlightReservation"));
+	if(quickFlightReservation != null){
+		toastr["error"]("Cannot reserve hotel if quick flight is reserved");
+		return;
+	}
+	
 	checkCountry(branch, currentVehicleID);
 	
 	if(error){
@@ -725,6 +737,17 @@ function reserveQuickVehicleReservation(reservationID, branchOffice) {
 	    }
 	} );
 	
+	
+
+	var start = moment(val[4], "DD.MM.YYYY HH:mm").toDate();
+	if(start === null || start === "") {
+		toastr["error"]("Start date must have a value");
+		return;
+	} else if(!moment(JSON.parse(localStorage.getItem("flightReservation"))["other"]["landingTime"], 'DD.MM.YYYY hh:mm')
+			.isSame(start, 'date')){
+		toastr["error"]("Quick vehicle reservation start date must be same as flight landing date");
+		return;
+	}
 	
 	var carRes = {
 			'fromDate' : moment(val[4], "DD.MM.YYYY HH:mm").toDate(),
@@ -1691,16 +1714,21 @@ function reserveRoomNumber(roomNumber, roomPrice){
 	}
 	var drp = $('#searchRoomsDateRange').data('daterangepicker');
 	
+	var quickFlightReservation = JSON.parse(localStorage.getItem("quickFlightReservation"));
+	if(quickFlightReservation != null){
+		toastr["error"]("Cannot reserve hotel if quick flight is reserved");
+		return;
+	}
+	
 	var flightReservation = JSON.parse(localStorage.getItem("flightReservation"));
 	if(flightReservation === null){
 		toastr["error"]("Flight must be reserved first");
-		error = true;
 		return;
 	}
 		
 	
 	var country = flightReservation["other"]["countryName"];
-	if(data !== searchHotelCountry){
+	if(country !== searchHotelCountry){
 		toastr["error"]("Hotel country must be same as flight destination country");
 		return;
 	}
@@ -1732,6 +1760,7 @@ function reserveRoomNumber(roomNumber, roomPrice){
 	localStorage.setItem("hotelRes", JSON.stringify(hotelRes));
 	$('#hotelRes').text(shownHotel);
 	additionalServicesTable.$('tr.reservedAdditionalService').removeClass('reservedAdditionalService');
+	toastr["success"]("Hotel room reservation successfully added to cart");
 }
 
 function reserveQuickHotelReservation(quickID){
@@ -1739,6 +1768,21 @@ function reserveQuickHotelReservation(quickID){
 		warnVisitorToLogIn();
 		return;
 	}
+	
+	var flightReservation = JSON.parse(localStorage.getItem("flightReservation"));
+	if(flightReservation === null){
+		toastr["error"]("Flight must be reserved first");
+		return;
+	}
+		
+	
+	var country = flightReservation["other"]["countryName"];
+	if(country !== searchHotelCountry){
+		toastr["error"]("Hotel country must be same as flight destination country");
+		return;
+	}
+	
+	
 	var val = null;
 	quickHotelReservationsTable.rows().every(function ( rowIdx, tableLoop, rowLoop ) {
 	    if(this.data()[0] == quickID){
@@ -1747,7 +1791,17 @@ function reserveQuickHotelReservation(quickID){
 	    }
 	} );
 	
-	var hotelRes = {'fromDate' : moment(val[3], "DD.MM.YYYY HH:mm").toDate(),
+	var start = moment(val[3], "DD.MM.YYYY HH:mm").toDate();
+	if(start === null || start === "") {
+		toastr["error"]("Start date must have a value");
+		return;
+	} else if(!moment(JSON.parse(localStorage.getItem("flightReservation"))["other"]["landingTime"], 'DD.MM.YYYY hh:mm')
+			.isSame(start, 'date')){
+		toastr["error"]("Quick hotel room reservation start date must be same as flight landing date");
+		return;
+	}
+	
+	var hotelRes = {'fromDate' : start,
 			'toDate' : moment(val[4], "DD.MM.YYYY HH:mm").toDate(),
 			'hotelRoomNumber' : val[5],
 			'additionalServiceNames' : val[6].split('<br>'),
@@ -1756,6 +1810,7 @@ function reserveQuickHotelReservation(quickID){
 			'quickReservationID' : quickID};
 	localStorage.setItem("hotelRes", JSON.stringify(hotelRes));
 	$('#hotelRes').text(shownHotel);
+	toastr["success"]("Quick hotel room reservation successfully added to cart");
 }
 
 function searchRooms(e) {
@@ -2016,102 +2071,190 @@ function continueReservation(e) {
     e.preventDefault();
     
     var flightReservation = JSON.parse(localStorage.getItem("flightReservation"));
-    var data = flightReservation["other"];
+    var quickFlightReservation = JSON.parse(localStorage.getItem("quickFlightReservation"));
+    if(quickFlightReservation == null && flightReservation == null){
+    	return;
+    }
     
-    $("#startDestRes").text(data["startDestination"]);
-    $("#endDestRes").text(data["endDestination"]);
-    $("#depTimeRes").text(data["departureTime"]);
-    $("#landTimeRes").text(data["landingTime"]);
-    if (data["roundTrip"]) {
-    	$("#resRetDepTime").text(data["returningDepartureTime"]);
-    	$("#resRetLandTime").text(data["returningLandingTime"]);
-    	$(".resRoundTrip").show();
-    }
-    else {
-    	$(".resRoundTrip").hide();
-    }
-    $("#flightAirlineRes").text(data["airlineName"]);
-    var date1 = moment(data["departureTime"], 'DD.MM.YYYY hh:mm');
-    var date2 = moment(data["landingTime"], 'DD.MM.YYYY hh:mm');
-    var diff = date2.diff(date1, 'minutes');
-    $("#flightDurationRes").text(diff);
-    $("#flightDistanceRes").text(data["flightDistance"]);
-    $('#flightConnectionsRes').find('option').remove();
-    var conn = $("#flightConnectionsRes");
-    if (data["connections"].length == 0) {
-        conn.append("<option value=''></option>");
-    } else {
-        $.each(data["connections"], function(i, val) {
-            conn.append("<option value=" + val + ">" + val +
-                "</option>");
+    if(quickFlightReservation != null){
+    	var data = quickFlightReservation["other"];
+    	$("#startDestRes").text(data["startDestination"]);
+        $("#endDestRes").text(data["endDestination"]);
+        $("#depTimeRes").text(data["departureTime"]);
+        $("#landTimeRes").text(data["landingTime"]);
+        if (data["roundTrip"]) {
+        	$("#resRetDepTime").text(data["returningDepartureTime"]);
+        	$("#resRetLandTime").text(data["returningLandingTime"]);
+        	$(".resRoundTrip").show();
+        }
+        else {
+        	$(".resRoundTrip").hide();
+        }
+        $("#flightAirlineRes").text(data["airlineName"]);
+        var date1 = moment(data["departureTime"], 'DD.MM.YYYY hh:mm');
+        var date2 = moment(data["landingTime"], 'DD.MM.YYYY hh:mm');
+        var diff = date2.diff(date1, 'minutes');
+        $("#flightDurationRes").text(diff);
+        $("#flightDistanceRes").text(data["flightDistance"]);
+        $('#flightConnectionsRes').find('option').remove();
+        var conn = $("#flightConnectionsRes");
+        if (data["connections"].length == 0) {
+            conn.append("<option value=''></option>");
+        } else {
+            $.each(data["connections"], function(i, val) {
+                conn.append("<option value=" + val + ">" + val +
+                    "</option>");
+            });
+        }
+        $("#numOfSeatsRes").text(quickFlightReservation["passengers"].length);
+        $('#seatsRes').find('option').remove();
+        var flightSeats = $("#seatsRes");
+        var seats = quickFlightReservation["seats"]
+        if (seats.length == 0) {
+            flightSeats.append("<option value=''></option>");
+        } else {
+            $.each(seats, function(i, val) {
+                flightSeats.append("<option value=" + val + ">" + val +
+                    "</option>");
+            });
+        }
+
+        $("#flightPriceRes").text(quickFlightReservation["price"]);
+        
+        $("#cancelFlightReservationButton").click(function() {
+        	localStorage.removeItem("quickFlightReservation");
+            $("#flightRes").html("No flight reserved");
+            getReservations();
+            $('#showReservationModal').modal('hide');
         });
-    }
-    $("#numOfSeatsRes").text(flightReservation["passengers"].length);
-    $('#seatsRes').find('option').remove();
-    var flightSeats = $("#seatsRes");
-    var seats = flightReservation["seats"]
-    seats.splice(1, 0 + flightReservation["invitedFriends"].length);
-    if (seats.length == 0) {
-        flightSeats.append("<option value=''></option>");
-    } else {
-        $.each(seats, function(i, val) {
-            flightSeats.append("<option value=" + val + ">" + val +
-                "</option>");
-        });
+    	
     }
     
-    var price = 0;
-    for(let pass of flightReservation["passengers"]){
-    	price += pass["numberOfBags"]*flightReservation["other"]["pricePerBag"];
-    }
-    var dict = {'f':flightReservation["other"]["firstClassPrice"], 'b':flightReservation["other"]["businessClassPrice"],'e':flightReservation["other"]["economyClassPrice"]};
-    for(let seat of seats){
-    	price += dict[seat.substr(-1)];
-    }
-    $("#flightPriceRes").text(price);
-    
-    
-    var hotelRes = JSON.parse(localStorage.getItem("hotelRes"));
-    if(hotelRes != null){
-		$("#fromDateRes").text(moment(hotelRes["fromDate"]).format('DD.MM.YYYY'));
-		$("#toDateRes").text(moment(hotelRes["toDate"]).format('DD.MM.YYYY'));
-		$("#roomNumberRes").text(hotelRes["hotelRoomNumber"]);
-		$("#hotelResId").text(hotelRes["hotelName"]);
-		$('#addServRes').find('option').remove();
-		var addServices = $("#addServRes");
-	    if (hotelRes["additionalServiceNames"].length == 0) {
-	        addServices.append("<option value=''></option>");
+    else if(flightReservation != null){
+	    var data = flightReservation["other"];
+	    
+	    $("#startDestRes").text(data["startDestination"]);
+	    $("#endDestRes").text(data["endDestination"]);
+	    $("#depTimeRes").text(data["departureTime"]);
+	    $("#landTimeRes").text(data["landingTime"]);
+	    if (data["roundTrip"]) {
+	    	$("#resRetDepTime").text(data["returningDepartureTime"]);
+	    	$("#resRetLandTime").text(data["returningLandingTime"]);
+	    	$(".resRoundTrip").show();
+	    }
+	    else {
+	    	$(".resRoundTrip").hide();
+	    }
+	    $("#flightAirlineRes").text(data["airlineName"]);
+	    var date1 = moment(data["departureTime"], 'DD.MM.YYYY hh:mm');
+	    var date2 = moment(data["landingTime"], 'DD.MM.YYYY hh:mm');
+	    var diff = date2.diff(date1, 'minutes');
+	    $("#flightDurationRes").text(diff);
+	    $("#flightDistanceRes").text(data["flightDistance"]);
+	    $('#flightConnectionsRes').find('option').remove();
+	    var conn = $("#flightConnectionsRes");
+	    if (data["connections"].length == 0) {
+	        conn.append("<option value=''></option>");
 	    } else {
-	        $.each(hotelRes["additionalServiceNames"], function(i, val) {
-	            addServices.append("<option value=" + val + ">" + val +
+	        $.each(data["connections"], function(i, val) {
+	            conn.append("<option value=" + val + ">" + val +
 	                "</option>");
 	        });
 	    }
-	    $("#hotelPriceRes").text(hotelRes["price"]);
-	    $("#hotelResHeader").show();
-		$("#showHotelReservationTable").show();
+	    $("#numOfSeatsRes").text(flightReservation["passengers"].length);
+	    $('#seatsRes').find('option').remove();
+	    var flightSeats = $("#seatsRes");
+	    var seats = flightReservation["seats"]
+	    seats.splice(1, 0 + flightReservation["invitedFriends"].length);
+	    if (seats.length == 0) {
+	        flightSeats.append("<option value=''></option>");
+	    } else {
+	        $.each(seats, function(i, val) {
+	            flightSeats.append("<option value=" + val + ">" + val +
+	                "</option>");
+	        });
+	    }
+	    
+	    var price = 0;
+	    for(let pass of flightReservation["passengers"]){
+	    	price += pass["numberOfBags"]*flightReservation["other"]["pricePerBag"];
+	    }
+	    var dict = {'f':flightReservation["other"]["firstClassPrice"], 'b':flightReservation["other"]["businessClassPrice"],'e':flightReservation["other"]["economyClassPrice"]};
+	    for(let seat of seats){
+	    	price += dict[seat.substr(-1)];
+	    }
+	    $("#flightPriceRes").text(price);
+	    
+	    $("#cancelFlightReservationButton").click(function() {
+        	localStorage.removeItem("flightReservation");
+            localStorage.removeItem("flightRes");
+            localStorage.removeItem("hotelRes");
+            $("#hotelRes").text("");
+            localStorage.removeItem("carRes");
+            $("#carRes").text("");
+            $("#flightRes").html("No flight reserved");
+            getReservations();
+            $('#showReservationModal').modal('hide');
+        });
+	    
+	    
+	    var hotelRes = JSON.parse(localStorage.getItem("hotelRes"));
+	    if(hotelRes != null){
+			$("#fromDateRes").text(moment(hotelRes["fromDate"]).format('DD.MM.YYYY'));
+			$("#toDateRes").text(moment(hotelRes["toDate"]).format('DD.MM.YYYY'));
+			$("#roomNumberRes").text(hotelRes["hotelRoomNumber"]);
+			$("#hotelResId").text(hotelRes["hotelName"]);
+			$('#addServRes').find('option').remove();
+			var addServices = $("#addServRes");
+		    if (hotelRes["additionalServiceNames"].length == 0) {
+		        addServices.append("<option value=''></option>");
+		    } else {
+		        $.each(hotelRes["additionalServiceNames"], function(i, val) {
+		            addServices.append("<option value=" + val + ">" + val +
+		                "</option>");
+		        });
+		    }
+		    $("#hotelPriceRes").text(hotelRes["price"]);
+		    $("#cancelHotelReservationButton").click(function() {
+		    	localStorage.removeItem("hotelRes");
+		    	$("#hotelRes").text("");
+		    	getReservations();
+		    	$("#hotelResHeader").hide();
+				$("#showHotelReservationTable").hide();
+	        });
+		    
+		    $("#hotelResHeader").show();
+			$("#showHotelReservationTable").show();
+	    }
+	    else {
+	    	$("#hotelResHeader").hide();
+	    	$("#showHotelReservationTable").hide();
+	    }
+	    
+	    var carRes = JSON.parse(localStorage.getItem("carRes"));
+	    if (carRes != null) {
+	    	$("#fromDateCarRes").text(moment(carRes["fromDate"]).format('DD.MM.YYYY'));
+	    	$("#toDateCarRes").text(moment(carRes["toDate"]).format('DD.MM.YYYY'));
+	    	$("#bOfficeRes").text(carRes["branchOfficeName"]);
+	    	$("#modelCarRes").text(carRes["vehicleModel"]);
+	    	$("#prodCarRes").text(carRes["vehicleProducer"]);
+	    	$("#carPriceRes").text(carRes["price"]);
+	    	$("#cancelCarReservationButton").click(function() {
+	    		localStorage.removeItem("carRes");
+	    		$("#carRes").text("");
+	    		getReservations();
+	    		$("#carResHeader").hide();
+		    	$("#showCarReservationTable").hide();
+	        });
+		    
+	    	$("#carResHeader").show();
+	    	$("#showCarReservationTable").show();
+	    }
+	    else {
+	    	$("#carResHeader").hide();
+	    	$("#showCarReservationTable").hide();
+	    }
     }
-    else {
-    	$("#hotelResHeader").hide();
-    	$("#showHotelReservationTable").hide();
-    }
-    
-    var carRes = JSON.parse(localStorage.getItem("carRes"));
-    if (carRes != null) {
-    	$("#fromDateCarRes").text(moment(carRes["fromDate"]).format('DD.MM.YYYY'));
-    	$("#toDateCarRes").text(moment(carRes["toDate"]).format('DD.MM.YYYY'));
-    	$("#bOfficeRes").text(carRes["branchOfficeName"]);
-    	$("#modelCarRes").text(carRes["vehicleModel"]);
-    	$("#prodCarRes").text(carRes["vehicleProducer"]);
-    	$("#carPriceRes").text(carRes["price"]);
-    	$("#carResHeader").show();
-    	$("#showCarReservationTable").show();
-    }
-    else {
-    	$("#carResHeader").hide();
-    	$("#showCarReservationTable").hide();
-    }
-	
 	
     $("#showReservationModal").modal();   
 }
@@ -2334,6 +2477,7 @@ function renderQuickFlightReservations(data) {
 	quickFlightResTable.clear().draw();
 	$.each(data, function(i, val) {
 		quickFlightResTable.row.add([	val.id,
+										val.flightCode,
 										val.discountedPrice,
 										val.discount,
 										val.startDestination + "-" + val.endDestination,
@@ -2341,6 +2485,8 @@ function renderQuickFlightReservations(data) {
 										val.landingTime,
 										val.seat,
 										val.seatClass,
+										val.returningDepartureTime || "no return",
+										val.returningLandingTime || "no return",
 										`<button onclick="reserveQuickFlightReservation('${val.id}', 
 											'${val.startDestination}', '${val.endDestination}', '${val.departureTime}')" class="btn btn-default">Reserve</a>` ])
 						.draw(false);
@@ -2348,20 +2494,50 @@ function renderQuickFlightReservations(data) {
 }
 
 function reserveQuickFlightReservation(quickID, startDest, endDest, flightDate){
-	var quickFlightReservation = {
-	        "quickReservationID" : quickID,
-	        "passengers": [{
-	            "firstName": "",
-	            "lastName": "",
-	            "passport": "",
-	            "numberOfBags": 0
-	        }]
-	    };
-	localStorage.removeItem("flightReservation");
-	localStorage.removeItem("flightRes");
-	localStorage.setItem("quickFlightReservation", JSON.stringify(quickFlightReservation));
-	$("#flightRes").html(startDest + "-" + endDest + " " + flightDate);
-	$("#passportBagsModal").modal('show');
+	let table = $('#quickAirlineReservationsTable').DataTable();
+	var val = null;
+	table.rows().every(function ( rowIdx, tableLoop, rowLoop ) {
+	    if(this.data()[0] == quickID){
+	    	val = this.data(); 
+	    	return;
+	    }
+	} );
+	
+	$.ajax({
+        type: 'GET',
+        url: getDetailedFlightURL,
+        contentType: "application/json",
+        data: {
+            'flightCode': val[1]
+        },
+        dataType: "json",
+        headers: createAuthorizationTokenHeader(tokenKey),
+        success: function(data) {
+            if (data != null) {
+            	var quickFlightReservation = {
+            	        "quickReservationID" : quickID,
+            	        "passengers": [{
+            	            "firstName": "",
+            	            "lastName": "",
+            	            "passport": "",
+            	            "numberOfBags": 0
+            	        }],
+            	        "seats" : [val[7]],
+            	        "price" : val[2],
+            	        "other" : data
+            	    };
+            	localStorage.removeItem("flightReservation");
+            	localStorage.removeItem("flightRes");
+            	localStorage.setItem("quickFlightReservation", JSON.stringify(quickFlightReservation));
+            	$("#flightRes").html(startDest + "-" + endDest + " " + flightDate);
+            	$("#passportBagsModal").modal('show');
+            }
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            alert("AJAX ERROR: " + textStatus);
+        }
+    });
+
 }
 
 function getPassportAndBags(e) {

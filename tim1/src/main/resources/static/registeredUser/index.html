@@ -935,8 +935,8 @@
 				</tr>
 				<tr>
 					<td colspan="3" style="text-align: center;"><button
-							class="btn btn-default" id="reserveButton"
-							onclick="continueReservation(event)">Continue Reservation</button></td>
+							class="btn btn-default" id="reserveButton" title="Opens cart window where reservations can be confirmed"
+							onclick="continueReservation(event)">Open Cart</button></td>
 				</tr>
 			</table>
 		</div>
@@ -1099,6 +1099,7 @@
 								<thead>
 									<tr>
 										<th>Reservation ID</th>
+										<th>Fligt code</th>
 										<th>Discounted price</th>
 										<th>Discount</th>
 										<th>Flight</th>
@@ -1106,7 +1107,8 @@
 										<th>Landing time</th>
 										<th>Seat</th>
 										<th>Seat class</th>
-										<th></th>
+										<th>Returning dep time</th>
+										<th>Returning land time</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -1346,6 +1348,8 @@
 						<tr>
 							<td>Price</td>
 							<td><span id="flightPriceRes"></span></td>
+							<td colspan='2'><button id="cancelFlightReservationButton"
+									class="btn btn-default">Cancel</button></td>
 						</tr>
 					</table>
 					<br> <br>
@@ -1371,6 +1375,8 @@
 						<tr>
 							<td>Price</td>
 							<td><span id="hotelPriceRes"></span></td>
+							<td colspan='2'><button id="cancelHotelReservationButton"
+									class="btn btn-default">Cancel</button></td>
 						</tr>
 					</table>
 					<br> <br>
@@ -1396,10 +1402,13 @@
 						<tr>
 							<td>Price</td>
 							<td><span id="carPriceRes"></span></td>
+							<td colspan='2'><button id="cancelCarReservationButton"
+									class="btn btn-default">Cancel</button></td>
 						</tr>
 					</table>
 					<br> <br>
-					<button onclick="confirmReservation()" class="btn btn-default" id="confirmReservationButton">Confirm Reservation</button>
+					<button onclick="confirmReservation()" class="btn btn-default"
+						id="confirmReservationButton">Confirm Reservation</button>
 				</div>
 			</div>
 		</div>
