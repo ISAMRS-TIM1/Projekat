@@ -24,7 +24,7 @@ const getReservationsURL = "/api/getReservations";
 const cancelReservationURL = "/api/cancelReservation";
 const getAirlinesURL = "/api/getAirlines";
 const getDetailedAirlineURL = "../api/getDetailedAirline";
-const reserveQuickFlightReservationURL = "/api/reserveQuickFlightReservation";
+const reserveQuickFlightReservationURL = "/api/reserveQuickFlightReservation/";
 const getDetailedReservationURL = "/api/getDetailedReservation";
 
 const searchHotelsURL = "/api/searchHotels";
@@ -43,10 +43,10 @@ const checkVehicleForPeriodURL = "/api/checkVehicleForPeriod";
 const getBranchOfficesForVehicleURL = "/api/getBranchOfficesForVehicle/";
 const checkCountryURL = "/api/checkCountry/";
 
-const reserveFlightURL = "/api/reserveFlight";
-const reserveFlightHotelURL = "/api/reserveFlightHotel";
-const reserveFlightVehicleURL = "/api/reserveFlightVehicle";
-const reserveFlightHotelVehicleURL = "/api/reserveFlightHotelVehicle";
+const reserveFlightURL = "/api/reserveFlight/";
+const reserveFlightHotelURL = "/api/reserveFlightHotel/";
+const reserveFlightVehicleURL = "/api/reserveFlightVehicle/";
+const reserveFlightHotelVehicleURL = "/api/reserveFlightHotelVehicle/";
 
 var userMail = "";
 var hotelMap = null;
@@ -1924,7 +1924,7 @@ function showFriendsStep(e) {
         "other" : {"startDestination" : shownFlight["startDestination"],
         			"endDestination" : shownFlight["endDestination"],
         			"departureTime" : shownFlight["departureTime"],
-        			"landingTime" : shownFlight["departureTime"],
+        			"landingTime" : shownFlight["landingTime"],
         			"airlineName" : shownFlight["airlineName"],
         			"flightDistance" : shownFlight["flightDistance"],
         			"connections" : shownFlight["connections"],
@@ -2428,6 +2428,7 @@ function confirmReservation(){
             }
         });
     }
+    $('#showReservationModal').modal('hide');
 }
 
 function getReservations() {

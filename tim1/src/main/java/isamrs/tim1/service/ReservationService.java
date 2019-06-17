@@ -36,6 +36,7 @@ import isamrs.tim1.dto.VehicleReservationDTO;
 import isamrs.tim1.model.Airline;
 import isamrs.tim1.model.AirlineAdmin;
 import isamrs.tim1.model.BranchOffice;
+import isamrs.tim1.model.DiscountInfo;
 import isamrs.tim1.model.Flight;
 import isamrs.tim1.model.FlightInvitation;
 import isamrs.tim1.model.FlightReservation;
@@ -57,6 +58,7 @@ import isamrs.tim1.model.Seat;
 import isamrs.tim1.model.Vehicle;
 import isamrs.tim1.model.VehicleReservation;
 import isamrs.tim1.repository.BranchOfficeRepository;
+import isamrs.tim1.repository.DiscountInfoRepository;
 import isamrs.tim1.repository.FlightInvitationRepository;
 import isamrs.tim1.repository.FlightRepository;
 import isamrs.tim1.repository.FlightReservationRepository;
@@ -78,58 +80,61 @@ import isamrs.tim1.repository.VehicleReservationRepository;
 public class ReservationService {
 
 	@Autowired
-	FlightReservationRepository flightReservationRepository;
+	private FlightReservationRepository flightReservationRepository;
 
 	@Autowired
-	FlightRepository flightRepository;
+	private FlightRepository flightRepository;
 
 	@Autowired
-	UserRepository userRepository;
+	private UserRepository userRepository;
 
 	@Autowired
-	ServiceRepository serviceRepository;
+	private ServiceRepository serviceRepository;
 
 	@Autowired
-	PassengerSeatRepository passengerSeatRepository;
+	private PassengerSeatRepository passengerSeatRepository;
 
 	@Autowired
-	EmailService mailService;
+	private EmailService mailService;
 
 	@Autowired
-	HotelRoomRepository hotelRoomRepository;
+	private HotelRoomRepository hotelRoomRepository;
 
 	@Autowired
-	HotelAdditionalServicesRepository hotelAdditionalServicesRepository;
+	private HotelAdditionalServicesRepository hotelAdditionalServicesRepository;
 
 	@Autowired
-	HotelReservationService hotelReservationService;
+	private HotelReservationService hotelReservationService;
 
 	@Autowired
-	QuickHotelReservationRepository quickHotelReservationRepository;
+	private QuickHotelReservationRepository quickHotelReservationRepository;
 
 	@Autowired
-	QuickFlightReservationRepository quickFlightReservationRepository;
+	private QuickFlightReservationRepository quickFlightReservationRepository;
 
 	@Autowired
-	QuickVehicleReservationRepository quickVehicleReservationRepository;
+	private QuickVehicleReservationRepository quickVehicleReservationRepository;
 
 	@Autowired
-	BranchOfficeRepository branchOfficeRepository;
+	private BranchOfficeRepository branchOfficeRepository;
 
 	@Autowired
-	VehicleRepository vehicleRepository;
+	private VehicleRepository vehicleRepository;
 
 	@Autowired
-	VehicleReservationRepository vehicleReservationRepository;
+	private VehicleReservationRepository vehicleReservationRepository;
 
 	@Autowired
-	RentACarRepository rentACarRepository;
+	private RentACarRepository rentACarRepository;
 
 	@Autowired
-	SeatRepository seatRepository;
+	private SeatRepository seatRepository;
 
 	@Autowired
-	FlightInvitationRepository flightInvitationRepository;
+	private FlightInvitationRepository flightInvitationRepository;
+
+	@Autowired
+	private DiscountInfoRepository discountInfoRepository;
 
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
@@ -149,26 +154,49 @@ public class ReservationService {
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
-	public MessageDTO reserveFlight(FlightReservationDTO flightRes) {
+	public MessageDTO reserveFlight(int discountPoints, FlightReservationDTO flightRes) {
+
+		if (discountPoints < 0)
+			return new MessageDTO("Discount points cannot be negative", ToasterType.ERROR.toString());
+		DiscountInfo di = discountInfoRepository.findAll().get(0);
+		if (discountPoints > di.getMaxDiscountPoints())
+			return new MessageDTO("Too much discount points used, max is " + di.getMaxDiscountPoints(),
+					ToasterType.ERROR.toString());
+
 		FlightReservation fr = new FlightReservation();
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (discountPoints > ru.getDiscountPoints())
+			return new MessageDTO("Not enough discount points.", ToasterType.ERROR.toString());
+		
 		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru);
 		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString())) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return retval;
 		}
-
+		
+		double discountPercentage = discountPoints*di.getDiscountPercentagePerPoint();
+		
+		fr.setPrice(fr.getPrice()*(1 - discountPercentage/100));
 		userRepository.save(ru);
 		mailService.sendFlightReservationMail(ru, fr);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
-	public MessageDTO reserveFlightHotel(FlightHotelReservationDTO flightHotelRes) {
+	public MessageDTO reserveFlightHotel(int discountPoints, FlightHotelReservationDTO flightHotelRes) {
+		if (discountPoints < 0)
+			return new MessageDTO("Discount points cannot be negative.", ToasterType.ERROR.toString());
+		DiscountInfo di = discountInfoRepository.findAll().get(0);
+		if (discountPoints > di.getMaxDiscountPoints())
+			return new MessageDTO("Too much discount points used, max is " + di.getMaxDiscountPoints(),
+					ToasterType.ERROR.toString());
+
 		FlightReservationDTO flightRes = flightHotelRes.getFlightReservation();
 		HotelReservationDTO hotelRes = flightHotelRes.getHotelReservation();
 		FlightReservation fr = new FlightReservation();
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (discountPoints > ru.getDiscountPoints())
+			return new MessageDTO("Not enough discount points.", ToasterType.ERROR.toString());
 
 		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru);
 		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString())) {
@@ -182,16 +210,29 @@ public class ReservationService {
 			return retval;
 		}
 
+		double discountPercentage = discountPoints*di.getDiscountPercentagePerPoint();
+		discountPercentage += di.getDiscountPerExtraReservation();
+		
+		fr.setPrice(fr.getPrice()*(1 - discountPercentage/100));
+		fr.getHotelReservation().setPrice(fr.getHotelReservation().getPrice()*(1 - discountPercentage/100));
 		userRepository.save(ru);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
-	public MessageDTO reserveFlightVehicle(FlightVehicleReservationDTO flightVehicleRes) {
+	public MessageDTO reserveFlightVehicle(int discountPoints, FlightVehicleReservationDTO flightVehicleRes) {
+		if (discountPoints < 0)
+			return new MessageDTO("Discount points cannot be negative.", ToasterType.ERROR.toString());
+		DiscountInfo di = discountInfoRepository.findAll().get(0);
+		if (discountPoints > di.getMaxDiscountPoints())
+			return new MessageDTO("Too much discount points used, max is " + di.getMaxDiscountPoints(),
+					ToasterType.ERROR.toString());
 		FlightReservationDTO flightRes = flightVehicleRes.getFlightReservation();
 		VehicleReservationDTO vehicleRes = flightVehicleRes.getVehicleReservation();
 		FlightReservation fr = new FlightReservation();
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (discountPoints > ru.getDiscountPoints())
+			return new MessageDTO("Not enough discount points.", ToasterType.ERROR.toString());
 
 		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru);
 		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString())) {
@@ -204,19 +245,33 @@ public class ReservationService {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return retval;
 		}
-
+		double discountPercentage = discountPoints*di.getDiscountPercentagePerPoint();
+		discountPercentage += di.getDiscountPerExtraReservation();
+		
+		fr.setPrice(fr.getPrice()*(1 - discountPercentage/100));
+		fr.getVehicleReservation().setPrice(fr.getVehicleReservation().getPrice()*(1 - discountPercentage/100));
+		
 		userRepository.save(ru);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
-	public MessageDTO reserveFlightHotelVehicle(FlightHotelVehicleReservationDTO flightHotelVehicleRes) {
+	public MessageDTO reserveFlightHotelVehicle(int discountPoints,
+			FlightHotelVehicleReservationDTO flightHotelVehicleRes) {
+		if (discountPoints < 0)
+			return new MessageDTO("Discount points cannot be negative.", ToasterType.ERROR.toString());
+		DiscountInfo di = discountInfoRepository.findAll().get(0);
+		if (discountPoints > di.getMaxDiscountPoints())
+			return new MessageDTO("Too much discount points used, max is " + di.getMaxDiscountPoints(),
+					ToasterType.ERROR.toString());
 		FlightReservationDTO flightRes = flightHotelVehicleRes.getFlightReservation();
 		HotelReservationDTO hotelRes = flightHotelVehicleRes.getHotelReservation();
 		VehicleReservationDTO vehicleRes = flightHotelVehicleRes.getVehicleReservation();
 
 		FlightReservation fr = new FlightReservation();
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (discountPoints > ru.getDiscountPoints())
+			return new MessageDTO("Not enough discount points.", ToasterType.ERROR.toString());
 
 		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru);
 		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString())) {
@@ -236,6 +291,13 @@ public class ReservationService {
 			return retval;
 		}
 
+		double discountPercentage = discountPoints*di.getDiscountPercentagePerPoint();
+		discountPercentage += 2*di.getDiscountPerExtraReservation();
+		
+		fr.setPrice(fr.getPrice()*(1 - discountPercentage/100));
+		fr.getHotelReservation().setPrice(fr.getHotelReservation().getPrice()*(1 - discountPercentage/100));
+		fr.getVehicleReservation().setPrice(fr.getVehicleReservation().getPrice()*(1 - discountPercentage/100));
+		
 		userRepository.save(ru);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
 	}
@@ -822,7 +884,7 @@ public class ReservationService {
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
-	public MessageDTO reserveQuickFlightReservation(FlightReservationDTO flightRes) {
+	public MessageDTO reserveQuickFlightReservation(int discountPoints, FlightReservationDTO flightRes) {
 		QuickFlightReservation qfr = quickFlightReservationRepository.findById(flightRes.getQuickReservationID())
 				.orElse(null);
 		if (qfr == null)
@@ -830,7 +892,18 @@ public class ReservationService {
 		if (qfr.getUser() != null) {
 			return new MessageDTO("Quick flight reservation is already taken.", ToasterType.ERROR.toString());
 		}
+		
+		if (discountPoints < 0)
+			return new MessageDTO("Discount points cannot be negative", ToasterType.ERROR.toString());
+		DiscountInfo di = discountInfoRepository.findAll().get(0);
+		if (discountPoints > di.getMaxDiscountPoints())
+			return new MessageDTO("Too much discount points used, max is " + di.getMaxDiscountPoints(),
+					ToasterType.ERROR.toString());
+
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (discountPoints > ru.getDiscountPoints())
+			return new MessageDTO("Not enough discount points.", ToasterType.ERROR.toString());
+		
 		qfr.setDone(false);
 		qfr.setDateOfReservation(new Date());
 		String userPassport = flightRes.getPassengers()[0].getPassport();
@@ -846,6 +919,9 @@ public class ReservationService {
 
 		ru.getFlightReservations().add(qfr);
 		qfr.setUser(ru);
+		double discountPercentage = discountPoints*di.getDiscountPercentagePerPoint();
+		
+		qfr.setPrice(qfr.getPrice()*(1 - discountPercentage/100));
 		userRepository.save(ru);
 		mailService.sendFlightReservationMail(ru, qfr);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
