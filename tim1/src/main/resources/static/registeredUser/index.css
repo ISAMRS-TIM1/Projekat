@@ -556,3 +556,14 @@ input, select {
 .retTripSrc {
 	display: none;
 }
+
+#confirmReservationButton {
+ 	margin-left: auto;
+ 	margin-right: auto;
+ 	margin-bottom: 3vh;
+ 	display: block;
+ 	color: white;
+	font-size: 1.6vw;
+	border: 0.16vw solid #B27A00;
+	border-radius: 2vw 2vw 2vw 2vw;
+}

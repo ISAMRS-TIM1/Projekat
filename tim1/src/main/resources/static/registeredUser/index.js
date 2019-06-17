@@ -1963,7 +1963,7 @@ function endReservation(e) {
     localStorage.setItem("flightRes", "true");
 }
 
-function confirmReservation(e) {
+function continueReservation(e) {
     e.preventDefault();
     var hotelRes = JSON.parse(localStorage.getItem("hotelRes"));
     if(hotelRes != null){
@@ -2009,7 +2009,7 @@ function confirmReservation(e) {
 	
     $("#showReservationModal").modal();   
 }
-function confirmReservationOnServer(){
+function confirmReservation(){
     var quickFlightReservation = JSON.parse(localStorage.getItem("quickFlightReservation"));
     var flightRes = localStorage.getItem("flightRes");
     var hotelRes = JSON.parse(localStorage.getItem("hotelRes"));
