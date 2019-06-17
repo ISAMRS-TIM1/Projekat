@@ -20,6 +20,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import isamrs.tim1.dto.HotelReservationDTO;
 
@@ -58,6 +59,10 @@ public class HotelReservation implements Serializable {
 
 	@Column(name = "price", unique = false, nullable = true)
 	protected Double price;
+	
+	@Version
+	private Integer version;
+
 
 	public HotelReservation() {
 		super();

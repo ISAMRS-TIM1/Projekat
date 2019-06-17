@@ -9,6 +9,6 @@ import isamrs.tim1.model.QuickHotelReservation;
 
 public interface QuickHotelReservationRepository extends JpaRepository<QuickHotelReservation, Long> {
 	
-	@Lock(LockModeType.PESSIMISTIC_WRITE)
+	@Lock(LockModeType.OPTIMISTIC)
 	QuickHotelReservation findOneById(Long id);
 }
