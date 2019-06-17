@@ -2,17 +2,27 @@ package isamrs.tim1.dto;
 
 import java.io.Serializable;
 
+import isamrs.tim1.model.Destination;
+
 public class DestinationDTO implements Serializable {
 	
 	private String nameOfDest;
 	private Double latitude;
 	private Double longitude;
 	private String airlineName;
+	private String oldName;
 	
 	public DestinationDTO() {
 		super();
 	}
 	
+	public DestinationDTO(Destination d) {
+		this.nameOfDest = d.getName();
+		this.airlineName = d.getAirline().getName();
+		this.longitude = d.getLocation().getLongitude();
+		this.latitude = d.getLocation().getLatitude();
+	}
+
 	public String getNameOfDest() {
 		return nameOfDest;
 	}
@@ -48,6 +58,15 @@ public class DestinationDTO implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+	
+	public String getOldName() {
+		return oldName;
+	}
+
+	public void setOldName(String oldName) {
+		this.oldName = oldName;
+	}
+
 
 	private static final long serialVersionUID = 231712408553877022L;
 }
