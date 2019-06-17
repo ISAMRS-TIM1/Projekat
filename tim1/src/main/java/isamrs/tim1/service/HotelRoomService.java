@@ -35,12 +35,12 @@ public class HotelRoomService {
 	SeasonalHotelRoomPriceRepository seasonalHotelRoomPriceRepository;
 
 	public HotelRoomDetailedDTO getHotelRoom(String roomNumber, Hotel hotel) {
-		return new HotelRoomDetailedDTO(hotelRoomRepository.findOneByNumberAndHotel(roomNumber, hotel.getId()));
+		return new HotelRoomDetailedDTO(hotelRoomRepository.findOneByNumberAndHotelForRead(roomNumber, hotel.getId()));
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO addHotelRoom(HotelRoomDTO hotelRoom, Hotel hotel) {
-		if (hotelRoomRepository.findOneByNumberAndHotel(hotelRoom.getRoomNumber(), hotel.getId()) != null)
+		if (hotelRoomRepository.findOneByNumberAndHotelForRead(hotelRoom.getRoomNumber(), hotel.getId()) != null)
 			return new MessageDTO("Hotel room with same number already exists", ToasterType.ERROR.toString());
 		hotel.getRooms().add(new HotelRoom(hotelRoom, hotel));
 		hotelRepository.save(hotel);
@@ -109,7 +109,7 @@ public class HotelRoomService {
 		if (checkForActiveReservations(hr))
 			return new MessageDTO("Hotel room has reservations bound to it", ToasterType.ERROR.toString());
 		if (!hotelRoom.getRoomNumber().equals(roomNumber)) // if room number was changed, check if new one is taken
-			if (hotelRoomRepository.findOneByNumberAndHotel(hotelRoom.getRoomNumber(), hotel.getId()) != null)
+			if (hotelRoomRepository.findOneByNumberAndHotelForRead(hotelRoom.getRoomNumber(), hotel.getId()) != null)
 				return new MessageDTO("Hotel room with same number already exists", ToasterType.ERROR.toString());
 		hr.update(hotelRoom);
 		hotelRoomRepository.save(hr);

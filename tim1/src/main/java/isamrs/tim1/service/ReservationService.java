@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.persistence.OptimisticLockException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -167,16 +168,16 @@ public class ReservationService {
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if (discountPoints > ru.getDiscountPoints())
 			return new MessageDTO("Not enough discount points.", ToasterType.ERROR.toString());
-		
+
 		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru);
 		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString())) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return retval;
 		}
-		
-		double discountPercentage = discountPoints*di.getDiscountPercentagePerPoint();
-		
-		fr.setPrice(fr.getPrice()*(1 - discountPercentage/100));
+
+		double discountPercentage = discountPoints * di.getDiscountPercentagePerPoint();
+
+		fr.setPrice(fr.getPrice() * (1 - discountPercentage / 100));
 		fr.setUsedPoints(discountPoints);
 		userRepository.save(ru);
 		mailService.sendFlightReservationMail(ru, fr);
@@ -211,12 +212,12 @@ public class ReservationService {
 			return retval;
 		}
 
-		double discountPercentage = discountPoints*di.getDiscountPercentagePerPoint();
+		double discountPercentage = discountPoints * di.getDiscountPercentagePerPoint();
 		discountPercentage += di.getDiscountPerExtraReservation();
-		
-		fr.setPrice(fr.getPrice()*(1 - discountPercentage/100));
-		if(hotelRes.getQuickReservationID() == null) // discount only on non quick res
-			fr.getHotelReservation().setPrice(fr.getHotelReservation().getPrice()*(1 - discountPercentage/100));
+
+		fr.setPrice(fr.getPrice() * (1 - discountPercentage / 100));
+		if (hotelRes.getQuickReservationID() == null) // discount only on non quick res
+			fr.getHotelReservation().setPrice(fr.getHotelReservation().getPrice() * (1 - discountPercentage / 100));
 		fr.setUsedPoints(discountPoints);
 		userRepository.save(ru);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
@@ -248,12 +249,12 @@ public class ReservationService {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return retval;
 		}
-		double discountPercentage = discountPoints*di.getDiscountPercentagePerPoint();
+		double discountPercentage = discountPoints * di.getDiscountPercentagePerPoint();
 		discountPercentage += di.getDiscountPerExtraReservation();
-		
-		fr.setPrice(fr.getPrice()*(1 - discountPercentage/100));
-		if(vehicleRes.getQuickVehicleReservationID() == null) // discount only on non quick res
-			fr.getVehicleReservation().setPrice(fr.getVehicleReservation().getPrice()*(1 - discountPercentage/100));
+
+		fr.setPrice(fr.getPrice() * (1 - discountPercentage / 100));
+		if (vehicleRes.getQuickVehicleReservationID() == null) // discount only on non quick res
+			fr.getVehicleReservation().setPrice(fr.getVehicleReservation().getPrice() * (1 - discountPercentage / 100));
 		fr.setUsedPoints(discountPoints);
 		userRepository.save(ru);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
@@ -295,14 +296,14 @@ public class ReservationService {
 			return retval;
 		}
 
-		double discountPercentage = discountPoints*di.getDiscountPercentagePerPoint();
-		discountPercentage += 2*di.getDiscountPerExtraReservation();
-		
-		fr.setPrice(fr.getPrice()*(1 - discountPercentage/100));
-		if(hotelRes.getQuickReservationID() == null) // discount only on non quick res
-			fr.getHotelReservation().setPrice(fr.getHotelReservation().getPrice()*(1 - discountPercentage/100));
-		if(vehicleRes.getQuickVehicleReservationID() == null) // discount only on non quick res
-			fr.getVehicleReservation().setPrice(fr.getVehicleReservation().getPrice()*(1 - discountPercentage/100));
+		double discountPercentage = discountPoints * di.getDiscountPercentagePerPoint();
+		discountPercentage += 2 * di.getDiscountPerExtraReservation();
+
+		fr.setPrice(fr.getPrice() * (1 - discountPercentage / 100));
+		if (hotelRes.getQuickReservationID() == null) // discount only on non quick res
+			fr.getHotelReservation().setPrice(fr.getHotelReservation().getPrice() * (1 - discountPercentage / 100));
+		if (vehicleRes.getQuickVehicleReservationID() == null) // discount only on non quick res
+			fr.getVehicleReservation().setPrice(fr.getVehicleReservation().getPrice() * (1 - discountPercentage / 100));
 		fr.setUsedPoints(discountPoints);
 		userRepository.save(ru);
 		return new MessageDTO("Reservation successfully made.", ToasterType.SUCCESS.toString());
@@ -384,8 +385,13 @@ public class ReservationService {
 					.equals(fr.getFlight().getEndDestination().getLocation().getCountry()))
 				return new MessageDTO("Hotel country must be same as flight destination country",
 						ToasterType.ERROR.toString());
-			qhr.setFlightReservation(fr);
-			fr.setHotelReservation(qhr);
+			try {
+				qhr.setFlightReservation(fr);
+				fr.setHotelReservation(qhr);
+				quickHotelReservationRepository.flush();
+			} catch (OptimisticLockingFailureException ex) {
+				return new MessageDTO("Quick hotel reservation has just been taken", ToasterType.ERROR.toString());
+			}
 			return new MessageDTO("", ToasterType.SUCCESS.toString());
 		}
 
@@ -542,7 +548,7 @@ public class ReservationService {
 		mailService.sendMailToFriend(friend, fRes, inviter);
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	public ResponseEntity<MessageDTO> acceptFlightInvitation(FlightReservationDTO fRes) {
 		Long resID = fRes.getId();
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -898,10 +904,9 @@ public class ReservationService {
 		if (qfr.getUser() != null) {
 			return new MessageDTO("Quick flight reservation is already taken.", ToasterType.ERROR.toString());
 		}
-		
+
 		if (discountPoints != 0)
 			return new MessageDTO("Discount points cannot be used on quick reservation", ToasterType.ERROR.toString());
-
 
 		RegisteredUser ru = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 

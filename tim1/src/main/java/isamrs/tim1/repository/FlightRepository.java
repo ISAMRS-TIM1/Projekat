@@ -13,7 +13,6 @@ import isamrs.tim1.model.Flight;
 
 public interface FlightRepository extends JpaRepository<Flight, Long> {
 
-	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	Flight findOneByFlightCode(String flightCode);
 
 	@Query(value = "select * from flights f where f.start_destination = ?1 "
