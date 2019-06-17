@@ -80,7 +80,7 @@ public class HotelRoomController {
 				HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasRole('REGISTEREDUSER')")
+	// everyone
 	@RequestMapping(value = "api/searchRooms/{hotel}", method = RequestMethod.GET)
 	public ArrayList<HotelRoomDTO> searchRooms(@PathVariable("hotel") String hotel, Date fromDate, Date toDate,
 			int forPeople, double fromPrice, double toPrice, double fromGrade, double toGrade) {
