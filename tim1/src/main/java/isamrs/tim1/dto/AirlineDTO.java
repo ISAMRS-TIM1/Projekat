@@ -3,6 +3,8 @@ package isamrs.tim1.dto;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import org.hibernate.proxy.HibernateProxy;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import isamrs.tim1.model.Airline;
@@ -45,8 +47,17 @@ public class AirlineDTO implements Serializable {
 		}
 		this.quickReservations = new ArrayList<QuickFlightReservationDTO>();
 		for (FlightReservation f : airline.getReservations()) {
-			if (f instanceof QuickFlightReservation && f.getUser() == null) {
-				quickReservations.add(new QuickFlightReservationDTO((QuickFlightReservation) f));
+			try {
+				f = (FlightReservation) ((HibernateProxy) f).getHibernateLazyInitializer()
+		                .getImplementation();
+				if (f instanceof QuickFlightReservation && f.getUser() == null) {
+					quickReservations.add(new QuickFlightReservationDTO((QuickFlightReservation) f));
+				}
+			}
+			catch(Exception e) {
+				if (f instanceof QuickFlightReservation && f.getUser() == null) {
+					quickReservations.add(new QuickFlightReservationDTO((QuickFlightReservation) f));
+				}
 			}
 		}
 	}

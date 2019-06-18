@@ -19,6 +19,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 @Entity
 @Table(name = "flight_reservations")
@@ -31,6 +32,9 @@ public class FlightReservation implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "reservation_id", unique = true, nullable = false)
 	protected Long id;
+	
+	@Version
+	private Integer version;
 
 	@Column(name = "dateOfReservation", unique = false, nullable = true)
 	protected Date dateOfReservation;

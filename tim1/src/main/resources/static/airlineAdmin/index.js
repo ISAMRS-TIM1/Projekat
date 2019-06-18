@@ -103,6 +103,7 @@ $(document).ready(function() {
 	});
 	
 	$("#destinationModalDialog").on('hidden.bs.modal', function() {
+		$("#destinationName").val("");
 		$("#modalDestButton").attr("onclick", "addDestination(event)");
 	});
 	

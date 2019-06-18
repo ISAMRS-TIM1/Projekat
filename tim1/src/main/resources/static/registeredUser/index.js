@@ -2165,6 +2165,10 @@ function endReservation(e) {
     	toastr["error"]("Two persons can not have same passport number.");
     	return;
     }
+    if (passports.indexOf(flightReservation["passengers"][0]["passport"]) != -1) {
+    	toastr["error"]("Two persons can not have same passport number.");
+    	return;
+    }
     var bags = $("input[name='bags']").map(function() {
         return $(this).val();
     }).get();

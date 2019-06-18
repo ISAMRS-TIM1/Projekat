@@ -5,12 +5,19 @@ import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import isamrs.tim1.model.Flight;
 
 public interface FlightRepository extends JpaRepository<Flight, Long> {
-
-	Flight findOneByFlightCode(String flightCode);
+	
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
+	@Query(value = "select f from Flight f where f.flightCode = :flightCode")
+	Flight findOneByFlightCode(@Param("flightCode") String flightCode);
+	
+	@Lock(LockModeType.PESSIMISTIC_READ)
+	@Query(value = "select f from Flight f where f.flightCode = :flightCode")
+	Flight findOneByFlightCodeForRead(@Param("flightCode") String flightCode);
 
 	@Query(value = "select * from flights f where f.start_destination = ?1 "
 			+ "and f.end_destination = ?2 and year(?3) = year(f.departure_time) and "
