@@ -62,7 +62,7 @@ public class FlightService {
 			n = rand.nextInt(101);
 			flightCode = flightDTO.getStartDestination().substring(0, 2).toUpperCase() + 
 					flightDTO.getEndDestination().substring(0, 2).toUpperCase() + n;
-			if (flightRepository.findOneByFlightCode(flightCode) == null) {
+			if (flightRepository.findOneByFlightCodeForRead(flightCode) == null) {
 				break;
 			}
 		}
@@ -163,7 +163,7 @@ public class FlightService {
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO saveSeats(PlaneSeatsDTO seats) {
-		Flight f = flightRepository.findOneByFlightCode(seats.getFlightCode());
+		Flight f = flightRepository.findOneByFlightCodeForRead(seats.getFlightCode());
 		if (f == null) {
 			return new MessageDTO("Flight does not exist.", ToasterType.ERROR.toString());
 		}
@@ -229,12 +229,12 @@ public class FlightService {
 	}
 	
 	public PlaneSeatsDTO getPlaneSeats(String flightCode) {
-		Flight f = flightRepository.findOneByFlightCode(flightCode);
+		Flight f = flightRepository.findOneByFlightCodeForRead(flightCode);
 		return new PlaneSeatsDTO(f);
 	}
 
 	public FlightDTO getDetailedFlight(String flightCode) {
-		Flight f = flightRepository.findOneByFlightCode(flightCode);
+		Flight f = flightRepository.findOneByFlightCodeForRead(flightCode);
 		return new FlightDTO(f);
 	}
 

@@ -199,25 +199,6 @@ $(document)
                         }, 1000);
                     });
 
-                    setUpTableFilter("#flightsTable");
-
-                    var flightsTable = $('#flightsTable').DataTable({
-                        "paging": false,
-                        "info": false,
-                        "scrollY": "17vw",
-                        "scrollX": true,
-                        "scrollCollapse": true,
-                        "retrieve": true,
-                        "orderCellsTop": true
-                    });
-                    
-                    $('#quickAirlineReservationsTable').DataTable({
-                		"paging" : false,
-                		"info" : false,
-                		"orderCellsTop" : true,
-                		"fixedHeader" : true
-                	});
-
                     $('#showFlightModal').on('hidden.bs.modal', function() {
                         flightsTable.$('tr.selected').removeClass('selected');
                         $("#reserveDivPassengers").hide();
@@ -2128,6 +2109,10 @@ function endReservation(e) {
     	return;
     }
     if (new Set(passports).size !== passports.length) {
+    	toastr["error"]("Two persons can not have same passport number.");
+    	return;
+    }
+    if (passports.indexOf(flightReservation["passengers"][0]["passport"]) != -1) {
     	toastr["error"]("Two persons can not have same passport number.");
     	return;
     }

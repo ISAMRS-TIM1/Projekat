@@ -22,8 +22,11 @@ import isamrs.tim1.model.VehicleReservation;
 import isamrs.tim1.repository.AirlineRepository;
 import isamrs.tim1.repository.DiscountInfoRepository;
 import isamrs.tim1.repository.FlightInvitationRepository;
+import isamrs.tim1.repository.FlightReservationRepository;
 import isamrs.tim1.repository.HotelRepository;
+import isamrs.tim1.repository.HotelReservationRepository;
 import isamrs.tim1.repository.RentACarRepository;
+import isamrs.tim1.repository.VehicleReservationRepository;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
@@ -43,6 +46,15 @@ public class PeriodicCheckService {
 
 	@Autowired
 	private FlightInvitationRepository flightInvitationRepository;
+	
+	@Autowired
+	private FlightReservationRepository flightReservationRepository;
+	
+	@Autowired
+	private HotelReservationRepository hotelReservationRepository;
+	
+	@Autowired
+	private VehicleReservationRepository vehicleReservationRepository;
 
 	@Value("${daysBeforeHotelResIsDone}")
 	private int daysBeforeHotelResIsDone;
@@ -97,12 +109,19 @@ public class PeriodicCheckService {
 
 		for (Airline airline : airlineRepository.findAll()) {
 			for (FlightReservation fr : airline.getReservations()) {
-				numOfHours = (int) ((now.getTime() - fr.getFlight().getDepartureTime().getTime()) / (1000 * 60 * 60))
-						+ 1;
-				if (numOfHours <= hoursBeforeFlightResIsDone) {
-					fr.setDone(true);
-					fr.getUser().setDiscountPoints((int) Math.floor((fr.getUser().getDiscountPoints()
-							+ fr.getFlight().getFlightLength() / di.getKmsNeededForPoint())));
+				if (!fr.getDone()) {
+					numOfHours = Math.abs((int) ((fr.getFlight().getDepartureTime().getTime() - now.getTime()) / (1000 * 60 * 60)))
+							+ 1;
+					if (numOfHours <= hoursBeforeFlightResIsDone) {
+						if (fr.getUser() != null) {
+							fr.setDone(true);
+							fr.getUser().setDiscountPoints((int) Math.floor((fr.getUser().getDiscountPoints()
+									+ fr.getFlight().getFlightLength() / di.getKmsNeededForPoint())));
+						}
+						else {
+							flightReservationRepository.delete(fr);
+						}
+					}
 				}
 			}
 			airlineRepository.save(airline);
@@ -110,16 +129,34 @@ public class PeriodicCheckService {
 
 		for (Hotel hotel : hotelRepository.findAll()) {
 			for (HotelReservation hr : hotel.getReservations()) {
-				numOfDays = (int) ((now.getTime() - hr.getFromDate().getTime()) / (1000 * 60 * 60 * 24)) + 1;
-				hr.setDone(numOfDays <= daysBeforeHotelResIsDone);
+				if (!hr.getDone()) {
+					numOfDays = (int) ((hr.getFromDate().getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+					if (numOfDays <= daysBeforeHotelResIsDone) {
+						if (hr.getFlightReservation() != null) {
+							hr.setDone(true);
+						}
+						else {
+							hotelReservationRepository.delete(hr);
+						}
+					}
+				}
 			}
 			hotelRepository.save(hotel);
 		}
 
 		for (RentACar rac : racRepository.findAll()) {
 			for (VehicleReservation vr : rac.getReservations()) {
-				numOfDays = (int) ((now.getTime() - vr.getFromDate().getTime()) / (1000 * 60 * 60 * 24)) + 1;
-				vr.setDone(numOfDays <= daysBeforeVehicleResIsDone);
+				if (!vr.getDone()) {
+					numOfDays = (int) ((vr.getFromDate().getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+					if (numOfDays <= daysBeforeVehicleResIsDone) {
+						if (vr.getFlightReservation() != null) {
+							vr.setDone(true);
+						}
+						else {
+							vehicleReservationRepository.delete(vr);
+						}
+					}
+				}
 			}
 			racRepository.save(rac);
 		}
