@@ -201,23 +201,6 @@ $(document)
 
                     setUpTableFilter("#flightsTable");
 
-                    var flightsTable = $('#flightsTable').DataTable({
-                        "paging": false,
-                        "info": false,
-                        "scrollY": "17vw",
-                        "scrollX": true,
-                        "scrollCollapse": true,
-                        "retrieve": true,
-                        "orderCellsTop": true
-                    });
-                    
-                    $('#quickAirlineReservationsTable').DataTable({
-                		"paging" : false,
-                		"info" : false,
-                		"orderCellsTop" : true,
-                		"fixedHeader" : true
-                	});
-
                     $('#showFlightModal').on('hidden.bs.modal', function() {
                         flightsTable.$('tr.selected').removeClass('selected');
                         $("#reserveDivPassengers").hide();

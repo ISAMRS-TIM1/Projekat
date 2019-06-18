@@ -65,7 +65,6 @@ import isamrs.tim1.repository.FlightRepository;
 import isamrs.tim1.repository.FlightReservationRepository;
 import isamrs.tim1.repository.HotelAdditionalServicesRepository;
 import isamrs.tim1.repository.HotelRoomRepository;
-import isamrs.tim1.repository.PassengerSeatRepository;
 import isamrs.tim1.repository.QuickFlightReservationRepository;
 import isamrs.tim1.repository.QuickHotelReservationRepository;
 import isamrs.tim1.repository.QuickVehicleReservationRepository;
@@ -91,9 +90,6 @@ public class ReservationService {
 
 	@Autowired
 	private ServiceRepository serviceRepository;
-
-	@Autowired
-	private PassengerSeatRepository passengerSeatRepository;
 
 	@Autowired
 	private EmailService mailService;

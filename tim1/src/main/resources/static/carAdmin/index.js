@@ -307,8 +307,8 @@ function loadBranchOffices() {
 					table.row.add([
 					               branchOffice.id,
 					               branchOffice.name,
-					               branchOffice.location.latitude,
-					               branchOffice.location.longitude,
+					               Math.round(branchOffice.location.latitude*1000)/1000,
+					               Math.round(branchOffice.location.longitude*1000)/1000,
 					               branchOffice.deleted
 					               ]).draw(false);
 				}

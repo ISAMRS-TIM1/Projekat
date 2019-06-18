@@ -57,14 +57,15 @@ public class AuthenticationController {
 	public ResponseEntity<UserTokenState> changePassword(@RequestBody String password) {
 		return new ResponseEntity<UserTokenState>(authenticationService.changePassword(password), HttpStatus.OK);
 	}
-	
+
 	@RequestMapping(value = "auth/checkIfRegisteredUser", method = RequestMethod.GET)
 	public ResponseEntity<Boolean> checkIfRegisteredUser() {
 		boolean isRegisteredUser = true;
 		try {
-			RegisteredUser regUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		}
-		catch(Exception e){
+			@SuppressWarnings("unused")
+			RegisteredUser regUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication()
+					.getPrincipal();
+		} catch (Exception e) {
 			isRegisteredUser = false;
 		}
 		return new ResponseEntity<Boolean>(isRegisteredUser, HttpStatus.OK);

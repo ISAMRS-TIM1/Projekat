@@ -26,6 +26,7 @@ public class DetailedReservationDTO implements Serializable {
 	private String returningDepartureTime;
 	private String returningLandingTime;
 	private boolean done;
+	private Double grade;
 	private HotelReservationDTO hotelRes;
 	private VehicleReservationDTO vehicleRes;
 
@@ -40,6 +41,7 @@ public class DetailedReservationDTO implements Serializable {
 		this.departureTime = sdf.format(flightRes.getFlight().getDepartureTime());
 		this.landingTime = sdf.format(flightRes.getFlight().getLandingTime());
 		this.roundTrip = flightRes.getFlight().isRoundTrip();
+		this.grade = flightRes.getGrade();
 
 		if (flightRes.getDone() != null) {
 			this.done = flightRes.getDone().booleanValue();
@@ -62,7 +64,7 @@ public class DetailedReservationDTO implements Serializable {
 		}
 		this.hotelRes = flightRes.getHotelReservation() == null ? null
 				: new HotelReservationDTO(flightRes.getHotelReservation());
-		
+
 		this.vehicleRes = flightRes.getVehicleReservation() == null ? null
 				: new VehicleReservationDTO(flightRes.getVehicleReservation());
 	}
@@ -185,5 +187,13 @@ public class DetailedReservationDTO implements Serializable {
 
 	public void setDone(boolean done) {
 		this.done = done;
+	}
+
+	public Double getGrade() {
+		return grade;
+	}
+
+	public void setGrade(Double grade) {
+		this.grade = grade;
 	}
 }

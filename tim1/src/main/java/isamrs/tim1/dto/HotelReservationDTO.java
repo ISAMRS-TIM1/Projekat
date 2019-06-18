@@ -20,6 +20,7 @@ public class HotelReservationDTO implements Serializable {
 	private String hotelName;
 	private Long quickReservationID;
 	private Boolean done;
+	private Double grade;
 
 	public HotelReservationDTO(HotelReservation hr) {
 		this.fromDate = hr.getFromDate();
@@ -31,6 +32,7 @@ public class HotelReservationDTO implements Serializable {
 		this.hotelName = hr.getHotelRoom().getHotel().getName();
 		this.quickReservationID = null;
 		this.done = hr.getDone();
+		this.grade = hr.getGrade();
 	}
 
 	public HotelReservationDTO(QuickHotelReservation hr) {
@@ -43,6 +45,7 @@ public class HotelReservationDTO implements Serializable {
 		this.hotelName = hr.getHotelRoom().getHotel().getName();
 		this.quickReservationID = hr.getId();
 		this.done = hr.getDone();
+		this.grade = hr.getGrade();
 	}
 
 	public HotelReservationDTO() {
@@ -107,5 +110,13 @@ public class HotelReservationDTO implements Serializable {
 
 	public void setDone(Boolean done) {
 		this.done = done;
+	}
+
+	public Double getGrade() {
+		return grade;
+	}
+
+	public void setGrade(Double grade) {
+		this.grade = grade;
 	}
 }

@@ -15,7 +15,7 @@ public interface HotelRoomRepository extends JpaRepository<HotelRoom, Integer> {
 	@Query(value = "select * from hotel_rooms r where r.room_number = ?1 and r.hotel = ?2 and r.deleted = false", nativeQuery = true)
 	HotelRoom findOneByNumberAndHotel(String roomNumber, Integer hotel);
 	
-	@Lock(LockModeType.PESSIMISTIC_READ)
+	//@Lock(LockModeType.PESSIMISTIC_READ) Illegal attempt to set lock mode on native SQL query
 	@Query(value = "select * from hotel_rooms r where r.room_number = ?1 and r.hotel = ?2 and r.deleted = false", nativeQuery = true)
 	HotelRoom findOneByNumberAndHotelForRead(String roomNumber, Integer hotel);
 

@@ -31,13 +31,9 @@ $(document).ready(function(){
 					$('input[name="address"]').val("");
 				} else{
 					if(data){
-						setTimeout(function(){
-							toastr["info"]("Please check out your email for verification");
-							document.location.href = rootURL3;
-						}, 2000);
-					} else{
-						console.log("error");
-					}	
+						toastr["info"]("Please check out your email for verification");
+						setTimeout(function(){ document.location.href = rootURL3; }, 3000);
+					}
 				}
 			},
 			error : function(XMLHttpRequest, textStatus, errorThrown) {

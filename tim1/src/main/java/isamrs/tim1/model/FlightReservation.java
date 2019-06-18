@@ -39,11 +39,11 @@ public class FlightReservation implements Serializable {
 	protected Boolean done;
 
 	@Column(name = "grade", unique = false, nullable = true)
-	private Integer grade;
-	
+	private Double grade;
+
 	@Column(name = "usedPoints", unique = false, nullable = true)
 	private Integer usedPoints = 0;
-	
+
 	@Column(name = "price", unique = false, nullable = true)
 	protected Double price;
 
@@ -108,14 +108,6 @@ public class FlightReservation implements Serializable {
 		this.price = price;
 	}
 
-	public Integer getGrade() {
-		return grade;
-	}
-
-	public void setGrade(Integer grade) {
-		this.grade = grade;
-	}
-
 	public RegisteredUser getUser() {
 		return user;
 	}
@@ -156,7 +148,6 @@ public class FlightReservation implements Serializable {
 		this.vehicleReservation = vehicleReservation;
 	}
 
-	
 	public Integer getUsedPoints() {
 		return usedPoints;
 	}
@@ -167,6 +158,14 @@ public class FlightReservation implements Serializable {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public Double getGrade() {
+		return grade;
+	}
+
+	public void setGrade(Double grade) {
+		this.grade = grade;
 	}
 
 }

@@ -10,18 +10,18 @@ public class FlightReservationDTO {
 	private String reservationInf;
 	private String dateOfReservation;
 	private Double price;
-	private Integer grade;
+	private Double grade;
 	private Long quickReservationID;
 
 	public FlightReservationDTO() {
 	}
 
-	public FlightReservationDTO(long id, String res, String date, double price, Integer grade) {
+	public FlightReservationDTO(long id, String res, String date, double price, Double grade) {
 		this.id = id;
 		this.reservationInf = res;
 		this.dateOfReservation = date;
 		this.price = price;
-		this.grade = grade;
+		this.setGrade(grade);
 	}
 
 	public String getFlightCode() {
@@ -88,14 +88,6 @@ public class FlightReservationDTO {
 		this.price = price;
 	}
 
-	public Integer getGrade() {
-		return grade;
-	}
-
-	public void setGrade(Integer grade) {
-		this.grade = grade;
-	}
-
 	public long getId() {
 		return id;
 	}
@@ -110,6 +102,14 @@ public class FlightReservationDTO {
 
 	public void setQuickReservationID(Long quickReservationID) {
 		this.quickReservationID = quickReservationID;
+	}
+
+	public Double getGrade() {
+		return grade;
+	}
+
+	public void setGrade(Double grade) {
+		this.grade = grade;
 	}
 
 }

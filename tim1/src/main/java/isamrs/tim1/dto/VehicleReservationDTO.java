@@ -21,6 +21,7 @@ public class VehicleReservationDTO implements Serializable {
 	private double price;
 	private Boolean done;
 	private String rentacar;
+	private Double grade;
 
 	public VehicleReservationDTO() {
 		super();
@@ -35,6 +36,7 @@ public class VehicleReservationDTO implements Serializable {
 		this.quickVehicleReservationID = qvr.getId();
 		this.discount = qvr.getDiscount();
 		this.price = qvr.getPrice();
+		this.setGrade(qvr.getGrade());
 		this.rentacar = qvr.getBranchOffice().getRentACar().getName();
 		this.setDone(qvr.getDone());
 	}
@@ -50,6 +52,7 @@ public class VehicleReservationDTO implements Serializable {
 		this.discount = null;
 		this.price = vr.getPrice();
 		this.done = vr.getDone();
+		this.setGrade(vr.getGrade());
 	}
 
 	public Date getFromDate() {
@@ -130,6 +133,14 @@ public class VehicleReservationDTO implements Serializable {
 
 	public void setDone(Boolean done) {
 		this.done = done;
+	}
+
+	public Double getGrade() {
+		return grade;
+	}
+
+	public void setGrade(Double grade) {
+		this.grade = grade;
 	}
 
 }
