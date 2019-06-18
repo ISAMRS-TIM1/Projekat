@@ -26,9 +26,11 @@ public class DetailedReservationDTO implements Serializable {
 	private String returningDepartureTime;
 	private String returningLandingTime;
 	private boolean done;
-	private Double grade;
+	private Double flightGrade;
+	private Double airlineGrade;
 	private HotelReservationDTO hotelRes;
 	private VehicleReservationDTO vehicleRes;
+	private Long id;
 
 	public DetailedReservationDTO() {
 		super();
@@ -41,7 +43,9 @@ public class DetailedReservationDTO implements Serializable {
 		this.departureTime = sdf.format(flightRes.getFlight().getDepartureTime());
 		this.landingTime = sdf.format(flightRes.getFlight().getLandingTime());
 		this.roundTrip = flightRes.getFlight().isRoundTrip();
-		this.grade = flightRes.getGrade();
+		this.setFlightGrade(flightRes.getGrade());
+		this.setAirlineGrade(flightRes.getFlight().getAirline().getAverageGrade());
+		this.setId(flightRes.getId());
 
 		if (flightRes.getDone() != null) {
 			this.done = flightRes.getDone().booleanValue();
@@ -189,11 +193,27 @@ public class DetailedReservationDTO implements Serializable {
 		this.done = done;
 	}
 
-	public Double getGrade() {
-		return grade;
+	public Double getFlightGrade() {
+		return flightGrade;
 	}
 
-	public void setGrade(Double grade) {
-		this.grade = grade;
+	public void setFlightGrade(Double flightGrade) {
+		this.flightGrade = flightGrade;
+	}
+
+	public Double getAirlineGrade() {
+		return airlineGrade;
+	}
+
+	public void setAirlineGrade(Double airlineGrade) {
+		this.airlineGrade = airlineGrade;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 }

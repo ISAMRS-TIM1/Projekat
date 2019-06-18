@@ -20,7 +20,9 @@ public class HotelReservationDTO implements Serializable {
 	private String hotelName;
 	private Long quickReservationID;
 	private Boolean done;
-	private Double grade;
+	private Double roomGrade;
+	private Double hotelGrade;
+	private Long id;
 
 	public HotelReservationDTO(HotelReservation hr) {
 		this.fromDate = hr.getFromDate();
@@ -32,7 +34,9 @@ public class HotelReservationDTO implements Serializable {
 		this.hotelName = hr.getHotelRoom().getHotel().getName();
 		this.quickReservationID = null;
 		this.done = hr.getDone();
-		this.grade = hr.getGrade();
+		this.roomGrade = hr.getGrade();
+		this.hotelGrade = hr.getHotelRoom().getHotel().getAverageGrade();
+		this.id = hr.getId();
 	}
 
 	public HotelReservationDTO(QuickHotelReservation hr) {
@@ -45,7 +49,9 @@ public class HotelReservationDTO implements Serializable {
 		this.hotelName = hr.getHotelRoom().getHotel().getName();
 		this.quickReservationID = hr.getId();
 		this.done = hr.getDone();
-		this.grade = hr.getGrade();
+		this.roomGrade = hr.getGrade();
+		this.hotelGrade = hr.getHotelRoom().getHotel().getAverageGrade();
+		this.id = hr.getId();
 	}
 
 	public HotelReservationDTO() {
@@ -112,11 +118,28 @@ public class HotelReservationDTO implements Serializable {
 		this.done = done;
 	}
 
-	public Double getGrade() {
-		return grade;
+	public Double getRoomGrade() {
+		return roomGrade;
 	}
 
-	public void setGrade(Double grade) {
-		this.grade = grade;
+	public void setRoomGrade(Double roomGrade) {
+		this.roomGrade = roomGrade;
 	}
+
+	public Double getHotelGrade() {
+		return hotelGrade;
+	}
+
+	public void setHotelGrade(Double hotelGrade) {
+		this.hotelGrade = hotelGrade;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 }

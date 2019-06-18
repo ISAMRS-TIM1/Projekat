@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import isamrs.tim1.dto.ReservationGradeDTO;
 import isamrs.tim1.dto.ServiceGradeDTO;
 import isamrs.tim1.service.RatingService;
 
@@ -21,5 +22,11 @@ public class RatingController {
 	@RequestMapping(value = "/api/rateService", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void rateService(@RequestBody ServiceGradeDTO serviceGrade) {
 		ratingService.rateService(serviceGrade);
+	}
+
+	@PreAuthorize("hasRole('REGISTEREDUSER')")
+	@RequestMapping(value = "/api/rateReservation", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public void rateService(@RequestBody ReservationGradeDTO reservationGrade) {
+		ratingService.rateReservation(reservationGrade);
 	}
 }
