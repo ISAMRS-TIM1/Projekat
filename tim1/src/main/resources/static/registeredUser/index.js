@@ -241,23 +241,42 @@ $(document)
                     });
                     
                     $('#reservationsTable tbody').on('click', 'tr', function() {
-                    	var tgt = $(event.target);
-                    	var resTable = $("#reservationsTable").DataTable();
-                    	if (tgt[0].id == "cancelResButton") {
-                    		var res = resTable.row(this).data()[0];
-                    		cancelReservation(res);
-                    	}
-                    	else {
-                    		reservationsTable.$('tr.selected').removeClass('selected');
-                            $(this).addClass('selected');
-                            shownReservation = reservationsTable.row(this).data()[0];
-                            loadReservation(shownReservation);
-                            $("#showReservationModal").modal();
-                    	}
+                		reservationsTable.$('tr.selected').removeClass('selected');
+                        $(this).addClass('selected');
+                        shownReservation = reservationsTable.row(this).data()[0];
+                        loadReservation(shownReservation);
+                        $("#showReservationModal").modal();
                     });
                     
                     $('#showReservationModal').on('hidden.bs.modal', function() {
                     	reservationsTable.$('tr.selected').removeClass('selected');
+                    	$("#cancelFlightReservationButton").click(function() {
+                        	cancelReservation(shownReservation);
+                        	$("#showReservationModal").modal("hide");
+                        });
+                    	$("#cancelHotelReservationButton").click(function() {
+                        	cancelHotelReservation(shownReservation);
+                        	$("#showReservationModal").modal("hide");
+                        });
+                    	$("#canceCarReservationButton").click(function() {
+                        	cancelCarReservation(shownReservation);
+                        	$("#showReservationModal").modal("hide");
+                        });
+                    });
+                    
+                    $("#cancelFlightReservationButton").click(function() {
+                    	cancelReservation(shownReservation);
+                    	$("#showReservationModal").modal("hide");
+                    });
+                    
+                    $("#cancelHotelReservationButton").click(function() {
+                    	cancelHotelReservation(shownReservation);
+                    	$("#showReservationModal").modal("hide");
+                    });
+                    
+                    $("#cancelCarReservationButton").click(function() {
+                    	cancelCarReservation(shownReservation);
+                    	$("#showReservationModal").modal("hide");
                     });
                     
                     $("#srcRoundTrip").change(function() {
@@ -2642,6 +2661,38 @@ function cancelReservation(id) {
             	getReservations();
             	loadProfileData(); // TO UPDATE AVAILABLE DISCOUNT POINTS
             }
+            toastr[data.toastType](data.message);
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            alert("AJAX ERROR: " + textStatus);
+        }
+    });
+}
+
+function cancelHotelReservation(id) {
+	$.ajax({
+        type: 'DELETE',
+        url: cancelHotelReservationURL,
+        headers: createAuthorizationTokenHeader(tokenKey),
+        contentType: "application/json",
+        data: id.toString(),
+        success: function(data) {
+            toastr[data.toastType](data.message);
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            alert("AJAX ERROR: " + textStatus);
+        }
+    });
+}
+
+function cancelCarReservation(id) {
+	$.ajax({
+        type: 'DELETE',
+        url: cancelCarReservationURL,
+        headers: createAuthorizationTokenHeader(tokenKey),
+        contentType: "application/json",
+        data: id.toString(),
+        success: function(data) {
             toastr[data.toastType](data.message);
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
