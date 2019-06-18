@@ -26,6 +26,8 @@ const getAirlinesURL = "/api/getAirlines";
 const getDetailedAirlineURL = "../api/getDetailedAirline";
 const reserveQuickFlightReservationURL = "/api/reserveQuickFlightReservation/";
 const getDetailedReservationURL = "/api/getDetailedReservation";
+const cancelHotelReservationURL = "/api/cancelHotelReservation";
+const cancelCarReservationURL = "/api/cancelCarReservation";
 
 const searchHotelsURL = "/api/searchHotels";
 const getHotelURL = "../api/getHotel";
@@ -250,15 +252,15 @@ $(document)
                     
                     $('#showReservationModal').on('hidden.bs.modal', function() {
                     	reservationsTable.$('tr.selected').removeClass('selected');
-                    	$("#cancelFlightReservationButton").click(function() {
+                    	$("#cancelFlightReservationButton").off("click").click(function() {
                         	cancelReservation(shownReservation);
                         	$("#showReservationModal").modal("hide");
                         });
-                    	$("#cancelHotelReservationButton").click(function() {
+                    	$("#cancelHotelReservationButton").off("click").click(function() {
                         	cancelHotelReservation(shownReservation);
                         	$("#showReservationModal").modal("hide");
                         });
-                    	$("#canceCarReservationButton").click(function() {
+                    	$("#cancelCarReservationButton").off("click").click(function() {
                         	cancelCarReservation(shownReservation);
                         	$("#showReservationModal").modal("hide");
                         });
@@ -2305,7 +2307,7 @@ function continueReservation(e) {
 
         $("#flightPriceRes").val(quickFlightReservation["price"]);
         
-        $("#cancelFlightReservationButton").click(function() {
+        $("#cancelFlightReservationButton").off("click").click(function() {
         	localStorage.removeItem("quickFlightReservation");
             $("#flightRes").html("No flight reserved");
             getReservations();
@@ -2362,7 +2364,7 @@ function continueReservation(e) {
 	    }
 	    
 	    
-	    $("#cancelFlightReservationButton").click(function() {
+	    $("#cancelFlightReservationButton").off("click").click(function() {
         	localStorage.removeItem("flightReservation");
             localStorage.removeItem("flightRes");
             localStorage.removeItem("hotelRes");
@@ -2394,7 +2396,7 @@ function continueReservation(e) {
 		    }
 		   
 
-		    $("#cancelHotelReservationButton").click(function() {
+		    $("#cancelHotelReservationButton").off("click").click(function() {
 		    	localStorage.removeItem("hotelRes");
 		    	$("#hotelRes").text("");
 		    	getReservations();
@@ -2420,7 +2422,7 @@ function continueReservation(e) {
 	    	$("#modelCarRes").text(carRes["vehicleModel"]);
 	    	$("#prodCarRes").text(carRes["vehicleProducer"]);
 	    	$("#carPriceRes").val(carRes["price"]);
-	    	$("#cancelCarReservationButton").click(function() {
+	    	$("#cancelCarReservationButton").off("click").click(function() {
 	    		localStorage.removeItem("carRes");
 	    		$("#carRes").text("");
 	    		getReservations();

@@ -65,6 +65,7 @@ import isamrs.tim1.repository.FlightRepository;
 import isamrs.tim1.repository.FlightReservationRepository;
 import isamrs.tim1.repository.HotelAdditionalServicesRepository;
 import isamrs.tim1.repository.HotelRepository;
+import isamrs.tim1.repository.HotelReservationRepository;
 import isamrs.tim1.repository.HotelRoomRepository;
 import isamrs.tim1.repository.QuickFlightReservationRepository;
 import isamrs.tim1.repository.QuickHotelReservationRepository;
@@ -136,6 +137,9 @@ public class ReservationService {
 	
 	@Autowired
 	private HotelRepository hotelRepository;
+	
+	@Autowired
+	private HotelReservationRepository hotelReservationRepository;
 
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
@@ -964,5 +968,71 @@ public class ReservationService {
 			return null;
 		}
 		return new DetailedReservationDTO(flightRes);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false)
+	public ResponseEntity<MessageDTO> cancelHotelReservation(String resID) {
+		Long id = Long.parseLong(resID);
+		FlightReservation fr = flightReservationRepository.findById(id).orElse(null);
+		if (fr == null || fr.getHotelReservation() == null) {
+			return new ResponseEntity<MessageDTO>(
+					new MessageDTO("Reservation does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
+		}
+		if (fr.getHotelReservation().getDone()) {
+			return new ResponseEntity<MessageDTO>(new MessageDTO("You can not cancel hotel reservation which is done.",
+					ToasterType.ERROR.toString()), HttpStatus.OK);
+		}
+		Hotel hotel = fr.getHotelReservation().getHotelRoom().getHotel();
+		HotelReservation hr = fr.getHotelReservation();
+		hotel.getReservations().removeIf(h -> {
+			if (h.getId().longValue() == hr.getId().longValue()) {
+				if (quickHotelReservationRepository.existsById(h.getId())) {
+					h.setFlightReservation(null);
+					return false;
+				} else {
+					return true;
+				}
+			}
+			return false;
+		});
+		serviceRepository.save(hotel);
+		fr.setHotelReservation(null);
+		flightReservationRepository.save(fr);
+		hotelReservationRepository.delete(hr);
+		return new ResponseEntity<MessageDTO>(
+				new MessageDTO("Successfully canceled hotel reservation.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
+	}
+	
+	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false)
+	public ResponseEntity<MessageDTO> cancelCarReservation(String resID) {
+		Long id = Long.parseLong(resID);
+		FlightReservation fr = flightReservationRepository.findById(id).orElse(null);
+		if (fr == null || fr.getVehicleReservation() == null) {
+			return new ResponseEntity<MessageDTO>(
+					new MessageDTO("Reservation does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
+		}
+		if (fr.getVehicleReservation().getDone()) {
+			return new ResponseEntity<MessageDTO>(new MessageDTO("You can not cancel car reservation which is done.",
+					ToasterType.ERROR.toString()), HttpStatus.OK);
+		}
+		VehicleReservation vr = fr.getVehicleReservation();
+		RentACar rac = fr.getVehicleReservation().getVehicle().getRentACar();
+		rac.getReservations().removeIf(r -> {
+			if (r.getId().longValue() == fr.getVehicleReservation().getId().longValue()) {
+				if (quickVehicleReservationRepository.existsById(r.getId())) {
+					r.setFlightReservation(null);
+					return false;
+				} else {
+					return true;
+				}
+			}
+			return false;
+		});
+		serviceRepository.save(rac);
+		fr.setVehicleReservation(null);
+		flightReservationRepository.save(fr);
+		vehicleReservationRepository.delete(vr);
+		return new ResponseEntity<MessageDTO>(
+				new MessageDTO("Successfully canceled car reservation.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
 	}
 }
