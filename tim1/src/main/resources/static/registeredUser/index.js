@@ -50,6 +50,11 @@ const reserveFlightHotelVehicleURL = "/api/reserveFlightHotelVehicle/";
 
 const getDiscountInfoURL = "/api/getDiscountInfo";
 
+const rateServiceURL = "/api/rateService";
+const rateVehicleURL = "/api/rateVehicle/";
+const rateFlightURL = "/api/rateFlight/";
+const rateRoomURL = "/api/rateRoom/";
+
 var userMail = "";
 var hotelMap = null;
 var airlineMap = null;
@@ -146,6 +151,13 @@ $(document)
                                 "visible": false
                             }
                         ]
+                    });
+                    
+                    $("#airlineRating .rate label").click(function(){
+                    	var airlineName = $(this).parent().parent().siblings('td').first().text();
+                    	var grade = getRatingFromStars($(this).parent().parent().attr("id"));
+                    	
+                    	rateService(airlineName, grade);
                     });
                     
                     $('#airlineDestinationsTable tbody').on('click', 'tr', function() {
@@ -677,6 +689,29 @@ function getBranchOfficesForVehicle(id){
             alert("AJAX ERROR: " + textStatus);
         }
     });
+}
+
+function rateService(name, grade){
+	$.ajax({
+        type: 'POST',
+        url: rateServiceURL,
+        headers : createAuthorizationTokenHeader(tokenKey),
+        contentType: "application/json",
+        data: serviceGradeToJSON(name, grade),
+        success: function(data) {
+        	console.log("RATED!");
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            alert("AJAX ERROR: " + textStatus);
+        }
+    });
+}
+
+function serviceGradeToJSON(name, grade){
+	return JSON.stringify({
+		"serviceName": name,
+		"grade": grade
+	});
 }
 
 function getAirlines() {
@@ -2788,6 +2823,11 @@ function loadReservation(res_id) {
                 	$(".resRoundTrip").hide();
                 }
                 $("#flightAirlineRes").text(data["airlineName"]);
+                
+                if(data["done"]){
+                	createStarRating("airlineRating", data["grade"]);
+                }
+                	
                 var date1 = moment(data["departureTime"], 'DD.MM.YYYY hh:mm');
                 var date2 = moment(data["landingTime"], 'DD.MM.YYYY hh:mm');
                 var diff = date2.diff(date1, 'minutes');
@@ -2857,4 +2897,41 @@ function loadReservation(res_id) {
             alert("AJAX ERROR: " + textStatus);
         }
     });
+}
+
+function createStarRating(label, grade=null){
+	$(`#${label}`).empty();
+	var rating = $(`<fieldset class="rate"></fieldset>`);
+
+	var star;
+	if(grade == null){
+		for(var i = 1; i <= 10; i++){
+			if(i % 2 == 1)
+				star = `<input type="radio" name="${label + i}"/><label class="half" for="${label + i}" title="${i * 0.5} star"></label>`;
+			else
+				star = `<input type="radio" name="${label + i}"/><label for="${label + i}" title="${i * 0.5}"></label>`;
+			rating.prepend($(star));
+		}
+	} else {
+		var counter = grade/0.5;
+		for(var i = 1; i <= 10; i++){
+			if(i % 2 == 1 && i <= counter)
+				star = `<input type="radio" name="${label + i}"/><label class="half" for="${label + i}" title="${i * 0.5} star" style="color:#FFD426;"></label>`;
+			else if(i % 2 == 0 && i <= counter)
+				star = `<input type="radio" name="${label + i}"/><label for="${label + i}" title="${i * 0.5}" style="color:#FFD426;"></label>`;
+			else if(i % 2 == 1 && i > counter){
+				star = `<input type="radio" name="${label + i}"/><label class="half" for="${label + i}" title="${i * 0.5} star"></label>`;
+			} else{
+				star = `<input type="radio" name="${label + i}"/><label for="${label + i}" title="${i * 0.5}"></label>`;
+			}
+			rating.prepend($(star));
+		}
+	}
+	$(`#${label}`).append(rating);
+}
+
+function getRatingFromStars(id){
+	return $(`#${id}`).first().children(function(){
+		return $(this).css('color') === "#FFD426";
+	}).length * 0.5;
 }

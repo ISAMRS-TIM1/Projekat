@@ -269,16 +269,22 @@ input, button {
 	font-size: 15px;
 }
 
-#showFlightTable, #passengersTable, #showReservationTable, #showHotelReservationTable, #showCarReservationTable, #discountTable {
-	text-align:left;
-	color:white;
+#showFlightTable, #passengersTable, #showReservationTable,
+	#showHotelReservationTable, #showCarReservationTable, #discountTable {
+	text-align: left;
+	color: white;
 	margin: 0 auto;
 }
-#showFlightTable tbody, #passengersTable tbody, #showReservationTable tbody, 
-	#showHotelReservationTable tbody, #showCarReservationTable tbody, #discountTable tbody {
-	overflow-y : auto;
+
+#showFlightTable tbody, #passengersTable tbody, #showReservationTable tbody,
+	#showHotelReservationTable tbody, #showCarReservationTable tbody,
+	#discountTable tbody {
+	overflow-y: auto;
 }
-#showFlightTable td, #passengersTable td, #showReservationTable td, #showHotelReservationTable td, #showCarReservationTable td, #discountTable td {
+
+#showFlightTable td, #passengersTable td, #showReservationTable td,
+	#showHotelReservationTable td, #showCarReservationTable td,
+	#discountTable td {
 	padding: 5px;
 }
 
@@ -584,13 +590,49 @@ input, select {
 }
 
 #confirmReservationButton {
- 	margin-left: auto;
- 	margin-right: auto;
- 	margin-bottom: 3vh;
- 	display: block;
- 	color: white;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 3vh;
+	display: block;
+	color: white;
 	font-size: 1.6vw;
 	border: 0.16vw solid #B27A00;
 	border-radius: 2vw 2vw 2vw 2vw;
 }
 
+/* Ratings widget */
+.rate {
+	display: inline-block;
+	border: 0;
+}
+
+.rate>input {
+	display: none;
+}
+
+.rate>label {
+	float: right;
+}
+
+.rate>label:before {
+	display: inline-block;
+	font-size: 1.7rem;
+	padding: .3rem .2rem;
+	margin: 0;
+	cursor: pointer;
+	font-family: FontAwesome;
+	content: "\f005 ";
+}
+
+.rate .half:before {
+	content: "\f089 ";
+	position: absolute;
+	padding-right: 0;
+}
+
+input:checked ~ label, label:hover, label:hover ~ label, input:checked+label:hover,
+	input:checked ~ label:hover, input:checked ~ label:hover 
+	 ~ label, label:hover 
+	 ~ input:checked ~ label {
+	color: #FFD426;
+}
