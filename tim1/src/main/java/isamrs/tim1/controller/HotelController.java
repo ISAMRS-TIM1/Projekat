@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,13 +35,13 @@ public class HotelController {
 
 	@PreAuthorize("hasRole('SYSADMIN')")
 	@RequestMapping(value = "/api/addHotel", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MessageDTO> addHotel(@RequestBody ServiceDTO hotel) {
+	public ResponseEntity<MessageDTO> addHotel(@Valid @RequestBody ServiceDTO hotel) {
 		return new ResponseEntity<MessageDTO>(hotelService.addHotel(new Hotel(hotel)), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasRole('HOTELADMIN')")
 	@RequestMapping(value = "/api/editHotel", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MessageDTO> editHotel(@RequestBody ServiceDTO hotel) {
+	public ResponseEntity<MessageDTO> editHotel(@Valid @RequestBody ServiceDTO hotel) {
 		return new ResponseEntity<MessageDTO>(hotelService.editHotel(hotel,
 				((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel()),
 				HttpStatus.OK);

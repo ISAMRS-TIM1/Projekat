@@ -2,12 +2,26 @@ package isamrs.tim1.dto;
 
 import java.io.Serializable;
 
-public class ServiceDTO implements Serializable {
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 
+public class ServiceDTO implements Serializable {
+	
+	@NotBlank
 	private String name;
+	
+	@NotBlank
 	private String description;
+	
+	@Min(-90)
+	@Max(90)
 	private double latitude;
+	
+	@Min(-180)
+	@Max(180)
 	private double longitude;
+	
 	public ServiceDTO() {
 		super();
 	}

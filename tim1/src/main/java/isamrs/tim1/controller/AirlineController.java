@@ -3,6 +3,8 @@ package isamrs.tim1.controller;
 import java.util.ArrayList;
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,13 +35,13 @@ public class AirlineController {
 
 	@PreAuthorize("hasRole('SYSADMIN')")
 	@RequestMapping(value = "/api/addAirline", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MessageDTO> addAirline(@RequestBody ServiceDTO airline) {
+	public ResponseEntity<MessageDTO> addAirline(@Valid @RequestBody ServiceDTO airline) {
 		return new ResponseEntity<MessageDTO>(airlineService.addAirline(new Airline(airline)), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasRole('AIRADMIN')")
 	@RequestMapping(value = "/api/editAirline", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MessageDTO> editAirline(@RequestBody ServiceDTO airline) throws Exception {
+	public ResponseEntity<MessageDTO> editAirline(@Valid @RequestBody ServiceDTO airline) throws Exception {
 		return new ResponseEntity<MessageDTO>(airlineService.editAirline(airline), HttpStatus.OK);
 	}
 
