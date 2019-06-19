@@ -2,9 +2,14 @@ package isamrs.tim1.dto;
 
 import java.io.Serializable;
 
-public class FlightHotelReservationDTO implements Serializable {
+import javax.validation.constraints.NotNull;
 
+public class FlightHotelReservationDTO implements Serializable {
+	
+	@NotNull
 	private FlightReservationDTO flightReservation;
+	
+	@NotNull
 	private HotelReservationDTO hotelReservation;
 
 	public FlightHotelReservationDTO() {

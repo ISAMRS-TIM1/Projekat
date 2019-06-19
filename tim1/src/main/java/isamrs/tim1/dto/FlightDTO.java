@@ -4,24 +4,32 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import javax.validation.constraints.NotBlank;
+
 import isamrs.tim1.model.Flight;
 import isamrs.tim1.model.PlaneSegment;
 import isamrs.tim1.model.PlaneSegmentClass;
 import isamrs.tim1.model.Seat;
 
 public class FlightDTO implements Serializable {
-
+	
+	@NotBlank
 	private String departureTime;
-	private String landingTime;
+	
+	@NotBlank
+	private String startDestination;
+	
+	@NotBlank
+	private String endDestination;
+	
 	private Integer flightDistance;
-	private String[] connections;
 	private Double firstClassPrice;
 	private Double businessClassPrice;
 	private Double economyClassPrice;
 	private Double pricePerBag;
+	private String landingTime;
 	private String airlineName;
-	private String startDestination;
-	private String endDestination;
+	private String[] connections;
 	private Double averageGrade;
 	private String flightCode;
 	private String countryName;

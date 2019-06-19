@@ -2,6 +2,8 @@ package isamrs.tim1.controller;
 
 import java.util.ArrayList;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,12 +23,12 @@ public class DestinationController {
 	private DestinationService destinationService;
 	
 	@RequestMapping(value = "/api/addDestination", method = RequestMethod.POST)
-	public ResponseEntity<MessageDTO> addDestination(@RequestBody DestinationDTO d) {
+	public ResponseEntity<MessageDTO> addDestination(@Valid @RequestBody DestinationDTO d) {
 		return destinationService.addDestination(d);
 	}
 	
 	@RequestMapping(value = "/api/editDestination", method = RequestMethod.PUT)
-	public ResponseEntity<MessageDTO> editDestination(@RequestBody DestinationDTO d) {
+	public ResponseEntity<MessageDTO> editDestination(@Valid @RequestBody DestinationDTO d) {
 		return destinationService.editDestination(d);
 	}
 	

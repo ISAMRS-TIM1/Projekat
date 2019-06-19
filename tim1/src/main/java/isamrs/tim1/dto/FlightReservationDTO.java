@@ -1,12 +1,18 @@
 package isamrs.tim1.dto;
 
+import javax.validation.constraints.NotEmpty;
+
 public class FlightReservationDTO {
+	
 	private long id;
+	
+	@NotEmpty
+	private PassengerDTO[] passengers;
+	
 	private String flightCode;
+	private String[] seats;
 	private String[] invitedFriends;
 	private Integer numberOfPassengers;
-	private PassengerDTO[] passengers;
-	private String[] seats;
 	private String reservationInf;
 	private String dateOfReservation;
 	private Double price;

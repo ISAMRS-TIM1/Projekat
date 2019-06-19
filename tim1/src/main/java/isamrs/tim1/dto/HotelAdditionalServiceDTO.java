@@ -1,10 +1,16 @@
 package isamrs.tim1.dto;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+
 import isamrs.tim1.model.HotelAdditionalService;
 
 public class HotelAdditionalServiceDTO {
 
+	@NotBlank
 	private String name;
+	
+	@Min(1)
 	private double price;
 
 	public HotelAdditionalServiceDTO(String name, double price) {
