@@ -2,6 +2,7 @@ package isamrs.tim1.dto;
 
 import java.io.Serializable;
 
+
 public class MessageDTO implements Serializable {
 
 	private static final long serialVersionUID = -6747235972929476490L;

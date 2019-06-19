@@ -2,6 +2,8 @@ package isamrs.tim1.dto;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotNull;
+
 import isamrs.tim1.model.BranchOffice;
 import isamrs.tim1.model.Location;
 
@@ -11,7 +13,9 @@ public class BranchOfficeDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = -4525327696632773915L;
 	private Long id;
+	@NotNull
 	private String name;
+	@NotNull
 	private Location location;
 	private boolean deleted;
 
