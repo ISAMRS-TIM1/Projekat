@@ -12,12 +12,10 @@ import isamrs.tim1.dto.BranchOfficeDTO;
 import isamrs.tim1.dto.MessageDTO;
 import isamrs.tim1.dto.MessageDTO.ToasterType;
 import isamrs.tim1.model.BranchOffice;
-import isamrs.tim1.model.Location;
 import isamrs.tim1.model.RentACar;
 import isamrs.tim1.model.RentACarAdmin;
 import isamrs.tim1.model.VehicleReservation;
 import isamrs.tim1.repository.BranchOfficeRepository;
-import isamrs.tim1.repository.LocationRepository;
 import isamrs.tim1.repository.RentACarRepository;
 
 @Service
@@ -27,24 +25,19 @@ public class BranchOfficeService {
 	BranchOfficeRepository branchOfficeRepository;
 
 	@Autowired
-	private LocationRepository locationRepository;
-
-	@Autowired
 	private RentACarRepository rentACarRepository;
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO addBranchOffice(BranchOfficeDTO branch) {
 		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
 				.getRentACar();
-		if (this.checkIfNameIsTaken(branch.getName(), rentACar)) {
+
+		if (branchOfficeRepository.findOneByNameForRead(branch.getName()) != null) {
 			return new MessageDTO("Branch office name is taken.", ToasterType.ERROR.toString());
 		}
 		BranchOffice bo = new BranchOffice();
 		bo.setId(null);
-		Location l = branch.getLocation();
-		l.setId(null);
-		locationRepository.save(l);
-		bo.setLocation(l);
+		bo.setLocation(branch.getLocation());
 		bo.setName(branch.getName());
 		bo.setRentACar(rentACar);
 
@@ -57,30 +50,16 @@ public class BranchOfficeService {
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO editBranchOffice(BranchOfficeDTO branch, String oldName) {
-		RentACar rentACar = ((RentACarAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
-				.getRentACar();
+		BranchOffice bo = branchOfficeRepository.findOneByName(oldName);
 
-		boolean branchExists = false;
-		for (BranchOffice bo : rentACar.getBranchOffices()) {
-			if (bo.getName().equals(oldName)) {
-				branchExists = true;
-				break;
-			}
-		}
-
-		if (!branchExists) {
+		if (bo == null) {
 			return new MessageDTO("Branch office requested for change does not exist.", ToasterType.ERROR.toString());
 		}
 
-		if (this.checkIfNameIsTaken(branch.getName(), rentACar)) {
+		if (branchOfficeRepository.findOneByNameForRead(branch.getName()) != null)
 			return new MessageDTO("Branch office name is taken.", ToasterType.ERROR.toString());
-		}
 
-		BranchOffice bo = this.findByName(oldName);
-		Location l = branch.getLocation();
-		l.setId(null);
-		locationRepository.save(l);
-		bo.setLocation(l);
+		bo.setLocation(branch.getLocation());
 		bo.setName(branch.getName());
 		branchOfficeRepository.save(bo);
 		return new MessageDTO("Branch office saved.", ToasterType.SUCCESS.toString());
@@ -122,20 +101,7 @@ public class BranchOfficeService {
 		}
 
 		branch.setDeleted(true);
-		branchOfficeRepository.save(branch);
 		rentACarRepository.save(rentACar);
 		return new MessageDTO("Branch office deleted.", ToasterType.SUCCESS.toString());
 	}
-
-	public boolean checkIfNameIsTaken(String name, RentACar rentACar) {
-		if (branchOfficeRepository.findOneByNameAndService(name, rentACar.getId()) != null) {
-			return true;
-		}
-		return false;
-	}
-
-	public BranchOffice findByName(String name) {
-		return branchOfficeRepository.findOneByName(name);
-	}
-
 }

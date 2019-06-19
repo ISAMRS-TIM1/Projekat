@@ -2,6 +2,7 @@ package isamrs.tim1.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -31,7 +32,7 @@ public class BranchOffice implements Serializable {
 	@Column(name = "name", unique = true, nullable = false)
 	private String name;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "location")
 	private Location location;
 
