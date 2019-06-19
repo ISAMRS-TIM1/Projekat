@@ -167,7 +167,7 @@ function setUpTabView(){
 
 function setUpTables(){
 	airlinesTable = $('#airlinesTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 	});
 

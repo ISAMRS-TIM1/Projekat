@@ -1,23 +1,23 @@
 body {
-	background: #0D63FF;
+	background: #f4f7f6;
 }
 
 #formDiv {
-	margin: 0;
-	position: absolute;
-	top: 55%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
 	width: 70%;
-	background: #5994FF;
-	border: 0.24vw solid #B27A00;
-  	border-radius: 4vw 1.6vw;
   	font-size: 1.6vw;
+  	margin-top: 10%;
 }
 
+input {
+	width:20vw !important;
+}
 #registrationForm {
 	padding: 2.8vw;
 	padding-bottom: 1.6vw;
+	text-align:center;
 }
 
 #fields div {
@@ -38,27 +38,17 @@ body {
 
 button[type="submit"]{
 	width: 50%;
-	margin-left: 25%;
-	background: #0D63FF;
+	background: #17252A;
 	color: white;
-  	font-size: 1.6vw;
-  	border: 0.16vw solid #B27A00;
+  	font-size: 1.5vw;
 }
 
-button[type="button"]{
-	margin-left: 42%;
-	background: none;
-	color: white;
-  	font-size: 1.4vw;
-  	margin-top: 0.8vw;
-  	font-style: italic;
+#logButton {
+	font-size: 1.4vw;
+	font-style: italic;
 }
 
-#background-img{
-	margin: 0;
-	position: absolute;
-	top: 38%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	z-index: -1;
-}	
+.btn:hover {
+	background-color: #26a69a !important;
+	color:white;
+}

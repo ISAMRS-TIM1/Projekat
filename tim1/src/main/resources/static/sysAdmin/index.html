@@ -9,13 +9,16 @@
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+	href="../common/css/bootstrap.css">
+<link rel="stylesheet" href="common/css/materialize.css">
 <link rel="stylesheet" href="sysAdmin/index.css">
 <link rel="stylesheet" href="common/css/tableStyle.css">
+<link rel="stylesheet" href="common/css/button.css">
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script type="text/javascript"
 	src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 <script type="text/javascript"
@@ -38,18 +41,16 @@
 </head>
 <body>
 	<div class="container-fluid">
-		<div id="topMenu">
-			<div id="tabsDiv">
-				<ul class="nav nav-tabs nav-justified">
-					<li class="active"><a data-toggle="tab" href="#airlines">Airlines</a>
-					</li>
-					<li><a data-toggle="tab" href="#hotels">Hotels</a></li>
-					<li><a data-toggle="tab" href="#rentACars">Rent A Cars</a></li>
-					<li><a data-toggle="tab" href="#discounts">Discounts</a></li>
-					<li><a data-toggle="tab" href="#profile">Profile</a></li>
-				</ul>
-			</div>
-			<button type="button" class="btn .btn-link" id="logout">Logout</button>
+		<div id="tabsDiv">
+			<ul class="nav nav-tabs nav-justified">
+				<li class="active"><a data-toggle="tab" href="#airlines">Airlines</a>
+				</li>
+				<li><a data-toggle="tab" href="#hotels">Hotels</a></li>
+				<li><a data-toggle="tab" href="#rentACars">Rent A Cars</a></li>
+				<li><a data-toggle="tab" href="#discounts">Discounts</a></li>
+				<li><a data-toggle="tab" href="#profile">Profile</a></li>
+				<li><a data-toggle="tab" id="logout">Logout</a></li>
+			</ul>
 		</div>
 		<div class="tab-content">
 			<div id="airlines" class="tab-pane fade in active">

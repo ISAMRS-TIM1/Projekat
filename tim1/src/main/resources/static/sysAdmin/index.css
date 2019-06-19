@@ -1,5 +1,5 @@
 body {
-	background: #0D63FF;
+	background: #f4f7f6;
 }
 
 #topMenu {
@@ -9,26 +9,14 @@ body {
 #tabsDiv {
 	width: 90%;
 	margin-top: 1%;
-	margin-left: 5%;
+	margin-left: auto;
+	margin-right:auto;
+	display: block;
 }
 
 a[data-toggle="tab"] {
-	border-radius: 2vw 2vw 0vw 0vw !important;
-	background: #5994FF;
-	border: 0.18vw solid #B27A00 !important;
 	font-size: 1.3vw;
-	color: white;
-}
-
-#logout {
-	width: 10%;
-	margin-right: 0% !important;
-	background: none;
-	color: white;
-	font-size: 1.4vw;
-	margin-top: 0.8vw;
-	font-style: italic;
-	text-decoration: underline;
+	color:black;
 }
 
 #profileContent {
@@ -58,11 +46,6 @@ a[data-toggle="tab"] {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
-	background: #5994FF;
-	color: white;
-	font-size: 1.6vw;
-	border: 0.16vw solid #B27A00;
-	border-radius: 2vw 2vw 2vw 2vw;
 }
 
 #email {
@@ -72,18 +55,16 @@ a[data-toggle="tab"] {
 #airlinesTableDiv, #hotelsTableDiv, #rentACarsTableDiv, #discountsDiv {
 	width: 70%;
 	height: 30vw;
-	margin-left: 13%;
 	margin-top: 5%;
-	background: #5994FF;
-	border: 0.24vw solid #B27A00;
-	border-radius: 4vw 1.6vw;
-	margin-left: 13%;
+	margin-left: auto;
+	margin-right:auto;
+	display: block;
 	padding: 2vw;
 }
 
 #serviceDiv, #addServiceDiv {
 	margin: 0;
-	background: #5994FF;
+	background: #f4f7f6;
 	border: 0.24vw solid #B27A00;
 	border-radius: 4vw 1.6vw;
 }
@@ -95,11 +76,11 @@ a[data-toggle="tab"] {
 }
 
 #serviceName {
-	background-color: #5994FF;
+	background-color: #f4f7f6;
 }
 
 #serviceDescription {
-	background-color: #5994FF;
+	background-color: #f4f7f6;
 }
 
 #serviceTable td, #addServiceTable td {
@@ -150,7 +131,7 @@ label[for=kmsNeededForPoint], label[for=discountPercentagePerPoint], label[for=m
 */
 #formDiv {
 	margin: 0;
-	background: #5994FF;
+	background: #f4f7f6;
 	border: 0.24vw solid #B27A00;
 	border-radius: 4vw 1.6vw;
 }
@@ -179,8 +160,8 @@ label[for=kmsNeededForPoint], label[for=discountPercentagePerPoint], label[for=m
 #registerNewAdmin {
 	margin-left: 25%;
 	margin-right: 25%;
-	background: #0D63FF;
-	color: white;
+	background: #f4f7f6;;
+	color:black;
 	border: 0.16vw solid #B27A00;
 	border-radius: 2vw 2vw 2vw 2vw;
 }
@@ -189,13 +170,7 @@ label[for=kmsNeededForPoint], label[for=discountPercentagePerPoint], label[for=m
 .addServiceButton {
 	margin-left: auto;
 	margin-right: auto;
-	margin-bottom: 2vh;
 	display: block;
-	background: #5994FF;
-	color: white;
-	font-size: 1.6vw;
-	border: 0.16vw solid #B27A00;
-	border-radius: 2vw 2vw 2vw 2vw;
 }
 
 #newServiceName {

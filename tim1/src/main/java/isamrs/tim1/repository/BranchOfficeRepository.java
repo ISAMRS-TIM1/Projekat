@@ -5,6 +5,7 @@ import javax.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import isamrs.tim1.model.BranchOffice;
 
@@ -13,8 +14,10 @@ public interface BranchOfficeRepository extends JpaRepository<BranchOffice, Inte
 	BranchOffice findOneByNameAndService(String name, Integer rentACar);
 
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
-	BranchOffice findOneByName(String name);
+	@Query(value = "select b from BranchOffice b where b.name = :name")
+	BranchOffice findOneByName(@Param("name") String name);
 
 	@Lock(LockModeType.PESSIMISTIC_READ)
-	BranchOffice findOneByNameForRead(String name);
+	@Query(value = "select b from BranchOffice b where b.name = :name")
+	BranchOffice findOneByNameForRead(@Param("name") String name);
 }
