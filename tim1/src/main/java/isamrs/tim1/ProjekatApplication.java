@@ -15,10 +15,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import isamrs.tim1.model.Authority;
-import isamrs.tim1.model.DiscountInfo;
 import isamrs.tim1.model.User;
 import isamrs.tim1.model.UserType;
-import isamrs.tim1.repository.DiscountInfoRepository;
 import isamrs.tim1.repository.UserRepository;
 import isamrs.tim1.service.CustomUserDetailsService;
 
@@ -31,9 +29,6 @@ public class ProjekatApplication implements CommandLineRunner {
 
 	@Autowired
 	private UserRepository userRepository;
-
-	@Autowired
-	private DiscountInfoRepository discountInfoRepository;
 
 	@Autowired
 	private CustomUserDetailsService userDetailsService;

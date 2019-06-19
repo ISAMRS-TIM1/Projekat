@@ -2,6 +2,7 @@ package isamrs.tim1.dto;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.NoSuchElementException;
 
 import isamrs.tim1.model.QuickVehicleReservation;
 import isamrs.tim1.model.VehicleReservation;
@@ -10,7 +11,7 @@ public class VehicleReservationDTO implements Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -8136623023450172437L;
+	private static final long serialVersionUID = 8979382260323221717L;
 	private Date fromDate;
 	private Date toDate;
 	private String vehicleProducer;
@@ -19,6 +20,11 @@ public class VehicleReservationDTO implements Serializable {
 	private Long quickVehicleReservationID;
 	private Integer discount;
 	private double price;
+	private Boolean done;
+	private String rentacar;
+	private Double vehicleGrade;
+	private Double rentacarGrade;
+	private Long id;
 
 	public VehicleReservationDTO() {
 		super();
@@ -33,10 +39,25 @@ public class VehicleReservationDTO implements Serializable {
 		this.quickVehicleReservationID = qvr.getId();
 		this.discount = qvr.getDiscount();
 		this.price = qvr.getPrice();
+		this.rentacar = qvr.getBranchOffice().getRentACar().getName();
+		this.setDone(qvr.getDone());
+		this.vehicleGrade = qvr.getVehicle().getAverageGrade();
+		this.setId(qvr.getId());
+
+		if (qvr.getFlightReservation() != null) {
+			try {
+				this.rentacarGrade = qvr.getBranchOffice().getRentACar().getServiceGrades().stream()
+						.filter(sg -> sg.getUser().getId().equals(qvr.getFlightReservation().getUser().getId()))
+						.findFirst().get().getGrade();
+			} catch (NoSuchElementException e) {
+				this.rentacarGrade = null;
+			}
+		}
 	}
 
 	public VehicleReservationDTO(VehicleReservation vr) {
 		this.fromDate = vr.getFromDate();
+		this.rentacar = vr.getBranchOffice().getRentACar().getName();
 		this.toDate = vr.getToDate();
 		this.vehicleProducer = vr.getVehicle().getProducer();
 		this.vehicleModel = vr.getVehicle().getModel();
@@ -44,6 +65,19 @@ public class VehicleReservationDTO implements Serializable {
 		this.quickVehicleReservationID = null;
 		this.discount = null;
 		this.price = vr.getPrice();
+		this.done = vr.getDone();
+		this.vehicleGrade = vr.getVehicle().getAverageGrade();
+		this.setId(vr.getId());
+
+		if (vr.getFlightReservation() != null) {
+			try {
+				this.rentacarGrade = vr.getBranchOffice().getRentACar().getServiceGrades().stream()
+						.filter(sg -> sg.getUser().getId().equals(vr.getFlightReservation().getUser().getId()))
+						.findFirst().get().getGrade();
+			} catch (NoSuchElementException e) {
+				this.rentacarGrade = null;
+			}
+		}
 	}
 
 	public Date getFromDate() {
@@ -110,9 +144,44 @@ public class VehicleReservationDTO implements Serializable {
 		this.price = price;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public String getRentacar() {
+		return rentacar;
 	}
-	
+
+	public void setRentacar(String rentacar) {
+		this.rentacar = rentacar;
+	}
+
+	public Boolean getDone() {
+		return done;
+	}
+
+	public void setDone(Boolean done) {
+		this.done = done;
+	}
+
+	public Double getVehicleGrade() {
+		return vehicleGrade;
+	}
+
+	public void setVehicleGrade(Double vehicleGrade) {
+		this.vehicleGrade = vehicleGrade;
+	}
+
+	public Double getRentacarGrade() {
+		return rentacarGrade;
+	}
+
+	public void setRentacarGrade(Double rentacarGrade) {
+		this.rentacarGrade = rentacarGrade;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 }

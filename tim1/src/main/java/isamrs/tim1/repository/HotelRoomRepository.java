@@ -16,7 +16,7 @@ public interface HotelRoomRepository extends JpaRepository<HotelRoom, Integer> {
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	@Query(value = "select r from HotelRoom r where r.roomNumber = :roomNumber and r.hotel = :hotel and r.deleted = false")
 	HotelRoom findOneByNumberAndHotel(@Param("roomNumber") String roomNumber, @Param("hotel") Hotel hotel);
-	
+
 	@Lock(LockModeType.PESSIMISTIC_READ)
 	@Query(value = "select r from HotelRoom r where r.roomNumber  = :roomNumber and r.hotel = :hotel and r.deleted = false")
 	HotelRoom findOneByNumberAndHotelForRead(@Param("roomNumber") String roomNumber, @Param("hotel") Hotel hotel);

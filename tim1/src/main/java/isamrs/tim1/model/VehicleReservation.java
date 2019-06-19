@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 @Entity
 @Table(name = "VehicleReservations")
@@ -31,12 +32,12 @@ public class VehicleReservation implements Serializable {
 
 	@Column(name = "toDate", unique = false, nullable = false)
 	protected Date toDate;
-	
+
 	@Column(name = "done", unique = false, nullable = false)
 	protected Boolean done = false;
 
 	@Column(name = "grade", unique = false, nullable = true)
-	protected Integer grade = null;
+	protected Double grade = null;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "vehicle")
@@ -51,6 +52,9 @@ public class VehicleReservation implements Serializable {
 
 	@Column(name = "price", unique = false, nullable = true)
 	protected Double price;
+
+	@Version
+	private Integer version;
 
 	public Date getFromDate() {
 		return fromDate;
@@ -100,14 +104,6 @@ public class VehicleReservation implements Serializable {
 		this.done = done;
 	}
 
-	public Integer getGrade() {
-		return grade;
-	}
-
-	public void setGrade(Integer grade) {
-		this.grade = grade;
-	}
-
 	public FlightReservation getFlightReservation() {
 		return flightReservation;
 	}
@@ -128,6 +124,14 @@ public class VehicleReservation implements Serializable {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public Double getGrade() {
+		return grade;
+	}
+
+	public void setGrade(Double grade) {
+		this.grade = grade;
 	}
 
 }

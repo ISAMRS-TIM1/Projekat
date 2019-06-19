@@ -50,6 +50,9 @@ const reserveFlightHotelVehicleURL = "/api/reserveFlightHotelVehicle/";
 
 const getDiscountInfoURL = "/api/getDiscountInfo";
 
+const rateServiceURL = "/api/rateService";
+const rateReservationURL = "/api/rateReservation";
+
 var userMail = "";
 var hotelMap = null;
 var airlineMap = null;
@@ -198,6 +201,8 @@ $(document)
                             destinationsMap.invalidateSize();
                         }, 1000);
                     });
+
+                    setUpTableFilter("#flightsTable");
 
                     $('#showFlightModal').on('hidden.bs.modal', function() {
                         flightsTable.$('tr.selected').removeClass('selected');
@@ -582,7 +587,7 @@ $(document)
                     		toastr["error"]("Start date must have a value");
                     		return;
                     	} else if(!moment(JSON.parse(localStorage.getItem("flightReservation"))["other"]["landingTime"], 'DD.MM.YYYY hh:mm')
-                    			.isSame(start, 'date')){
+                    			.isSame(start, 'day')){
                     		toastr["error"]("Vehicle reservation start date must be same as flight landing date");
                     		return;
                     	}
@@ -677,6 +682,47 @@ function getBranchOfficesForVehicle(id){
     });
 }
 
+function rateService(name, grade){
+	$.ajax({
+        type: 'POST',
+        url: rateServiceURL,
+        headers : createAuthorizationTokenHeader(tokenKey),
+        contentType: "application/json",
+        data: serviceGradeToJSON(name, grade),
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            alert("AJAX ERROR: " + textStatus);
+        }
+    });
+}
+
+function rateReservation(id, grade, type){
+	$.ajax({
+        type: 'POST',
+        url: rateReservationURL,
+        headers : createAuthorizationTokenHeader(tokenKey),
+        contentType: "application/json",
+        data: reservationGradeToJSON(id, grade, type),
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            alert("AJAX ERROR: " + textStatus);
+        }
+    });
+}
+
+function reservationGradeToJSON(id, grade, type){
+	return JSON.stringify({
+		"id": id,
+		"grade": grade,
+		"type": type
+	});
+}
+
+function serviceGradeToJSON(name, grade){
+	return JSON.stringify({
+		"serviceName": name,
+		"grade": grade
+	});
+}
+
 function getAirlines() {
 	$.ajax({
         type: 'GET',
@@ -688,8 +734,16 @@ function getAirlines() {
                 var table = $('#airlinesTable').DataTable();
                 table.clear().draw();
                 $.each(data, function(i, val) {
+                	var grade = val.averageGrade;
+                	
+                	if(grade !== 0){
+                		grade = grade/5*100;
+                	}
+                	var roundedGrade = Math.round(val.averageGrade * 10)/10;
+                	var rating = "<div class='star-ratings-sprite' title='" + roundedGrade + "/5.0'><span style='width:" + grade 
+                	+ "%' class='star-ratings-sprite-rating'></span></div>";
                     table.row.add(
-                        [ val.name, val.averageGrade ]).draw(false);
+                        [ val.name, rating ]).draw(false);
                 });
             }
         },
@@ -1634,7 +1688,15 @@ function loadAirline(name) {
 		success : function(data) {
 			if (data != null) {
 				$("#airlineName").val(data["name"]);
-				$("#airlineGrade").text(data["averageGrade"]);
+				var grade = data["averageGrade"];
+            	
+            	if(grade !== 0){
+            		grade = grade/5*100;
+            	}
+            	var roundedGrade = Math.round(data["averageGrade"]*10)/10;
+            	var rating = "<div class='star-ratings-sprite'><span style='width:" + grade 
+            	+ "%' class='star-ratings-sprite-rating'></span></div><p>" + roundedGrade + "/5.0";
+				$("#airlineGrade").html(rating);
 				$("#airlineDescription").text(data["description"]);
 				if (airlineMap != null) {
 					airlineMap.off();
@@ -2618,7 +2680,7 @@ function getReservations() {
                 table.clear().draw();
                 var cancel = "<button id='cancelResButton' class='btn btn-default'>Cancel</button>";
                 $.each(data, function(i, val) {
-                    table.row.add([val.id, val.reservationInf, val.dateOfReservation, val.price, val.grade, cancel ]).draw(false);
+                    table.row.add([val.id, val.reservationInf, val.dateOfReservation, val.price, cancel ]).draw(false);
                 });
             }
         },
@@ -2765,6 +2827,8 @@ function loadReservation(res_id) {
                 $("#endDestRes").text(data["endDestination"]);
                 $("#depTimeRes").text(data["departureTime"]);
                 $("#landTimeRes").text(data["landingTime"]);
+                $("#flightResID").val(data["id"]);
+                
                 if (data["roundTrip"]) {
                 	$("#resRetDepTime").text(data["returningDepartureTime"]);
                 	$("#resRetLandTime").text(data["returningLandingTime"]);
@@ -2774,6 +2838,12 @@ function loadReservation(res_id) {
                 	$(".resRoundTrip").hide();
                 }
                 $("#flightAirlineRes").text(data["airlineName"]);
+                
+                if(data["done"]){
+                	createStarRating("airlineRating", data["airlineGrade"], "sendServiceGrade(this)");// add params
+                	createStarRating("flightRating", data["flightGrade"], "sendReservationGrade(this, 'FLIGHT')");// add params
+                }
+                	
                 var date1 = moment(data["departureTime"], 'DD.MM.YYYY hh:mm');
                 var date2 = moment(data["landingTime"], 'DD.MM.YYYY hh:mm');
                 var diff = date2.diff(date1, 'minutes');
@@ -2802,6 +2872,7 @@ function loadReservation(res_id) {
                 }
                 /* HOTEL RESERVATION */
                 if (data["hotelRes"] != null) {
+                	$("#roomResID").val(data["hotelRes"]["id"]);
                 	$("#fromDateRes").text(moment(data["hotelRes"]["fromDate"]).format('DD.MM.YYYY'));
                 	$("#toDateRes").text(moment(data["hotelRes"]["toDate"]).format('DD.MM.YYYY'));
                 	$("#roomNumberRes").text(data["hotelRes"]["hotelRoomNumber"]);
@@ -2816,6 +2887,12 @@ function loadReservation(res_id) {
                                 "</option>");
                         });
                     }
+                    
+                    if(data["hotelRes"]["done"]){
+                    	createStarRating("hotelRating", data["hotelRes"]["hotelGrade"], "sendServiceGrade(this)");// add params
+                    	createStarRating("roomRating", data["hotelRes"]["roomGrade"], "sendReservationGrade(this, 'ROOM')");// add params
+                    }
+                    
                     $("#hotelResHeader").show();
                 	$("#showHotelReservationTable").show();
                 }
@@ -2825,11 +2902,17 @@ function loadReservation(res_id) {
                 }
                 /* CAR RESERVATION */
                 if (data["vehicleRes"] != null) {
+                	$("#carResID").val(data["vehicleRes"]["id"]);
                 	$("#fromDateCarRes").text(moment(data["vehicleRes"]["fromDate"]).format('DD.MM.YYYY'));
                 	$("#toDateCarRes").text(moment(data["vehicleRes"]["toDate"]).format('DD.MM.YYYY'));
                 	$("#bOfficeRes").text(data["vehicleRes"]["branchOfficeName"]);
                 	$("#modelCarRes").text(data["vehicleRes"]["vehicleModel"]);
                 	$("#prodCarRes").text(data["vehicleRes"]["vehicleProducer"]);
+                	
+                	if(data["vehicleRes"]["done"]){
+                		createStarRating("rentacarRating", data["vehicleRes"]["rentacarGrade"], "sendServiceGrade(this)");// add params
+                    	createStarRating("vehicleRating", data["vehicleRes"]["vehicleGrade"], "sendReservationGrade(this, 'VEHICLE')");// add params
+                	}
                 	$("#carResHeader").show();
                 	$("#showCarReservationTable").show();
                 }
@@ -2843,4 +2926,65 @@ function loadReservation(res_id) {
             alert("AJAX ERROR: " + textStatus);
         }
     });
+}
+
+function createStarRating(label, grade=null, handler){
+	$(`#${label}`).empty();
+	var rating = $(`<fieldset class="rate"></fieldset>`);
+
+	var star;
+	if(grade == null){
+		for(var i = 1; i <= 10; i++){
+			if(i % 2 == 1)
+				star = `<input type="radio" id="${label + 'rating' + i}" name="${label + 'rating'}" value="${i}" onclick="${handler}"/><label class="half" for="${label + 'rating' + i}" title="${i * 0.5} star"></label>`;
+			else
+				star = `<input type="radio" id="${label + 'rating' + i}" name="${label + 'rating'}" value="${i}" onclick="${handler}"/><label for="${label + 'rating' + i}" title="${i * 0.5}"></label>`;
+			rating.prepend($(star));
+		}
+	} else {
+		var counter = grade/0.5;
+		for(var i = 1; i <= 10; i++){
+			if(i % 2 == 1 && i <= counter)
+				star = `<input type="radio" id="${label + 'rating' + i}" name="${label + 'rating'}" value="${i}" onclick="${handler}"/><label class="half" for="${label + 'rating' + i}" title="${i * 0.5} star" style="color:#FFD426;"></label>`;
+			else if(i % 2 == 0 && i <= counter)
+				star = `<input type="radio" id="${label + 'rating' + i}" name="${label + 'rating'} value="${i}" onclick="${handler}"/><label for="${label + 'rating' + i}" title="${i * 0.5}" style="color:#FFD426;"></label>`;
+			else if(i % 2 == 1 && i > counter){
+				star = `<input type="radio" id="${label + 'rating' + i}" name="${label + 'rating'}" value="${i}" onclick="${handler}"/><label class="half" for="${label + 'rating' + i}" title="${i * 0.5} star"></label>`;
+			} else{
+				star = `<input type="radio" id="${label + 'rating' + i}" name="${label + 'rating'}" value="${i}" onclick="${handler}"/><label for="${label + 'rating' + i}" title="${i * 0.5}"></label>`;
+			}
+			rating.prepend($(star));
+		}
+	}
+	$(`#${label}`).append(rating);
+}
+
+function sendServiceGrade(element){
+	var airlineName = $(element).parent().parent().prev().children(".service").text();
+	var grade = $(element).val() * 0.5;
+	
+	var num = $(element).val();
+	
+	$.each($(element).parent().children("label"), function(index, value){
+		if(parseInt($(value).attr("for").match(/\d+/)) > num){
+			$(value).css({"color": ""});
+		}
+	});
+	
+	rateService(airlineName, grade);
+}
+
+function sendReservationGrade(element, type){
+	var reservationID = $(element).parent().parent().prev().children().first().val();
+	var grade = $(element).val() * 0.5;
+	
+	var num = $(element).val();
+	
+	$.each($(element).parent().children("label"), function(index, value){
+		if(parseInt($(value).attr("for").match(/\d+/)) > num){
+			$(value).css({"color": ""});
+		}
+	});
+	
+	rateReservation(reservationID, grade, type);
 }

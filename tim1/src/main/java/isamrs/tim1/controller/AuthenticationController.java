@@ -8,7 +8,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -58,14 +57,15 @@ public class AuthenticationController {
 	public ResponseEntity<UserTokenState> changePassword(@RequestBody String password) {
 		return new ResponseEntity<UserTokenState>(authenticationService.changePassword(password), HttpStatus.OK);
 	}
-	
+
 	@RequestMapping(value = "auth/checkIfRegisteredUser", method = RequestMethod.GET)
 	public ResponseEntity<Boolean> checkIfRegisteredUser() {
 		boolean isRegisteredUser = true;
 		try {
-			RegisteredUser regUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		}
-		catch(Exception e){
+			@SuppressWarnings("unused")
+			RegisteredUser regUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication()
+					.getPrincipal();
+		} catch (Exception e) {
 			isRegisteredUser = false;
 		}
 		return new ResponseEntity<Boolean>(isRegisteredUser, HttpStatus.OK);

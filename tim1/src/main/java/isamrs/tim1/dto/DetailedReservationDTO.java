@@ -3,15 +3,17 @@ package isamrs.tim1.dto;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 import isamrs.tim1.model.FlightReservation;
-import isamrs.tim1.model.HotelAdditionalService;
 import isamrs.tim1.model.PassengerSeat;
 
 public class DetailedReservationDTO implements Serializable {
 
-	private static final long serialVersionUID = 4022554374483618355L;
-	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2839478733086154576L;
 	private String startDestination;
 	private String endDestination;
 	private String departureTime;
@@ -24,9 +26,13 @@ public class DetailedReservationDTO implements Serializable {
 	private boolean roundTrip;
 	private String returningDepartureTime;
 	private String returningLandingTime;
+	private boolean done;
+	private Double flightGrade;
+	private Double airlineGrade;
 	private HotelReservationDTO hotelRes;
 	private VehicleReservationDTO vehicleRes;
-	
+	private Long id;
+
 	public DetailedReservationDTO() {
 		super();
 	}
@@ -38,6 +44,20 @@ public class DetailedReservationDTO implements Serializable {
 		this.departureTime = sdf.format(flightRes.getFlight().getDepartureTime());
 		this.landingTime = sdf.format(flightRes.getFlight().getLandingTime());
 		this.roundTrip = flightRes.getFlight().isRoundTrip();
+		this.setFlightGrade(flightRes.getGrade());
+		try {
+			this.airlineGrade = flightRes.getFlight().getAirline().getServiceGrades().stream()
+					.filter(sg -> sg.getUser().getId().equals(flightRes.getUser().getId())).findFirst().get()
+					.getGrade();
+		} catch (NoSuchElementException e) {
+			this.airlineGrade = null;
+		}
+		this.setId(flightRes.getId());
+
+		if (flightRes.getDone() != null) {
+			this.done = flightRes.getDone().booleanValue();
+		}
+
 		if (this.roundTrip) {
 			this.returningDepartureTime = sdf.format(flightRes.getFlight().getReturningDepartureTime());
 			this.returningLandingTime = sdf.format(flightRes.getFlight().getReturningLandingTime());
@@ -49,34 +69,15 @@ public class DetailedReservationDTO implements Serializable {
 		this.seats = new ArrayList<String>();
 		String seat;
 		for (PassengerSeat p : flightRes.getPassengerSeats()) {
-			seat = p.getSeat().getRow() + "_" + p.getSeat().getColumn() + " - " + p.getSeat().getPlaneSegment().getSegmentClass();
+			seat = p.getSeat().getRow() + "_" + p.getSeat().getColumn() + " - "
+					+ p.getSeat().getPlaneSegment().getSegmentClass();
 			this.seats.add(seat);
 		}
-		if (flightRes.getHotelReservation() == null) {
-			this.hotelRes = null;
-		}
-		else {
-			this.hotelRes = new HotelReservationDTO();
-			this.hotelRes.setFromDate(flightRes.getHotelReservation().getFromDate());
-			this.hotelRes.setToDate(flightRes.getHotelReservation().getToDate());
-			this.hotelRes.setHotelName(flightRes.getHotelReservation().getHotelRoom().getHotel().getName());
-			this.hotelRes.setHotelRoomNumber(flightRes.getHotelReservation().getHotelRoom().getRoomNumber());
-			this.hotelRes.setAdditionalServiceNames(new ArrayList<String>());
-			for (HotelAdditionalService has : flightRes.getHotelReservation().getAdditionalServices()) {
-				this.hotelRes.getAdditionalServiceNames().add(has.getName());
-			}
-		}
-		if (flightRes.getVehicleReservation() == null) {
-			this.vehicleRes = null;
-		}
-		else {
-			this.vehicleRes = new VehicleReservationDTO();
-			this.vehicleRes.setFromDate(flightRes.getVehicleReservation().getFromDate());
-			this.vehicleRes.setToDate(flightRes.getVehicleReservation().getToDate());
-			this.vehicleRes.setBranchOfficeName(flightRes.getVehicleReservation().getBranchOffice().getName());
-			this.vehicleRes.setVehicleModel(flightRes.getVehicleReservation().getVehicle().getModel());
-			this.vehicleRes.setVehicleProducer(flightRes.getVehicleReservation().getVehicle().getProducer());
-		}
+		this.hotelRes = flightRes.getHotelReservation() == null ? null
+				: new HotelReservationDTO(flightRes.getHotelReservation());
+
+		this.vehicleRes = flightRes.getVehicleReservation() == null ? null
+				: new VehicleReservationDTO(flightRes.getVehicleReservation());
 	}
 
 	public String getStartDestination() {
@@ -125,7 +126,7 @@ public class DetailedReservationDTO implements Serializable {
 
 	public void setFlightDistance(Integer flightDistance) {
 		this.flightDistance = flightDistance;
-	}	
+	}
 
 	public ArrayList<String> getConnections() {
 		return connections;
@@ -191,7 +192,35 @@ public class DetailedReservationDTO implements Serializable {
 		this.returningLandingTime = returningLandingTime;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public boolean getDone() {
+		return done;
+	}
+
+	public void setDone(boolean done) {
+		this.done = done;
+	}
+
+	public Double getFlightGrade() {
+		return flightGrade;
+	}
+
+	public void setFlightGrade(Double flightGrade) {
+		this.flightGrade = flightGrade;
+	}
+
+	public Double getAirlineGrade() {
+		return airlineGrade;
+	}
+
+	public void setAirlineGrade(Double airlineGrade) {
+		this.airlineGrade = airlineGrade;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 }

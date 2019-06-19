@@ -33,7 +33,7 @@ public abstract class Service implements Serializable {
 	@Column(name = "name", unique = true, nullable = false)
 	private String name;
 
-	@Column(name = "description", unique = false, nullable = false, length=1000)
+	@Column(name = "description", unique = false, nullable = false, length = 1000)
 	private String description;
 
 	@Column(name = "averageGrade", unique = false, nullable = true)
@@ -44,12 +44,11 @@ public abstract class Service implements Serializable {
 	private Location location;
 
 	@OneToMany(mappedBy = "service", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<ServiceGrade> serviceGrades;
+	private Set<ServiceGrade> serviceGrades = new HashSet<ServiceGrade>();
 
 	public Service() {
 		super();
 		this.location = new Location();
-		serviceGrades = new HashSet<ServiceGrade>();
 		this.averageGrade = 0.0;
 	}
 
@@ -63,7 +62,7 @@ public abstract class Service implements Serializable {
 		this.location.setLongitude(serviceDTO.getLongitude());
 		this.averageGrade = 0.0;
 	}
-	
+
 	public Integer getId() {
 		return id;
 	}
@@ -114,6 +113,31 @@ public abstract class Service implements Serializable {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Service other = (Service) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
 	}
 
 }

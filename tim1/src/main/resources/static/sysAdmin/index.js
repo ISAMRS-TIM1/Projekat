@@ -375,8 +375,16 @@ function loadServices(url, tableID) {
 				var table = $(tableID).DataTable();
 				table.clear().draw();
 				$.each(data, function(i, val) {
+					var grade = val.averageGrade;
+		        	
+		        	if(grade !== 0){
+		        		grade = grade/5*100;
+		        	}
+		        	var roundedGrade = Math.round(val.averageGrade*10)/10;
+		        	var rating = "<div class='star-ratings-sprite' title='" + roundedGrade + "/5.0'><span style='width:" + grade 
+                	+ "%' class='star-ratings-sprite-rating'></span></div>";
 					table.row.add(
-							[ val.name, val.averageGrade, val.numberOfAdmins ])
+							[ val.name, rating, val.numberOfAdmins ])
 							.draw(false);
 				});
 			}
@@ -400,7 +408,15 @@ function loadService(name, url) {
 		success : function(data) {
 			if (data != null) {
 				$("#serviceName").val(data["name"]);
-				$("#serviceGrade").text(data["averageGrade"]);
+				var grade = data["averageGrade"];
+            	
+            	if(grade !== 0){
+            		grade = grade/5*100;
+            	}
+            	var roundedGrade = Math.round(data["averageGrade"]*10)/10;
+            	var rating = "<div class='star-ratings-sprite'><span style='width:" + grade 
+            	+ "%' class='star-ratings-sprite-rating'></span></div><p>" + roundedGrade + "/5.0";
+				$("#serviceGrade").html(rating);
 				$("#serviceDescription").text(data["description"]);
 				if(destMap != null){
 					destMap.off();
