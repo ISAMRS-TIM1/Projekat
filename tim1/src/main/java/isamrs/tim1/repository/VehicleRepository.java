@@ -16,6 +16,9 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	Vehicle findOneByModelAndProducer(String model, String producer);
 
+	@Lock(LockModeType.PESSIMISTIC_READ)
+	Vehicle findOneByModelAndProducerForRead(String model, String producer);
+
 	@Query(value = "select distinct v.producer from vehicles v", nativeQuery = true)
 	ArrayList<String> getAllProducers();
 

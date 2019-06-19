@@ -113,7 +113,7 @@ public class VehicleService {
 	}
 
 	public boolean alreadyExists(String model, String producer) {
-		return vehicleRepository.findOneByModelAndProducer(model, producer) != null;
+		return vehicleRepository.findOneByModelAndProducerForRead(model, producer) != null;
 	}
 
 	public ArrayList<VehicleDTO> getAllVehicles() {

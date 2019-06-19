@@ -8,8 +8,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.OptimisticLockException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
@@ -137,10 +135,10 @@ public class ReservationService {
 
 	@Autowired
 	private DiscountInfoRepository discountInfoRepository;
-	
+
 	@Autowired
 	private HotelRepository hotelRepository;
-	
+
 	@Autowired
 	private HotelReservationRepository hotelReservationRepository;
 
@@ -368,7 +366,8 @@ public class ReservationService {
 				fr.getPassengerSeats().add(ps);
 				seatRepository.flush();
 			} catch (OptimisticLockingFailureException ex) {
-				return new MessageDTO("Seat " + row + "_" + column + " has just been taken", ToasterType.ERROR.toString());
+				return new MessageDTO("Seat " + row + "_" + column + " has just been taken",
+						ToasterType.ERROR.toString());
 			}
 			counter++;
 		}
@@ -412,8 +411,7 @@ public class ReservationService {
 		}
 
 		Hotel hotel = hotelRepository.findOneByName(hotelRes.getHotelName());
-		HotelRoom room = hotelRoomRepository.findOneByNumberAndHotel(hotelRes.getHotelRoomNumber(),
-				hotel);
+		HotelRoom room = hotelRoomRepository.findOneByNumberAndHotel(hotelRes.getHotelRoomNumber(), hotel);
 
 		if (!sdf.format(hotelRes.getFromDate()).equals(sdf.format(fr.getFlight().getLandingTime())))
 			return new MessageDTO("Hotel reservation start day must be same as flight landing day",
@@ -458,12 +456,8 @@ public class ReservationService {
 		if (vehicleRes.getQuickVehicleReservationID() != null) {
 			QuickVehicleReservation qvr;
 
-			try {
-				qvr = quickVehicleReservationRepository.findOneById(vehicleRes.getQuickVehicleReservationID());
-			} catch (OptimisticLockException e) {
-				return new MessageDTO("Quick vehicle reservation has already been reserved",
-						ToasterType.ERROR.toString());
-			}
+			qvr = quickVehicleReservationRepository.findOneById(vehicleRes.getQuickVehicleReservationID());
+
 			if (qvr == null) {
 				return new MessageDTO("Quick vehicle reservation does not exist", ToasterType.ERROR.toString());
 			} else if (!sdf.format(qvr.getFromDate()).equals(sdf.format(fr.getFlight().getLandingTime()))) {
@@ -474,12 +468,18 @@ public class ReservationService {
 				return new MessageDTO("Branch office country must be same as flight destination country",
 						ToasterType.ERROR.toString());
 			}
-			fr.setVehicleReservation(qvr);
-			qvr.setFlightReservation(fr);
+			try {
+				fr.setVehicleReservation(qvr);
+				qvr.setFlightReservation(fr);
+				quickVehicleReservationRepository.flush();
+			} catch (OptimisticLockingFailureException e) {
+				return new MessageDTO("Quick vehicle reservation has already been reserved",
+						ToasterType.ERROR.toString());
+			}
 			return new MessageDTO("", ToasterType.SUCCESS.toString());
 		}
 
-		BranchOffice bo = branchOfficeRepository.findOneByName(vehicleRes.getBranchOfficeName());
+		BranchOffice bo = branchOfficeRepository.findOneByNameForRead(vehicleRes.getBranchOfficeName());
 
 		if (bo == null) {
 			return new MessageDTO("Branch office does not exist", ToasterType.ERROR.toString());
@@ -521,8 +521,8 @@ public class ReservationService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-	private MessageDTO inviteFriendToFlight(String email, FlightReservationDTO flightRes, String flightCode, int counter,
-			String inviter) {
+	private MessageDTO inviteFriendToFlight(String email, FlightReservationDTO flightRes, String flightCode,
+			int counter, String inviter) {
 		RegisteredUser friend = (RegisteredUser) userRepository.findOneByEmail(email);
 		FlightReservation fRes = new FlightReservation();
 		Flight f = flightRepository.findOneByFlightCodeForRead(flightCode);
@@ -550,16 +550,18 @@ public class ReservationService {
 		}
 		st = seatRepository.findOneByRowAndColumnAndPlaneSegment(row, column, planeSegment);
 		try {
-			PassengerSeat ps = new PassengerSeat(new PassengerDTO(friend.getFirstName(), friend.getLastName(), "", 0), st);
+			PassengerSeat ps = new PassengerSeat(new PassengerDTO(friend.getFirstName(), friend.getLastName(), "", 0),
+					st);
 			ps.setReservation(fRes);
 			st.setPassengerSeat(ps);
 			fRes.setPrice(price);
 			fRes.getPassengerSeats().add(ps);
 			seatRepository.flush();
 		} catch (OptimisticLockingFailureException ex) {
-			return new MessageDTO("Seat " + row + "_" + column + " for friend has just been taken", ToasterType.ERROR.toString());
+			return new MessageDTO("Seat " + row + "_" + column + " for friend has just been taken",
+					ToasterType.ERROR.toString());
 		}
-		
+
 		FlightInvitation flightInv = new FlightInvitation();
 		flightInv.setDateOfInviting(new Date());
 		flightInv.setFlightReservation(fRes);
@@ -693,7 +695,7 @@ public class ReservationService {
 		} catch (OptimisticLockingFailureException ex) {
 			return new MessageDTO("Seat " + row + "_" + column + " has just been taken", ToasterType.ERROR.toString());
 		}
-		
+
 		qfr.setFlight(f);
 		qfr.setDiscount(Integer.parseInt(quickDTO.getDiscount()));
 		qfr.setPrice((1.0 - qfr.getDiscount() / 100.0) * price);
@@ -706,8 +708,7 @@ public class ReservationService {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO createQuickHotelReservation(QuickHotelReservationDTO hotelRes) {
 		Hotel hotel = ((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel();
-		HotelRoom room = hotelRoomRepository.findOneByNumberAndHotel(hotelRes.getHotelRoomNumber(),
-				hotel);
+		HotelRoom room = hotelRoomRepository.findOneByNumberAndHotel(hotelRes.getHotelRoomNumber(), hotel);
 		if (checkRoomReservations(room, hotelRes.getFromDate(), hotelRes.getToDate())) {
 			return new MessageDTO("This hotel room already has reservations in this period",
 					ToasterType.ERROR.toString());
@@ -942,7 +943,7 @@ public class ReservationService {
 		String userPassport = flightRes.getPassengers()[0].getPassport();
 		int numOfBags = flightRes.getPassengers()[0].getNumberOfBags();
 		double price = numOfBags * qfr.getFlight().getPricePerBag();
-		
+
 		try {
 			qfr.setDone(false);
 			qfr.setDateOfReservation(new Date());
@@ -983,8 +984,9 @@ public class ReservationService {
 					new MessageDTO("Reservation does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
 		}
 		if (fr.getHotelReservation().getDone()) {
-			return new ResponseEntity<MessageDTO>(new MessageDTO("You can not cancel hotel reservation which is done.",
-					ToasterType.ERROR.toString()), HttpStatus.OK);
+			return new ResponseEntity<MessageDTO>(
+					new MessageDTO("You can not cancel hotel reservation which is done.", ToasterType.ERROR.toString()),
+					HttpStatus.OK);
 		}
 		Hotel hotel = fr.getHotelReservation().getHotelRoom().getHotel();
 		HotelReservation hr = fr.getHotelReservation();
@@ -1004,9 +1006,10 @@ public class ReservationService {
 		flightReservationRepository.save(fr);
 		hotelReservationRepository.delete(hr);
 		return new ResponseEntity<MessageDTO>(
-				new MessageDTO("Successfully canceled hotel reservation.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
+				new MessageDTO("Successfully canceled hotel reservation.", ToasterType.SUCCESS.toString()),
+				HttpStatus.OK);
 	}
-	
+
 	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	public ResponseEntity<MessageDTO> cancelCarReservation(String resID) {
 		Long id = Long.parseLong(resID);
@@ -1016,8 +1019,9 @@ public class ReservationService {
 					new MessageDTO("Reservation does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);
 		}
 		if (fr.getVehicleReservation().getDone()) {
-			return new ResponseEntity<MessageDTO>(new MessageDTO("You can not cancel car reservation which is done.",
-					ToasterType.ERROR.toString()), HttpStatus.OK);
+			return new ResponseEntity<MessageDTO>(
+					new MessageDTO("You can not cancel car reservation which is done.", ToasterType.ERROR.toString()),
+					HttpStatus.OK);
 		}
 		VehicleReservation vr = fr.getVehicleReservation();
 		RentACar rac = fr.getVehicleReservation().getVehicle().getRentACar();
@@ -1037,6 +1041,7 @@ public class ReservationService {
 		flightReservationRepository.save(fr);
 		vehicleReservationRepository.delete(vr);
 		return new ResponseEntity<MessageDTO>(
-				new MessageDTO("Successfully canceled car reservation.", ToasterType.SUCCESS.toString()), HttpStatus.OK);
+				new MessageDTO("Successfully canceled car reservation.", ToasterType.SUCCESS.toString()),
+				HttpStatus.OK);
 	}
 }
