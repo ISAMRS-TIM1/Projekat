@@ -22,7 +22,7 @@ $(document).ready(function(){
 		
 		var password = $('input[name="password"]').val()
 		
-		if(password == null || passowrd === ""){
+		if(password == null || password === ""){
 			toastr["error"]("Password must not be empty");
 			return;
 		}

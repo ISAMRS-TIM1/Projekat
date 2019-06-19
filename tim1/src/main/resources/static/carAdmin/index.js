@@ -47,9 +47,8 @@ $(document).ready(function() {
 	setUpTable("branchTable");
 	setUpTable("vehicleTable");
 	setUpTable("quickReservationsTable");
-	setUpDatePicker("showIncomeDateRange");
-	setUpDatePicker("quickPeriod");
-
+	
+	//$(".datepicker").datepicker();
 	
 	/* ADJUSTING TABLES */
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
@@ -237,7 +236,7 @@ function loadBasicData() {
 	        	}
 	        	var roundedGrade = Math.round(data["averageGrade"]*10)/10;
 	        	var rating = "<div class='star-ratings-sprite'><span style='width:" + grade 
-	        	+ "%' class='star-ratings-sprite-rating'></span></div><p style='color:white'>" + roundedGrade + "/5.0";
+	        	+ "%' class='star-ratings-sprite-rating'></span></div><p>" + roundedGrade + "/5.0";
 				$("#averageGrade").html(rating);
 				racMap = setUpMap(data["latitude"], data["longitude"], 'basicMapDiv', true, racMap, '#basicLatitude', '#basicLongitude');
 			}
@@ -619,8 +618,8 @@ function makeDailyChart(data, comparator) {
 	        labels: labels,
 	        datasets: [{
 	            label: 'Number of reservations',
-	            backgroundColor: 'rgb(255, 99, 132)',
-	            borderColor: 'rgb(255, 99, 132)',
+	            backgroundColor: 'rgb(23,37,42)',
+	            borderColor: 'rgb(23,37,42)',
 	            data: values
 	        }]
 	    },
@@ -1002,21 +1001,10 @@ function setUpToastr() {
 			}
 }
 
-function setUpDatePicker(id) {
-	$('#' + id).daterangepicker({
-		locale : {
-			format : 'DD/MM/YYYY'
-		}
-	});
-}
-
 function setUpTable(tableID) {
 	$('#' + tableID).DataTable({
-        "paging": false,
+        "paging": true,
         "info": false,
-        "scrollY": "17vw",
-        "scrollCollapse": true,
-        "retrieve": true,
     });
 }
 

@@ -1,76 +1,50 @@
 body {
-	background: #0D63FF;
+	background: #f4f7f6;
 }
+
+/* Tabs css */
 
 #topMenu {
 	display: flex;
 }
 
 #tabsDiv {
-	width: 85%;
+	width: 90%;
 	margin-top: 1%;
-	margin-left: 5%;
-}
-
-#logout {
-	width: 10%;
-	margin-right: 0% !important;
-	background: none;
-	color: white;
-	font-size: 1.4vw;
-	margin-top: 0.8vw;
-	font-style: italic;
-	text-decoration: underline;
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
 }
 
 a[data-toggle="tab"] {
-	border-radius: 2vw 2vw 0vw 0vw !important;
-	background: #5994FF;
-	border: 0.18vw solid #B27A00 !important;
 	font-size: 1.3vw;
-	color: white;
+	color: black;
 }
+
+.myTab {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/* Basic tab */
 
 #basicInfo {
 	text-align: center;
 	padding-bottom: 3vw;
 	width: 50%;
-    margin-left: 25%;
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
 }
 
-#rentACarName{
-	background-color: #0D63FF;
-    color: white;
-    text-align: center;
-    font-size: 4.5vw;
-    width: 100%;
-}
-
-.textInput{
-	border: none;
-	resize: none;
-}
-.textInput:focus{
-	border: 1px solid black;
-	resize: none;
-}
-
-#averageGrade {
-	color:white;
-	font-size: 1.5vw;
-}
-
-#descriptionDiv {
-	width: 100%;
-	height: 75%;
-	text-align:center;
+#rentACarName {
+	text-align: center;
+	font-size: 4.5vw;
 }
 
 #rentACarDescription {
-	background-color: #0D63FF;
-	color:white;
 	font-size: 1.5vw;
-	width: 100%;
 }
 
 .map {
@@ -79,44 +53,71 @@ a[data-toggle="tab"] {
 	display: block;
 	width: 65vw;
 	height: 60vh;
-	border-radius: 2vw 2vw 2vw 2vw;
 }
 
-#branchMapDiv, #addBranchOfficeMap, #editBranchOfficeMap{
-	width: 35vw;	
+.star-ratings-sprite {
+	background:
+		url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/2605/star-rating-sprite.png")
+		repeat-x;
+	/*font-size: 0;*/
+	height: 21px;
+	line-height: 0;
+	overflow: hidden;
+	text-indent: -110em;
+	width: 110px;
+	margin: 0 auto;
+}
+
+.star-ratings-sprite-rating {
+	background:
+		url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/2605/star-rating-sprite.png")
+		repeat-x;
+	background-position: 0 100%;
+	float: left;
+	height: 21px;
+	display: block;
+}
+
+#saveChangesBasic {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 2%;
+	margin-bottom: 1%;
+}
+
+#averageGrade {
+	font-size: 1.5vw;
+}
+
+/* Branch tab */
+
+#branchMapDiv, #addBranchOfficeMap, #editBranchOfficeMap {
+	width: 35vw;
 	height: 35vh;
 	margin-bottom: 2vh;
 }
 
-#saveChangesBasic {
+#addBranchOffice {
+	display: block;
 	margin-left: auto;
 	margin-right: auto;
-	display: block;
-	background: #5994FF;
-	color: white;
-	font-size: 1.6vw;
-	border: 0.16vw solid #B27A00;
-	border-radius: 2vw 2vw 2vw 2vw;
-	margin-top: 1%;
-	margin-bottom: 2vw;
+	margin-top: 2%;	
 }
 
 #branchTableDiv {
 	width: 70%;
-	height: 30vw; margin-left : 13%;
-	margin-top: 5%;
-	background: #5994FF;
-	border: 0.24vw solid #B27A00;
-	border-radius: 4vw 1.6vw;
+	height: 30vw;
+	margin-top: 3%;
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
-	padding: 2vw;
 }
 
 #vehicleTableDiv {
 	width: 100%;
-	height: 30vw; margin-left : 13%;
+	height: 30vw;
+	margin-left: 13%;
 	margin-top: 5%;
 	background: #5994FF;
 	border: 0.24vw solid #B27A00;
@@ -136,13 +137,7 @@ a[data-toggle="tab"] {
 	display: block;
 }
 
-#addBranchOffice, #saveChangesBranch, #addVehicle {
-	background: #5994FF;
-	color: white;
-	font-size: 1.6vw;
-	border: 0.16vw solid #B27A00;
-	border-radius: 2vw 2vw 2vw 2vw;
-}
+
 
 #profileContent {
 	width: 86%;
@@ -208,16 +203,10 @@ a[data-toggle="tab"] {
 #reportsDiv {
 	width: 70%;
 	height: 50vw;
-	margin-left : 13%;
 	margin-top: 1%;
-	background: #5994FF;
-	border: 0.24vw solid #B27A00;
-	border-radius: 4vw 1.6vw;
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
-	padding: 2vw;
-	margin-bottom: 2%;
 }
 
 #income {
@@ -229,11 +218,6 @@ a[data-toggle="tab"] {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
-	background: #5994FF;
-	color: white;
-	font-size: 1.6vw;
-	border: 0.16vw solid #B27A00;
-	border-radius: 2vw 2vw 2vw 2vw;
 }
 
 #quickDiv {
@@ -254,28 +238,5 @@ a[data-toggle="tab"] {
 }
 
 #quickCreate {
-	width:100%;
-}
-
-.star-ratings-sprite {
-	background:
-		url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/2605/star-rating-sprite.png")
-		repeat-x;
-	/*font-size: 0;*/
-	height: 21px;
-	line-height: 0;
-	overflow: hidden;
-	text-indent: -110em;
-	width: 110px;
-	margin: 0 auto;
-}
-
-.star-ratings-sprite-rating {
-	background:
-		url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/2605/star-rating-sprite.png")
-		repeat-x;
-	background-position: 0 100%;
-	float: left;
-	height: 21px;
-	display: block;
+	width: 100%;
 }

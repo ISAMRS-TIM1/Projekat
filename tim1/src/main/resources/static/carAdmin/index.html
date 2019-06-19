@@ -3,33 +3,39 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>RentACar Admin</title>
+<title>RentACar</title>
 <link rel="shortcut icon" type="image/png"
 	href="common/images/favicon.png" />
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+	href="../common/css/bootstrap.css">
 <link rel="stylesheet" href="carAdmin/index.css">
 <link rel="stylesheet" href="common/css/tableStyle.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
+<link rel="stylesheet"
+	href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+	integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+	crossorigin="" />
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
+<link rel="stylesheet" type="text/css"
+	href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<link rel="stylesheet" href="common/css/materialize.css">
+<link rel="stylesheet" href="common/css/tableStyle.css">
+<link rel="stylesheet" href="common/css/button.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="auth/auth.js"></script>
 <script type="text/javascript" src="carAdmin/index.js"></script>
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
 <script type="text/javascript"
 	src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 <script type="text/javascript"
 	src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript"
 	src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
-<link rel="stylesheet"
-	href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
-<link rel="stylesheet"
-	href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
-	integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
-	crossorigin="" />
 <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
 	integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
 	crossorigin=""></script>
@@ -37,18 +43,12 @@
 	src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript"
 	src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
-<link rel="stylesheet"
-	href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 <script
 	src="http://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.0"></script>
-<script type="text/javascript"
-	src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-<link rel="stylesheet" type="text/css"
-	href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 </head>
 <body>
 	<div class="container-fluid">
@@ -60,31 +60,33 @@
 					<li><a data-toggle="tab" href="#branch">Branch offices</a></li>
 					<li><a data-toggle="tab" href="#report">Reports</a></li>
 					<li><a data-toggle="tab" href="#vehicle">Vehicles</a></li>
-					<li><a data-toggle="tab" href="#quick">Quick reservations</a>
-					</li>
+					<li><a data-toggle="tab" href="#quick">Quick reservations</a></li>
 					<li><a data-toggle="tab" href="#profile">Profile</a></li>
+					<li><a data-toggle="tab" id="logout">Logout</a></li>
 				</ul>
 			</div>
-			<button type="button" class="btn .btn-link" id="logout">Logout</button>
 		</div>
 		<div class="tab-content">
-			<div id="basic" class="tab-pane fade in active">
+			<div id="basic" class="tab-pane fade in active myTab">
 				<div id="basicInfo">
-					<input type="text" id="rentACarName" class="textInput" />
+					<div class="input-field">
+		          		<input id="rentACarName" type="text" name="racName">
+		        	</div>
 					<div id="averageGrade"></div>
-					<br>
-					<br>
 					<div id="descriptionDiv">
-						<textarea id="rentACarDescription" class="textInput"></textarea>
+						<div class="input-field">
+          					<textarea id="rentACarDescription" class="materialize-textarea"></textarea>
+        				</div>
 					</div>
 				</div>
 				<div id="basicMapDiv" class="map leaflet-container"></div>
-				<input type="hidden" id="basicLatitude" value="45"required">
-				<input type="hidden" id="basicLongitude" value="0"required">
+				<input type="hidden" id="basicLatitude" value="45" required>
+				<input type="hidden" id="basicLongitude" value="0" required>
 				<button type="button" id="saveChangesBasic" class="btn btn-default">Save
 					changes</button>
 			</div>
 			<div id="branch" class="tab-pane fade in">
+				<button type="button" id="addBranchOffice" class="btn btn-default" data-toggle="modal" data-target="#addBranchModalDialog">Add branch office</button>
 				<div id="branchTableWrapper">
 					<div id="branchTableDiv">
 						<table id="branchTable" class="table display table-bordered">
@@ -102,23 +104,12 @@
 						</table>
 					</div>
 				</div>
-				<div id="branchButtons">
-					<button type="button" id="addBranchOffice" class="btn btn-default"
-						data-toggle="modal" data-target="#addBranchModalDialog">Add
-						branch office</button>
-				</div>
 			</div>
 			<div id="report" class="tab-pane fade">
 				<div id="reportsDiv">
-					<table id=reportsTable>
-						<tr>
-							<td>Period:</td>
-							<td><input type="text" id="showIncomeDateRange"></td>
-						</tr>
-					</table>
-					<button class="btn btn-default" id="showIncomeButton">Show
-						income</button>
-					<br> <span id="income"></span><br> <br> <select
+					<input type="text" id="showIncomeDateRange" class="datepicker">
+					<button class="btn btn-default" id="showIncomeButton">Show income</button>
+					<span id="income"></span><select
 						id="graphicLevel">
 						<option value="daily">Daily</option>
 						<option value="weekly">Weekly</option>
