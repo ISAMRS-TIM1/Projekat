@@ -3,6 +3,7 @@ package isamrs.tim1.dto;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.NoSuchElementException;
 
 import isamrs.tim1.model.HotelReservation;
 import isamrs.tim1.model.QuickHotelReservation;
@@ -35,8 +36,17 @@ public class HotelReservationDTO implements Serializable {
 		this.quickReservationID = null;
 		this.done = hr.getDone();
 		this.roomGrade = hr.getGrade();
-		this.hotelGrade = hr.getHotelRoom().getHotel().getAverageGrade();
 		this.id = hr.getId();
+
+		if (hr.getFlightReservation() != null) {
+			try {
+				this.hotelGrade = hr.getHotelRoom().getHotel().getServiceGrades().stream()
+						.filter(sg -> sg.getUser().getId().equals(hr.getFlightReservation().getUser().getId()))
+						.findFirst().get().getGrade();
+			} catch (NoSuchElementException e) {
+				this.hotelGrade = null;
+			}
+		}
 	}
 
 	public HotelReservationDTO(QuickHotelReservation hr) {
@@ -50,8 +60,17 @@ public class HotelReservationDTO implements Serializable {
 		this.quickReservationID = hr.getId();
 		this.done = hr.getDone();
 		this.roomGrade = hr.getGrade();
-		this.hotelGrade = hr.getHotelRoom().getHotel().getAverageGrade();
 		this.id = hr.getId();
+
+		if (hr.getFlightReservation() != null) {
+			try {
+				this.hotelGrade = hr.getHotelRoom().getHotel().getServiceGrades().stream()
+						.filter(sg -> sg.getUser().getId().equals(hr.getFlightReservation().getUser().getId()))
+						.findFirst().get().getGrade();
+			} catch (NoSuchElementException e) {
+				this.hotelGrade = null;
+			}
+		}
 	}
 
 	public HotelReservationDTO() {

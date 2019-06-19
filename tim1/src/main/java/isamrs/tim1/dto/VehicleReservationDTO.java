@@ -2,6 +2,7 @@ package isamrs.tim1.dto;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.NoSuchElementException;
 
 import isamrs.tim1.model.QuickVehicleReservation;
 import isamrs.tim1.model.VehicleReservation;
@@ -41,8 +42,17 @@ public class VehicleReservationDTO implements Serializable {
 		this.rentacar = qvr.getBranchOffice().getRentACar().getName();
 		this.setDone(qvr.getDone());
 		this.vehicleGrade = qvr.getVehicle().getAverageGrade();
-		this.rentacarGrade = qvr.getVehicle().getRentACar().getAverageGrade();
 		this.setId(qvr.getId());
+
+		if (qvr.getFlightReservation() != null) {
+			try {
+				this.rentacarGrade = qvr.getBranchOffice().getRentACar().getServiceGrades().stream()
+						.filter(sg -> sg.getUser().getId().equals(qvr.getFlightReservation().getUser().getId()))
+						.findFirst().get().getGrade();
+			} catch (NoSuchElementException e) {
+				this.rentacarGrade = null;
+			}
+		}
 	}
 
 	public VehicleReservationDTO(VehicleReservation vr) {
@@ -57,8 +67,17 @@ public class VehicleReservationDTO implements Serializable {
 		this.price = vr.getPrice();
 		this.done = vr.getDone();
 		this.vehicleGrade = vr.getVehicle().getAverageGrade();
-		this.rentacarGrade = vr.getVehicle().getRentACar().getAverageGrade();
 		this.setId(vr.getId());
+
+		if (vr.getFlightReservation() != null) {
+			try {
+				this.rentacarGrade = vr.getBranchOffice().getRentACar().getServiceGrades().stream()
+						.filter(sg -> sg.getUser().getId().equals(vr.getFlightReservation().getUser().getId()))
+						.findFirst().get().getGrade();
+			} catch (NoSuchElementException e) {
+				this.rentacarGrade = null;
+			}
+		}
 	}
 
 	public Date getFromDate() {

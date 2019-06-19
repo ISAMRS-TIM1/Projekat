@@ -3,6 +3,7 @@ package isamrs.tim1.dto;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 import isamrs.tim1.model.FlightReservation;
 import isamrs.tim1.model.PassengerSeat;
@@ -44,7 +45,13 @@ public class DetailedReservationDTO implements Serializable {
 		this.landingTime = sdf.format(flightRes.getFlight().getLandingTime());
 		this.roundTrip = flightRes.getFlight().isRoundTrip();
 		this.setFlightGrade(flightRes.getGrade());
-		this.setAirlineGrade(flightRes.getFlight().getAirline().getAverageGrade());
+		try {
+			this.airlineGrade = flightRes.getFlight().getAirline().getServiceGrades().stream()
+					.filter(sg -> sg.getUser().getId().equals(flightRes.getUser().getId())).findFirst().get()
+					.getGrade();
+		} catch (NoSuchElementException e) {
+			this.airlineGrade = null;
+		}
 		this.setId(flightRes.getId());
 
 		if (flightRes.getDone() != null) {

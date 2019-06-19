@@ -689,9 +689,6 @@ function rateService(name, grade){
         headers : createAuthorizationTokenHeader(tokenKey),
         contentType: "application/json",
         data: serviceGradeToJSON(name, grade),
-        success: function(data) {
-        	console.log("SERVICE RATED!");
-        },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
             alert("AJAX ERROR: " + textStatus);
         }
@@ -705,9 +702,6 @@ function rateReservation(id, grade, type){
         headers : createAuthorizationTokenHeader(tokenKey),
         contentType: "application/json",
         data: reservationGradeToJSON(id, grade, type),
-        success: function(data) {
-        	console.log("RESERVATION RATED!");
-        },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
             alert("AJAX ERROR: " + textStatus);
         }
@@ -2966,9 +2960,16 @@ function createStarRating(label, grade=null, handler){
 }
 
 function sendServiceGrade(element){
-	var airlineName = $(element).parent().parent().siblings(".service").text();
-	var td = $(element).parent().parent().attr("id");
+	var airlineName = $(element).parent().parent().prev().children(".service").text();
 	var grade = $(element).val() * 0.5;
+	
+	var num = $(element).val();
+	
+	$.each($(element).parent().children("label"), function(index, value){
+		if(parseInt($(value).attr("for").match(/\d+/)) > num){
+			$(value).css({"color": ""});
+		}
+	});
 	
 	rateService(airlineName, grade);
 }
@@ -2976,6 +2977,14 @@ function sendServiceGrade(element){
 function sendReservationGrade(element, type){
 	var reservationID = $(element).parent().parent().prev().children().first().val();
 	var grade = $(element).val() * 0.5;
+	
+	var num = $(element).val();
+	
+	$.each($(element).parent().children("label"), function(index, value){
+		if(parseInt($(value).attr("for").match(/\d+/)) > num){
+			$(value).css({"color": ""});
+		}
+	});
 	
 	rateReservation(reservationID, grade, type);
 }

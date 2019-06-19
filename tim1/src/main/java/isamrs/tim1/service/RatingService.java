@@ -40,16 +40,23 @@ public class RatingService {
 
 		ServiceGrade g = new ServiceGrade(user, s, serviceGrade.getGrade());
 
-		if (s.getServiceGrades().contains(g)) {
-			s.getServiceGrades().remove(g);
-			s.getServiceGrades().add(g);
-		} else {
+		boolean exists = false;
+		for(ServiceGrade sg : s.getServiceGrades()) {
+			if(sg.getUser().equals(user)) {
+				exists = true;
+				sg.setGrade(g.getGrade());
+				break;
+			}
+		}
+		
+		if(!exists) {
 			s.getServiceGrades().add(g);
 		}
-
+		
 		serviceRepository.save(s);
 	}
 
+	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	public void rateReservation(ReservationGradeDTO reservationGrade) {
 		switch (reservationGrade.getType()) {
 		case FLIGHT:
