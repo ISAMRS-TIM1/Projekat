@@ -2,6 +2,8 @@ package isamrs.tim1.controller;
 
 import java.util.ArrayList;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -38,29 +40,32 @@ public class ReservationController {
 	@RequestMapping(value = "/api/reserveFlight/{discountPoints}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MessageDTO> reserveFlight(@PathVariable("discountPoints") int discountPoints,
 			@RequestBody FlightReservationDTO flightRes) {
-		return new ResponseEntity<MessageDTO>(reservationService.reserveFlight(discountPoints, flightRes), HttpStatus.OK);
+		return new ResponseEntity<MessageDTO>(reservationService.reserveFlight(discountPoints, flightRes),
+				HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasRole('REGISTEREDUSER')")
 	@RequestMapping(value = "/api/reserveFlightHotel/{discountPoints}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MessageDTO> reserveFlightHotel(@PathVariable("discountPoints") int discountPoints,
 			@RequestBody FlightHotelReservationDTO flightHotelRes) {
-		return new ResponseEntity<MessageDTO>(reservationService.reserveFlightHotel(discountPoints, flightHotelRes), HttpStatus.OK);
+		return new ResponseEntity<MessageDTO>(reservationService.reserveFlightHotel(discountPoints, flightHotelRes),
+				HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasRole('REGISTEREDUSER')")
 	@RequestMapping(value = "/api/reserveFlightVehicle/{discountPoints}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MessageDTO> reserveFlightVehicle(@PathVariable("discountPoints") int discountPoints,
 			@RequestBody FlightVehicleReservationDTO flightVehicleRes) {
-		return new ResponseEntity<MessageDTO>(reservationService.reserveFlightVehicle(discountPoints, flightVehicleRes), HttpStatus.OK);
+		return new ResponseEntity<MessageDTO>(reservationService.reserveFlightVehicle(discountPoints, flightVehicleRes),
+				HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasRole('REGISTEREDUSER')")
 	@RequestMapping(value = "/api/reserveFlightHotelVehicle/{discountPoints}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MessageDTO> reserveFlightHotelVehicle(@PathVariable("discountPoints") int discountPoints,
-			@RequestBody FlightHotelVehicleReservationDTO flightHotelVehicleRes) {
-		return new ResponseEntity<MessageDTO>(reservationService.reserveFlightHotelVehicle(discountPoints, flightHotelVehicleRes),
-				HttpStatus.OK);
+			@Valid @RequestBody FlightHotelVehicleReservationDTO flightHotelVehicleRes) {
+		return new ResponseEntity<MessageDTO>(
+				reservationService.reserveFlightHotelVehicle(discountPoints, flightHotelVehicleRes), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasRole('REGISTEREDUSER')")
@@ -92,13 +97,13 @@ public class ReservationController {
 	public ResponseEntity<MessageDTO> cancelReservation(@RequestBody String resID) {
 		return reservationService.cancelReservation(resID);
 	}
-	
+
 	@PreAuthorize("hasRole('REGISTEREDUSER')")
 	@RequestMapping(value = "/api/cancelHotelReservation", method = RequestMethod.DELETE)
 	public ResponseEntity<MessageDTO> cancelHotelReservation(@RequestBody String resID) {
 		return reservationService.cancelHotelReservation(resID);
 	}
-	
+
 	@PreAuthorize("hasRole('REGISTEREDUSER')")
 	@RequestMapping(value = "/api/cancelCarReservation", method = RequestMethod.DELETE)
 	public ResponseEntity<MessageDTO> cancelCarReservation(@RequestBody String resID) {
@@ -114,7 +119,7 @@ public class ReservationController {
 	@PreAuthorize("hasRole('RENTADMIN')")
 	@RequestMapping(value = "/api/createQuickVehicleReservation", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MessageDTO> createQuickVehicleReservation(
-			@RequestBody QuickVehicleReservationDTO quickReservation) {
+			@Valid @RequestBody QuickVehicleReservationDTO quickReservation) {
 		return new ResponseEntity<MessageDTO>(reservationService.createQuickVehicleReservation(quickReservation),
 				HttpStatus.OK);
 	}
@@ -146,7 +151,7 @@ public class ReservationController {
 	}
 
 	@RequestMapping(value = "/api/checkVehicleForPeriod", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> checkVehicleForPeriod(@RequestBody CheckVehicleReservationDTO vehicle) {
+	public ResponseEntity<Boolean> checkVehicleForPeriod(@Valid @RequestBody CheckVehicleReservationDTO vehicle) {
 		return new ResponseEntity<Boolean>(
 				reservationService.checkVehicleForPeriod(vehicle.getVehicleID(), vehicle.getStart(), vehicle.getEnd()),
 				HttpStatus.OK);
@@ -154,9 +159,10 @@ public class ReservationController {
 
 	@PreAuthorize("hasRole('REGISTEREDUSER')")
 	@RequestMapping(value = "/api/reserveQuickFlightReservation/{discountPoints}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MessageDTO> reserveQuickFlightReservation(@PathVariable("discountPoints") int discountPoints,@RequestBody FlightReservationDTO flightRes) {
-		return new ResponseEntity<MessageDTO>(reservationService.reserveQuickFlightReservation(discountPoints, flightRes),
-				HttpStatus.OK);
+	public ResponseEntity<MessageDTO> reserveQuickFlightReservation(@PathVariable("discountPoints") int discountPoints,
+			@RequestBody FlightReservationDTO flightRes) {
+		return new ResponseEntity<MessageDTO>(
+				reservationService.reserveQuickFlightReservation(discountPoints, flightRes), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/api/getDetailedReservation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

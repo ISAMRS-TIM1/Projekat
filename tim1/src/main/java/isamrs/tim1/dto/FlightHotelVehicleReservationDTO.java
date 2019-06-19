@@ -2,14 +2,19 @@ package isamrs.tim1.dto;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotNull;
+
 public class FlightHotelVehicleReservationDTO implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -6538294253395903027L;
+	@NotNull
 	private FlightReservationDTO flightReservation;
+	@NotNull
 	private HotelReservationDTO hotelReservation;
+	@NotNull
 	private VehicleReservationDTO vehicleReservation;
 
 	public FlightReservationDTO getFlightReservation() {

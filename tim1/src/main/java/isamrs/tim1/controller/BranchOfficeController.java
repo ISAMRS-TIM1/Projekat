@@ -1,5 +1,7 @@
 package isamrs.tim1.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,13 +24,13 @@ public class BranchOfficeController {
 
 	@PreAuthorize("hasRole('RENTADMIN')")
 	@RequestMapping(value = "/api/addBranchOffice", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MessageDTO> addBranchOffice(@RequestBody BranchOfficeDTO branch) {
+	public ResponseEntity<MessageDTO> addBranchOffice(@Valid @RequestBody BranchOfficeDTO branch) {
 		return new ResponseEntity<MessageDTO>(branchOfficeService.addBranchOffice(branch), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasRole('RENTADMIN')")
 	@RequestMapping(value = "/api/editBranchOffice/{oldName}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MessageDTO> editBranchOffice(@RequestBody BranchOfficeDTO branch,
+	public ResponseEntity<MessageDTO> editBranchOffice(@Valid @RequestBody BranchOfficeDTO branch,
 			@PathVariable("oldName") String oldName) {
 		return new ResponseEntity<MessageDTO>(branchOfficeService.editBranchOffice(branch, oldName), HttpStatus.OK);
 	}

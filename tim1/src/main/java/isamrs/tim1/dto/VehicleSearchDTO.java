@@ -3,11 +3,18 @@ package isamrs.tim1.dto;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 public class VehicleSearchDTO implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -6050883421806931996L;
+	@NotNull
+	@NotBlank
 	private String producer;
 	private ArrayList<String> models;
 	private ArrayList<String> vehicleTypes;
@@ -16,8 +23,15 @@ public class VehicleSearchDTO implements Serializable {
 	private Integer seats;
 	private Integer startDate;
 	private Integer endDate;
+	@NotNull
+	@Min(0)
+	@Max(5)
 	private double minGrade;
+	@NotNull
+	@Min(0)
+	@Max(5)
 	private double maxGrade;
+	@NotNull
 	private String country;
 
 	public VehicleSearchDTO() {

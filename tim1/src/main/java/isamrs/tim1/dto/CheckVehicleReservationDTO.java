@@ -3,13 +3,18 @@ package isamrs.tim1.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+
 public class CheckVehicleReservationDTO implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1595971551457689943L;
+	@NotNull
 	private Integer vehicleID;
+	@NotNull
 	private Date start;
+	@NotNull
 	private Date end;
 
 	public Integer getVehicleID() {

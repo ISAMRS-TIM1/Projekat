@@ -48,7 +48,7 @@ public class VehicleController {
 
 	// everyone
 	@RequestMapping(value = "/api/searchVehicles", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ArrayList<VehicleDTO>> searchVehicles(@RequestBody VehicleSearchDTO searchFields) {
+	public ResponseEntity<ArrayList<VehicleDTO>> searchVehicles(@Valid @RequestBody VehicleSearchDTO searchFields) {
 		return new ResponseEntity<ArrayList<VehicleDTO>>(vehicleService.searchVehicles(searchFields), HttpStatus.OK);
 	}
 
