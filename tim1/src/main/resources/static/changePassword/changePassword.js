@@ -1,24 +1,28 @@
-const TOKEN_KEY = 'jwtToken';
+const TOKEN_KEY = "jwtToken";
 const changePasswordURL = "auth/changePassword";
 var airlineAdminURL = "../airlineAdmin";
 var hotelAdminURL = "../hotelAdmin";
 var rentACarAdminURL = "../carAdmin";
 var sysAdminURL = "../sysAdmin";
 
-$(document).on("click", "#eye", function(e){
-	if($("#eye-icon").hasClass("glyphicon-eye-close")){
-		$("#eye-icon").removeClass("glyphicon-eye-close");
-		$("#eye-icon").addClass("glyphicon-eye-open");
-		$('input[name="password"]').attr("type", "text");
-	} else{
-		$("#eye-icon").removeClass("glyphicon-eye-open");
-		$("#eye-icon").addClass("glyphicon-eye-close");
-		$('input[name="password"]').attr("type", "password");
-	}
-})
+$(document).ready(function(){
+	initToastr();
+	
+	$("#submitButton").click(function(e){
+		e.preventDefault();
+		
+		var password = $("#pass").val();
+		
+		if(password == null || password === ""){
+			toastr["error"]("Password must not be empty");
+			return;
+		}
+		
+		changePassword(password);
+	});
+});
 
-$(document).on("click", "#submitButton", function(e){
-	var password = $("#pass").val();
+function changePassword(password){
 	$.ajax({
 		type : 'PUT',
 		url : changePasswordURL,
@@ -36,4 +40,24 @@ $(document).on("click", "#submitButton", function(e){
 			}
 		}
 	});
-})
+}
+
+function initToastr(){
+	toastr.options = {
+			  "closeButton": true,
+			  "debug": false,
+			  "newestOnTop": false,
+			  "progressBar": false,
+			  "positionClass": "toast-top-center",
+			  "preventDuplicates": false,
+			  "onclick": null,
+			  "showDuration": "300",
+			  "hideDuration": "1000",
+			  "timeOut": "3000",
+			  "extendedTimeOut": "1000",
+			  "showEasing": "swing",
+			  "hideEasing": "linear",
+			  "showMethod": "fadeIn",
+			  "hideMethod": "fadeOut"
+			}
+}
