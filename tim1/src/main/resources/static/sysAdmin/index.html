@@ -14,11 +14,11 @@
 <link rel="stylesheet" href="sysAdmin/index.css">
 <link rel="stylesheet" href="common/css/tableStyle.css">
 <link rel="stylesheet" href="common/css/button.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script type="text/javascript"
 	src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 <script type="text/javascript"
@@ -198,8 +198,7 @@
 
 
 	<!-- Service Modal -->
-	<div class="modal fade" id="modalDialog" tabindex="-1" role="dialog"
-		aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal fade" id="modalDialog" role="dialog">
 		<div class="modal-dialog modal-lg" role="document">
 			<div class="modal-content" id="serviceDiv">
 				<table id="serviceTable">
@@ -309,32 +308,44 @@
 		</div>
 	</div>
 	<!-- Add Service Modal -->
-	<div class="modal fade" id="addServiceModal" tabindex="-1"
-		role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-lg" role="document">
+	<div class="modal fade" id="addServiceModal" role="dialog">
+		<div class="modal-dialog modal-lg">
 			<div class="modal-content" id="addServiceDiv">
-				<form id="addServiceForm">
-					<table id="addServiceTable">
-						<tr>
-							<td colspan="2"><input type="text" id="newServiceName"
-								class="textInput" value="Name"></td>
-						</tr>
-
-						<tr>
-							<td><textarea rows="10" cols="38" id="newServiceDescription"
-									class="textInput">Description</textarea></td>
-							<td><div id="newServiceMapDiv"></div></td>
-						</tr>
-						<tr>
-							<td colspan="2">
-								<button type="submit" id="addServiceButton"
-									class="addServiceButton btn btn-default">Add</button>
-							</td>
-						</tr>
-					</table>
-					<input type="hidden" id="latitude" value="45"required"> <input
-						type="hidden" id="longitude" value="0"required">
-				</form>
+				<div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	      		</div>
+	      		<div class="modal-body">
+	      			<form id="addServiceForm">
+						<table id="addServiceTable">
+							<tr>
+								<td>
+									<div class="input-field">
+										<input type="text" name="serviceName" id="newServiceName" required class="validate">
+										<label for="serviceName">Name</label>
+									</div>
+								</td>
+								<td rowspan="2"><div id="newServiceMapDiv"></div></td>
+							</tr>
+	
+							<tr>
+								<td>
+									<div class="input-field">
+										<textarea rows="4" cols="50" name="serviceDesc" id="newServiceDescription" required class="validate materialize-textarea"></textarea>
+										<label for="serviceDesc">Description</label>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2">
+									<button type="submit" id="addServiceButton"
+										class="addServiceButton btn btn-default">Add</button>
+								</td>
+							</tr>
+						</table>
+						<input type="hidden" id="latitude" value="45" required> <input
+							type="hidden" id="longitude" value="0" required>
+					</form>
+	      		</div>
 			</div>
 		</div>
 	</div>

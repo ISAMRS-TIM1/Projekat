@@ -194,7 +194,7 @@ function setUpTables(){
 		currentService = airlinesTable.row(this).data()[0];
 		currentServiceURL = getAirlineURL;
 		loadService(currentService, currentServiceURL);
-		$("#modalDialog").modal();
+		$("#modalDialog").modal("show");
 	});
 
 	$('#hotelsTable tbody').on('click', 'tr', function() {
