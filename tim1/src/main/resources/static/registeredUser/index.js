@@ -26,6 +26,8 @@ const getAirlinesURL = "/api/getAirlines";
 const getDetailedAirlineURL = "../api/getDetailedAirline";
 const reserveQuickFlightReservationURL = "/api/reserveQuickFlightReservation/";
 const getDetailedReservationURL = "/api/getDetailedReservation";
+const cancelHotelReservationURL = "/api/cancelHotelReservation";
+const cancelCarReservationURL = "/api/cancelCarReservation";
 
 const searchHotelsURL = "/api/searchHotels";
 const getHotelURL = "../api/getHotel";
@@ -246,23 +248,42 @@ $(document)
                     });
                     
                     $('#reservationsTable tbody').on('click', 'tr', function() {
-                    	var tgt = $(event.target);
-                    	var resTable = $("#reservationsTable").DataTable();
-                    	if (tgt[0].id == "cancelResButton") {
-                    		var res = resTable.row(this).data()[0];
-                    		cancelReservation(res);
-                    	}
-                    	else {
-                    		reservationsTable.$('tr.selected').removeClass('selected');
-                            $(this).addClass('selected');
-                            shownReservation = reservationsTable.row(this).data()[0];
-                            loadReservation(shownReservation);
-                            $("#showReservationModal").modal();
-                    	}
+                		reservationsTable.$('tr.selected').removeClass('selected');
+                        $(this).addClass('selected');
+                        shownReservation = reservationsTable.row(this).data()[0];
+                        loadReservation(shownReservation);
+                        $("#showReservationModal").modal();
                     });
                     
                     $('#showReservationModal').on('hidden.bs.modal', function() {
                     	reservationsTable.$('tr.selected').removeClass('selected');
+                    	$("#cancelFlightReservationButton").off("click").click(function() {
+                        	cancelReservation(shownReservation);
+                        	$("#showReservationModal").modal("hide");
+                        });
+                    	$("#cancelHotelReservationButton").off("click").click(function() {
+                        	cancelHotelReservation(shownReservation);
+                        	$("#showReservationModal").modal("hide");
+                        });
+                    	$("#cancelCarReservationButton").off("click").click(function() {
+                        	cancelCarReservation(shownReservation);
+                        	$("#showReservationModal").modal("hide");
+                        });
+                    });
+                    
+                    $("#cancelFlightReservationButton").click(function() {
+                    	cancelReservation(shownReservation);
+                    	$("#showReservationModal").modal("hide");
+                    });
+                    
+                    $("#cancelHotelReservationButton").click(function() {
+                    	cancelHotelReservation(shownReservation);
+                    	$("#showReservationModal").modal("hide");
+                    });
+                    
+                    $("#cancelCarReservationButton").click(function() {
+                    	cancelCarReservation(shownReservation);
+                    	$("#showReservationModal").modal("hide");
                     });
                     
                     $("#srcRoundTrip").change(function() {
@@ -2348,7 +2369,7 @@ function continueReservation(e) {
 
         $("#flightPriceRes").val(quickFlightReservation["price"]);
         
-        $("#cancelFlightReservationButton").click(function() {
+        $("#cancelFlightReservationButton").off("click").click(function() {
         	localStorage.removeItem("quickFlightReservation");
             $("#flightRes").html("No flight reserved");
             getReservations();
@@ -2405,7 +2426,7 @@ function continueReservation(e) {
 	    }
 	    
 	    
-	    $("#cancelFlightReservationButton").click(function() {
+	    $("#cancelFlightReservationButton").off("click").click(function() {
         	localStorage.removeItem("flightReservation");
             localStorage.removeItem("flightRes");
             localStorage.removeItem("hotelRes");
@@ -2437,7 +2458,7 @@ function continueReservation(e) {
 		    }
 		   
 
-		    $("#cancelHotelReservationButton").click(function() {
+		    $("#cancelHotelReservationButton").off("click").click(function() {
 		    	localStorage.removeItem("hotelRes");
 		    	$("#hotelRes").text("");
 		    	getReservations();
@@ -2463,7 +2484,7 @@ function continueReservation(e) {
 	    	$("#modelCarRes").text(carRes["vehicleModel"]);
 	    	$("#prodCarRes").text(carRes["vehicleProducer"]);
 	    	$("#carPriceRes").val(carRes["price"]);
-	    	$("#cancelCarReservationButton").click(function() {
+	    	$("#cancelCarReservationButton").off("click").click(function() {
 	    		localStorage.removeItem("carRes");
 	    		$("#carRes").text("");
 	    		getReservations();
@@ -2704,6 +2725,38 @@ function cancelReservation(id) {
             	getReservations();
             	loadProfileData(); // TO UPDATE AVAILABLE DISCOUNT POINTS
             }
+            toastr[data.toastType](data.message);
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            alert("AJAX ERROR: " + textStatus);
+        }
+    });
+}
+
+function cancelHotelReservation(id) {
+	$.ajax({
+        type: 'DELETE',
+        url: cancelHotelReservationURL,
+        headers: createAuthorizationTokenHeader(tokenKey),
+        contentType: "application/json",
+        data: id.toString(),
+        success: function(data) {
+            toastr[data.toastType](data.message);
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            alert("AJAX ERROR: " + textStatus);
+        }
+    });
+}
+
+function cancelCarReservation(id) {
+	$.ajax({
+        type: 'DELETE',
+        url: cancelCarReservationURL,
+        headers: createAuthorizationTokenHeader(tokenKey),
+        contentType: "application/json",
+        data: id.toString(),
+        success: function(data) {
             toastr[data.toastType](data.message);
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {

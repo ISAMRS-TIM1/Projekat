@@ -54,7 +54,7 @@ public class HotelReservation implements Serializable {
 	@JoinTable(name = "reservation_additionalservices", joinColumns = @JoinColumn(name = "reservation", referencedColumnName = "reservation_id"), inverseJoinColumns = @JoinColumn(name = "additionalservice", referencedColumnName = "additionalservice_id"))
 	protected Set<HotelAdditionalService> additionalServices;
 
-	@OneToOne(mappedBy = "hotelReservation", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToOne(mappedBy = "hotelReservation", fetch = FetchType.LAZY)
 	protected FlightReservation flightReservation;
 
 	@Column(name = "price", unique = false, nullable = true)

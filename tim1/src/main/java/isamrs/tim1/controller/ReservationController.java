@@ -92,6 +92,18 @@ public class ReservationController {
 	public ResponseEntity<MessageDTO> cancelReservation(@RequestBody String resID) {
 		return reservationService.cancelReservation(resID);
 	}
+	
+	@PreAuthorize("hasRole('REGISTEREDUSER')")
+	@RequestMapping(value = "/api/cancelHotelReservation", method = RequestMethod.DELETE)
+	public ResponseEntity<MessageDTO> cancelHotelReservation(@RequestBody String resID) {
+		return reservationService.cancelHotelReservation(resID);
+	}
+	
+	@PreAuthorize("hasRole('REGISTEREDUSER')")
+	@RequestMapping(value = "/api/cancelCarReservation", method = RequestMethod.DELETE)
+	public ResponseEntity<MessageDTO> cancelCarReservation(@RequestBody String resID) {
+		return reservationService.cancelCarReservation(resID);
+	}
 
 	@PreAuthorize("hasRole('HOTELADMIN')")
 	@RequestMapping(value = "/api/createQuickHotelReservation", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

@@ -27,7 +27,7 @@ public class PassengerSeat implements Serializable {
 	@Column(name = "passengerSeat_id", unique = true, nullable = false)
 	private Long id;
 
-	@OneToOne(mappedBy = "passengerSeat", cascade = CascadeType.ALL)
+	@OneToOne(mappedBy = "passengerSeat")
     private Seat seat;
 	
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
