@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,7 +36,7 @@ public class RentACarController {
 
 	@PreAuthorize("hasRole('SYSADMIN')")
 	@RequestMapping(value = "/api/addRentACar", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MessageDTO> addRentACar(@RequestBody ServiceDTO rentACar) {
+	public ResponseEntity<MessageDTO> addRentACar(@Valid @RequestBody ServiceDTO rentACar) {
 		return new ResponseEntity<MessageDTO>(rentACarService.addRentACar(new RentACar(rentACar)), HttpStatus.OK);
 	}
 

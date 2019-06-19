@@ -2,13 +2,25 @@ package isamrs.tim1.dto;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+
 import isamrs.tim1.model.Destination;
 
 public class DestinationDTO implements Serializable {
 	
+	@NotBlank
 	private String nameOfDest;
+	
+	@Min(-90)
+	@Max(90)
 	private Double latitude;
+	
+	@Min(-180)
+	@Max(180)
 	private Double longitude;
+
 	private String airlineName;
 	private String oldName;
 	

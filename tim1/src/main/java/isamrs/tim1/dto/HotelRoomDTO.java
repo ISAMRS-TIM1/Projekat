@@ -2,15 +2,24 @@ package isamrs.tim1.dto;
 
 import java.util.Date;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+
 import isamrs.tim1.model.HotelRoom;
 import isamrs.tim1.model.SeasonalHotelRoomPrice;
 
 public class HotelRoomDTO {
+	
+	@NotBlank
 	private String roomNumber;
-	private double averageGrade;
+	
+	@Min(1)
 	private double price;
+	
+	@Min(1)
 	private int numberOfPeople;
 
+	private double averageGrade;
 	
 	public HotelRoomDTO() {
 		super();

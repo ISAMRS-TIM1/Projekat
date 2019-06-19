@@ -3,15 +3,21 @@ package isamrs.tim1.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
 
 import isamrs.tim1.model.SeasonalHotelRoomPrice;
 
 public class SeasonalPriceDTO implements Serializable {
 
 	private static final long serialVersionUID = -3267466116282499981L;
-	private double price;
+	
+	@NotNull
 	private Date fromDate;
+	
+	@NotNull
 	private Date toDate;
+	
+	private double price;
 
 	public SeasonalPriceDTO() {
 		super();

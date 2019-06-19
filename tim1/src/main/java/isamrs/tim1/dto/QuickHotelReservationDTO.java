@@ -4,17 +4,30 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import isamrs.tim1.model.HotelAdditionalService;
 import isamrs.tim1.model.QuickHotelReservation;
 
 public class QuickHotelReservationDTO implements Serializable {
 
 	private long id;
+	
+	@NotNull
 	private Date fromDate;
+	
+	@NotNull
 	private Date toDate;
+	
+	@NotBlank
 	private String hotelRoomNumber;
-	private ArrayList<String> additionalServiceNames;
+	
+	@Min(1)
 	private int discount;
+	
+	private ArrayList<String> additionalServiceNames;
 	private double discountedPrice;
 
 	public QuickHotelReservationDTO() {

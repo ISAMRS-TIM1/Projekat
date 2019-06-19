@@ -1111,11 +1111,10 @@ function searchFlights(e) {
 			toastr["error"]("Returning departure time is not valid.");
 			return;
 		}
-		/*
-		 * if (moment(retDepTime).isBefore(departureTime)) {
-		 * toastr["error"]("Returning departure time must be after the departure
-		 * time."); return; }
-		 */
+		if (moment(retDepTime).isBefore(departureTime)) {
+			toastr["error"]("Returning departure time must be after the departure time."); 
+			return; 
+		}
 	}
     $.ajax({
         type: 'POST',

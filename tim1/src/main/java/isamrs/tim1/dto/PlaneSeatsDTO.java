@@ -3,6 +3,9 @@ package isamrs.tim1.dto;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+
 import isamrs.tim1.model.Flight;
 import isamrs.tim1.model.PlaneSegment;
 import isamrs.tim1.model.Seat;
@@ -10,13 +13,18 @@ import isamrs.tim1.model.Seat;
 public class PlaneSeatsDTO implements Serializable {
 	
 	private static final long serialVersionUID = -8886693041430317406L;
+	
+	@NotEmpty
+	private String[] savedSeats;
+	
+	@NotBlank
+	private String flightCode;
+	
 	private ArrayList<PlaneSegment> planeSegments;
 	private ArrayList<String> reservedSeats;
 	private Double firstClassPrice;
 	private Double businessClassPrice;
 	private Double economyClassPrice;
-	private String[] savedSeats;
-	private String flightCode;
 	
 	public PlaneSeatsDTO() {
 		super();

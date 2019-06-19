@@ -2,6 +2,8 @@ package isamrs.tim1.controller;
 
 import java.util.ArrayList;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,12 +27,12 @@ public class FlightController {
 	private FlightService flightService;
 	
 	@RequestMapping(value = "api/addFlight", method = RequestMethod.POST)
-	public ResponseEntity<String> addFlight(@RequestBody FlightDTO flight) {
+	public ResponseEntity<String> addFlight(@Valid @RequestBody FlightDTO flight) {
 		return flightService.addFlight(flight);
 	}
 	
 	@RequestMapping(value = "api/editFlight", method = RequestMethod.PUT)
-	public ResponseEntity<MessageDTO> editFlight(@RequestBody FlightDTO flight) {
+	public ResponseEntity<MessageDTO> editFlight(@Valid @RequestBody FlightDTO flight) {
 		return new ResponseEntity<MessageDTO>(flightService.editFlight(flight), HttpStatus.OK);
 	}
 	
@@ -40,7 +42,7 @@ public class FlightController {
 	}
 	
 	@RequestMapping(value = "/api/saveSeats", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MessageDTO> saveSeats(@RequestBody PlaneSeatsDTO seats) {
+	public ResponseEntity<MessageDTO> saveSeats(@Valid @RequestBody PlaneSeatsDTO seats) {
 		return new ResponseEntity<MessageDTO>(flightService.saveSeats(seats), HttpStatus.OK);
 	}
 

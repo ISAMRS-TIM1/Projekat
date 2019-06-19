@@ -3,6 +3,8 @@ package isamrs.tim1.controller;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -64,7 +66,7 @@ public class HotelRoomController {
 
 	@PreAuthorize("hasRole('HOTELADMIN')")
 	@RequestMapping(value = "/api/addSeasonalPrice/{roomNumber}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MessageDTO> addSeasonalPrice(@RequestBody SeasonalPriceDTO seasonalPrice,
+	public ResponseEntity<MessageDTO> addSeasonalPrice(@Valid @RequestBody SeasonalPriceDTO seasonalPrice,
 			@PathVariable("roomNumber") String roomNumber) {
 		return new ResponseEntity<MessageDTO>(hotelRoomService.addSeasonalPrice(seasonalPrice, roomNumber,
 				((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel()),
@@ -73,7 +75,7 @@ public class HotelRoomController {
 
 	@PreAuthorize("hasRole('HOTELADMIN')")
 	@RequestMapping(value = "/api/deleteSeasonalPrice/{roomNumber}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MessageDTO> deleteSeasonalPrice(@RequestBody SeasonalPriceDTO seasonalPrice,
+	public ResponseEntity<MessageDTO> deleteSeasonalPrice(@Valid @RequestBody SeasonalPriceDTO seasonalPrice,
 			@PathVariable("roomNumber") String roomNumber) {
 		return new ResponseEntity<MessageDTO>(hotelRoomService.deleteSeasonalPrice(seasonalPrice, roomNumber,
 				((HotelAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getHotel()),

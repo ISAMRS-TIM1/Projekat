@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import javax.validation.constraints.NotBlank;
+
 import isamrs.tim1.model.PassengerSeat;
 import isamrs.tim1.model.PlaneSegmentClass;
 import isamrs.tim1.model.QuickFlightReservation;
@@ -13,9 +15,16 @@ public class QuickFlightReservationDTO implements Serializable {
 	private static final long serialVersionUID = 8308369767514619103L;
 
 	private long id;
+	
+	@NotBlank
 	private String flightCode;
+	
+	@NotBlank
 	private String seat;
+	
+	@NotBlank
 	private String discount;
+	
 	private Double discountedPrice;
 	private String startDestination;
 	private String endDestination;
