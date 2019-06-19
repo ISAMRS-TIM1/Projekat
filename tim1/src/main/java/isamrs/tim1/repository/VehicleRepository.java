@@ -8,16 +8,19 @@ import javax.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import isamrs.tim1.model.Vehicle;
 
 public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
-	Vehicle findOneByModelAndProducer(String model, String producer);
+	@Query(value = "select v from Vehicle v where v.model = :model and v.producer = :producer")
+	Vehicle findOneByModelAndProducer(@Param("model") String model, @Param("producer") String producer);
 
 	@Lock(LockModeType.PESSIMISTIC_READ)
-	Vehicle findOneByModelAndProducerForRead(String model, String producer);
+	@Query(value = "select v from Vehicle v where v.model = :model and v.producer = :producer")
+	Vehicle findOneByModelAndProducerForRead(@Param("model") String model, @Param("producer") String producer);
 
 	@Query(value = "select distinct v.producer from vehicles v", nativeQuery = true)
 	ArrayList<String> getAllProducers();
