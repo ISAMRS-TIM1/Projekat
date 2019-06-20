@@ -423,16 +423,44 @@ function userEditFormToJSON(firstName, lastName, phone, address, email) {
 function setUpEditHotelForm() {
 	$('#editHotelForm').on('submit', function(e) {
 		e.preventDefault();
+		
+		var name = $("#hotelName").val();
+		
+		if(name == null || name === ""){
+			toastr["error"]("Hotel name must not be empty");
+			return;
+		}
+		
+		var description = $("#hotelDescription").val();
+
+		if(description == null || description === ""){
+			toastr["error"]("Hotel description must not be empty");
+			return;
+		}
+		
+		var latitude = $("#latitude").val();
+		
+		if(latitude == null){
+			toastr["error"]("Hotel latitude must not be empty");
+			return;
+		}
+		
+		var longitude = $("#longitude").val();
+		
+		if(longitude == null){
+			toastr["error"]("Hotel latitude must not be empty");
+			return;
+		}
 		$.ajax({
 			type : 'PUT',
 			url : editHotelURL,
 			headers : createAuthorizationTokenHeader(TOKEN_KEY),
 			contentType : "application/json",
 			data : JSON.stringify({
-				"name" : $("#hotelName").val(),
-				"description" : $("#hotelDescription").val(),
-				"latitude" : $("#latitude").val(),
-				"longitude" : $("#longitude").val(),
+				"name" : name,
+				"description" : description,
+				"latitude" : latitude,
+				"longitude" : longitude,
 			}),
 			dataType : "json",
 			success : function(data) {

@@ -101,9 +101,9 @@ public class PeriodicCheckService {
 			di.setDiscountPerExtraReservation(discountPerExtraReservation);
 			discountInfoRepository.save(di);
 		}
-		//checkReservations();
+		checkReservations();
 		deleteExpiredFlightInvitations();
-		//calculateAverageGrades();
+		calculateAverageGrades();
 	}
 
 	@Scheduled(cron = "${checkReservations.cron}")
