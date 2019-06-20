@@ -173,18 +173,18 @@ function setUpTables(){
 	});
 
 	hotelsTable = $('#hotelsTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 	});
 
 	rentACarsTable = $('#rentACarsTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 	});
 	
 	
 	adminsTable = $("#adminsTable").DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false
 	});
 
@@ -408,7 +408,7 @@ function loadService(name, url) {
 		headers : createAuthorizationTokenHeader(tokenKey),
 		success : function(data) {
 			if (data != null) {
-				$("#serviceName").val(data["name"]);
+				$("#serviceName").html(data["name"]);
 				var grade = data["averageGrade"];
             	
             	if(grade !== 0){

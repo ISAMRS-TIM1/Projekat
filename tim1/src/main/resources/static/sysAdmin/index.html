@@ -113,29 +113,26 @@
 						<table id="editDiscountInfoTable">
 							<tr>
 								<td><label for="discountPercentagePerPoint">Discount
-										percentage per discount point:</label><input type="number"
+										percentage per discount point:</label><div id="separator">&nbsp;</div><input type="number"
 									id="discountPercentagePerPoint" step="0.01" min="0" max="100"
-									oninput="validity.valid||(value='');"></td>
-							</tr>
-							<tr>
+									oninput="validity.valid||(value='');" class="validate">
+									</td>
 								<td><label for="kmsNeededForPoint">Kilometers
-										needed for discount point:</label><input type="number"
+										needed for discount point:</label><div id="separator">&nbsp;</div><input type="number"
 									id="kmsNeededForPoint" step="0.01" min="0" max="100000000"
-									oninput="validity.valid||(value='');"></td>
+									oninput="validity.valid||(value='');" class="validate"></td>
 							</tr>
 							<tr>
-								<td><label for="maxDiscountPoints">Max discount points:</label><input type="number"
+								<td><label for="maxDiscountPoints">Max discount points:</label><div id="separator">&nbsp;</div><input type="number"
 									id="maxDiscountPoints" step="1" min="0" max="50"
-									oninput="validity.valid||(value='');"></td>
-							</tr>
-							<tr>
-								<td><label for="discountPerExtraReservation">Discount per extra reservation:</label><input type="number"
+									oninput="validity.valid||(value='');" class="validate"></td>
+								<td><label for="discountPerExtraReservation">Discount per extra reservation:</label><div id="separator">&nbsp;</div><input type="number"
 									id="discountPerExtraReservation" step="1" min="0" max="30"
-									oninput="validity.valid||(value='');"></td>
+									oninput="validity.valid||(value='');" class="validate"></td>
 							</tr>
 							<tr>
-								<td>
-									<button type="submit" class="addServiceButton btn btn-default">Save
+								<td colspan="2">
+									<button type="submit" id="discountButt" class="addServiceButton btn btn-default">Save
 										changes</button>
 								</td>
 							</tr>
@@ -155,36 +152,28 @@
 								<label for="fname">First name:</label>
 								<div class="input-group">
 									<input class="form-control" type="text" name="fname"
-										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
-										readonly> <span class="input-group-addon edit"><i
-										class="glyphicon glyphicon-edit"></i></span>
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="lname">Last name:</label>
 								<div class="input-group">
 									<input class="form-control" type="text" name="lname"
-										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
-										readonly> <span class="input-group-addon edit"><i
-										class="glyphicon glyphicon-edit"></i></span>
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="phone">Phone:</label>
 								<div class="input-group">
 									<input class="form-control" type="tel" name="phone"
-										pattern="\+[0-9]{12}" title="12 digits starting with +"
-										readonly> <span class="input-group-addon edit"><i
-										class="glyphicon glyphicon-edit"></i></span>
+										pattern="\+[0-9]{12}" title="12 digits starting with +">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="address">Address:</label>
 								<div class="input-group">
 									<input class="form-control" type="text" name="address"
-										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
-										readonly> <span class="input-group-addon edit"><i
-										class="glyphicon glyphicon-edit"></i></span>
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter">
 								</div>
 							</div>
 							<button type="submit" class="btn btn-default" id="saveChanges">Save
@@ -201,109 +190,87 @@
 	<div class="modal fade" id="modalDialog" role="dialog">
 		<div class="modal-dialog modal-lg" role="document">
 			<div class="modal-content" id="serviceDiv">
-				<table id="serviceTable">
-					<tr>
-						<td colspan="2"><input type="text" id="serviceName"
-							class="textInput" readonly></td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<div id="serviceGrade"></div>
-						</td>
-					</tr>
-					<tr>
-						<td><textarea rows="8" cols="20" id="serviceDescription"
-								class="textInput" readonly></textarea></td>
-						<td><div id="mapDiv"></div></td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<div id="formDiv">
-								<form id="registrationForm">
-									<div id="fields">
-										<div id="leftSide">
-											<div class="form-group">
-												<div class="input-group">
-													<span class="input-group-addon"><i
-														class="glyphicon glyphicon-envelope"></i></span> <input
-														class="form-control" type="email" id="adminEmail"
-														placeholder="Email" required autofocus>
+				<div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal">&times;</button>
+			        <h3 class="modal-title" id="serviceName" style="text-align:center;"></h3>
+	      		</div>
+	      		<div class="modal-body">
+					<table id="serviceTable">
+						<tr>
+							<td colspan="2">
+								<div id="serviceGrade"></div>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<div class="input-field">
+									<textarea rows="4" cols="50" name="serviceDesc" id="serviceDescription" readonly class="materialize-textarea"></textarea>
+								</div>
+							</td>
+							<td><div id="mapDiv"></div></td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<div id="formDiv">
+									<form id="registrationForm">
+										<div id="fields">
+											<div id="leftSide">
+												<div class="input-field">
+													<input type="email" name="adminEmail" id="adminEmail" required class="validate">
+													<label for="adminEmail">Email</label>
+												</div>
+												<div class="input-field">
+													<input type="text" name="adminFName" id="adminFirstName" class="validate" pattern="[A-Z][a-z]*" title="Must start with a capital letter" required>
+													<label for="adminFName">First name</label>
+												</div>
+												<div class="input-field">
+													<input type="tel" name="adminPhone" id="adminPhone" class="validate" pattern="\+[0-9]{12}" title="12 digits starting with +" required>
+													<label for="adminPhone">Phone number</label>
 												</div>
 											</div>
-											<div class="form-group">
-												<div class="input-group">
-													<span class="input-group-addon"><i
-														class="glyphicon glyphicon-user"></i></span> <input
-														class="form-control" type="text" id="adminFirstName"
-														placeholder="First name" pattern="[A-Z][a-z]*"
-														title="Must start with a capital letter" required>
+											<div id="separator">&nbsp;</div>
+											<div id="rightSide">
+												<div class="input-field">
+													<input type="password" name="adminPass" id="adminPassword" class="validate" required>
+													<label for="adminPass">Password</label>
 												</div>
-											</div>
-											<div class="form-group">
-												<div class="input-group">
-													<span class="input-group-addon"><i
-														class="glyphicon glyphicon-phone"></i></span> <input
-														class="form-control" type="tel" id="adminPhone"
-														placeholder="Phone number" pattern="\+[0-9]{12}"
-														title="12 digits starting with +" required>
+												<div class="input-field">
+													<input type="text" name="adminLName" id="adminLastName" class="validate" pattern="[A-Z][a-z]*" title="Must start with a capital letter" required>
+													<label for="adminLName">Last name</label>
 												</div>
-											</div>
-										</div>
-										<div id="separator">&nbsp</div>
-										<div id="rightSide">
-											<div class="form-group">
-												<div class="input-group">
-													<span class="input-group-addon" id="eye"><i
-														class="glyphicon glyphicon-eye-close" id="eye-icon"></i></span> <input
-														class="form-control" type="password" id="adminPassword"
-														placeholder="Password" required>
-												</div>
-											</div>
-											<div class="form-group">
-												<div class="input-group">
-													<span class="input-group-addon"><i
-														class="glyphicon glyphicon-user"></i></span> <input
-														class="form-control" type="text" id="adminLastName"
-														placeholder="Last name" pattern="[A-Z][a-z]*"
-														title="Must start with a capital letter" required>
-												</div>
-											</div>
-											<div class="form-group">
-												<div class="input-group">
-													<span class="input-group-addon"><i
-														class="glyphicon glyphicon-map-marker"></i></span> <input
-														class="form-control" type="text" id="adminAddress"
-														placeholder="Address" required>
+												<div class="input-field">
+													<input type="text" name="adminAddress" id="adminAddress" class="validate" required>
+													<label for="adminAddress">Address</label>
 												</div>
 											</div>
 										</div>
-									</div>
-									<div id="buttons">
-										<button id="registerNewAdmin" type="submit"
-											class="btn btn-default">Register new admin</button>
-									</div>
-								</form>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<table id="adminsTable" class="table display table-bordered">
-								<thead>
-									<tr>
-										<th>Email</th>
-										<th>First name</th>
-										<th>Last name</th>
-										<th>Address</th>
-										<th>Phone number</th>
-									</tr>
-								</thead>
-								<tbody>
-								</tbody>
-							</table>
-						</td>
-					</tr>
-				</table>
+										<div id="buttons">
+											<button id="registerNewAdmin" type="submit"
+												class="btn btn-default">Register new admin</button>
+										</div>
+									</form>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<table id="adminsTable" class="table display table-bordered">
+									<thead>
+										<tr>
+											<th>Email</th>
+											<th>First name</th>
+											<th>Last name</th>
+											<th>Address</th>
+											<th>Phone number</th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+							</td>
+						</tr>
+					</table>
+				</div>
 			</div>
 		</div>
 	</div>
