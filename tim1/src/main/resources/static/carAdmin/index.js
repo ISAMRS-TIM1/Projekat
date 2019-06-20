@@ -13,7 +13,8 @@ var editBranchMap = null;
 var addBranchMap = null;
 
 /* URLs */
-const basicInfoURL = "/api/getRentACarInfo"
+const basicInfoURL = "/api/getRentACarInfo";
+const editRentacarURL = "/api/editRentACar";
 const loadUserInfoURL = "/api/getUserInfo";
 const logoutURL = "../logout";
 const loadBranchOfficesURL = "/api/getBranchOffices";
@@ -33,6 +34,8 @@ const loadMonthlyChartDataURL = "/api/getMonthlyGraphData";
 const getIncomeOfRentACarURL = "/api/getIncomeOfRentACar";
 const loadQuickReservationsURL = "/api/getQuickVehicleReservations";
 const addQuickReservationURL = "/api/createQuickVehicleReservation";
+
+var oldRentacarName = null;
 
 $(document).ready(function() {
 	/* INITIALIZING TOASTR, TABLES, MAPS AND LOADING BASIC RENT A CAR DATA */
@@ -81,6 +84,40 @@ $(document).ready(function() {
 		} else {
 			$(this).siblings().first().prop('readonly', 'true');
 		}
+	});
+	
+	$("#saveChangesBasic").click(function(e){
+		e.preventDefault();
+		
+		var name = $("#rentACarName").val();
+		
+		if(name == null || name === ""){
+			toastr["error"]("Rent a car name must not be empty");
+			return;
+		}
+		
+		var description = $("#rentACarDescription").val();
+		
+		if(description == null || description === ""){
+			toastr["error"]("Rent a car description must not be empty");
+			return;
+		}
+		
+		var latitude = $("#basicLatitude").val();
+		
+		if(latitude == null){
+			toastr["error"]("Rent a car latitude must not be empty");
+			return;
+		}
+		
+		var longitude = $("#basicLongitude").val();
+		
+		if(longitude == null){
+			toastr["error"]("Rent a car longitude must not be empty");
+			return;
+		}
+		
+		editRentacar(name, description, latitude, longitude);
 	});
 	
 	/* PROFILE EVENTS */
@@ -228,6 +265,7 @@ function loadBasicData() {
 		success: function(data){
 			if(data != null){
 				$("#rentACarName").val(data.name);
+				oldRentacarName = data["name"];
 				$("#rentACarDescription").text(data.description);
 				var grade = data["averageGrade"];
 	        	
@@ -238,12 +276,44 @@ function loadBasicData() {
 	        	var rating = "<div class='star-ratings-sprite'><span style='width:" + grade 
 	        	+ "%' class='star-ratings-sprite-rating'></span></div><p>" + roundedGrade + "/5.0";
 				$("#averageGrade").html(rating);
+				$("#basicLatitude").val(data["latitude"]);
+				$("#basicLongitude").val(data["longitude"]);
 				racMap = setUpMap(data["latitude"], data["longitude"], 'basicMapDiv', true, racMap, '#basicLatitude', '#basicLongitude');
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
 			alert("AJAX ERROR: " + textStatus);
 		}
+	});
+}
+
+function editRentacar(name, description, latitude, longitude) {
+	$.ajax({
+		type : 'PUT',
+		url : editRentacarURL,
+		contentType : 'application/json',
+		dataType : "json",
+		headers: createAuthorizationTokenHeader(TOKEN_KEY),
+		data : rentacarFormToJSON(oldRentacarName, name, description, latitude, longitude),
+		success: function(data){
+			toastr[data.toastType](data.message);
+			
+			if(data.toastType === "success")
+				loadBasicData();
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
+function rentacarFormToJSON(oldName, name, description, latitude, longitude){
+	return JSON.stringify({
+		"name": name,
+		"oldName": oldName,
+		"description": description,
+		"latitude": latitude,
+		"longitude": longitude,
 	});
 }
 

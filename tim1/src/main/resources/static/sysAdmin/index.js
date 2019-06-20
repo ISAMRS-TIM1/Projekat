@@ -39,7 +39,7 @@ $(document).ready(function() {
 	
 	
 	$("#logout").click(function() {
-		removeJwtToken(TOKEN_KEY);
+		removeJwtToken(tokenKey);
 		document.location.href = logoutURL;
 	});
 	

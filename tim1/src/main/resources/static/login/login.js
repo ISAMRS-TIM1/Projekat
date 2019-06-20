@@ -10,6 +10,8 @@ var adminPasswordURL = "../changePassword";
 var TOKEN_KEY = "jwtToken";
 
 $(document).ready(function(){
+	initToastr();
+	
 	$("#loginForm").submit(function(e){
 		e.preventDefault();
 		
