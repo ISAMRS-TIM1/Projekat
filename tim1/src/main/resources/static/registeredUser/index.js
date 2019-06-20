@@ -309,19 +309,6 @@ $(document)
                         $(this).tab('show');
                     });
 
-                    $('.edit')
-                        .click(
-                            function() {
-                                if ($(this).siblings().first().is(
-                                        '[readonly]')) {
-                                    $(this).siblings().first()
-                                        .removeAttr('readonly');
-                                } else {
-                                    $(this).siblings().first().prop(
-                                        'readonly', 'true');
-                                }
-                            });
-                    
                     $('#friendsTable tbody').on('click', 'tr', function(event) {
                     	var tgt = $(event.target);
                     	var table = $("#friendsTable").DataTable();
@@ -402,10 +389,39 @@ $(document)
         	                function(e) {
         	                    e.preventDefault();
         	                    let firstName = $('input[name="fname"]').val();
-        	                    let lastName = $('input[name="lname"]').val();
-        	                    let phone = $('input[name="phone"]').val();
-        	                    let address = $('input[name="address"]').val();
-        	                    let email = $('#email').text();
+        	            		
+        	            		if(firstName == null || firstName === ""){
+        	            			toastr["error"]("First name must not be empty");
+        	            			return;
+        	            		}
+        	            		
+        	            		let lastName = $('input[name="lname"]').val();
+        	            		
+        	            		if(lastName == null || lastName === ""){
+        	            			toastr["error"]("Last name must not be empty");
+        	            			return;
+        	            		}
+        	            		
+        	            		let phone = $('input[name="phone"]').val();
+        	            		
+        	            		if(phone == null || phone === ""){
+        	            			toastr["error"]("Phone must not be empty");
+        	            			return;
+        	            		}
+        	            		
+        	            		let address = $('input[name="address"]').val();
+        	            		
+        	            		if(address == null || address === ""){
+        	            			toastr["error"]("Address must not be empty");
+        	            			return;
+        	            		}
+        	            		
+        	            		let email = $('#email').text();
+
+        	            		if(email == null || email === ""){
+        	            			toastr["error"]("Email must not be empty");
+        	            			return;
+        	            		}
         	
         	                    $.ajax({
         	                        type: 'PUT',

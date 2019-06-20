@@ -597,10 +597,39 @@ function setUpEditForm() {
 			function(e) {
 				e.preventDefault();
 				let firstName = $('input[name="fname"]').val();
+				
+				if(firstName == null || firstName === ""){
+					toastr["error"]("First name must not be empty");
+					return;
+				}
+				
 				let lastName = $('input[name="lname"]').val();
+				
+				if(lastName == null || lastName === ""){
+					toastr["error"]("Last name must not be empty");
+					return;
+				}
+				
 				let phone = $('input[name="phone"]').val();
+				
+				if(phone == null || phone === ""){
+					toastr["error"]("Phone must not be empty");
+					return;
+				}
+				
 				let address = $('input[name="address"]').val();
+				
+				if(address == null || address === ""){
+					toastr["error"]("Address must not be empty");
+					return;
+				}
+				
 				let email = $('#email').text();
+
+				if(email == null || email === ""){
+					toastr["error"]("Email must not be empty");
+					return;
+				}
 
 				$.ajax({
 					type : 'PUT',
