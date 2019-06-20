@@ -187,7 +187,27 @@ $(document).ready(function() {
 	$(document).on('click', '#editBranch', function(e) {
 		e.preventDefault();
 		let newName = $("#editBranchOfficeForm input[name='name']").val();
-		editBranchOffice(oldName, newName, $('#branchLatitude').val(), $('#branchLongitude').val());
+		
+		if(newName == null || newName === ""){
+			toastr["error"]("Branch office name must not be null");
+			return;
+		}
+		
+		var latitude = $('#branchLatitude').val();
+		
+		if(latitude == null){
+			toastr["error"]("Branch office latitude must not be null");
+			return;
+		}
+		
+		var longitude = $('#branchLongitude').val();
+		
+		if(longitude == null){
+			toastr["error"]("Branch office longitude must not be null");
+			return;
+		}
+		
+		editBranchOffice(oldName, newName, latitude, longitude);
 		oldName = newName;
 	});
 	
@@ -231,13 +251,55 @@ $(document).ready(function() {
 	
 	$(document).on('click', '#editVehicle', function(e) {
 		e.preventDefault();
+		
 		let newProducer = $('#editVehicleForm input[name="producer"]').val();
+		
+		if(newProducer == null || newProducer === ""){
+			toastr["error"]("Vehicle producer must not be null");
+			return;
+		}
+		
 		let newModel = $('#editVehicleForm input[name="model"]').val();
+		
+		if(newModel == null || newModel === ""){
+			toastr["error"]("Vehicle model must not be null");
+			return;
+		}
+		
 		let newYear = $('#editVehicleForm input[name="year"]').val();
+		
+		if(newYear == null || newYear === ""){
+			toastr["error"]("Vehicle year must not be null");
+			return;
+		}
+		
 		let newSeats = $('#editVehicleForm input[name="seats"]').val();
+		
+		if(newSeats == null || newSeats === ""){
+			toastr["error"]("Vehicle seats must not be null");
+			return;
+		}
+		
 		let newPrice = $('#editVehicleForm input[name="price"]').val();
+		
+		if(newPrice == null || newPrice === ""){
+			toastr["error"]("Vehicle price must not be null");
+			return;
+		}
+		
 		let newFuel = $('#fuelTypeEdit').val();
+		
+		if(newFuel == null || newFuel === ""){
+			toastr["error"]("Vehicle fuel must not be null");
+			return;
+		}
+		
 		let newType = $('#vehicleTypeEdit').val();
+		
+		if(newType == null || newType === ""){
+			toastr["error"]("Vehicle type must not be null");
+			return;
+		}
 		
 		editVehicle(oldModel, oldProducer, newProducer, newModel, newYear, newSeats, newPrice, newType, newFuel);
 		
@@ -424,14 +486,34 @@ function loadBranchOffices() {
 
 function addBranchOffice() {
 	let token = getJwtToken("jwtToken");
+	
 	let name = $("#addBranchOfficeForm input[name='name']").val();
-	// extract latitude and longitude from map marker
+	
+	if(name == null || name === ""){
+		toastr["error"]("Branch office name must not be empty");
+		return;
+	}
+	
+	var latitude = $('#addBranchLatitude').val();
+	
+	if(latitude == null){
+		toastr["error"]("Branch office latitude must not be empty");
+		return;
+	}
+	
+	var longitude = $('#addBranchLongitude').val();
+	
+	if(longitude == null){
+		toastr["error"]("Branch office longitude must not be empty");
+		return;
+	}
+	
 	$.ajax({
 		type : 'POST',
 		url : addBranchOfficeURL,
 		contentType: "application/json",
 		dataType : "json",
-		data: branchOfficeFormToJSON(name, $('#addBranchLatitude').val(), $('#addBranchLongitude').val()),
+		data: branchOfficeFormToJSON(name, latitude, longitude),
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
 			toastr[data.toastType](data.message);
@@ -573,14 +655,62 @@ function loadVehicles() {
 
 function addVehicle() {
 	let token = getJwtToken("jwtToken");
+	
 	let producer = $('input[name="producer"]').val();
+	
+	if(producer == null || producer === ""){
+		toastr["error"]("Vehicle producer must not be null");
+		return;
+	}
+	
 	let model = $('input[name="model"]').val();
+	
+	if(model == null || model === ""){
+		toastr["error"]("Vehicle model must not be null");
+		return;
+	}
+	
 	let year = $('input[name="year"]').val();
+	
+	if(year == undefined || year === ""){
+		toastr["error"]("Vehicle production year must not be null");
+		return;
+	}
+	
 	let seats = $('input[name="seats"]').val();
+	
+	if(seats == undefined || seats === ""){
+		toastr["error"]("Vehicle seats must not be null");
+		return;
+	}
+	
 	let price = $('input[name="price"]').val();
+	
+	if(price == undefined || price === ""){
+		toastr["error"]("Vehicle price must not be null");
+		return;
+	}
+	
 	let vehicleType = $('#vehicleTypeAdd').val();
+	
+	if(vehicleType == undefined || vehicleType === ""){
+		toastr["error"]("Vehicle type must not be null");
+		return;
+	}
+	
 	let fuelType = $('#fuelTypeAdd').val();
+	
+	if(fuelType == undefined || fuelType === ""){
+		toastr["error"]("Vehicle fuel type must not be null");
+		return;
+	}
+	
 	let quantity = $('input[name="quantity"]').val();
+	
+	if(quantity == undefined || quantity === ""){
+		toastr["error"]("Vehicle quantity must not be null");
+		return;
+	}
 	
 	$.ajax({
 		type : 'POST',
