@@ -1,5 +1,5 @@
 body {
-	background: #0D63FF;
+	background: #f4f7f6;
 }
 
 #topMenu {
@@ -7,56 +7,42 @@ body {
 }
 
 #tabsDiv {
-	width: 85%;
+	width: 90%;
 	margin-top: 1%;
-	margin-left: 5%;
-}
-
-#logout {
-	width: 10%;
-	margin-right: 0% !important;
-	background: none;
-	color: white;
-	font-size: 1.4vw;
-	margin-top: 0.8vw;
-	font-style: italic;
-	text-decoration: underline;
+	margin-left: auto;
+	margin-right:auto;
+	display: block;
 }
 
 a[data-toggle="tab"] {
-	border-radius: 2vw 2vw 0vw 0vw !important;
-	background: #5994FF;
-	border: 0.18vw solid #B27A00 !important;
 	font-size: 1.3vw;
-	color: white;
+	color:black;
 }
 
 #basicInfo {
 	text-align: center;
-	padding-bottom: 3vw;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	padding-bottom: 1vw;
+	margin-top: 1%;
 	width: 50%;
-    margin-left: 25%;
 }
 
 #rentACarName{
-	background-color: #0D63FF;
-    color: white;
     text-align: center;
     font-size: 4.5vw;
-    width: 100%;
+    height: 4.5vw;
 }
 
 .textInput{
 	border: none;
 	resize: none;
-}
-.textInput:focus{
-	border: 1px solid black;
-	resize: none;
+	background: none;
+	width: 100%;
 }
 
 #averageGrade {
-	color:white;
 	font-size: 1.5vw;
 }
 
@@ -67,10 +53,7 @@ a[data-toggle="tab"] {
 }
 
 #rentACarDescription {
-	background-color: #0D63FF;
-	color:white;
 	font-size: 1.5vw;
-	width: 100%;
 }
 
 .map {
@@ -80,6 +63,10 @@ a[data-toggle="tab"] {
 	width: 65vw;
 	height: 60vh;
 	border-radius: 2vw 2vw 2vw 2vw;
+}
+
+#addBranchOffice, #addVehicle {
+	margin-top: 1%;
 }
 
 #branchMapDiv, #addBranchOfficeMap, #editBranchOfficeMap{
@@ -92,22 +79,15 @@ a[data-toggle="tab"] {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
-	background: #5994FF;
-	color: white;
 	font-size: 1.6vw;
-	border: 0.16vw solid #B27A00;
-	border-radius: 2vw 2vw 2vw 2vw;
 	margin-top: 1%;
-	margin-bottom: 2vw;
+	margin-bottom: 1%;
 }
 
 #branchTableDiv {
 	width: 70%;
-	height: 30vw; margin-left : 13%;
-	margin-top: 5%;
-	background: #5994FF;
-	border: 0.24vw solid #B27A00;
-	border-radius: 4vw 1.6vw;
+	height: 30vw;
+	margin-top: 1%;
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
@@ -115,16 +95,17 @@ a[data-toggle="tab"] {
 }
 
 #vehicleTableDiv {
-	width: 100%;
-	height: 30vw; margin-left : 13%;
-	margin-top: 5%;
-	background: #5994FF;
-	border: 0.24vw solid #B27A00;
-	border-radius: 4vw 1.6vw;
+	width: 80%;
+	height: 30vw;
+	margin-top: 1%;
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
 	padding: 2vw;
+}
+
+#branch, #vehicle {
+	text-align: center;
 }
 
 #branchButtons, #vehicleButtons {
@@ -134,14 +115,6 @@ a[data-toggle="tab"] {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
-}
-
-#addBranchOffice, #saveChangesBranch, #addVehicle {
-	background: #5994FF;
-	color: white;
-	font-size: 1.6vw;
-	border: 0.16vw solid #B27A00;
-	border-radius: 2vw 2vw 2vw 2vw;
 }
 
 #profileContent {
@@ -167,15 +140,11 @@ a[data-toggle="tab"] {
 	margin-top: -6%;
 }
 
-#saveChanges {
+#saveChanges, #changePasswordButton {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
-	background: #5994FF;
-	color: white;
 	font-size: 1.6vw;
-	border: 0.16vw solid #B27A00;
-	border-radius: 2vw 2vw 2vw 2vw;
 }
 
 #email {
@@ -183,16 +152,11 @@ a[data-toggle="tab"] {
 }
 
 .dialogStyle {
-	background: #0D63FF;
 	text-align: center;
 }
 
-#addBranch, #editBranch, #deleteBranch {
-	background: #5994FF;
-	color: white;
-	font-size: 1.6vw;
-	border: 0.16vw solid #B27A00;
-	border-radius: 2vw 2vw 2vw 2vw;
+.modal-body, .modal-header {
+	background: #f4f7f6;
 }
 
 #chartDiv {
@@ -202,22 +166,23 @@ a[data-toggle="tab"] {
 	height: 70%;
 	display: block;
 	margin-left: auto;
+	margin-bottom: 1%;
 	margin-right: auto;
+}
+
+#addVehicleForm .form-group, #quickTable .form-group {
+	width: 20vw !important;
 }
 
 #reportsDiv {
 	width: 70%;
 	height: 50vw;
-	margin-left : 13%;
 	margin-top: 1%;
-	background: #5994FF;
-	border: 0.24vw solid #B27A00;
-	border-radius: 4vw 1.6vw;
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
 	padding: 2vw;
-	margin-bottom: 2%;
+	margin-bottom: 1%;
 }
 
 #income {
@@ -229,32 +194,33 @@ a[data-toggle="tab"] {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
-	background: #5994FF;
-	color: white;
 	font-size: 1.6vw;
-	border: 0.16vw solid #B27A00;
-	border-radius: 2vw 2vw 2vw 2vw;
 }
 
 #quickDiv {
-	margin-top: 2%;
-	width: 85%;
-	margin-left: 15%;
+	margin-top: 1%;
+	width: 70%;
 	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+
+#quickReservationsTableDiv {
+	width: 70%;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
 }
 
 #quickTable {
-	text-align: center;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 67%;
 	border-collapse: separate;
 	border-spacing: 20px;
-}
-
-#quickCreateTD {
-	transform: translate(188%, 0%);
-}
-
-#quickCreate {
-	width:100%;
 }
 
 .star-ratings-sprite {
