@@ -1846,7 +1846,16 @@ function loadFlight(code) {
 					});
 				}
 				$("#resPricePerBag").text(data["pricePerBag"]);
-				$("#resAverageGrade").text(data["averageGrade"]);
+				var grade = data["averageGrade"];
+	        	
+	        	if(grade !== 0){
+	        		grade = grade/5*100;
+	        	}
+	        	var roundedGrade = Math.round(data["averageGrade"]*10)/10;
+	        	var rating = "<div class='star-ratings-sprite'><span style='width:" + grade 
+	        	+ "%' class='star-ratings-sprite-rating'></span></div><p>" + roundedGrade + "/5.0";
+				$("#resAverageGrade").html(rating);
+				
 				getPlaneSeats(code, 1);
 			}
 		},

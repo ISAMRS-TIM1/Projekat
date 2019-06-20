@@ -934,6 +934,14 @@ function searchVehicles(producer, models, vehicleTypes, fuelTypes, priceMax, num
                 table.clear().draw();
 
                 for (let vehicle of data) {
+                	var grade = vehicle["averageGrade"];
+    	        	
+    	        	if(grade !== 0){
+    	        		grade = grade/5*100;
+    	        	}
+    	        	var roundedGrade = Math.round(vehicle["averageGrade"]*10)/10;
+    	        	var rating = "<div class='star-ratings-sprite'><span style='width:" + grade 
+    	        	+ "%' class='star-ratings-sprite-rating'></span></div><p>" + roundedGrade + "/5.0";
                     table.row.add([
                     	vehicle.id,
                         vehicle.producer,
@@ -943,7 +951,7 @@ function searchVehicles(producer, models, vehicleTypes, fuelTypes, priceMax, num
                         vehicle.numberOfSeats,
                         vehicle.pricePerDay,
                         vehicle.yearOfProduction,
-                        vehicle.averageGrade
+                        rating
                     ]).draw(false);
                 }
             }
@@ -1658,7 +1666,15 @@ function renderHotels(data) {
         var table = $("#hotelsTable").DataTable();
         table.clear().draw();
         $.each(data, function(i, val) {
-            table.row.add([val.name, val.averageGrade]).draw(false);
+        	var grade = val["averageGrade"];
+        	
+        	if(grade !== 0){
+        		grade = grade/5*100;
+        	}
+        	var roundedGrade = Math.round(val["averageGrade"]*10)/10;
+        	var rating = "<div class='star-ratings-sprite'><span style='width:" + grade 
+        	+ "%' class='star-ratings-sprite-rating'></span></div><p>" + roundedGrade + "/5.0";
+            table.row.add([val.name, rating]).draw(false);
         });
     }
 }
@@ -1676,7 +1692,15 @@ function loadHotel(name) {
 		success : function(data) {
 			if (data != null) {
 				$("#hotelName").val(data["name"]);
-				$("#hotelGrade").text(data["averageGrade"]);
+				var grade = data["averageGrade"];
+	        	
+	        	if(grade !== 0){
+	        		grade = grade/5*100;
+	        	}
+	        	var roundedGrade = Math.round(data["averageGrade"]*10)/10;
+	        	var rating = "<div class='star-ratings-sprite'><span style='width:" + grade 
+	        	+ "%' class='star-ratings-sprite-rating'></span></div><p>" + roundedGrade + "/5.0";
+				$("#hotelGrade").val(rating);
 				$("#hotelDescription").text(data["description"]);
 				if (hotelMap != null) {
 					hotelMap.off();
@@ -1779,7 +1803,15 @@ function loadFlight(code) {
                 }
                 $("#flightConnections").text(data["description"]);
                 $("#pricePerBag").text(data["pricePerBag"]);
-                $("#averageGrade").text(data["averageGrade"]);
+                var grade = data["averageGrade"];
+	        	
+	        	if(grade !== 0){
+	        		grade = grade/5*100;
+	        	}
+	        	var roundedGrade = Math.round(data["averageGrade"]*10)/10;
+	        	var rating = "<div class='star-ratings-sprite'><span style='width:" + grade 
+	        	+ "%' class='star-ratings-sprite-rating'></span></div><p>" + roundedGrade + "/5.0";
+                $("#averageGrade").val(rating);
                 getPlaneSeats(code);
             }
         },
@@ -1792,8 +1824,16 @@ function loadFlight(code) {
 function renderRooms(data) {
 	roomsTable.clear().draw();
 	$.each(data, function(i, val) {
+		var grade = val["averageGrade"];
+    	
+    	if(grade !== 0){
+    		grade = grade/5*100;
+    	}
+    	var roundedGrade = Math.round(val["averageGrade"]*10)/10;
+    	var rating = "<div class='star-ratings-sprite'><span style='width:" + grade 
+    	+ "%' class='star-ratings-sprite-rating'></span></div><p>" + roundedGrade + "/5.0";
 		roomsTable.row.add(
-				[ val.roomNumber, val.price, val.numberOfPeople, val.averageGrade,
+				[ val.roomNumber, val.price, val.numberOfPeople, rating,
 					`<button onclick="reserveRoomNumber('${val.roomNumber}', ${val.price})" class="btn btn-default">Reserve</a>` ]).draw(false);
 	});
 }
