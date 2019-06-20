@@ -94,7 +94,7 @@ a[data-toggle="tab"] {
 	overflow-y: auto;
 }
 
-#serviceName, #newServiceName {
+#newServiceName {
 	font-size: 1.6vw;
 }
 
@@ -103,29 +103,41 @@ a[data-toggle="tab"] {
 	width: 100%;
 }
 
+#editDiscountInfoTable tr {
+	text-align:center;
+}
+
+#editDiscountInfoTable input {
+	text-align:center;
+}
+
 #kmsNeededForPoint, #discountPercentagePerPoint, #maxDiscountPoints, #discountPerExtraReservation {
 	font-size: 1.6vw;
-	margin-left: 3vw;
+	width: 20vw;
 }
 
 label[for=kmsNeededForPoint], label[for=discountPercentagePerPoint], label[for=maxDiscountPoints], label[for=discountPerExtraReservation] {
 	font-size: 1.6vw;
-	margin-left: 10vw;
 }
 
 /*
 * New admin registration
 */
 #formDiv {
-	margin: 0;
 	background: #f4f7f6;
-	border: 0.24vw solid #B27A00;
-	border-radius: 4vw 1.6vw;
+	margin-left:auto;
+	margin-right:auto;
+	display:block;
 }
 
 #registrationForm {
 	padding: 2.8vw;
 	padding-bottom: 1.6vw;
+	text-align:center;
+}
+
+.input-field input {
+	width:20vw !important;
 }
 
 #fields div {
@@ -145,12 +157,13 @@ label[for=kmsNeededForPoint], label[for=discountPercentagePerPoint], label[for=m
 }
 
 #registerNewAdmin {
-	margin-left: 25%;
-	margin-right: 25%;
-	background: #f4f7f6;;
-	color:black;
-	border: 0.16vw solid #B27A00;
-	border-radius: 2vw 2vw 2vw 2vw;
+	margin-left: auto;
+	margin-right:auto;
+	display:block;
+}
+
+#userEditForm input {
+	width:40vw;
 }
 
 /* New service registration */
@@ -158,6 +171,10 @@ label[for=kmsNeededForPoint], label[for=discountPercentagePerPoint], label[for=m
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
+}
+
+#discountButt {
+	margin-top:10%;
 }
 
 
