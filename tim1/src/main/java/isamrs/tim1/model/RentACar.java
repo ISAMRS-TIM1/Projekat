@@ -52,7 +52,6 @@ public class RentACar extends Service implements Serializable {
 		admins = new HashSet<RentACarAdmin>();
 		vehicles = new HashSet<Vehicle>();
 		reservations = new HashSet<VehicleReservation>();
-
 	}
 
 	public RentACar(ServiceDTO rentACar) {

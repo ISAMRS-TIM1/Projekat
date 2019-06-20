@@ -29,6 +29,7 @@ public class DetailedReservationDTO implements Serializable {
 	private boolean done;
 	private Double flightGrade;
 	private Double airlineGrade;
+	private double price;
 	private HotelReservationDTO hotelRes;
 	private VehicleReservationDTO vehicleRes;
 	private Long id;
@@ -44,6 +45,7 @@ public class DetailedReservationDTO implements Serializable {
 		this.departureTime = sdf.format(flightRes.getFlight().getDepartureTime());
 		this.landingTime = sdf.format(flightRes.getFlight().getLandingTime());
 		this.roundTrip = flightRes.getFlight().isRoundTrip();
+		this.price = flightRes.getPrice();
 		this.setFlightGrade(flightRes.getGrade());
 		try {
 			this.airlineGrade = flightRes.getFlight().getAirline().getServiceGrades().stream()
@@ -222,5 +224,17 @@ public class DetailedReservationDTO implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 }

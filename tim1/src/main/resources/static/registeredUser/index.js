@@ -2920,6 +2920,7 @@ function loadReservation(res_id) {
                 $("#depTimeRes").text(data["departureTime"]);
                 $("#landTimeRes").text(data["landingTime"]);
                 $("#flightResID").val(data["id"]);
+                $("#flightPriceRes").val(data["price"]);
                 
                 if (data["roundTrip"]) {
                 	$("#resRetDepTime").text(data["returningDepartureTime"]);
@@ -2969,6 +2970,7 @@ function loadReservation(res_id) {
                 	$("#toDateRes").text(moment(data["hotelRes"]["toDate"]).format('DD.MM.YYYY'));
                 	$("#roomNumberRes").text(data["hotelRes"]["hotelRoomNumber"]);
                 	$("#hotelResId").text(data["hotelRes"]["hotelName"]);
+                	$("#hotelPriceRes").val(data["hotelRes"]["price"]);
                 	$('#addServRes').find('option').remove();
                 	var addServices = $("#addServRes");
                     if (data["hotelRes"]["additionalServiceNames"].length == 0) {
@@ -3000,6 +3002,7 @@ function loadReservation(res_id) {
                 	$("#bOfficeRes").text(data["vehicleRes"]["branchOfficeName"]);
                 	$("#modelCarRes").text(data["vehicleRes"]["vehicleModel"]);
                 	$("#prodCarRes").text(data["vehicleRes"]["vehicleProducer"]);
+                	$("#carPriceRes").val(data["vehicleRes"]["price"]);
                 	
                 	if(data["vehicleRes"]["done"]){
                 		createStarRating("rentacarRating", data["vehicleRes"]["rentacarGrade"], "sendServiceGrade(this)");// add params

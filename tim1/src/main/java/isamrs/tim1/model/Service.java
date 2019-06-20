@@ -44,7 +44,7 @@ public abstract class Service implements Serializable {
 	private Location location;
 
 	@OneToMany(mappedBy = "service", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<ServiceGrade> serviceGrades = new HashSet<ServiceGrade>();
+	private Set<ServiceGrade> serviceGrades;
 
 	public Service() {
 		super();
@@ -55,7 +55,7 @@ public abstract class Service implements Serializable {
 	public Service(ServiceDTO serviceDTO) {
 		super();
 		this.location = new Location();
-		serviceGrades = new HashSet<ServiceGrade>();
+		this.serviceGrades = new HashSet<ServiceGrade>();
 		this.name = serviceDTO.getName();
 		this.description = serviceDTO.getDescription();
 		this.location.setLatitude(serviceDTO.getLatitude());
