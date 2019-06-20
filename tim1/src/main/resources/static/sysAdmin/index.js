@@ -190,6 +190,7 @@ function setUpTables(){
 
 
 	$('#airlinesTable tbody').on('click', 'tr', function() {
+		if(this.textContent === "No data available in table") return;
 		airlinesTable.$('tr.selected').removeClass('selected');
 		$(this).addClass('selected');
 		currentService = airlinesTable.row(this).data()[0];
@@ -199,6 +200,7 @@ function setUpTables(){
 	});
 
 	$('#hotelsTable tbody').on('click', 'tr', function() {
+		if(this.textContent === "No data available in table") return;
 		hotelsTable.$('tr.selected').removeClass('selected');
 		$(this).addClass('selected');
 		currentService = hotelsTable.row(this).data()[0];
@@ -208,6 +210,7 @@ function setUpTables(){
 	});
 
 	$('#rentACarsTable tbody').on('click', 'tr', function() {
+		if(this.textContent === "No data available in table") return;
 		rentACarsTable.$('tr.selected').removeClass('selected');
 		$(this).addClass('selected');
 		currentService = rentACarsTable.row(this).data()[0];

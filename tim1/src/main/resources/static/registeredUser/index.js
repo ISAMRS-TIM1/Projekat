@@ -154,6 +154,7 @@ $(document)
                     });
                     
                     $('#airlineDestinationsTable tbody').on('click', 'tr', function() {
+                    	if(this.textContent === "No data available in table") return;
                         destinationsTable.$('tr.selected').removeClass('selected');
                         $(this).addClass('selected');
                         var longitude = destinationsTable.row(this).data()[1];
@@ -232,6 +233,7 @@ $(document)
                     });
 
                     $('#flightsTable tbody').on('click', 'tr', function() {
+                    	if(this.textContent === "No data available in table") return;
                         flightsTable.$('tr.selected').removeClass('selected');
                         $(this).addClass('selected');
                         shownFlight = flightsTable.row(this).data()[0];
@@ -240,6 +242,7 @@ $(document)
                     });
                     
                     $('#airlinesTable tbody').on('click', 'tr', function() {
+                    	if(this.textContent === "No data available in table") return;
                     	airlinesTable.$('tr.selected').removeClass('selected');
                         $(this).addClass('selected');
                         shownAirline = airlinesTable.row(this).data()[0];
@@ -248,6 +251,7 @@ $(document)
                     });
                     
                     $('#reservationsTable tbody').on('click', 'tr', function() {
+                    	if(this.textContent === "No data available in table") return;
                 		reservationsTable.$('tr.selected').removeClass('selected');
                         $(this).addClass('selected');
                         shownReservation = reservationsTable.row(this).data()[0];
@@ -323,6 +327,7 @@ $(document)
                             });
                     
                     $('#friendsTable tbody').on('click', 'tr', function(event) {
+                    	if(this.textContent === "No data available in table") return;
                     	var tgt = $(event.target);
                     	var table = $("#friendsTable").DataTable();
                     	if (tgt[0].innerHTML == "Accept") {
@@ -333,6 +338,7 @@ $(document)
                     });
 
                     $('#usersTable tbody').on('click', 'tr', function(event) {
+                    	if(this.textContent === "No data available in table") return;
                     	var tgt = $(event.target);
                         if (tgt[0].id == "sendInvButton") {
                             var table = $("#usersTable").DataTable();
@@ -547,6 +553,7 @@ $(document)
                     var currentVehicleModel = null;
                     var currentVehiclePrice = null;
                     $(document).on('click', '#vehiclesTable tbody tr', function() {
+                    	if(this.textContent === "No data available in table") return;
                     	let table = $("#vehiclesTable").DataTable();
                     	let rowData = table.row(this).data();
                 		let title = rowData[1] + " " + rowData[2];
@@ -1625,6 +1632,7 @@ function setUpTablesHotelsTab() {
 	});
 
 	$('#hotelsTable tbody').on('click', 'tr', function() {
+		if(this.textContent === "No data available in table") return;
 		hotelsTable.$('tr.selected').removeClass('selected');
 		$(this).addClass('selected');
 		shownHotel = hotelsTable.row(this).data()[0];

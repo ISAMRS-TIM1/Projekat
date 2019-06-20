@@ -147,7 +147,9 @@ public class AuthenticationService {
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public MessageDTO registerServiceAdmin(User user, String serviceName) {
-
+		if (this.userDetailsService.usernameTaken(user.getEmail()) == true) {
+			return new MessageDTO("Email is taken.", ToasterType.ERROR.toString());
+		}
 		isamrs.tim1.model.Service service = serviceRepository.findOneByName(serviceName);
 		if (service == null)
 			return new MessageDTO("Service to which is admin added is not existent", ToasterType.ERROR.toString());
@@ -190,7 +192,7 @@ public class AuthenticationService {
 			mailService.sendMailToAdmin(admin, user.getPassword());
 			return new MessageDTO("Admin added successfully", ToasterType.SUCCESS.toString());
 		}
-		return new MessageDTO("Email already in use", ToasterType.ERROR.toString());
+		return new MessageDTO("Error while saving the admin", ToasterType.ERROR.toString());
 	}
 
 	@SuppressWarnings("unchecked")

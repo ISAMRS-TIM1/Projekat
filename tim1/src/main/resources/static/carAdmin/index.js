@@ -147,6 +147,7 @@ $(document).ready(function() {
 	
 	var oldName;
 	$(document).on('click', '#branchTable tbody tr', function(e) {
+		if(this.textContent === "No data available in table") return;
 		oldName = e.target.parentNode.childNodes[1].innerText;
 		$("#editBranchOfficeForm input[name='name']").val(oldName);
 		lat = e.target.parentNode.childNodes[2].innerText;
@@ -181,6 +182,7 @@ $(document).ready(function() {
 	var oldProducer;
 	var oldModel;
 	$(document).on('click', '#vehicleTable tbody tr', function(e) {
+		if(this.textContent === "No data available in table") return;
 		oldProducer = e.target.parentNode.childNodes[0].innerText;
 		oldModel = e.target.parentNode.childNodes[1].innerText;
 		$('#editVehicleForm input[name="producer"]').val(oldProducer);

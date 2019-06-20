@@ -17,6 +17,7 @@ $(document).ready(function() {
 	});
 	
 	$('#reservationsTable tbody').on('click', 'tr', function() {
+		if(this.textContent === "No data available in table") return;
     	var tgt = $(event.target);
 		var table = $("#reservationsTable").DataTable();
 		var rowData;
