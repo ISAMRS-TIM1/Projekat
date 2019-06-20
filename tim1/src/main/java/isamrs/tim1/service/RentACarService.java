@@ -38,40 +38,23 @@ public class RentACarService {
 	private ServiceRepository serviceRepository;
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-	public String editProfile(RentACar rentACar, String oldName) {
-		RentACar rentACarToEdit = rentACarRepository.findOneByName(oldName);
+	public MessageDTO editRentACarProfile(RentACarDTO rentACar) {
+		RentACar rentACarToEdit = rentACarRepository.findOneByName(rentACar.getOldName());
 		if (rentACarToEdit == null) {
-			return "Edited rent a car service does not exist.";
+			return new MessageDTO("Edited rent a car service does not exist.", ToasterType.ERROR.toString());
 		}
-
-		String newName = rentACar.getName();
-		if (newName != null) {
-			if (serviceRepository.findOneByName(newName) == null) {
-				rentACarToEdit.setName(newName);
-			} else {
-				return "Name is already in use by some other service.";
-			}
+		
+		if(!rentACar.getOldName().equals(rentACar.getName()) && serviceRepository.findOneByName(rentACar.getName()) != null) {
+			return new MessageDTO("Name is already in use by some other service.", ToasterType.ERROR.toString());
 		}
+		rentACarToEdit.setName(rentACar.getName());
+		rentACarToEdit.setDescription(rentACar.getDescription());
+		Location l = new Location(rentACar.getLatitude(), rentACar.getLongitude());
+		rentACarToEdit.setLocation(l);
 
-		String newDescription = rentACar.getDescription();
-		if (newDescription != null) {
-			rentACarToEdit.setDescription(newDescription);
-		}
+		rentACarRepository.save(rentACarToEdit);
 
-		Location newLocation = rentACar.getLocation();
-		if (newLocation != null) {
-			rentACarToEdit.getLocation().setLatitude(rentACar.getLocation().getLatitude());
-			rentACarToEdit.getLocation().setLongitude(rentACar.getLocation().getLongitude());
-		}
-
-		try {
-			rentACarRepository.save(rentACarToEdit);
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			return "Database error.";
-		}
-
-		return null;
+		return new MessageDTO("Rentacar edit successfull", ToasterType.SUCCESS.toString());
 	}
 
 	public RentACarDTO getRentACarInfo(String rentACarName) {

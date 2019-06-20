@@ -42,9 +42,8 @@ public class RentACarController {
 
 	@PreAuthorize("hasRole('RENTADMIN')")
 	@RequestMapping(value = "/api/editRentACar", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> editRentACarProfile(@RequestBody RentACar rentACar,
-			@RequestParam(required = true) String oldName) {
-		return new ResponseEntity<String>(rentACarService.editProfile(rentACar, oldName), HttpStatus.OK);
+	public ResponseEntity<MessageDTO> editRentACarProfile(@Valid @RequestBody RentACarDTO rentACar) {
+		return new ResponseEntity<MessageDTO>(rentACarService.editRentACarProfile(rentACar), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasRole('RENTADMIN') or hasRole('SYSADMIN')")
