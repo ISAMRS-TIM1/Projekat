@@ -112,15 +112,6 @@ $(document).ready(function() {
 		loadVehicles();
 	});
 	
-	/* EDIT ENABLE/DISABLE EVENT */
-	$('.edit').click(function(){
-		if($(this).siblings().first().is('[readonly]')) {
-			$(this).siblings().first().removeAttr('readonly');
-		} else {
-			$(this).siblings().first().prop('readonly', 'true');
-		}
-	});
-	
 	/* PROFILE EVENTS */
 	$('#userEditForm').on('submit', function(e){
 		e.preventDefault();
@@ -340,12 +331,65 @@ $(document).ready(function() {
 		e.preventDefault();
 		
 		let branch = $("#selectBranch").val();
+		
+		if(branch == null || branch === ""){
+			toastr["error"]("Branch office must not be null");
+			return;
+		}
+		
 		let vehicle = $("#selectVehicle").val();
+		
+		if(vehicle == null || vehicle === ""){
+			toastr["error"]("Vehicle must not be null");
+			return;
+		}
+		
 		let producer = vehicle.split("_")[0];
+		
+		if(producer == null || producer === ""){
+			toastr["error"]("Producer must not be null");
+			return;
+		}
+		
 		let model = vehicle.split("_")[1];
+		
+		if(model == null || model === ""){
+			toastr["error"]("Model must not be null");
+			return;
+		}
+		
 		let discount = emptyToZero($("#discount").val());
+		
+		if(discount == null){
+			toastr["error"]("Discount must not be null");
+			return;
+		}
+		
+		var today = moment();
+		
 		let startDate = $('#showIncomeDateRange').data('daterangepicker').startDate.format("DD/MM/YYYY");
+		
+		if(startDate == null){
+			toastr["error"]("Start date cannot be empty");
+			return;
+		}
+		
 		let endDate = $('#showIncomeDateRange').data('daterangepicker').endDate.format("DD/MM/YYYY");
+		
+		if(endDate == null){
+			toastr["error"]("End date cannot be empty");
+			return;
+		}
+		
+		if(!moment(startDate).isAfter(today)){
+			toastr["error"]("Cannot make quick vehicle reservation for past period");
+			return;
+		}
+		
+		if(!moment(endDate).isAfter(startDate)){
+			toastr["error"]("End date must be after start date");
+			return;
+		}
 		
 		addQuickReservation(branch, producer, model, discount, startDate, endDate);
 	});

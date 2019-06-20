@@ -43,8 +43,9 @@ public class RentACarService {
 		if (rentACarToEdit == null) {
 			return new MessageDTO("Edited rent a car service does not exist.", ToasterType.ERROR.toString());
 		}
-		
-		if(!rentACar.getOldName().equals(rentACar.getName()) && serviceRepository.findOneByName(rentACar.getName()) != null) {
+
+		if (!rentACar.getOldName().equals(rentACar.getName())
+				&& serviceRepository.findOneByName(rentACar.getName()) != null) {
 			return new MessageDTO("Name is already in use by some other service.", ToasterType.ERROR.toString());
 		}
 		rentACarToEdit.setName(rentACar.getName());
@@ -168,10 +169,13 @@ public class RentACarService {
 				.getRentACar();
 		double income = 0;
 
-		for (VehicleReservation vr : rentACar.getReservations()) {
-			FlightReservation fr = vr.getFlightReservation();
-			if (fr.getDone() && fr.getDateOfReservation().after(fromDate) && fr.getDateOfReservation().before(toDate)) {
-				income += vr.getPrice();
+		if (rentACar.getReservations() != null) {
+			for (VehicleReservation vr : rentACar.getReservations()) {
+				FlightReservation fr = vr.getFlightReservation();
+				if (fr.getDone() && fr.getDateOfReservation().after(fromDate)
+						&& fr.getDateOfReservation().before(toDate)) {
+					income += vr.getPrice();
+				}
 			}
 		}
 
