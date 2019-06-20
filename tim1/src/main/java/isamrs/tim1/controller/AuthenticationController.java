@@ -1,7 +1,11 @@
 package isamrs.tim1.controller;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import javax.naming.AuthenticationException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -35,8 +39,15 @@ public class AuthenticationController {
 	}
 
 	@RequestMapping(value = "auth/register", method = RequestMethod.POST)
-	public ResponseEntity<Object> register(@Valid @RequestBody User user) {
-		return new ResponseEntity<Object>(authenticationService.register(user), HttpStatus.OK);
+	public ResponseEntity<Object> register(@Valid @RequestBody User user, HttpServletRequest request) {
+		String siteName = "";
+		try {
+			 siteName = new URL(request.getRequestURL().toString()).getAuthority();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<Object>(authenticationService.register(user, siteName), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "auth/login", method = RequestMethod.POST)

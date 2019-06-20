@@ -160,7 +160,7 @@ public class ReservationService {
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
-	public MessageDTO reserveFlight(int discountPoints, FlightReservationDTO flightRes) {
+	public MessageDTO reserveFlight(int discountPoints, FlightReservationDTO flightRes, String siteName) {
 
 		if (discountPoints < 0)
 			return new MessageDTO("Discount points cannot be negative", ToasterType.ERROR.toString());
@@ -174,7 +174,7 @@ public class ReservationService {
 		if (discountPoints > ru.getDiscountPoints())
 			return new MessageDTO("Not enough discount points.", ToasterType.ERROR.toString());
 
-		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru);
+		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru, siteName);
 		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString())) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return retval;
@@ -190,7 +190,7 @@ public class ReservationService {
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
-	public MessageDTO reserveFlightHotel(int discountPoints, FlightHotelReservationDTO flightHotelRes) {
+	public MessageDTO reserveFlightHotel(int discountPoints, FlightHotelReservationDTO flightHotelRes, String siteName) {
 		if (discountPoints < 0)
 			return new MessageDTO("Discount points cannot be negative.", ToasterType.ERROR.toString());
 		DiscountInfo di = discountInfoRepository.findAll().get(0);
@@ -205,7 +205,7 @@ public class ReservationService {
 		if (discountPoints > ru.getDiscountPoints())
 			return new MessageDTO("Not enough discount points.", ToasterType.ERROR.toString());
 
-		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru);
+		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru, siteName);
 		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString())) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return retval;
@@ -229,7 +229,7 @@ public class ReservationService {
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
-	public MessageDTO reserveFlightVehicle(int discountPoints, FlightVehicleReservationDTO flightVehicleRes) {
+	public MessageDTO reserveFlightVehicle(int discountPoints, FlightVehicleReservationDTO flightVehicleRes, String siteName) {
 		if (discountPoints < 0)
 			return new MessageDTO("Discount points cannot be negative.", ToasterType.ERROR.toString());
 		DiscountInfo di = discountInfoRepository.findAll().get(0);
@@ -243,7 +243,7 @@ public class ReservationService {
 		if (discountPoints > ru.getDiscountPoints())
 			return new MessageDTO("Not enough discount points.", ToasterType.ERROR.toString());
 
-		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru);
+		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru, siteName);
 		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString())) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return retval;
@@ -267,7 +267,7 @@ public class ReservationService {
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
 	public MessageDTO reserveFlightHotelVehicle(int discountPoints,
-			FlightHotelVehicleReservationDTO flightHotelVehicleRes) {
+			FlightHotelVehicleReservationDTO flightHotelVehicleRes, String siteName) {
 		if (discountPoints < 0)
 			return new MessageDTO("Discount points cannot be negative.", ToasterType.ERROR.toString());
 		DiscountInfo di = discountInfoRepository.findAll().get(0);
@@ -283,7 +283,7 @@ public class ReservationService {
 		if (discountPoints > ru.getDiscountPoints())
 			return new MessageDTO("Not enough discount points.", ToasterType.ERROR.toString());
 
-		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru);
+		MessageDTO retval = reserveFlightNoSave(flightRes, fr, ru, siteName);
 		if (retval.getToastType().toString().equals(ToasterType.ERROR.toString())) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return retval;
@@ -315,7 +315,7 @@ public class ReservationService {
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
-	private MessageDTO reserveFlightNoSave(FlightReservationDTO flightRes, FlightReservation fr, RegisteredUser ru) {
+	private MessageDTO reserveFlightNoSave(FlightReservationDTO flightRes, FlightReservation fr, RegisteredUser ru, String siteName) {
 		Flight f = flightRepository.findOneByFlightCodeForRead(flightRes.getFlightCode());
 		if (f == null) {
 			return new MessageDTO("Flight does not exist.", ToasterType.ERROR.toString());
@@ -372,7 +372,7 @@ public class ReservationService {
 			counter++;
 		}
 		for (String email : flightRes.getInvitedFriends()) {
-			MessageDTO m = inviteFriendToFlight(email, flightRes, f.getFlightCode(), counter, ru.getEmail());
+			MessageDTO m = inviteFriendToFlight(email, flightRes, f.getFlightCode(), counter, ru.getEmail(), siteName);
 			if (m.getToastType().toString().equals(ToasterType.ERROR.toString())) {
 				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 				return m;
@@ -522,7 +522,7 @@ public class ReservationService {
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	private MessageDTO inviteFriendToFlight(String email, FlightReservationDTO flightRes, String flightCode,
-			int counter, String inviter) {
+			int counter, String inviter, String siteName) {
 		RegisteredUser friend = (RegisteredUser) userRepository.findOneByEmail(email);
 		FlightReservation fRes = new FlightReservation();
 		Flight f = flightRepository.findOneByFlightCodeForRead(flightCode);
@@ -571,7 +571,7 @@ public class ReservationService {
 		f.getAirline().getReservations().add(fRes);
 		flightReservationRepository.save(fRes);
 		userRepository.save(friend);
-		mailService.sendMailToFriend(friend, fRes, inviter);
+		mailService.sendMailToFriend(friend, fRes, inviter, siteName);
 		return new MessageDTO("Friend is successfully invited to flight", ToasterType.SUCCESS.toString());
 	}
 

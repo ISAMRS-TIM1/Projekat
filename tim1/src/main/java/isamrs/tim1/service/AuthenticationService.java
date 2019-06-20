@@ -69,7 +69,7 @@ public class AuthenticationService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-	public Object register(User user) {
+	public Object register(User user, String siteName) {
 		if (this.userDetailsService.usernameTaken(user.getEmail()) == true) {
 			return new MessageDTO("Email is taken.", "Error");
 		}
@@ -94,7 +94,7 @@ public class AuthenticationService {
 		ru.setPhoneNumber(user.getPhoneNumber());
 
 		if (this.userDetailsService.saveUser(ru)) {
-			mailService.sendMailAsync(ru);
+			mailService.sendMailAsync(ru, siteName);
 			return true;
 		}
 		return false;
