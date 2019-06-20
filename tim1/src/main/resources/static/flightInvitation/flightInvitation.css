@@ -1,9 +1,9 @@
 body {
-	background: #0D63FF;
+	background: #f4f7f6;
 }
 
 .modal-body, .modal-header {
-	background: #548cf1;	
+	background: #f4f7f6;	
 }
 
 #content {
@@ -15,9 +15,7 @@ body {
 	left: 50%;
 	transform: translate(-50%, -50%);
 	width: 40%;
-	background: #5994FF;
-	border: 0.24vw solid #B27A00;
-  	border-radius: 4vw 1.6vw;
+	background: #f4f7f6;
   	font-size: 1.6vw;
   	padding: 1.6vw;
   	text-align: center;
@@ -26,12 +24,6 @@ body {
 #invButton {
 	color: white;
 	font-size: 1vw;
-	border: 0.16vw solid #B27A00;
-	border-radius: 2vw 2vw 2vw 2vw;
-}
-
-.btn-default {
-	background: #5994FF;
 }
 
 #invStatus {

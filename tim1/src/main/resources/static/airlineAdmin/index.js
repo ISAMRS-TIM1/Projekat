@@ -123,21 +123,21 @@ $(document).ready(function() {
 
 function setUpTables() {
 	$('#destinationsTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 		"scrollY" : "17vw",
 		"scrollCollapse" : true,
 		"retrieve" : true,
 	});
 	$('#flightsTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 		"scrollY" : "17vw",
 		"scrollCollapse" : true,
 		"retrieve" : true,
 	});
 	$('#flightsResTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 		"scrollY" : "17vw",
 		"scrollCollapse" : true,
@@ -145,7 +145,7 @@ function setUpTables() {
 		"retrieve" : true,
 	});
 	$('#quickReservationsTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 		"scrollY" : "17vw",
 		"scrollCollapse" : true,
@@ -233,7 +233,7 @@ function loadAirline() {
         	}
         	var roundedGrade = Math.round(data["averageGrade"]*10)/10;
         	var rating = "<div class='star-ratings-sprite'><span style='width:" + grade 
-        	+ "%' class='star-ratings-sprite-rating'></span></div><p style='color:white'>" + roundedGrade + "/5.0";
+        	+ "%' class='star-ratings-sprite-rating'></span></div><p style='color:black'>" + roundedGrade + "/5.0";
 			$("#airlineGrade").html(rating);
 			$("#airlineDescription").text(data["description"]);
 			airlineMap = setUpMap(data["latitude"], data["longitude"], 'basicMapDiv', true, airlineMap, '#basicMapDivLatitude', '#basicMapDivLongitude');
