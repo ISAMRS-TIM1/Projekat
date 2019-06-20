@@ -341,12 +341,10 @@ function userEditFormSetUp() {
 			type : 'PUT',
 			url : editUserInfoURL,
 			contentType : 'application/json',
-			dataType : "html",
+			dataType : "json",
 			data : userFormToJSON(firstName, lastName, phone, address, email),
 			success : function(data) {
-				if (data != "") {
-					toastr["error"](data);
-				}
+				toastr[data.toastType](data.message);
 			},
 			error : function(XMLHttpRequest, textStatus, errorThrown) {
 				alert("AJAX ERROR: " + textStatus);
@@ -1028,6 +1026,8 @@ function showPlaneSeatsSecondMap(seats) {
 							[ 'l', 'available', 'Blank seat' ] ]
 				},
 				click : function() {
+					if (this.settings.character == 'l')
+						return;
 					if (this.status() == 'available') {
 						if (this.settings.character == 'a')
 							return;
