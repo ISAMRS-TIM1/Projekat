@@ -39,6 +39,7 @@ $(document).ready(function() {
 	
 	
 	$("#logout").click(function() {
+		removeJwtToken(tokenKey);
 		document.location.href = logoutURL;
 	});
 	
@@ -167,23 +168,23 @@ function setUpTabView(){
 
 function setUpTables(){
 	airlinesTable = $('#airlinesTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 	});
 
 	hotelsTable = $('#hotelsTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 	});
 
 	rentACarsTable = $('#rentACarsTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 	});
 	
 	
 	adminsTable = $("#adminsTable").DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false
 	});
 
@@ -194,7 +195,7 @@ function setUpTables(){
 		currentService = airlinesTable.row(this).data()[0];
 		currentServiceURL = getAirlineURL;
 		loadService(currentService, currentServiceURL);
-		$("#modalDialog").modal();
+		$("#modalDialog").modal("show");
 	});
 
 	$('#hotelsTable tbody').on('click', 'tr', function() {
@@ -304,7 +305,7 @@ function setUpRegistrationForm(){
 
 				$.ajax({
 					type : 'POST',
-					url : registerAdminURL + $('#serviceName').val(),
+					url : registerAdminURL + $('#serviceName').text(),
 					contentType : 'application/json',
 					headers: createAuthorizationTokenHeader(tokenKey),
 					dataType : "json",
@@ -407,7 +408,7 @@ function loadService(name, url) {
 		headers : createAuthorizationTokenHeader(tokenKey),
 		success : function(data) {
 			if (data != null) {
-				$("#serviceName").val(data["name"]);
+				$("#serviceName").html(data["name"]);
 				var grade = data["averageGrade"];
             	
             	if(grade !== 0){
