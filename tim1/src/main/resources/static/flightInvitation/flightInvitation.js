@@ -9,7 +9,7 @@ $(document).ready(function() {
 	setUpToastr();
 	
 	$('#reservationsTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 		"scrollY" : "17vw",
 		"scrollCollapse" : true,

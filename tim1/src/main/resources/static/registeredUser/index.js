@@ -99,7 +99,7 @@ $(document)
                     localStorage.removeItem("quickFlightReservation");
                     
                     $('#friendsTable').DataTable({
-                        "paging": false,
+                        "paging": true,
                         "info": false,
                         "scrollY": "17vw",
                         "scrollCollapse": true,
@@ -107,7 +107,7 @@ $(document)
                     });
 
                     var reservationsTable = $('#reservationsTable').DataTable({
-                        "paging": false,
+                        "paging": true,
                         "info": false,
                         "scrollY": "17vw",
                         "scrollCollapse": true,
@@ -115,28 +115,28 @@ $(document)
                     });
 
                     $('#usersTable').DataTable({
-                        "paging": false,
+                        "paging": true,
                         "info": false,
                         "scrollCollapse": true,
                         "retrieve": true,
                     });
 
                     $('#inviteFriendsTable').DataTable({
-                        "paging": false,
+                        "paging": true,
                         "info": false,
                         "scrollCollapse": true,
                         "retrieve": true,
                     });
                     
                     var airlinesTable = $('#airlinesTable').DataTable({
-                        "paging": false,
+                        "paging": true,
                         "info": false,
                         "scrollCollapse": true,
                         "retrieve": true,
                     });
             
                     var destinationsTable = $('#airlineDestinationsTable').DataTable({
-                        "paging": false,
+                        "paging": true,
                         "info": false,
                         "scrollY": "200px",
                         "scrollCollapse": true,
@@ -166,7 +166,7 @@ $(document)
                     setUpTableFilter("#flightsTable");
                     
                     var flightsTable = $('#flightsTable').DataTable({
-                        "paging": false,
+                        "paging": true,
                         "info": false,
                         "scrollY": "17vw",
                         "scrollX": true,
@@ -411,13 +411,13 @@ $(document)
         	                        type: 'PUT',
         	                        url: saveChangesURL,
         	                        contentType: 'application/json',
-        	                        dataType: "html",
+        	                        dataType: "json",
         	                        data: formToJSON(firstName, lastName,
         	                            phone, address, email),
         	                        success: function(data) {
-        	                            if (data != "") {
-        	                                toastr["error"](data);
-        	                            }
+        	                        	if (data != "") {
+        	    							toastr[data.toastType](data.message);
+        	    						}
         	                        },
         	                        error: function(XMLHttpRequest,
         	                            textStatus, errorThrown) {
@@ -518,7 +518,7 @@ $(document)
                     });
 
                     $('#vehiclesTable').DataTable({
-                        "paging": false,
+                        "paging": true,
                         "info": false,
                         "orderCellsTop": true,
                         "fixedHeader": true,
@@ -534,7 +534,7 @@ $(document)
                     });
                     
                     $('#quickReservationsTable').DataTable({
-                        "paging": false,
+                        "paging": true,
                         "info": false,
                         "orderCellsTop": true,
                         "fixedHeader": true,
@@ -2154,10 +2154,10 @@ function showLastStep(e) {
 		for (var i = 0; i < flightReservation["seatsLeft"]; i++) {
 			var passengerNumber = flightReservation["numberOfPassengers"] - flightReservation["seatsLeft"] + i + 1;
 			var tableRow = "<tr><td>Passenger</td><td>" + passengerNumber + "</td></tr>";
-			tableRow += "<tr><td>First name</td><td><input type='text' name='passFirstName'/></td><tr>";
-			tableRow += "<tr><td>Last name</td><td><input type='text' name='passLastName'/></td><tr>";
-			tableRow += "<tr><td>Passport number</td><td><input type='text' name='passportNumber'/></td><tr>";
-			tableRow += "<tr><td>Number of bags</td><td><input type='number' name='bags'/></td><tr>";
+			tableRow += "<tr><td>First name</td><td><input type='text' class='form-control' name='passFirstName'/></td><tr>";
+			tableRow += "<tr><td>Last name</td><td><input type='text' class='form-control' name='passLastName'/></td><tr>";
+			tableRow += "<tr><td>Passport number</td><td><input type='text' class='form-control' name='passportNumber'/></td><tr>";
+			tableRow += "<tr><td>Number of bags</td><td><input type='number' class='form-control' name='bags'/></td><tr>";
 			tableRow += "<tr><td></td><td></td></tr>";
 			lastStepTable.append(tableRow);
 		}

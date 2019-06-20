@@ -103,27 +103,27 @@ function setUpInputFields(){
 
 function setUpTables() {
 	roomsTable = $('#roomsTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 	});
 	additionalServicesTable = $('#additionalServicesTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 	});
 	quickAdditionalServicesTable = $('#quickAdditionalServicesTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 	});
 	quickRoomsTable = $('#quickRoomsTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 	});
 	quickReservationsTable = $('#quickReservationsTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 	});
 	seasonalPricesTable = $('#seasonalPricesTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 		"columnDefs" : [ {
 			"orderable" : false,
@@ -213,7 +213,7 @@ function loadHotel() {
         	}
         	var roundedGrade = Math.round(data["averageGrade"]*10)/10;
         	var rating = "<div class='star-ratings-sprite'><span style='width:" + grade 
-        	+ "%' class='star-ratings-sprite-rating'></span></div><p style='color:white'>" + roundedGrade + "/5.0";
+        	+ "%' class='star-ratings-sprite-rating'></span></div><p style='color:black'>" + roundedGrade + "/5.0";
 			$("#averageGrade").html(rating);
 			$("#hotelDescription").text(data["description"]);
 			setUpMap(data["latitude"], data["longitude"], 'basicMapDiv');

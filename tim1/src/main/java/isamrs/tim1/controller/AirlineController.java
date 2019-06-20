@@ -1,6 +1,7 @@
 package isamrs.tim1.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -71,7 +72,7 @@ public class AirlineController {
 	}
 	
 	@RequestMapping(value = "/api/getIncomeOfAirline", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Double> searchUsers(@RequestParam String fromDate, @RequestParam String toDate) {
+	public ResponseEntity<Double> getIncomeOfAirline(@RequestParam Date fromDate, @RequestParam Date toDate) {
 		return airlineService.getIncomeOfAirline(fromDate, toDate);
 	}
 	
