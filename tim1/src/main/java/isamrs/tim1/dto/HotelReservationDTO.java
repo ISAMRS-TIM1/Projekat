@@ -23,6 +23,7 @@ public class HotelReservationDTO implements Serializable {
 	private Boolean done;
 	private Double roomGrade;
 	private Double hotelGrade;
+	private double price;
 	private Long id;
 
 	public HotelReservationDTO(HotelReservation hr) {
@@ -37,6 +38,7 @@ public class HotelReservationDTO implements Serializable {
 		this.done = hr.getDone();
 		this.roomGrade = hr.getGrade();
 		this.id = hr.getId();
+		this.price = hr.getPrice();
 
 		if (hr.getFlightReservation() != null) {
 			try {
@@ -159,6 +161,14 @@ public class HotelReservationDTO implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
 	}
 
 }

@@ -155,8 +155,11 @@ public class FlightService {
 			});
 		}
 		ArrayList<FlightUserViewDTO> flightsList = new ArrayList<FlightUserViewDTO>();
+		Date today = new Date();
 		for (Flight f : flights) {
-			flightsList.add(new FlightUserViewDTO(f));
+			if (f.getDepartureTime().compareTo(today) > 0) {
+				flightsList.add(new FlightUserViewDTO(f));
+			}
 		}
 		return flightsList;
 	}

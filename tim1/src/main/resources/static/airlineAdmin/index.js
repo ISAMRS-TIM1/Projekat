@@ -94,6 +94,7 @@ $(document).ready(function() {
 	});
 	
 	$('#flightsResTable tbody').on('click', 'tr', function() {
+		if(this.textContent === "No data available in table") return;
 		var flightsTable = $('#flightsResTable').DataTable();
 		shownFlight = flightsTable.row(this).data()[0];
 		loadFlight(shownFlight);
@@ -101,6 +102,7 @@ $(document).ready(function() {
 	});
 	
 	$('#destinationsTable tbody').on('click', 'tr', function() {
+		if(this.textContent === "No data available in table") return;
 		var destTable = $('#destinationsTable').DataTable();
 		var destToShow = destTable.row(this).data()[0];
 		loadDestination(destToShow);
@@ -118,6 +120,7 @@ $(document).ready(function() {
 	});
 	
 	$('#flightsTable tbody').on('click', 'tr', function(event) {
+		if(this.textContent === "No data available in table") return;
 		var flightsTable = $('#flightsTable').DataTable();
 		shownFlight = flightsTable.row(this).data()[0];
 		loadFlightForEdit(shownFlight);
@@ -395,12 +398,10 @@ function userEditFormSetUp() {
 			type : 'PUT',
 			url : editUserInfoURL,
 			contentType : 'application/json',
-			dataType : "html",
+			dataType : "json",
 			data : userFormToJSON(firstName, lastName, phone, address, email),
 			success : function(data) {
-				if (data != "") {
-					toastr["error"](data);
-				}
+				toastr[data.toastType](data.message);
 			},
 			error : function(XMLHttpRequest, textStatus, errorThrown) {
 				alert("AJAX ERROR: " + textStatus);
@@ -1082,6 +1083,8 @@ function showPlaneSeatsSecondMap(seats) {
 							[ 'l', 'available', 'Blank seat' ] ]
 				},
 				click : function() {
+					if (this.settings.character == 'l')
+						return;
 					if (this.status() == 'available') {
 						if (this.settings.character == 'a')
 							return;

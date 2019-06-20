@@ -94,9 +94,11 @@ public class DestinationService {
 	    Airline a = admin.getAirline();
 	    if (a == null)
 			return new ResponseEntity<MessageDTO>(new MessageDTO("Airline does not exist.", ToasterType.ERROR.toString()), HttpStatus.BAD_REQUEST);
-	    Destination destNew = destinationRepository.findOneByName(destDTO.getNameOfDest());
-	    if (destNew != null)
-	    	return new ResponseEntity<MessageDTO>(new MessageDTO("Destination with same name already exists.", ToasterType.ERROR.toString()), HttpStatus.OK);
+	    if (!destDTO.getOldName().equals(destDTO.getNameOfDest())) {
+	    	Destination destNew = destinationRepository.findOneByName(destDTO.getNameOfDest());
+		    if (destNew != null)
+		    	return new ResponseEntity<MessageDTO>(new MessageDTO("Destination with same name already exists.", ToasterType.ERROR.toString()), HttpStatus.OK);
+	    }
 	    Destination dest = destinationRepository.findOneByName(destDTO.getOldName());
 	    if (dest == null)
 	    	return new ResponseEntity<MessageDTO>(new MessageDTO("Destination does not exist.", ToasterType.ERROR.toString()), HttpStatus.OK);

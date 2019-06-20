@@ -132,6 +132,7 @@ function setUpTables() {
 	});
 
 	$('#roomsTable tbody').on('click', 'tr', function() {
+		if(this.textContent === "No data available in table") return;
 		roomsTable.$('tr.selected').removeClass('selected');
 		$(this).addClass('selected');
 		$("#showHotelRoomModal").modal();
@@ -145,6 +146,7 @@ function setUpTables() {
 	
 	
 	$('#additionalServicesTable tbody').on('click', 'tr', function() {
+		if(this.textContent === "No data available in table") return;
 		additionalServicesTable.$('tr.selected').removeClass('selected');
 		$(this).addClass('selected');
 		$("#shownAdditionalServiceModal").modal();
