@@ -313,19 +313,6 @@ $(document)
                         $(this).tab('show');
                     });
 
-                    $('.edit')
-                        .click(
-                            function() {
-                                if ($(this).siblings().first().is(
-                                        '[readonly]')) {
-                                    $(this).siblings().first()
-                                        .removeAttr('readonly');
-                                } else {
-                                    $(this).siblings().first().prop(
-                                        'readonly', 'true');
-                                }
-                            });
-                    
                     $('#friendsTable tbody').on('click', 'tr', function(event) {
                     	if(this.textContent === "No data available in table") return;
                     	var tgt = $(event.target);
@@ -408,10 +395,39 @@ $(document)
         	                function(e) {
         	                    e.preventDefault();
         	                    let firstName = $('input[name="fname"]').val();
-        	                    let lastName = $('input[name="lname"]').val();
-        	                    let phone = $('input[name="phone"]').val();
-        	                    let address = $('input[name="address"]').val();
-        	                    let email = $('#email').text();
+        	            		
+        	            		if(firstName == null || firstName === ""){
+        	            			toastr["error"]("First name must not be empty");
+        	            			return;
+        	            		}
+        	            		
+        	            		let lastName = $('input[name="lname"]').val();
+        	            		
+        	            		if(lastName == null || lastName === ""){
+        	            			toastr["error"]("Last name must not be empty");
+        	            			return;
+        	            		}
+        	            		
+        	            		let phone = $('input[name="phone"]').val();
+        	            		
+        	            		if(phone == null || phone === ""){
+        	            			toastr["error"]("Phone must not be empty");
+        	            			return;
+        	            		}
+        	            		
+        	            		let address = $('input[name="address"]').val();
+        	            		
+        	            		if(address == null || address === ""){
+        	            			toastr["error"]("Address must not be empty");
+        	            			return;
+        	            		}
+        	            		
+        	            		let email = $('#email').text();
+
+        	            		if(email == null || email === ""){
+        	            			toastr["error"]("Email must not be empty");
+        	            			return;
+        	            		}
         	
         	                    $.ajax({
         	                        type: 'PUT',
@@ -941,14 +957,14 @@ function searchVehicles(producer, models, vehicleTypes, fuelTypes, priceMax, num
                 table.clear().draw();
 
                 for (let vehicle of data) {
-                	var grade = vehicle["averageGrade"];
-    	        	
-    	        	if(grade !== 0){
-    	        		grade = grade/5*100;
-    	        	}
-    	        	var roundedGrade = Math.round(vehicle["averageGrade"]*10)/10;
-    	        	var rating = "<div class='star-ratings-sprite'><span style='width:" + grade 
-    	        	+ "%' class='star-ratings-sprite-rating'></span></div><p>" + roundedGrade + "/5.0";
+                	var grade = vehicle.averageGrade;
+                	
+                	if(grade !== 0){
+                		grade = grade/5*100;
+                	}
+                	var roundedGrade = Math.round(vehicle.averageGrade * 10)/10;
+                	var rating = "<div class='star-ratings-sprite' title='" + roundedGrade + "/5.0'><span style='width:" + grade 
+                	+ "%' class='star-ratings-sprite-rating'></span></div>";
                     table.row.add([
                     	vehicle.id,
                         vehicle.producer,
@@ -1674,14 +1690,14 @@ function renderHotels(data) {
         var table = $("#hotelsTable").DataTable();
         table.clear().draw();
         $.each(data, function(i, val) {
-        	var grade = val["averageGrade"];
+        	var grade = val.averageGrade;
         	
         	if(grade !== 0){
         		grade = grade/5*100;
         	}
-        	var roundedGrade = Math.round(val["averageGrade"]*10)/10;
-        	var rating = "<div class='star-ratings-sprite'><span style='width:" + grade 
-        	+ "%' class='star-ratings-sprite-rating'></span></div><p>" + roundedGrade + "/5.0";
+        	var roundedGrade = Math.round(val.averageGrade * 10)/10;
+        	var rating = "<div class='star-ratings-sprite' title='" + roundedGrade + "/5.0'><span style='width:" + grade 
+        	+ "%' class='star-ratings-sprite-rating'></span></div>";
             table.row.add([val.name, rating]).draw(false);
         });
     }
@@ -1708,7 +1724,7 @@ function loadHotel(name) {
 	        	var roundedGrade = Math.round(data["averageGrade"]*10)/10;
 	        	var rating = "<div class='star-ratings-sprite'><span style='width:" + grade 
 	        	+ "%' class='star-ratings-sprite-rating'></span></div><p>" + roundedGrade + "/5.0";
-				$("#hotelGrade").val(rating);
+				$("#hotelGrade").html(rating);
 				$("#hotelDescription").text(data["description"]);
 				if (hotelMap != null) {
 					hotelMap.off();
@@ -3010,6 +3026,7 @@ function loadReservation(res_id) {
                 	$("#bOfficeRes").text(data["vehicleRes"]["branchOfficeName"]);
                 	$("#modelCarRes").text(data["vehicleRes"]["vehicleModel"]);
                 	$("#prodCarRes").text(data["vehicleRes"]["vehicleProducer"]);
+                	$("#rentRes").text(data["vehicleRes"]["rentacar"]);
                 	$("#carPriceRes").val(data["vehicleRes"]["price"]);
                 	
                 	if(data["vehicleRes"]["done"]){

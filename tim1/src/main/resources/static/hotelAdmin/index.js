@@ -425,16 +425,44 @@ function userEditFormToJSON(firstName, lastName, phone, address, email) {
 function setUpEditHotelForm() {
 	$('#editHotelForm').on('submit', function(e) {
 		e.preventDefault();
+		
+		var name = $("#hotelName").val();
+		
+		if(name == null || name === ""){
+			toastr["error"]("Hotel name must not be empty");
+			return;
+		}
+		
+		var description = $("#hotelDescription").val();
+
+		if(description == null || description === ""){
+			toastr["error"]("Hotel description must not be empty");
+			return;
+		}
+		
+		var latitude = $("#latitude").val();
+		
+		if(latitude == null){
+			toastr["error"]("Hotel latitude must not be empty");
+			return;
+		}
+		
+		var longitude = $("#longitude").val();
+		
+		if(longitude == null){
+			toastr["error"]("Hotel latitude must not be empty");
+			return;
+		}
 		$.ajax({
 			type : 'PUT',
 			url : editHotelURL,
 			headers : createAuthorizationTokenHeader(TOKEN_KEY),
 			contentType : "application/json",
 			data : JSON.stringify({
-				"name" : $("#hotelName").val(),
-				"description" : $("#hotelDescription").val(),
-				"latitude" : $("#latitude").val(),
-				"longitude" : $("#longitude").val(),
+				"name" : name,
+				"description" : description,
+				"latitude" : latitude,
+				"longitude" : longitude,
 			}),
 			dataType : "json",
 			success : function(data) {
@@ -599,10 +627,39 @@ function setUpEditForm() {
 			function(e) {
 				e.preventDefault();
 				let firstName = $('input[name="fname"]').val();
+				
+				if(firstName == null || firstName === ""){
+					toastr["error"]("First name must not be empty");
+					return;
+				}
+				
 				let lastName = $('input[name="lname"]').val();
+				
+				if(lastName == null || lastName === ""){
+					toastr["error"]("Last name must not be empty");
+					return;
+				}
+				
 				let phone = $('input[name="phone"]').val();
+				
+				if(phone == null || phone === ""){
+					toastr["error"]("Phone must not be empty");
+					return;
+				}
+				
 				let address = $('input[name="address"]').val();
+				
+				if(address == null || address === ""){
+					toastr["error"]("Address must not be empty");
+					return;
+				}
+				
 				let email = $('#email').text();
+
+				if(email == null || email === ""){
+					toastr["error"]("Email must not be empty");
+					return;
+				}
 
 				$.ajax({
 					type : 'PUT',
