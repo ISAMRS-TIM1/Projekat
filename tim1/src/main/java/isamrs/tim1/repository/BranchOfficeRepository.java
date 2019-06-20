@@ -15,9 +15,9 @@ public interface BranchOfficeRepository extends JpaRepository<BranchOffice, Inte
 
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	@Query(value = "select b from BranchOffice b where b.name = :name")
-    BranchOffice findOneByName(@Param("name") String name);
+	BranchOffice findOneByName(@Param("name") String name);
 
 	@Lock(LockModeType.PESSIMISTIC_READ)
 	@Query(value = "select b from BranchOffice b where b.name = :name")
-    BranchOffice findOneByNameForRead(@Param("name") String name);
+	BranchOffice findOneByNameForRead(@Param("name") String name);
 }
