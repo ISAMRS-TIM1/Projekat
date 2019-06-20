@@ -52,6 +52,7 @@ $(document).ready(function() {
 	setUpTable("quickReservationsTable");
 	
 	//$(".datepicker").datepicker();
+	$("select").formSelect();
 	
 	/* ADJUSTING TABLES */
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
@@ -133,6 +134,10 @@ $(document).ready(function() {
 	});
 	
 	/* BRANCH OFFICE EVENTS */
+	$("#addBranchModalDialog").on("show.bs.modal", function(){
+		$("#addBranchOfficeForm input[name='name']").val("");
+	});
+	
 	$('#addBranchModalDialog').on('shown.bs.modal', function() {
 	    setTimeout(function() {
 	      addBranchMap = setUpMap(45, 0, 'addBranchOfficeMap', true, addBranchMap, '#addBranchLatitude', '#addBranchLongitude');
@@ -142,6 +147,7 @@ $(document).ready(function() {
 	$(document).on('click', '#addBranch', function(e) {
 		e.preventDefault();
 		addBranchOffice();
+		$("#addBranchModalDialog").modal("toggle");
 	});
 	
 	var oldName;
@@ -157,6 +163,12 @@ $(document).ready(function() {
 	$(document).on('click', '#editBranch', function(e) {
 		e.preventDefault();
 		let newName = $("#editBranchOfficeForm input[name='name']").val();
+		
+		if(newName == null || newName === ""){
+			toastr["erorr"]("Branch office name must not be empty");
+			return;
+		}
+		
 		editBranchOffice(oldName, newName, $('#branchLatitude').val(), $('#branchLongitude').val());
 		oldName = newName;
 	});
@@ -454,22 +466,24 @@ function loadVehicleTypes(id, selected=undefined) {
 		dataType : "json",
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
-			if(data != null){
-				let types = $(id);
-				types.empty();
-				for(let vehicleType of data) {
-					if (selected != undefined && selected === vehicleType) {
-						types.append('<option value="' + vehicleType + '"selected>' + vehicleType + '</option');
-					} else {
-						types.append('<option value="' + vehicleType + '">' + vehicleType + '</option');
-					}
-				}
+			let types = $(id);
+			types.empty();
+			
+			for (let vehicleType of data) {
+				var sel = "";
+				if (selected === vehicleType)
+					sel = "selected";
+				types.append(`<option value="${vehicleType}" ${sel}>${capitalize(vehicleType)}</option>`);
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
 			alert("AJAX ERROR: " + textStatus);
 		}
 	});
+}
+
+function capitalize(word){
+	return word.charAt(0).toUpperCase() + (word.toLowerCase()).slice(1);
 }
 
 function loadFuelTypes(id, selected=undefined) {
@@ -479,16 +493,13 @@ function loadFuelTypes(id, selected=undefined) {
 		dataType : "json",
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
-			if(data != null){
-				let types = $(id);
-				types.empty();
-				for(let fuelType of data) {
-					if (selected != undefined && selected === fuelType) {
-						types.append('<option value="' + fuelType + '" selected>' + fuelType + '</option>');
-					} else {						
-						types.append('<option value="' + fuelType + '">' + fuelType + '</option>');
-					}
-				}
+			let types = $(id);
+			types.empty();
+			for (let fuelType of data) {
+				var sel = "";
+				if (selected === fuelType)
+					sel = "selected";
+				types.append(`<option value="${fuelType}" ${sel}>${capitalize(fuelType)}</option>`);
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {

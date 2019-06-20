@@ -305,7 +305,7 @@ function setUpRegistrationForm(){
 
 				$.ajax({
 					type : 'POST',
-					url : registerAdminURL + $('#serviceName').val(),
+					url : registerAdminURL + $('#serviceName').text(),
 					contentType : 'application/json',
 					headers: createAuthorizationTokenHeader(tokenKey),
 					dataType : "json",

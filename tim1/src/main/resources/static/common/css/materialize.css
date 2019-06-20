@@ -2371,7 +2371,6 @@ svg:not(:root) {
 button,
 input,
 optgroup,
-select,
 textarea {
   font-family: sans-serif;
   /* 1 */
@@ -2397,8 +2396,7 @@ input {
  * Remove the inheritance of text transform in Edge, Firefox, and IE.
  * 1. Remove the inheritance of text transform in Firefox.
  */
-button,
-select {
+button {
   /* 1 */
   text-transform: none;
 }
@@ -6805,10 +6803,6 @@ input[type=checkbox]:not(:disabled).tabbed:focus ~ .lever::before {
 
 /* Select Field
    ========================================================================== */
-select {
-  display: none;
-}
-
 select.browser-default {
   display: block;
 }

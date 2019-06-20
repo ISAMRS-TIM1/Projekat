@@ -56,7 +56,7 @@ public class BranchOfficeService {
 			return new MessageDTO("Branch office requested for change does not exist.", ToasterType.ERROR.toString());
 		}
 
-		if (branchOfficeRepository.findOneByNameForRead(branch.getName()) != null)
+		if (!oldName.equals(branch.getName()) && branchOfficeRepository.findOneByNameForRead(branch.getName()) != null)
 			return new MessageDTO("Branch office name is taken.", ToasterType.ERROR.toString());
 
 		bo.setLocation(branch.getLocation());

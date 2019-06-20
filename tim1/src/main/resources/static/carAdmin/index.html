@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>RentACar</title>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <link rel="shortcut icon" type="image/png"
 	href="common/images/favicon.png" />
 <link rel="stylesheet"
@@ -24,8 +26,7 @@
 <link rel="stylesheet" href="common/css/tableStyle.css">
 <link rel="stylesheet" href="common/css/button.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="auth/auth.js"></script>
@@ -121,31 +122,25 @@
 				</div>
 			</div>
 			<div id="vehicle" class="tab-pane fade">
-				<div id="vehicleTableWrapper">
-					<div id="vehicleTableDiv">
-						<table id="vehicleTable" class="table display table-bordered">
-							<thead>
-								<tr>
-									<th>Producer</th>
-									<th>Model</th>
-									<th>Year of Production</th>
-									<th>Number of Seats</th>
-									<th>Fuel Type</th>
-									<th>Vehicle Type</th>
-									<th>Price Per Day</th>
-									<th>Average grade</th>
-									<th>Deleted</th>
-								</tr>
-							</thead>
-							<tbody>
-							</tbody>
-						</table>
-					</div>
-					<div id="vehicleButtons">
-						<button type="button" id="addVehicle" class="btn btn-default"
-							data-toggle="modal" data-target="#addVehicleModalDialog">Add
-							vehicle</button>
-					</div>
+				<div id="vehicleTableDiv">
+					<button type="button" id="addVehicle" class="btn btn-default" data-toggle="modal" data-target="#addVehicleModalDialog">Add vehicle</button>
+					<table id="vehicleTable" class="table display table-bordered">
+						<thead>
+							<tr>
+								<th>Producer</th>
+								<th>Model</th>
+								<th>Year of Production</th>
+								<th>Number of Seats</th>
+								<th>Fuel Type</th>
+								<th>Vehicle Type</th>
+								<th>Price Per Day</th>
+								<th>Average grade</th>
+								<th>Deleted</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
 				</div>
 			</div>
 			<div id="quick" class="tab-pane fade">
@@ -205,36 +200,28 @@
 								<label for="fname">First name:</label>
 								<div class="input-group">
 									<input class="form-control" type="text" name="fname"
-										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
-										readonly> <span class="input-group-addon edit"><i
-										class="glyphicon glyphicon-edit"></i></span>
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="lname">Last name:</label>
 								<div class="input-group">
 									<input class="form-control" type="text" name="lname"
-										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
-										readonly> <span class="input-group-addon edit"><i
-										class="glyphicon glyphicon-edit"></i></span>
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="phone">Phone:</label>
 								<div class="input-group">
 									<input class="form-control" type="tel" name="phone"
-										pattern="\+[0-9]{12}" title="12 digits starting with +"
-										readonly> <span class="input-group-addon edit"><i
-										class="glyphicon glyphicon-edit"></i></span>
+										pattern="\+[0-9]{12}" title="12 digits starting with +">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="address">Address:</label>
 								<div class="input-group">
 									<input class="form-control" type="text" name="address"
-										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
-										readonly> <span class="input-group-addon edit"><i
-										class="glyphicon glyphicon-edit"></i></span>
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter">
 								</div>
 							</div>
 							<button type="submit" class="btn btn-default" id="saveChanges">Save
@@ -250,23 +237,19 @@
 				<div class="modal-content dialogStyle">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
-						<h2 class="modal-title">Add branch office</h2>
+						<h3 class="modal-title">Add branch office</h3>
 					</div>
-					<div class="modal-body">
+					<div class="modal-body" id="branchDialog">
 						<div id="addBranchOfficeMap"></div>
-						<div id="addBranchOfficeFormDiv">
-							<form id="addBranchOfficeForm">
-								<div class="form-group">
-									<div class="input-group">
-										<input class="form-control" type="text" name="name"
-											placeholder="Name" required autofocus>
-									</div>
-								</div>
-								<input type="hidden" id="addBranchLatitude" value="45" required>
-								<input type="hidden" id="addBranchLongitude" value="0" required>
-								<button class="btn btn-default" id="addBranch">Add</button>
-							</form>
-						</div>
+						<form id="addBranchOfficeForm">
+							<div class="input-field">
+		          				<input type="text" name="name" class="validate" required autofocus>
+		          				<label for="name">Name</label>
+		        			</div>
+							<input type="hidden" id="addBranchLatitude" value="45" required>
+							<input type="hidden" id="addBranchLongitude" value="0" required>
+							<button class="btn btn-default" id="addBranch">Add</button>
+						</form>
 					</div>
 				</div>
 			</div>
@@ -277,28 +260,19 @@
 				<div class="modal-content dialogStyle">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
-						<h2 class="modal-title">Edit branch office</h2>
+						<h3 class="modal-title">Edit branch office</h3>
 					</div>
-					<div class="modal-body">
-						<div id="editBranchOfficeMap"></div>
-						<div id="editBranchOfficeFormDiv">
-							<form id="editBranchOfficeForm">
-								<div class="form-group">
-									<div class="input-group">
-										<input class="form-control" type="text" name="name"
-											pattern="[A-z0-9a-z]+"
-											title="Must contain only letters and numbers" readonly>
-										<span class="input-group-addon edit"><i
-											class="glyphicon glyphicon-edit"></i></span>
-									</div>
-								</div>
-								<div id="branchMapDiv" class="map"></div>
-								<input type="hidden" id="branchLatitude" value="45"required">
-								<input type="hidden" id="branchLongitude" value="0"required">
-								<button class="btn btn-default" id="editBranch">Save</button>
-								<button class="btn btn-default" id="deleteBranch">Delete</button>
-							</form>
-						</div>
+					<div class="modal-body" id="branchEditDialog">
+						<div id="branchMapDiv"></div>
+						<form id="editBranchOfficeForm">
+							<div class="input-field">
+		          				<input type="text" name="name" class="validate" pattern="[A-z0-9a-z]+">
+		        			</div>
+							<input type="hidden" id="branchLatitude" value="45" required>
+							<input type="hidden" id="branchLongitude" value="0" required>
+							<button class="btn btn-default" id="editBranch">Save</button>
+							<button class="btn btn-default" id="deleteBranch">Delete</button>
+						</form>
 					</div>
 				</div>
 			</div>
@@ -309,49 +283,43 @@
 				<div class="modal-content dialogStyle">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
-						<h2 class="modal-title">Add vehicle</h2>
+						<h3 class="modal-title">Add vehicle</h3>
 					</div>
 					<div class="modal-body">
 						<div id="addVehicleFormDiv">
 							<form id="addVehicleForm">
-								<div class="form-group">
-									<div class="input-group">
-										<input class="form-control" type="text" name="producer"
-											placeholder="Producer" required autofocus>
-									</div>
-									<div class="input-group">
-										<input class="form-control" type="text" name="model"
-											placeholder="Model" required>
-									</div>
-									<div class="input-group">
-										<input class="form-control" type="number" name="year"
-											placeholder="Year of production" min="1908"
-											title="Year must be after year 1908." required>
-									</div>
-									<div class="input-group">
-										<input class="form-control" type="number" name="seats"
-											placeholder="Number of seats" min="1" max="9"
-											title="Number of seats must be between 1 and 9" required>
-									</div>
-									<div class="input-group">
-										<input class="form-control" type="number" name="price"
-											placeholder="Price per day" min="1"
-											title="Price per day at least must be 1" required>
-									</div>
-									<div class="form-group">
-										<select class="form-control" id="vehicleTypeAdd">
-										</select>
-									</div>
-									<div class="form-group">
-										<select class="form-control" id="fuelTypeAdd">
-										</select>
-									</div>
-									<div class="input-group">
-										<input class="form-control" type="number" name="quantity"
-											placeholder="Quantity" min="1"
-											title="Quantity must be greater than 0" required>
-									</div>
+								<div class="input-field">
+		          					<input type="text" name="producer" class="validate" pattern="[A-z0-9a-z]+" required>
+		        					<label for="producer">Producer</label>
+		        				</div>
+		        				<div class="input-field">
+		          					<input type="text" name="model" class="validate" pattern="[A-z0-9a-z]+" required>
+		        					<label for="model">Model</label>
+		        				</div>
+		        				<div class="input-field">
+		          					<input type="number" name="year" class="validate" min="1908" max="2100" title="Year must be between 1908. and 2100." required>
+		        					<label for="year">Year</label>
+		        				</div>
+		        				<div class="input-field">
+		          					<input type="number" name="seats" class="validate" min="1" max="9" title="Number of seats must be between 1 and 9" required>
+		        					<label for="seats">Number of seats</label>
+		        				</div>
+		        				<div class="input-field">
+		          					<input type="number" name="price" class="validate" min="1" title="Price per day must be 1 at least" required>
+		        					<label for="seats">Price per day</label>
+		        				</div>
+								<div class="form-control">
+									<select id="vehicleTypeAdd" name="vehicleType"></select>
+									<label for="vehicleType">Choose vehicle type</label>
 								</div>
+								<div class="form-control">
+									<select id="fuelTypeAdd" name="fuelType"></select>
+									<label for="fuelType">Choose fuel type</label>
+								</div>
+								<div class="input-field">
+		          					<input type="number" name="quantity" class="validate" min="1" title="Quantity must be greater than 0" required>
+		        					<label for="quantity">Quantity</label>
+		        				</div>
 								<button class="btn btn-default" id="saveVehicle">Add</button>
 							</form>
 						</div>
