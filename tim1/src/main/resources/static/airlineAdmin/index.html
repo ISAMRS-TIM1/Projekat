@@ -19,7 +19,10 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.0"></script>
-
+<script type="text/javascript"
+	src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css"
+	href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
 <link rel="stylesheet"
@@ -106,24 +109,14 @@
 				<div class="reportsDiv">
 					<table id="serviceTable">
 						<tr>
-							<td>
-								From date
-							</td>
-							<td>
-								<input class="form-control" type="date" id="startDateIncome"/>
-							</td>
-							<td>
-								To date
-							</td>
-							<td>
-								<input class="form-control" type="date" id="endDateIncome"/>
-							</td>
+							<td id="shownIncomePeriodText">Period:</td>
+							<td><input type="text" class="form-control" id="showIncomeDateRange"></td>
 						</tr>
 					</table><br>
 					<button class="btn btn-default" id="showIncomeButton" onclick='showIncome(event)'>Show income</button>	
 					<br>
 					<span id="income"></span><br><br>
-					<select id="graphicLevel">
+					<select id="graphicLevel" class="form-control">
 						<option value="daily">Daily</option>
 						<option value="weekly">Weekly</option>
 						<option value="monthly">Monthly</option>

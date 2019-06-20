@@ -52,6 +52,12 @@ a[data-toggle="tab"] {
 	margin-bottom: 2vw;
 }
 
+#graphicLevel {
+	width: 20vw !important;
+	margin-left:auto;
+	margin-right:auto;
+	display:block;	
+}
 
 /* PROFILE */
 
@@ -414,6 +420,11 @@ input, select {
 	position: absolute;
     top: 175%;
     left: 80%;
+}
+
+#shownIncomePeriodText {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 1.6vw;
 }
 
 #userEditForm input {

@@ -411,13 +411,13 @@ $(document)
         	                        type: 'PUT',
         	                        url: saveChangesURL,
         	                        contentType: 'application/json',
-        	                        dataType: "html",
+        	                        dataType: "json",
         	                        data: formToJSON(firstName, lastName,
         	                            phone, address, email),
         	                        success: function(data) {
-        	                            if (data != "") {
-        	                                toastr["error"](data);
-        	                            }
+        	                        	if (data != "") {
+        	    							toastr[data.toastType](data.message);
+        	    						}
         	                        },
         	                        error: function(XMLHttpRequest,
         	                            textStatus, errorThrown) {

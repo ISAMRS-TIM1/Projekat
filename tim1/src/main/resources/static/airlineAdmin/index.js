@@ -65,6 +65,12 @@ $(document).ready(function() {
 	    }
 	});
 	
+	$('#showIncomeDateRange').daterangepicker({
+		locale : {
+			format : 'DD/MM/YYYY'
+		}
+	});
+	
 	$('#descriptionDiv').on( 'change keyup keydown paste cut', 'textarea', function (){
 	    $(this).height(0).height(this.scrollHeight);
 	}).find( 'textarea' ).change();
@@ -348,26 +354,13 @@ function userEditFormSetUp() {
 
 function showIncome(e) {
 	e.preventDefault();
-	var startDate = $("#startDateIncome").val();
-	if (startDate == null || startDate == "") {
-		toastr["error"]("Start date is not valid.")
-		return;
-	}
-	var endDate = $("#endDateIncome").val();
-	if (endDate == null || endDate == "") {
-		toastr["error"]("End date is not valid.")
-		return;
-	}
-	if (moment(endDate).isBefore(startDate)) {
-		toastr["error"]("End date must be after start date.");
-		return;
-	}
+	var drp = $('#showIncomeDateRange').data('daterangepicker');
 	$.ajax({
 		type : 'GET',
 		url : getIncomeOfAirlineURL,
 		headers : createAuthorizationTokenHeader(TOKEN_KEY),
 		contentType : 'application/json',
-		data : {"fromDate" : startDate, "toDate" : endDate},
+		data : {"fromDate" : drp.startDate.toDate(), "toDate" : drp.endDate.toDate()},
 		success : function(data) {
 			if (data != null) {
 				$("#income").html("Income of airline: " + data + "EUR");
