@@ -20,6 +20,7 @@
 <link rel="stylesheet" type="text/css"
 	href="common/css/jquery.seat-charts.css">
 <link rel="stylesheet" href="common/css/tableStyle.css">
+<link rel="stylesheet" href="common/css/button.css">
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <script
@@ -79,9 +80,9 @@
 					<li><a data-toggle="tab" href="#reservations">My
 							Reservations</a></li>
 					<li><a data-toggle="tab" href="#profile">Profile</a></li>
+					<li><a data-toggle="tab" id="logout">Logout</a></li>
 				</ul>
 			</div>
-			<button type="button" class="btn .btn-link" id="logout">Logout</button>
 		</div>
 		<div class="tab-content">
 			<div id="flights" class="tab-pane fade in active"
@@ -103,23 +104,23 @@
 						<table id="serviceTable">
 							<tr>
 								<td>Start destination</td>
-								<td><select id="startDestination">
+								<td><select class="form-control" id="startDestination">
 								</select></td>
 								<td>End destination</td>
-								<td><select id="endDestination">
+								<td><select class="form-control" id="endDestination">
 								</select></td>
 							</tr>
 							<tr>
 								<td>Departure time</td>
-								<td><input type="date" id="departureTime" /></td>
+								<td><input type="date" id="departureTime" class="form-control" /></td>
 								<td>Multi city</td>
-								<td><input type="checkbox" id="multicity" /></td>
+								<td><input type="checkbox" id="multicity"/></td>
 							</tr>
 							<tr>
 								<td>Round trip</td>
 								<td><input type="checkbox" id="srcRoundTrip" /></td>
 								<td class="retTripSrc">Returning departure time</td>
-								<td class="retTripSrc"><input type="date"
+								<td class="retTripSrc"><input class="form-control" type="date"
 									id="srcRetDepTime" /></td>
 							</tr>
 						</table>
@@ -150,7 +151,7 @@
 						<form id="searchHotelsForm">
 							<table id="hotelsSearchTable">
 								<tr>
-									<td><label>Hotel name</label><input id="searchHotelName"
+									<td><label>Hotel name</label></td><td><input class="form-control" id="searchHotelName"
 										type="text"></td>
 									<td><select id="searchHotelCountry" class="form-control"
 										required>
@@ -442,7 +443,8 @@
 
 								</tr>
 								<tr>
-									<td colspan="2"><label>Hotel grade</label><input
+									<td><label>Hotel grade</label></td>
+									<td><input
 										id="searchHotelGrade" type="text" class="span2" value=""
 										data-slider-min="0" data-slider-max="5" data-slider-step="0.1"
 										data-slider-value="[0,5]" /></td>
@@ -876,36 +878,28 @@
 								<label for="fname">First name:</label>
 								<div class="input-group">
 									<input class="form-control" type="text" name="fname"
-										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
-										readonly> <span class="input-group-addon edit"><i
-										class="glyphicon glyphicon-edit"></i></span>
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="lname">Last name:</label>
 								<div class="input-group">
 									<input class="form-control" type="text" name="lname"
-										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
-										readonly> <span class="input-group-addon edit"><i
-										class="glyphicon glyphicon-edit"></i></span>
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="phone">Phone:</label>
 								<div class="input-group">
 									<input class="form-control" type="tel" name="phone"
-										pattern="\+[0-9]{12}" title="12 digits starting with +"
-										readonly> <span class="input-group-addon edit"><i
-										class="glyphicon glyphicon-edit"></i></span>
+										pattern="\+[0-9]{12}" title="12 digits starting with +">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="address">Address:</label>
 								<div class="input-group">
 									<input class="form-control" type="text" name="address"
-										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
-										readonly> <span class="input-group-addon edit"><i
-										class="glyphicon glyphicon-edit"></i></span>
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter">
 								</div>
 							</div>
 							<button type="submit" class="btn btn-default" id="saveChanges">Save
@@ -948,8 +942,8 @@
 		<div class="modal-dialog modal-lg" role="document">
 			<div class="modal-content" id="serviceDiv">
 				<form id="searchUserForm">
-					First name <input type="text" id="userFirstName" /> Last name <input
-						type="text" id="userLastName" /> <input type="submit"
+					First name <input type="text" id="userFirstName" class="form-control"/> Last name <input
+						type="text" class="form-control" id="userLastName" /><br><input type="submit"
 						id="submitButton" class="btn btn-default" value="Search" />
 				</form>
 				<br>
@@ -982,7 +976,7 @@
 					</tr>
 					<tr>
 						<td colspan="2">Average grade:
-							<p id="hotelGrade"></p>
+							<span id="hotelGrade"></span>
 						</td>
 					</tr>
 					<tr>
@@ -1083,7 +1077,7 @@
 							class="textInput" readonly></td>
 					</tr>
 					<tr>
-						<td colspan="2" style="color:white;">
+						<td colspan="2" style="color:black;">
 							<div id="airlineGrade"></div>
 						</td>
 					</tr>
@@ -1108,7 +1102,7 @@
 							</table>
 						</td>
 					</tr>
-					<tr><td colspan="2"><div id="destinationsMapDiv"></div>><td></tr>
+					<tr><td colspan="2"><div id="destinationsMapDiv"></div><td></tr>
 					<tr>
 						<td colspan="2">
 							<table id="quickAirlineReservationsTable"
@@ -1168,7 +1162,7 @@
 							<td>Flight distance</td>
 							<td><span id="flightDistance"></span></td>
 							<td>Locations of connections</td>
-							<td><select id="flightConnections"></select>
+							<td><select class="form-control" id="flightConnections"></select>
 						</tr>
 						<tr class="retTrip">
 							<td>Returning departure time</td>
@@ -1184,9 +1178,9 @@
 						</tr>
 						<tr>
 							<td>Passport number</td>
-							<td><input type='text' id="userPassNumber" /></td>
+							<td><input type='text' class="form-control" id="userPassNumber" /></td>
 							<td>Number of bags</td>
-							<td><input type='number' id="numOfBags" /></td>
+							<td><input type='number' class="form-control" id="numOfBags" /></td>
 						</tr>
 					</table>
 					<br> <br>
@@ -1243,7 +1237,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
-					<h4 id="quickReservationsModalTitle" class="modal-title"></h4>
+					<h4 style="font-size:4.5vw !important;" id="quickReservationsModalTitle" class="modal-title"></h4>
 				</div>
 				<div class="modal-body">
 					<table id="reserveCarsTable">
@@ -1324,7 +1318,7 @@
 		<div class="modal-dialog modal-lg" role="document">
 			<div class="modal-content" id="showReservationDiv">
 				<div id="reserveDiv">
-					<h2 style="color: white; text-align: center;">Flight
+					<h2 style="color: black; text-align: center;">Flight
 						reservation</h2>
 					<table id="showReservationTable">
 						<tr>
@@ -1350,7 +1344,7 @@
 							<td>Flight distance</td>
 							<td><span id="flightDistanceRes"></span></td>
 							<td>Locations of connections</td>
-							<td><select id="flightConnectionsRes"></select></td>
+							<td><select class="form-control" id="flightConnectionsRes"></select></td>
 						</tr>
 						<tr class="resRoundTrip">
 							<td>Returning departure time</td>
@@ -1362,11 +1356,11 @@
 							<td>Number of seats</td>
 							<td><span id="numOfSeatsRes"></span></td>
 							<td>Seats</td>
-							<td><select id="seatsRes"></select></td>
+							<td><select class="form-control" id="seatsRes"></select></td>
 						</tr>
 						<tr>
 							<td>Price</td>
-							<td><input type="number" id="flightPriceRes" readonly></td>
+							<td><input type="number" class="form-control" id="flightPriceRes" readonly></td>
 							<td><input type="hidden" id="flightResID"></td>
 							<td id="flightRating"></td>
 							<td><button id="cancelFlightReservationButton"
@@ -1374,7 +1368,7 @@
 						</tr>
 					</table>
 					<br> <br>
-					<h2 id="hotelResHeader" style="color: white; text-align: center;">Hotel
+					<h2 id="hotelResHeader" style="color: black; text-align: center;">Hotel
 						reservation</h2>
 					<table id="showHotelReservationTable">
 						<tr>
@@ -1392,19 +1386,19 @@
 						</tr>
 						<tr>
 							<td>Additional services</td>
-							<td><select id="addServRes"></select></td>
+							<td><select class="form-control" id="addServRes"></select></td>
 						</tr>
 						<tr>
 							<td>Price</td>
-							<td><input type="number" id="hotelPriceRes" readonly></td>
-							<td><input type="hidden" id="roomResID"></td>
+							<td><input type="number" class="form-control" id="hotelPriceRes" readonly></td>
+							<td><input type="hidden" class="form-control" id="roomResID"></td>
 							<td id="roomRating"></td>
 							<td colspan='2'><button id="cancelHotelReservationButton"
 									class="btn btn-default">Cancel</button></td>
 						</tr>
 					</table>
 					<br> <br>
-					<h2 id="carResHeader" style="color: white; text-align: center;">Car
+					<h2 id="carResHeader" style="color: black; text-align: center;">Car
 						reservation</h2>
 					<table id="showCarReservationTable">
 						<tr>
@@ -1428,8 +1422,8 @@
 						</tr>
 						<tr>
 							<td>Price</td>
-							<td><input type="number" id="carPriceRes" readonly></td>
-							<td><input type="hidden" id="carResID"></td>
+							<td><input type="number" class="form-control" id="carPriceRes" readonly></td>
+							<td><input type="hidden" class="form-control" id="carResID"></td>
 							<td id="vehicleRating"></td>
 							<td colspan='2'><button id="cancelCarReservationButton"
 									class="btn btn-default">Cancel</button></td>
@@ -1440,28 +1434,28 @@
 						<table id="discountTable">
 							<tr>
 								<td><label for="usedDiscountPoints">Used points:</label></td>
-								<td><input type="number" id="usedDiscountPoints" step="1"
+								<td><input type="number" class="form-control" id="usedDiscountPoints" step="1"
 									min="0" value="0"
 									oninput="validity.valid||(value='0');recalculatePrices();"></td>
 								<td><label for="discountPercentagePerPoint">Discount
 										percentage per discount point:</label></td>
-								<td><input type="number" id="discountPercentagePerPoint"
+								<td><input type="number" class="form-control" id="discountPercentagePerPoint"
 									readonly></td>
 							</tr>
 							<tr>
 								<td><label for="availableDiscountPoints">Available
 										discount points:</label></td>
-								<td><input type="number" id="availableDiscountPoints"
+								<td><input type="number" class="form-control" id="availableDiscountPoints"
 									readonly></td>
 								<td><label for="discountPerExtraReservation">Discount
 										per extra reservation:</label></td>
-								<td><input type="number" id="discountPerExtraReservation"
+								<td><input type="number" class="form-control" id="discountPerExtraReservation"
 									readonly></td>
 							</tr>
 							<tr>
 								<td colspan="2"><label for="totalPrice">Total
 										price:</label></td>
-								<td colspan="2"><input type="number" id="totalPrice"
+								<td colspan="2"><input type="number" class="form-control" id="totalPrice"
 									readonly></td>
 							</tr>
 						</table>

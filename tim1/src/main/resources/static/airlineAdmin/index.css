@@ -1,5 +1,5 @@
 body {
-	background: #0D63FF;
+	background:#f4f7f6;
 }
 
 /* MENU */
@@ -14,23 +14,10 @@ body {
 	margin-left: 5%;
 }
 
-#logout {
-	width: 10%;
-	margin-right: 0% !important;
-	background: none;
-	color: white;
-	font-size: 1.4vw;
-	margin-top: 0.8vw;
-	font-style: italic;
-	text-decoration: underline;
-}
-
 a[data-toggle="tab"] {
-	border-radius: 2vw 2vw 0vw 0vw !important;
-	background: #5994FF;
-	border: 0.18vw solid #B27A00 !important;
+	background: #f4f7f6;
 	font-size: 1.3vw;
-	color: white;
+	color: black;
 }
 
 #basicInfo {
@@ -41,7 +28,7 @@ a[data-toggle="tab"] {
 }
 
 #averageGrade {
-	color:white;
+	color:black;
 	font-size: 1.5vw;
 }
 
@@ -58,15 +45,19 @@ a[data-toggle="tab"] {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
-	background: #5994FF;
-	color: white;
+	background: #f4f7f6;
+	color: black;
 	font-size: 1.6vw;
-	border: 0.16vw solid #B27A00;
-	border-radius: 2vw 2vw 2vw 2vw;
 	margin-top: 1%;
 	margin-bottom: 2vw;
 }
 
+#graphicLevel {
+	width: 20vw !important;
+	margin-left:auto;
+	margin-right:auto;
+	display:block;	
+}
 
 /* PROFILE */
 
@@ -97,11 +88,9 @@ a[data-toggle="tab"] {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
-	background: #5994FF;
-	color: white;
+	background: #f4f7f6;
+	color: black;
 	font-size: 1.6vw;
-	border: 0.16vw solid #B27A00;
-	border-radius: 2vw 2vw 2vw 2vw;
 }
 
 #email {
@@ -109,13 +98,13 @@ a[data-toggle="tab"] {
 }
 
 .dialogStyle {
-	background: #0D63FF;
+	background: #f4f7f6;
 	text-align: center;
 }
 
 #airlineName{
-	background-color: #0D63FF;
-    color: white;
+	background-color: #f4f7f6;
+    color: black;
     text-align: center;
     font-size: 4.5vw;
     width: 100%;
@@ -128,8 +117,8 @@ a[data-toggle="tab"] {
 }
 
 #airlineDescription {
-	background-color: #0D63FF;
-	color:white;
+	background-color: #f4f7f6;
+	color:black;
 	font-size: 1.5vw;
 	width: 100%;
 }
@@ -148,15 +137,13 @@ a[data-toggle="tab"] {
 	height: 53vw; 
 	margin-left : 13%;
 	margin-top: 5%;
-	background: #5994FF;
-	border: 0.24vw solid #B27A00;
-	border-radius: 4vw 1.6vw;
+	background: #f4f7f6;
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
 	padding: 2vw;
 	text-align:center;
-	color:white;
+	color:black;
 }
 #income {
 	font-size: 1.5vw;
@@ -171,9 +158,7 @@ a[data-toggle="tab"] {
 	height: 30vw; 
 	margin-left : 13%;
 	margin-top: 5%;
-	background: #5994FF;
-	border: 0.24vw solid #B27A00;
-	border-radius: 4vw 1.6vw;
+	background: #f4f7f6;
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
@@ -197,7 +182,7 @@ a {
 .front-indicator {
 	width: 100px;
 	margin-bottom: 25px;
-	margin-left: 18px;
+	margin-left: 40px;
 	background-color: #f6f6f6;	
 	color: #adadad;
 	text-align: center;
@@ -208,6 +193,10 @@ a {
 	margin: 0 auto;
 	width: 500px;
 	text-align: left;
+	display: flex;
+}
+#planeSeats {
+	display: flex;
 }
 .booking-details {
 	float: left;
@@ -216,7 +205,8 @@ a {
 	font-size: 12px;
 	position: relative;
 	height: 401px;
-	color:white;
+	color:black;
+	width: 50% !important;
 }
 .booking-details h2 {
 	margin: 25px 0 20px 0;
@@ -228,9 +218,9 @@ a {
 }
 div.seatCharts-cell {
 	color: #182C4E;
-	height: 20px !important;
-	width: 20px !important;
-	line-height: 20px !important;
+	height: 30px !important;
+	width: 30px !important;
+	line-height: 30px !important;
 	
 }
 div.seatCharts-seat {
@@ -255,7 +245,6 @@ div.seatCharts-seat.available.business-class {
 	background-color: #00d33b !important;
 }
 div.seatCharts-seat.available.blank-class {
-/* 	background: url(vip.png); */
 	background-color: white !important;
 }
 div.seatCharts-seat.focused {
@@ -269,7 +258,7 @@ div.seatCharts-seat.unavailable {
 }
 div.seatCharts-container {
 	border-right: 1px dotted #adadad;
-	width: 200px;
+	width: 50% !important;
 	padding: 20px;
 	float: left;
 }
@@ -277,9 +266,9 @@ div.seatCharts-legend {
 	padding-left: 0px;
 	position: absolute;
 	bottom:100px;
-	left: 225px;
+	left: 275px;
 	width: 200px;
-	color: white;
+	color: black;
 }
 ul.seatCharts-legendList {
 	padding-left: 0px;
@@ -290,9 +279,14 @@ span.seatCharts-legendDescription {
 }
 #addButton {
 	display: inline-block !important;
+	width: 50% !important;
 }
 #deleteButton {
 	display: inline-block !important;
+	width: 50% !important;
+}
+#seatButtons {
+	display: flex;
 }
 .configure-button {
 	display: block;
@@ -320,6 +314,7 @@ span.seatCharts-legendDescription {
 #seatDiv {
 	margin-top:25px;
 	margin-left:-15px;
+	display: flex;
 }
 #saveSeatButton {
 	margin-top: 50px;
@@ -331,10 +326,8 @@ input, select {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
-	color: white;
+	color: black;
 	font-size: 1.6vw;
-	border: 0.16vw solid #B27A00;
-	border-radius: 2vw 2vw 2vw 2vw;
 	margin-top: 1%;
 	margin-bottom: 2vw;
 }
@@ -344,23 +337,19 @@ input, select {
 }
 #serviceDiv {
 	margin: 0;
-	background: #5994FF;
-	border: 0.24vw solid #B27A00;
-  	border-radius: 4vw 1.6vw;
+	background: #f4f7f6;
   	height: 50vh;
 }
 
 #flightServiceDiv {
 	margin: 0;
-	background: #5994FF;
-	border: 0.24vw solid #B27A00;
-  	border-radius: 4vw 1.6vw;
+	background: #f4f7f6;
   	height: 100vh;
 }
 
 #serviceTable {
 	text-align:left;
-	color:white;
+	color:black;
 	margin: 0 auto;
 }
 #serviceTable tbody {
@@ -373,10 +362,8 @@ input, select {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
-	color: white;
+	color: black;
 	font-size: 1.6vw;
-	border: 0.16vw solid #B27A00;
-	border-radius: 2vw 2vw 2vw 2vw;
 	margin-bottom: 2vw;
 }
 #destMapDiv {
@@ -387,7 +374,7 @@ input, select {
 	height: 70vh !important;
 }
 #destDiv {
-	color:white;
+	color:black;
 	position: absolute;
   	left: 50%;
   	top: 50%;
@@ -404,7 +391,7 @@ input, select {
 }
 #showFlightTable {
 	text-align:left;
-	color:white;
+	color:black;
 	margin: 0 auto;
 }
 #showFlightTable tbody {
@@ -415,32 +402,35 @@ input, select {
 }
 #showFlightDiv {
 	margin: 0;
-	background: #5994FF;
-	border: 0.24vw solid #B27A00;
-	border-radius: 4vw 1.6vw;
+	background: #f4f7f6;
 }
 #resTableDiv {
-	width: 70%;
-	height: 30vw; 
+	width: 70%; 
 	margin-left : 13%;
 	margin-top: 5%;
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
-	padding: 2vw;
 }
 #legend-second {
     bottom: 150px !important;
     left: 0 !important;
-}
-#seat-map-second {
-	margin-left: 25% !important;
 }
 #quickReserveButton {
 	position: absolute;
     top: 175%;
     left: 80%;
 }
+
+#shownIncomePeriodText {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 1.6vw;
+}
+
+#userEditForm input {
+	width: 40vw !important;
+}
+
 .retTrip {
 	display: none;
 }

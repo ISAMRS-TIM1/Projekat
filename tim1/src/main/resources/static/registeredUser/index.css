@@ -1,5 +1,5 @@
 body {
-	background: #0D63FF;
+	background: #f4f7f6;
 }
 
 #topMenu {
@@ -13,22 +13,9 @@ body {
 }
 
 a[data-toggle="tab"] {
-	border-radius: 2vw 2vw 0vw 0vw !important;
-	background: #5994FF;
-	border: 0.18vw solid #B27A00 !important;
+	background: #f4f7f6;
 	font-size: 1.3vw;
-	color: white;
-}
-
-#logout {
-	width: 10%;
-	margin-right: 0% !important;
-	background: none;
-	color: white;
-	font-size: 1.4vw;
-	margin-top: 0.8vw;
-	font-style: italic;
-	text-decoration: underline;
+	color: black;
 }
 
 #profileContent {
@@ -60,32 +47,26 @@ a[data-toggle="tab"] {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
-	color: white;
+	color: black;
 	font-size: 1.6vw;
-	border: 0.16vw solid #B27A00;
-	border-radius: 2vw 2vw 2vw 2vw;
 }
 
 #searchVehiclesButton {
-	color: white;
+	color: black;
 	font-size: 1.6vw;
-	border: 0.16vw solid #B27A00;
-	border-radius: 2vw 2vw 2vw 2vw;
 }
 
 #reserveButton {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
-	color: white;
-	border: 0.16vw solid #B27A00;
-	border-radius: 2vw 2vw 2vw 2vw;
+	color: black;
 }
 
 #nextButtonFlights {
 	position: absolute;
-	top: 88%;
-	left: 76%;
+	margin-left: 90%;
+	margin-top: -10%;
 }
 
 #nextButtonFlightsFriends {
@@ -110,9 +91,7 @@ a[data-toggle="tab"] {
 	position: fixed;
 	right: 0;
 	top: 9.5vw;
-	background: #5994FF;
-	border: 0.24vw solid #B27A00;
-	border-radius: 4vw 4vw;
+	background: #f4f7f6;
 	padding: 2vw;
 	overflow: auto;
 }
@@ -122,9 +101,7 @@ a[data-toggle="tab"] {
 	height: 30vw;
 	margin-left: 13%;
 	margin-top: 5%;
-	background: #5994FF;
-	border: 0.24vw solid #B27A00;
-	border-radius: 4vw 1.6vw;
+	background: #f4f7f6;
 	margin-left: 13%;
 	padding: 2vw;
 }
@@ -134,9 +111,7 @@ a[data-toggle="tab"] {
 	height: 30vw;
 	margin-left: 13%;
 	margin-top: 5%;
-	background: #5994FF;
-	border: 0.24vw solid #B27A00;
-	border-radius: 4vw 1.6vw;
+	background: #f4f7f6;
 	margin-left: 13%;
 	padding: 2vw;
 }
@@ -159,7 +134,8 @@ a[data-toggle="tab"] {
 	font-size: 12px;
 	position: relative;
 	height: 401px;
-	color: white;
+	color: black;
+	width: 50% !important;
 }
 
 .booking-details h2 {
@@ -174,18 +150,14 @@ a[data-toggle="tab"] {
 
 div.seatCharts-cell {
 	color: #182C4E;
-	height: 20px !important;
-	width: 20px !important;
-	line-height: 20px !important;
+	height: 30px !important;
+	width: 30px !important;
+	line-height: 30px !important;
 }
 
 div.seatCharts-seat {
 	color: #FFFFFF;
 	cursor: pointer;
-}
-
-div.seatCharts-row {
-	height: 35px;
 }
 
 div.seatCharts-seat.available {
@@ -207,7 +179,7 @@ div.seatCharts-seat.available.business-class {
 
 div.seatCharts-seat.available.blank-class {
 	/* 	background: url(vip.png); */
-	background-color: white !important;
+	background-color: black !important;
 }
 
 div.seatCharts-seat.focused {
@@ -224,7 +196,7 @@ div.seatCharts-seat.unavailable {
 
 div.seatCharts-container {
 	border-right: 1px dotted #adadad;
-	width: 200px;
+	width: 50% !important;
 	padding: 20px;
 	float: left;
 }
@@ -233,9 +205,9 @@ div.seatCharts-legend {
 	padding-left: 0px;
 	position: absolute;
 	bottom: 100px;
-	left: 325px;
+	left: 275px;
 	width: 200px;
-	color: white;
+	color: black;
 }
 
 ul.seatCharts-legendList {
@@ -255,6 +227,7 @@ input, button {
 	margin: 0 auto;
 	width: 650px;
 	text-align: left;
+	display: flex;
 }
 
 #selected-seats {
@@ -272,7 +245,7 @@ input, button {
 #showFlightTable, #passengersTable, #showReservationTable,
 	#showHotelReservationTable, #showCarReservationTable, #discountTable {
 	text-align: left;
-	color: white;
+	color: black;
 	margin: 0 auto;
 }
 
@@ -292,16 +265,14 @@ input, button {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
-	color: white;
+	color: black;
 	font-size: 1.6vw;
-	border: 0.16vw solid #B27A00;
-	border-radius: 2vw 2vw 2vw 2vw;
 	margin-top: 1%;
 	margin-bottom: 2vw;
 }
 
 .btn-default {
-	background: #5994FF;
+	background: #f4f7f6;
 }
 
 .modal-content {
@@ -311,24 +282,31 @@ input, button {
 
 #serviceDiv {
 	margin: 0;
-	background: #5994FF;
-	border: 0.24vw solid #B27A00;
-	border-radius: 4vw 1.6vw;
+	background: #f4f7f6;
 	height: 50vh;
 }
 
 #searchUserForm {
 	text-align: center;
 	margin-top: 3%;
-	color: white;
+	color: black;
+}
+
+#searchUserForm input {
+	width: 20vw !important;
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
 }
 
 #submitButton {
-	color: white;
+	color: black;
 	font-size: 1.6vw;
-	border: 0.16vw solid #B27A00;
-	border-radius: 2vw 2vw 2vw 2vw;
 	margin-left: 3%;
+}
+
+#userEditForm input {
+	width: 40vw !important;
 }
 
 #usersDiv {
@@ -337,10 +315,8 @@ input, button {
 }
 
 #sendInvButton, #cancelResButton {
-	color: white;
+	color: black;
 	font-size: 1vw;
-	border: 0.16vw solid #B27A00;
-	border-radius: 2vw 2vw 2vw 2vw;
 }
 
 #invFriendStatus {
@@ -352,16 +328,14 @@ input, button {
 	height: 90vh;
 	margin-left: 13%;
 	margin-top: 5%;
-	background: #5994FF;
-	border: 0.24vw solid #B27A00;
-	border-radius: 4vw 1.6vw;
+	background: #f4f7f6;
 	margin-left: 13%;
 	padding: 2vw;
 }
 
 #serviceTable, #cartTable {
 	text-align: left;
-	color: white;
+	color: black;
 	margin: 0 auto;
 }
 
@@ -392,9 +366,7 @@ input, select {
 	height: 38vw;
 	margin-left: 13%;
 	margin-top: 5%;
-	background: #5994FF;
-	border: 0.24vw solid #B27A00;
-	border-radius: 4vw 1.6vw;
+	background: #f4f7f6;
 	margin-left: 13%;
 	padding: 2vw;
 }
@@ -405,7 +377,7 @@ input, select {
 
 #hotelsSearchTable {
 	text-align: left;
-	color: white;
+	color: black;
 	margin: 0 auto;
 }
 
@@ -419,9 +391,7 @@ input, select {
 
 #showHotelDiv, #showFlightDiv, #showAirlineDiv, #showReservationDiv {
 	margin: 0;
-	background: #5994FF;
-	border: 0.24vw solid #B27A00;
-	border-radius: 4vw 1.6vw;
+	background: #f4f7f6;
 }
 
 #hotelMapDiv, #airlineMapDiv, #destinationsMapDiv {
@@ -431,12 +401,12 @@ input, select {
 }
 
 #hotelName {
-	background-color: #5994FF;
-	font-size: 1.6vw;
+	background-color: #f4f7f6;
+	font-size: 4.5vw !important;
 }
 
 #hotelDescription {
-	background-color: #5994FF;
+	background-color: #f4f7f6;
 }
 
 #showHotelTable>tbody>tr>td {
@@ -518,20 +488,20 @@ input, select {
 
 .modal-header {
 	text-align: center;
-	color: white;
+	color: black;
 }
 
 .searchLabel {
-	color: white;
+	color: black;
 }
 
 .reserve {
-	background-color: white;
+	background-color: black;
 	color: black;
 }
 
 .modal-body, .modal-header {
-	background: #548cf1;
+	background: #f4f7f6;
 }
 
 #rvButton {
@@ -539,24 +509,22 @@ input, select {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
-	color: white;
+	color: black;
 	font-size: 1.6vw;
-	border: 0.16vw solid #B27A00;
-	border-radius: 2vw 2vw 2vw 2vw;
 }
 
 #airlineDescription {
 	background-color: transparent;
 	text-align: left;
-	color: white;
+	color: black;
 }
 
 #airlineGrade {
-	color: white;
+	color: black;
 }
 
 #airlineName {
-	color: white;
+	color: black;
 	font-size: 4.5vw;
 	text-align: center;
 	background-color: transparent;
@@ -594,10 +562,8 @@ input, select {
 	margin-right: auto;
 	margin-bottom: 3vh;
 	display: block;
-	color: white;
+	color: black;
 	font-size: 1.6vw;
-	border: 0.16vw solid #B27A00;
-	border-radius: 2vw 2vw 2vw 2vw;
 }
 
 

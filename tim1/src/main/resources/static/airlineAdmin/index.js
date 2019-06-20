@@ -65,6 +65,12 @@ $(document).ready(function() {
 	    }
 	});
 	
+	$('#showIncomeDateRange').daterangepicker({
+		locale : {
+			format : 'DD/MM/YYYY'
+		}
+	});
+	
 	$('#descriptionDiv').on( 'change keyup keydown paste cut', 'textarea', function (){
 	    $(this).height(0).height(this.scrollHeight);
 	}).find( 'textarea' ).change();
@@ -123,21 +129,21 @@ $(document).ready(function() {
 
 function setUpTables() {
 	$('#destinationsTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 		"scrollY" : "17vw",
 		"scrollCollapse" : true,
 		"retrieve" : true,
 	});
 	$('#flightsTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 		"scrollY" : "17vw",
 		"scrollCollapse" : true,
 		"retrieve" : true,
 	});
 	$('#flightsResTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 		"scrollY" : "17vw",
 		"scrollCollapse" : true,
@@ -145,7 +151,7 @@ function setUpTables() {
 		"retrieve" : true,
 	});
 	$('#quickReservationsTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 		"scrollY" : "17vw",
 		"scrollCollapse" : true,
@@ -233,7 +239,7 @@ function loadAirline() {
         	}
         	var roundedGrade = Math.round(data["averageGrade"]*10)/10;
         	var rating = "<div class='star-ratings-sprite'><span style='width:" + grade 
-        	+ "%' class='star-ratings-sprite-rating'></span></div><p style='color:white'>" + roundedGrade + "/5.0";
+        	+ "%' class='star-ratings-sprite-rating'></span></div><p style='color:black'>" + roundedGrade + "/5.0";
 			$("#airlineGrade").html(rating);
 			$("#airlineDescription").text(data["description"]);
 			airlineMap = setUpMap(data["latitude"], data["longitude"], 'basicMapDiv', true, airlineMap, '#basicMapDivLatitude', '#basicMapDivLongitude');
@@ -348,26 +354,13 @@ function userEditFormSetUp() {
 
 function showIncome(e) {
 	e.preventDefault();
-	var startDate = $("#startDateIncome").val();
-	if (startDate == null || startDate == "") {
-		toastr["error"]("Start date is not valid.")
-		return;
-	}
-	var endDate = $("#endDateIncome").val();
-	if (endDate == null || endDate == "") {
-		toastr["error"]("End date is not valid.")
-		return;
-	}
-	if (moment(endDate).isBefore(startDate)) {
-		toastr["error"]("End date must be after start date.");
-		return;
-	}
+	var drp = $('#showIncomeDateRange').data('daterangepicker');
 	$.ajax({
 		type : 'GET',
 		url : getIncomeOfAirlineURL,
 		headers : createAuthorizationTokenHeader(TOKEN_KEY),
 		contentType : 'application/json',
-		data : {"fromDate" : startDate, "toDate" : endDate},
+		data : {"fromDate" : drp.startDate.toDate(), "toDate" : drp.endDate.toDate()},
 		success : function(data) {
 			if (data != null) {
 				$("#income").html("Income of airline: " + data + "EUR");
@@ -1853,7 +1846,16 @@ function loadFlight(code) {
 					});
 				}
 				$("#resPricePerBag").text(data["pricePerBag"]);
-				$("#resAverageGrade").text(data["averageGrade"]);
+				var grade = data["averageGrade"];
+	        	
+	        	if(grade !== 0){
+	        		grade = grade/5*100;
+	        	}
+	        	var roundedGrade = Math.round(data["averageGrade"]*10)/10;
+	        	var rating = "<div class='star-ratings-sprite'><span style='width:" + grade 
+	        	+ "%' class='star-ratings-sprite-rating'></span></div><p>" + roundedGrade + "/5.0";
+				$("#resAverageGrade").html(rating);
+				
 				getPlaneSeats(code, 1);
 			}
 		},

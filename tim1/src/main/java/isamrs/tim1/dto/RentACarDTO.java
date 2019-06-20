@@ -2,6 +2,9 @@ package isamrs.tim1.dto;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import isamrs.tim1.model.RentACar;
 
 public class RentACarDTO implements Serializable {
@@ -9,11 +12,20 @@ public class RentACarDTO implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -3378278723268266095L;
+	@NotNull
+	@NotBlank
 	private String name;
+	@NotNull
+	@NotBlank
 	private String description;
 	private double averageGrade;
+	@NotNull
 	private double latitude;
+	@NotNull
 	private double longitude;
+	@NotNull
+	@NotBlank
+	private String oldName;
 
 	public RentACarDTO(RentACar rentACar) {
 		this.name = rentACar.getName();
@@ -71,6 +83,14 @@ public class RentACarDTO implements Serializable {
 
 	public void setLongitude(double longitude) {
 		this.longitude = longitude;
+	}
+
+	public String getOldName() {
+		return oldName;
+	}
+
+	public void setOldName(String oldName) {
+		this.oldName = oldName;
 	}
 
 }

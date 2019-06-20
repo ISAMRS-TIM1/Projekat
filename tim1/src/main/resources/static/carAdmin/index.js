@@ -1,4 +1,4 @@
-// TOKEN KEY
+//TOKEN KEY
 const TOKEN_KEY = 'jwtToken';
 
 /* MAP CONSTANTS */
@@ -13,7 +13,8 @@ var editBranchMap = null;
 var addBranchMap = null;
 
 /* URLs */
-const basicInfoURL = "/api/getRentACarInfo"
+const basicInfoURL = "/api/getRentACarInfo";
+const editRentacarURL = "/api/editRentACar";
 const loadUserInfoURL = "/api/getUserInfo";
 const logoutURL = "../logout";
 const loadBranchOfficesURL = "/api/getBranchOffices";
@@ -33,6 +34,9 @@ const loadMonthlyChartDataURL = "/api/getMonthlyGraphData";
 const getIncomeOfRentACarURL = "/api/getIncomeOfRentACar";
 const loadQuickReservationsURL = "/api/getQuickVehicleReservations";
 const addQuickReservationURL = "/api/createQuickVehicleReservation";
+const changePasswordURL = "../changePassword";
+
+var oldRentacarName = null;
 
 $(document).ready(function() {
 	/* INITIALIZING TOASTR, TABLES, MAPS AND LOADING BASIC RENT A CAR DATA */
@@ -49,8 +53,41 @@ $(document).ready(function() {
 	setUpTable("quickReservationsTable");
 	setUpDatePicker("showIncomeDateRange");
 	setUpDatePicker("quickPeriod");
-
 	
+	$("#saveChangesBasic").click(function(e){
+		e.preventDefault();
+		
+		var name = $("#rentACarName").val();
+		
+		if(name == null || name === ""){
+			toastr["error"]("Rent a car name must not be empty");
+			return;
+		}
+		
+		var description = $("#rentACarDescription").val();
+		
+		if(description == null || description === ""){
+			toastr["error"]("Rent a car description must not be empty");
+			return;
+		}
+		
+		var latitude = $("#basicLatitude").val();
+		
+		if(latitude == null){
+			toastr["error"]("Rent a car latitude must not be empty");
+			return;
+		}
+		
+		var longitude = $("#basicLongitude").val();
+		
+		if(longitude == null){
+			toastr["error"]("Rent a car longitude must not be empty");
+			return;
+		}
+		
+		editRentacar(name, description, latitude, longitude);
+	});
+
 	/* ADJUSTING TABLES */
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
 		$($.fn.dataTable.tables(true)).DataTable().columns.adjust();
@@ -158,6 +195,11 @@ $(document).ready(function() {
 		$('#editVehicleModalDialog').modal('show');
 	});
 	
+	$(document).on("click", "#changePasswordButton", function(e){
+		e.preventDefault();
+		document.location.href = changePasswordURL;
+	});
+	
 	$(document).on('click', '#editVehicle', function(e) {
 		e.preventDefault();
 		let newProducer = $('#editVehicleForm input[name="producer"]').val();
@@ -229,6 +271,7 @@ function loadBasicData() {
 		success: function(data){
 			if(data != null){
 				$("#rentACarName").val(data.name);
+				oldRentacarName = data.name;
 				$("#rentACarDescription").text(data.description);
 				var grade = data["averageGrade"];
 	        	
@@ -237,7 +280,7 @@ function loadBasicData() {
 	        	}
 	        	var roundedGrade = Math.round(data["averageGrade"]*10)/10;
 	        	var rating = "<div class='star-ratings-sprite'><span style='width:" + grade 
-	        	+ "%' class='star-ratings-sprite-rating'></span></div><p style='color:white'>" + roundedGrade + "/5.0";
+	        	+ "%' class='star-ratings-sprite-rating'></span></div><p>" + roundedGrade + "/5.0";
 				$("#averageGrade").html(rating);
 				racMap = setUpMap(data["latitude"], data["longitude"], 'basicMapDiv', true, racMap, '#basicLatitude', '#basicLongitude');
 			}
@@ -245,6 +288,36 @@ function loadBasicData() {
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
 			alert("AJAX ERROR: " + textStatus);
 		}
+	});
+}
+
+function editRentacar(name, description, latitude, longitude) {
+	$.ajax({
+		type : 'PUT',
+		url : editRentacarURL,
+		contentType : 'application/json',
+		dataType : "json",
+		headers: createAuthorizationTokenHeader(TOKEN_KEY),
+		data : rentacarFormToJSON(oldRentacarName, name, description, latitude, longitude),
+		success: function(data){
+			toastr[data.toastType](data.message);
+			
+			if(data.toastType === "success")
+				loadBasicData();
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
+
+function rentacarFormToJSON(oldName, name, description, latitude, longitude){
+	return JSON.stringify({
+		"name": name,
+		"oldName": oldName,
+		"description": description,
+		"latitude": latitude,
+		"longitude": longitude,
 	});
 }
 
@@ -385,22 +458,24 @@ function loadVehicleTypes(id, selected=undefined) {
 		dataType : "json",
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
-			if(data != null){
-				let types = $(id);
-				types.empty();
-				for(let vehicleType of data) {
-					if (selected != undefined && selected === vehicleType) {
-						types.append('<option value="' + vehicleType + '"selected>' + vehicleType + '</option');
-					} else {
-						types.append('<option value="' + vehicleType + '">' + vehicleType + '</option');
-					}
-				}
+			let types = $(id);
+			types.empty();
+			
+			for (let vehicleType of data) {
+				var sel = "";
+				if (selected === vehicleType)
+					sel = "selected";
+				types.append(`<option value="${vehicleType}" ${sel}>${capitalize(vehicleType)}</option>`);
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
 			alert("AJAX ERROR: " + textStatus);
 		}
 	});
+}
+
+function capitalize(word){
+	return word.charAt(0).toUpperCase() + (word.toLowerCase()).slice(1);
 }
 
 function loadFuelTypes(id, selected=undefined) {
@@ -410,16 +485,13 @@ function loadFuelTypes(id, selected=undefined) {
 		dataType : "json",
 		headers: createAuthorizationTokenHeader(TOKEN_KEY),
 		success: function(data){
-			if(data != null){
-				let types = $(id);
-				types.empty();
-				for(let fuelType of data) {
-					if (selected != undefined && selected === fuelType) {
-						types.append('<option value="' + fuelType + '" selected>' + fuelType + '</option>');
-					} else {						
-						types.append('<option value="' + fuelType + '">' + fuelType + '</option>');
-					}
-				}
+			let types = $(id);
+			types.empty();
+			for (let fuelType of data) {
+				var sel = "";
+				if (selected === fuelType)
+					sel = "selected";
+				types.append(`<option value="${fuelType}" ${sel}>${capitalize(fuelType)}</option>`);
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {

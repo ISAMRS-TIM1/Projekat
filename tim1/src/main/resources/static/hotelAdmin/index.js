@@ -103,27 +103,27 @@ function setUpInputFields(){
 
 function setUpTables() {
 	roomsTable = $('#roomsTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 	});
 	additionalServicesTable = $('#additionalServicesTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 	});
 	quickAdditionalServicesTable = $('#quickAdditionalServicesTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 	});
 	quickRoomsTable = $('#quickRoomsTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 	});
 	quickReservationsTable = $('#quickReservationsTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 	});
 	seasonalPricesTable = $('#seasonalPricesTable').DataTable({
-		"paging" : false,
+		"paging" : true,
 		"info" : false,
 		"columnDefs" : [ {
 			"orderable" : false,
@@ -213,7 +213,7 @@ function loadHotel() {
         	}
         	var roundedGrade = Math.round(data["averageGrade"]*10)/10;
         	var rating = "<div class='star-ratings-sprite'><span style='width:" + grade 
-        	+ "%' class='star-ratings-sprite-rating'></span></div><p style='color:white'>" + roundedGrade + "/5.0";
+        	+ "%' class='star-ratings-sprite-rating'></span></div><p style='color:black'>" + roundedGrade + "/5.0";
 			$("#averageGrade").html(rating);
 			$("#hotelDescription").text(data["description"]);
 			setUpMap(data["latitude"], data["longitude"], 'basicMapDiv');
@@ -236,7 +236,15 @@ function loadHotelRoom(roomNumber) {
 		headers : createAuthorizationTokenHeader(TOKEN_KEY),
 		success : function(data) {
 			$("#shownRoomNumber").val(data["roomNumber"]);
-			$("#shownRoomAverageGrade").val(data["averageGrade"]);
+			var grade = data["averageGrade"];
+        	
+        	if(grade !== 0){
+        		grade = grade/5*100;
+        	}
+        	var roundedGrade = Math.round(data["averageGrade"]*10)/10;
+        	var rating = "<div class='star-ratings-sprite'><span style='width:" + grade 
+        	+ "%' class='star-ratings-sprite-rating'></span></div><p>" + roundedGrade + "/5.0";
+			$("#shownRoomAverageGrade").val(rating);
 			$("#shownRoomDefaultPrice").val(data["defaultPrice"]);
 			$("#shownRoomNumberOfPeople").val(data["numberOfPeople"]);
 			renderSeasonalPrices(data["seasonalPrices"]);
@@ -297,8 +305,16 @@ function renderRooms(data) {
 function renderQuickRooms(data) {
 	quickRoomsTable.clear().draw();
 	$.each(data, function(i, val) {
+		var grade = val["averageGrade"];
+    	
+    	if(grade !== 0){
+    		grade = grade/5*100;
+    	}
+    	var roundedGrade = Math.round(val["averageGrade"]*10)/10;
+    	var rating = "<div class='star-ratings-sprite'><span style='width:" + grade 
+    	+ "%' class='star-ratings-sprite-rating'></span></div><p>" + roundedGrade + "/5.0";
 		quickRoomsTable.row.add(
-				[ val.roomNumber, val.price, val.numberOfPeople, val.averageGrade,
+				[ val.roomNumber, val.price, val.numberOfPeople, rating,
 					`<button onclick="reserveRoomNumber('${val.roomNumber}')" class="btn btn-default">Reserve</a>` ]).draw(false);
 	});
 }

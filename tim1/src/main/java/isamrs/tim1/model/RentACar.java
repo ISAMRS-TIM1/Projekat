@@ -23,7 +23,7 @@ public class RentACar extends Service implements Serializable {
 	private Set<Vehicle> vehicles;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<VehicleReservation> reservations;
+	private Set<VehicleReservation> reservations = new HashSet<VehicleReservation>();
 
 	@OneToMany(mappedBy = "rentACar", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<RentACarAdmin> admins;

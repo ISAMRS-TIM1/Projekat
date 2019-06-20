@@ -1,48 +1,23 @@
 body {
-	background: #0D63FF;
+	background: #f4f7f6;
 }
 
 #formDiv {
-	margin: 0;
-	position: absolute;
-	top: 60%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+	margin-left:auto;
+	margin-right:auto;
+	margin-top: 15%;
+  	display:block;
 	width: 40%;
-	background: #5994FF;
-	border: 0.24vw solid #B27A00;
-  	border-radius: 4vw 1.6vw;
   	font-size: 1.6vw;
 }
 
-form{
+form {
 	padding: 2.8vw;
 	padding-bottom: 1.6vw;
+	text-align:center;
 }
 
-button[type="submit"]{
-	width: 50%;
-	margin-left: 25%;
-	background: #0D63FF;
-	color: white;
-  	font-size: 1.6vw;
-  	border: 0.16vw solid #B27A00;
-}
-
-button[type="button"]{
-	margin-left: 23%;
-	background: none;
-	color: white;
-  	font-size: 1.6vw;
-  	margin-top: 0.8vw;
-  	font-style: italic;
-}
-
-#background-img{
-	margin: 0;
-	position: absolute;
-	top: 38%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	z-index: -1;
+#regButton {
+	font-size: 1.4vw;
+	font-style: italic;
 }

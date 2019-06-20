@@ -4,52 +4,36 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Flights</title>
-<link rel="shortcut icon" type="image/png"
-	href="common/images/favicon.png" />
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link rel="shortcut icon" type="image/png" href="common/images/favicon.png" />
 <link rel="stylesheet" href="sysAdmin/index.css">
 <link rel="stylesheet" href="common/css/tableStyle.css">
-<script
-	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
-<script type="text/javascript"
-	src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-<script type="text/javascript"
-	src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript"
-	src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
-<link rel="stylesheet"
-	href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
-
-<link rel="stylesheet"
-	href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
-	integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
-	crossorigin="" />
-<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
-	integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
-	crossorigin=""></script>
+<link rel="stylesheet" href="common/css/button.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin="" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
 <script type="text/javascript" src="auth/auth.js"></script>
 <script type="text/javascript" src="sysAdmin/index.js"></script>
 
 </head>
 <body>
 	<div class="container-fluid">
-		<div id="topMenu">
-			<div id="tabsDiv">
-				<ul class="nav nav-tabs nav-justified">
-					<li class="active"><a data-toggle="tab" href="#airlines">Airlines</a>
-					</li>
-					<li><a data-toggle="tab" href="#hotels">Hotels</a></li>
-					<li><a data-toggle="tab" href="#rentACars">Rent A Cars</a></li>
-					<li><a data-toggle="tab" href="#discounts">Discounts</a></li>
-					<li><a data-toggle="tab" href="#profile">Profile</a></li>
-				</ul>
-			</div>
-			<button type="button" class="btn .btn-link" id="logout">Logout</button>
+		<div id="tabsDiv">
+			<ul class="nav nav-tabs nav-justified">
+				<li class="active"><a data-toggle="tab" href="#airlines">Airlines</a>
+				</li>
+				<li><a data-toggle="tab" href="#hotels">Hotels</a></li>
+				<li><a data-toggle="tab" href="#rentACars">Rent A Cars</a></li>
+				<li><a data-toggle="tab" href="#discounts">Discounts</a></li>
+				<li><a data-toggle="tab" href="#profile">Profile</a></li>
+				<li><a data-toggle="tab" id="logout">Logout</a></li>
+			</ul>
 		</div>
 		<div class="tab-content">
 			<div id="airlines" class="tab-pane fade in active">
@@ -111,30 +95,36 @@
 					<form id="editDiscountInfoForm">
 						<table id="editDiscountInfoTable">
 							<tr>
-								<td><label for="discountPercentagePerPoint">Discount
-										percentage per discount point:</label><input type="number"
-									id="discountPercentagePerPoint" step="0.01" min="0" max="100"
-									oninput="validity.valid||(value='');"></td>
-							</tr>
-							<tr>
-								<td><label for="kmsNeededForPoint">Kilometers
-										needed for discount point:</label><input type="number"
-									id="kmsNeededForPoint" step="0.01" min="0" max="100000000"
-									oninput="validity.valid||(value='');"></td>
-							</tr>
-							<tr>
-								<td><label for="maxDiscountPoints">Max discount points:</label><input type="number"
-									id="maxDiscountPoints" step="1" min="0" max="50"
-									oninput="validity.valid||(value='');"></td>
-							</tr>
-							<tr>
-								<td><label for="discountPerExtraReservation">Discount per extra reservation:</label><input type="number"
-									id="discountPerExtraReservation" step="1" min="0" max="30"
-									oninput="validity.valid||(value='');"></td>
+								<td>
+									<div class="form-group">
+										<label for="discountPercentagePerPoint">Discount percentage per discount point</label>
+										<input type="number" id="discountPercentagePerPoint" step="0.01" min="0" max="100" oninput="validity.valid||(value='');" class="form-control">
+									</div>
+								</td>
+								<td>
+									<div class="form-group">
+										<label for="kmsNeededForPoint">Kilometers needed for discount point</label>
+										<input type="number" id="kmsNeededForPoint" class="form-control" step="0.01" min="0" max="100000000" oninput="validity.valid||(value='');">
+									</div>
+								</td>
 							</tr>
 							<tr>
 								<td>
-									<button type="submit" class="addServiceButton btn btn-default">Save
+									<div class="form-group">
+										<label for="maxDiscountPoints">Max discount points</label>
+										<input type="number" id="maxDiscountPoints" step="1" min="0" max="50" oninput="validity.valid||(value='');" class="form-control">
+									</div>
+								</td>
+								<td>
+									<div class="form-group">
+										<label for="discountPerExtraReservation">Discount per extra reservation:</label>
+										<input type="number" id="discountPerExtraReservation" step="1" min="0" max="30" oninput="validity.valid||(value='');" class="form-control">
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2">
+									<button type="submit" id="discountButt" class="btn btn-default">Save
 										changes</button>
 								</td>
 							</tr>
@@ -154,36 +144,28 @@
 								<label for="fname">First name:</label>
 								<div class="input-group">
 									<input class="form-control" type="text" name="fname"
-										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
-										readonly> <span class="input-group-addon edit"><i
-										class="glyphicon glyphicon-edit"></i></span>
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="lname">Last name:</label>
 								<div class="input-group">
 									<input class="form-control" type="text" name="lname"
-										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
-										readonly> <span class="input-group-addon edit"><i
-										class="glyphicon glyphicon-edit"></i></span>
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="phone">Phone:</label>
 								<div class="input-group">
 									<input class="form-control" type="tel" name="phone"
-										pattern="\+[0-9]{12}" title="12 digits starting with +"
-										readonly> <span class="input-group-addon edit"><i
-										class="glyphicon glyphicon-edit"></i></span>
+										pattern="\+[0-9]{12}" title="12 digits starting with +">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="address">Address:</label>
 								<div class="input-group">
 									<input class="form-control" type="text" name="address"
-										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
-										readonly> <span class="input-group-addon edit"><i
-										class="glyphicon glyphicon-edit"></i></span>
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter">
 								</div>
 							</div>
 							<button type="submit" class="btn btn-default" id="saveChanges">Save
@@ -197,143 +179,131 @@
 
 
 	<!-- Service Modal -->
-	<div class="modal fade" id="modalDialog" tabindex="-1" role="dialog"
-		aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal fade" id="modalDialog" role="dialog">
 		<div class="modal-dialog modal-lg" role="document">
 			<div class="modal-content" id="serviceDiv">
-				<table id="serviceTable">
-					<tr>
-						<td colspan="2"><input type="text" id="serviceName"
-							class="textInput" readonly></td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<div id="serviceGrade"></div>
-						</td>
-					</tr>
-					<tr>
-						<td><textarea rows="8" cols="20" id="serviceDescription"
-								class="textInput" readonly></textarea></td>
-						<td><div id="mapDiv"></div></td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<div id="formDiv">
-								<form id="registrationForm">
-									<div id="fields">
-										<div id="leftSide">
-											<div class="form-group">
-												<div class="input-group">
-													<span class="input-group-addon"><i
-														class="glyphicon glyphicon-envelope"></i></span> <input
-														class="form-control" type="email" id="adminEmail"
-														placeholder="Email" required autofocus>
+				<div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal">&times;</button>
+			        <h3 class="modal-title" id="serviceName" style="text-align:center;"></h3>
+	      		</div>
+	      		<div class="modal-body">
+					<table id="serviceTable">
+						<tr>
+							<td colspan="2">
+								<div id="serviceGrade"></div>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<div class="form-group">
+									<textarea rows="4" cols="50" name="serviceDesc" id="serviceDescription" readonly class="form-input"></textarea>
+								</div>
+							</td>
+							<td><div id="mapDiv"></div></td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<div id="formDiv">
+									<form id="registrationForm">
+										<div id="fields">
+											<div id="leftSide">
+												<div class="form-group">
+													<label for="adminEmail">Email</label>
+													<input type="email" name="adminEmail" id="adminEmail" required class="form-control">
+												</div>
+												<div class="form-group">
+													<label for="adminFName">First name</label>
+													<input type="text" name="adminFName" id="adminFirstName" class="form-control" pattern="[A-Z][a-z]*" title="Must start with a capital letter" required>
+												</div>
+												<div class="form-group">
+													<label for="adminPhone">Phone number</label>
+													<input type="tel" name="adminPhone" id="adminPhone" class="form-control" pattern="\+[0-9]{12}" title="12 digits starting with +" required>
 												</div>
 											</div>
-											<div class="form-group">
-												<div class="input-group">
-													<span class="input-group-addon"><i
-														class="glyphicon glyphicon-user"></i></span> <input
-														class="form-control" type="text" id="adminFirstName"
-														placeholder="First name" pattern="[A-Z][a-z]*"
-														title="Must start with a capital letter" required>
+											<div id="separator">&nbsp;</div>
+											<div id="rightSide">
+												<div class="form-group">
+													<label for="adminPass">Password</label>
+													<input type="password" name="adminPass" id="adminPassword" class="form-control" required>
 												</div>
-											</div>
-											<div class="form-group">
-												<div class="input-group">
-													<span class="input-group-addon"><i
-														class="glyphicon glyphicon-phone"></i></span> <input
-														class="form-control" type="tel" id="adminPhone"
-														placeholder="Phone number" pattern="\+[0-9]{12}"
-														title="12 digits starting with +" required>
+												<div class="form-group">
+													<label for="adminLName">Last name</label>
+													<input type="text" name="adminLName" id="adminLastName" class="form-control" pattern="[A-Z][a-z]*" title="Must start with a capital letter" required>
 												</div>
-											</div>
-										</div>
-										<div id="separator">&nbsp</div>
-										<div id="rightSide">
-											<div class="form-group">
-												<div class="input-group">
-													<span class="input-group-addon" id="eye"><i
-														class="glyphicon glyphicon-eye-close" id="eye-icon"></i></span> <input
-														class="form-control" type="password" id="adminPassword"
-														placeholder="Password" required>
-												</div>
-											</div>
-											<div class="form-group">
-												<div class="input-group">
-													<span class="input-group-addon"><i
-														class="glyphicon glyphicon-user"></i></span> <input
-														class="form-control" type="text" id="adminLastName"
-														placeholder="Last name" pattern="[A-Z][a-z]*"
-														title="Must start with a capital letter" required>
-												</div>
-											</div>
-											<div class="form-group">
-												<div class="input-group">
-													<span class="input-group-addon"><i
-														class="glyphicon glyphicon-map-marker"></i></span> <input
-														class="form-control" type="text" id="adminAddress"
-														placeholder="Address" required>
+												<div class="form-group">
+													<label for="adminAddress">Address</label>
+													<input type="text" name="adminAddress" id="adminAddress" class="form-control" required>
 												</div>
 											</div>
 										</div>
-									</div>
-									<div id="buttons">
-										<button id="registerNewAdmin" type="submit"
-											class="btn btn-default">Register new admin</button>
-									</div>
-								</form>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<table id="adminsTable" class="table display table-bordered">
-								<thead>
-									<tr>
-										<th>Email</th>
-										<th>First name</th>
-										<th>Last name</th>
-										<th>Address</th>
-										<th>Phone number</th>
-									</tr>
-								</thead>
-								<tbody>
-								</tbody>
-							</table>
-						</td>
-					</tr>
-				</table>
+										<div id="buttons">
+											<button id="registerNewAdmin" type="submit"
+												class="btn btn-default">Register new admin</button>
+										</div>
+									</form>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<table id="adminsTable" class="table display table-bordered">
+									<thead>
+										<tr>
+											<th>Email</th>
+											<th>First name</th>
+											<th>Last name</th>
+											<th>Address</th>
+											<th>Phone number</th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+							</td>
+						</tr>
+					</table>
+				</div>
 			</div>
 		</div>
 	</div>
 	<!-- Add Service Modal -->
-	<div class="modal fade" id="addServiceModal" tabindex="-1"
-		role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-lg" role="document">
+	<div class="modal fade" id="addServiceModal" role="dialog">
+		<div class="modal-dialog modal-lg">
 			<div class="modal-content" id="addServiceDiv">
-				<form id="addServiceForm">
-					<table id="addServiceTable">
-						<tr>
-							<td colspan="2"><input type="text" id="newServiceName"
-								class="textInput" value="Name"></td>
-						</tr>
-
-						<tr>
-							<td><textarea rows="10" cols="38" id="newServiceDescription"
-									class="textInput">Description</textarea></td>
-							<td><div id="newServiceMapDiv"></div></td>
-						</tr>
-						<tr>
-							<td colspan="2">
-								<button type="submit" id="addServiceButton"
-									class="addServiceButton btn btn-default">Add</button>
-							</td>
-						</tr>
-					</table>
-					<input type="hidden" id="latitude" value="45"required"> <input
-						type="hidden" id="longitude" value="0"required">
-				</form>
+				<div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	      		</div>
+	      		<div class="modal-body">
+	      			<form id="addServiceForm">
+						<table id="addServiceTable">
+							<tr>
+								<td>
+									<div class="form-group">
+										<label for="serviceName">Name</label>
+										<input type="text" name="serviceName" id="newServiceName" required class="form-control">
+									</div>
+								</td>
+								<td rowspan="2"><div id="newServiceMapDiv"></div></td>
+							</tr>
+							<tr>
+								<td>
+									<div class="form-group">
+										<label for="serviceDesc">Description</label>
+										<textarea rows="4" cols="50" name="serviceDesc" id="newServiceDescription" required class="form-control"></textarea>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2">
+									<button type="submit" id="addServiceButton"
+										class="addServiceButton btn btn-default">Add</button>
+								</td>
+							</tr>
+						</table>
+						<input type="hidden" id="latitude" value="45" required> <input
+							type="hidden" id="longitude" value="0" required>
+					</form>
+	      		</div>
 			</div>
 		</div>
 	</div>

@@ -3,41 +3,40 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Flights</title>
-<link rel="shortcut icon" type="image/png" href="common/images/favicon.png" />
+<title>Login</title>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link rel="shortcut icon" type="image/png"
+	href="common/images/favicon.png" />
+<link rel="stylesheet" href="common/css/button.css">
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="login/login.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="auth/auth.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script src="login/login.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 </head>
 <body>
 	<div class="container">
-		<img id="background-img" src="common/images/flight.png">
 		<div id="formDiv">
 			<form id="loginForm">
 				<div class="form-group">
-					<div class="input-group">
-						<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-						<input class="form-control" type="email" name="email" placeholder="Email" required autofocus>
-					</div>
+					<label for="email">Email</label> <input id="email" type="email"
+						name="email" class="form-control">
 				</div>
 				<div class="form-group">
-					<div class="input-group">
-						<span class="input-group-addon" id="eye"><i class="glyphicon glyphicon-eye-close" id="eye-icon"></i></span>
-						<input class="form-control" type="password" name="password" placeholder="Password" required>
-					</div>
+					<label for="password">Password</label> <input id="password"
+						type="password" name="password" class="form-control">
 				</div>
 				<button type="submit" class="btn btn-default">Login</button>
-				<br>
-				<button type="button" class="btn .btn-link" id="regButton">Don't
-					have an account?</button>
+				<br> <br> <a id="regButton">Don't have an account?</a>
 			</form>
 		</div>
 	</div>

@@ -1,6 +1,5 @@
 package isamrs.tim1.service;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -95,20 +94,11 @@ public class AirlineService {
 		return new MessageDTO("Airline successfully added", ToasterType.SUCCESS.toString());
 	}
 
-	public ResponseEntity<Double> getIncomeOfAirline(String fromDate, String toDate) {
+	public ResponseEntity<Double> getIncomeOfAirline(Date fromDate, Date toDate) {
 		Airline airline = ((AirlineAdmin) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getAirline();
-		Double income = 0.0;
-		Date startDate = null;
-		Date endDate = null;
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		try {
-			startDate = sdf.parse(fromDate);
-			endDate = sdf.parse(toDate);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+		double income = 0.0;
 		for (FlightReservation r : airline.getReservations()) {
-			if (!(r.getDateOfReservation().before(startDate)) && !(r.getDateOfReservation().after(endDate)) && r.getDone()) {
+			if (!(r.getDateOfReservation().before(fromDate)) && !(r.getDateOfReservation().after(toDate)) && r.getDone()) {
 				income += r.getPrice();
 			}
 		}

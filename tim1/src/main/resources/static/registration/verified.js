@@ -1,5 +1,8 @@
 var rootURL1 = "../login";
 
-$(document).on("click", "#logButton", function(e){
-	document.location.href = rootURL1
-})
+$(document).ready(function(){
+	$("#logButton").click(function(e){
+		e.preventDefault();
+		document.location.href = rootURL1;
+	});
+});

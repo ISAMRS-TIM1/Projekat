@@ -14,10 +14,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <link rel="stylesheet" type="text/css"
 	href="common/css/jquery.seat-charts.css">
+<link rel="stylesheet" type="text/css"
+	href="common/css/button.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.0"></script>
-
+<script type="text/javascript"
+	src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css"
+	href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
 <link rel="stylesheet"
@@ -62,9 +67,9 @@
 					<li><a data-toggle="tab" href="#quickResevationsTab">Quick
 							reservations</a></li>
 					<li><a data-toggle="tab" href="#profile">Profile</a></li>
+					<li><a data-toggle="tab" id="logout">Logout</a></li>
 				</ul>
 			</div>
-			<button type="button" class="btn .btn-link" id="logout">Logout</button>
 		</div>
 		<div class="tab-content">
 			<div id="basicTab" class="tab-pane fade in active">
@@ -104,24 +109,14 @@
 				<div class="reportsDiv">
 					<table id="serviceTable">
 						<tr>
-							<td>
-								From date
-							</td>
-							<td>
-								<input type="date" id="startDateIncome"/>
-							</td>
-							<td>
-								To date
-							</td>
-							<td>
-								<input type="date" id="endDateIncome"/>
-							</td>
+							<td id="shownIncomePeriodText">Period:</td>
+							<td><input type="text" class="form-control" id="showIncomeDateRange"></td>
 						</tr>
 					</table><br>
 					<button class="btn btn-default" id="showIncomeButton" onclick='showIncome(event)'>Show income</button>	
 					<br>
 					<span id="income"></span><br><br>
-					<select id="graphicLevel">
+					<select id="graphicLevel" class="form-control">
 						<option value="daily">Daily</option>
 						<option value="weekly">Weekly</option>
 						<option value="monthly">Monthly</option>
@@ -190,36 +185,28 @@
 								<label for="fname">First name:</label>
 								<div class="input-group">
 									<input class="form-control" type="text" name="fname"
-										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
-										readonly> <span class="input-group-addon edit"><i
-										class="glyphicon glyphicon-edit"></i></span>
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="lname">Last name:</label>
 								<div class="input-group">
 									<input class="form-control" type="text" name="lname"
-										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
-										readonly> <span class="input-group-addon edit"><i
-										class="glyphicon glyphicon-edit"></i></span>
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="phone">Phone:</label>
 								<div class="input-group">
 									<input class="form-control" type="tel" name="phone"
-										pattern="\+[0-9]{12}" title="12 digits starting with +"
-										readonly> <span class="input-group-addon edit"><i
-										class="glyphicon glyphicon-edit"></i></span>
+										pattern="\+[0-9]{12}" title="12 digits starting with +">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="address">Address:</label>
 								<div class="input-group">
 									<input class="form-control" type="text" name="address"
-										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
-										readonly> <span class="input-group-addon edit"><i
-										class="glyphicon glyphicon-edit"></i></span>
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter">
 								</div>
 							</div>
 							<button type="button" class="btn btn-default"
@@ -245,14 +232,14 @@
 						Start destination
 					</td>
 					<td>
-						<select id="startDestination">
+						<select class="form-control" id="startDestination">
 						</select>
 					</td>
 					<td>
 						End destination
 					</td>
 					<td>
-						<select id="endDestination">
+						<select class="form-control" id="endDestination">
 						</select>
 					</td>
 				</tr>
@@ -261,13 +248,13 @@
 						Departure time
 					</td>
 					<td>
-						<input type="datetime-local" id="departureTime"/>
+						<input class="form-control" type="datetime-local" id="departureTime"/>
 					</td>
 					<td>
 						Landing time
 					</td>
 					<td>
-						<input type="datetime-local" id="landingTime"/>
+						<input class="form-control" type="datetime-local" id="landingTime"/>
 					</td>
 				</tr>
 				<tr>
@@ -275,13 +262,13 @@
 						Flight distance
 					</td>
 					<td>
-						<input type="number" id="flightDistance"/>
+						<input class="form-control" type="number" id="flightDistance"/>
 					</td>
 					<td>
 						Price per bag
 					</td>
 					<td>
-						<input type="number" id="pricePerBag"/>
+						<input class="form-control" type="number" id="pricePerBag"/>
 					</td>
 				</tr>
 				<tr>
@@ -289,13 +276,13 @@
 						Connection destinations
 					</td>
 					<td>
-						<select multiple id="connections"></select>
+						<select class="form-control" multiple id="connections"></select>
 					</td>
 					<td>
 						First class seat price
 					</td>
 					<td>
-						<input type="number" id="firstPrice"/>
+						<input class="form-control" type="number" id="firstPrice"/>
 					</td>
 				</tr>
 				<tr>
@@ -303,13 +290,13 @@
 						Business class seat price
 					</td>
 					<td>
-						<input type="number" id="businessPrice"/>
+						<input class="form-control" type="number" id="businessPrice"/>
 					</td>
 					<td>
 						Economy class seat price
 					</td>
 					<td>
-						<input type="number" id="economyPrice"/>
+						<input class="form-control" type="number" id="economyPrice"/>
 					</td>
 				</tr>
 				<tr>
@@ -323,7 +310,7 @@
 						Returning departure time
 					</td>
 					<td class="retTrip">
-						<input type="datetime-local" id="retDepartureTime"/>
+						<input class="form-control" type="datetime-local" id="retDepartureTime"/>
 					</td>
 				</tr>
 				<tr class="retTrip">
@@ -331,7 +318,7 @@
 						Returning landing time
 					</td>
 					<td>
-						<input type="datetime-local" id="retLandingTime"/>
+						<input class="form-control" type="datetime-local" id="retLandingTime"/>
 					</td>
 				</tr>
 				</table><br><br>
@@ -342,8 +329,8 @@
 					<div class="booking-details">
 						<h2>Configure seats</h2>
 						<h3>First class</h3>
-						<input type="number" id="first">
-						<div>
+						<input class="form-control" type="number" id="first">
+						<div id="seatButtons">
 							<button class="btn btn-default configure-button" id="addButton"
 								onclick="add(event, 1)">Add</button>
 							<button class="btn btn-default configure-button"
@@ -351,8 +338,8 @@
 						</div>
 						<br>
 						<h3>Business class</h3>
-						<input type="number" id="business">
-						<div>
+						<input class="form-control" type="number" id="business">
+						<div id="seatButtons">
 							<button class="btn btn-default configure-button" id="addButton"
 								onclick="add(event, 2)">Add</button>
 							<button class="btn btn-default configure-button"
@@ -360,8 +347,8 @@
 						</div>
 						<br>
 						<h3>Economy class</h3>
-						<input type="number" id="economy">
-						<div>
+						<input class="form-control" type="number" id="economy">
+						<div id="seatButtons">
 							<button class="btn btn-default configure-button" id="addButton"
 								onclick="add(event, 3)">Add</button>
 							<button class="btn btn-default configure-button"
@@ -389,7 +376,7 @@
 		<div class="modal-dialog modal-lg" role="document">
 			<div class="modal-content destModal" id="serviceDiv">
 				<div id="destDiv">
-					Name of destination <input type="text" id="destinationName"/><br><br>
+					Name of destination <input class="form-control" type="text" id="destinationName"/><br><br>
 					<div id="destMapDiv" class="map leaflet-container"></div><br>
 					<input type="hidden" id="destMapDivLatitude" value="45" required> <input
 						type="hidden" id="destMapDivLongitude" value="0" required>
@@ -463,7 +450,7 @@
 						</tr>
 					</table>
 					<br> <br>
-					<div id="planeSeats">
+					<div id="planeSeatsTable">
 						<div id="seat-map-second">
 							<div class="front-indicator">Front</div>
 						</div>

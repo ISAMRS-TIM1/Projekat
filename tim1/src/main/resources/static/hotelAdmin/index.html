@@ -53,6 +53,7 @@
 <script src="hotelAdmin/index.js"></script>
 <link rel="stylesheet" href="hotelAdmin/index.css">
 <link rel="stylesheet" href="common/css/tableStyle.css">
+<link rel="stylesheet" type="text/css" href="common/css/button.css">
 </head>
 <body>
 	<div class="container-fluid">
@@ -68,9 +69,9 @@
 					<li><a data-toggle="tab" href="#quickResevationsTab">Quick
 							reservations</a></li>
 					<li><a data-toggle="tab" href="#profile">Profile</a></li>
+					<li><a data-toggle="tab" id="logout">Logout</a></li>
 				</ul>
 			</div>
-			<button type="button" class="btn .btn-link" id="logout">Logout</button>
 		</div>
 		<div class="tab-content">
 			<div id="basicTab" class="tab-pane fade in active">
@@ -81,7 +82,7 @@
 						<br>
 						<br>
 						<div id="descriptionDiv">
-							<textarea id="hotelDescription" class="textInput" required></textarea>
+							<textarea id="hotelDescription" class="textInput form-control" required></textarea>
 						</div>
 					</div>
 					<div id="basicMapDiv" class="map leaflet-container"></div>
@@ -96,7 +97,7 @@
 					<table id=reportsTable>
 						<tr>
 							<td id="shownIncomePeriodText">Period:</td>
-							<td><input type="text" id="showIncomeDateRange"></td>
+							<td><input type="text" class="form-control" id="showIncomeDateRange"></td>
 						</tr>
 					</table>
 					<br>
@@ -201,36 +202,28 @@
 								<label for="fname">First name:</label>
 								<div class="input-group">
 									<input class="form-control" type="text" name="fname"
-										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
-										readonly> <span class="input-group-addon edit"><i
-										class="glyphicon glyphicon-edit"></i></span>
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="lname">Last name:</label>
 								<div class="input-group">
 									<input class="form-control" type="text" name="lname"
-										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
-										readonly> <span class="input-group-addon edit"><i
-										class="glyphicon glyphicon-edit"></i></span>
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="phone">Phone:</label>
 								<div class="input-group">
 									<input class="form-control" type="tel" name="phone"
-										pattern="\+[0-9]{12}" title="12 digits starting with +"
-										readonly> <span class="input-group-addon edit"><i
-										class="glyphicon glyphicon-edit"></i></span>
+										pattern="\+[0-9]{12}" title="12 digits starting with +">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="address">Address:</label>
 								<div class="input-group">
 									<input class="form-control" type="text" name="address"
-										pattern="[A-Z][a-z]*" title="Must start with a capital letter"
-										readonly> <span class="input-group-addon edit"><i
-										class="glyphicon glyphicon-edit"></i></span>
+										pattern="[A-Z][a-z]*" title="Must start with a capital letter">
 								</div>
 							</div>
 							<button type="button" class="btn btn-default myButton"
@@ -271,8 +264,8 @@
 							</tr>
 							<tr>
 								<td><label for="shownRoomAverageGrade">AverageGrade</label></td>
-								<td><input id="shownRoomAverageGrade" class="form-control"
-									readonly></td>
+								<td><span id="shownRoomAverageGrade" class="form-control"
+									></span></td>
 							</tr>
 							<tr>
 								<td><button type="submit" id="editHotelRoomButton"
@@ -289,9 +282,9 @@
 						<table class="showHotelRoomTable">
 							<tr>
 								<td><label for="newSeasonalPriceDateRange">Date</label></td>
-								<td><input type="text" id="newSeasonalPriceDateRange" /></td>
+								<td><input type="text" class="form-control" id="newSeasonalPriceDateRange" /></td>
 								<td><label for="newSeasonalPricePrice">Price</label></td>
-								<td><input id="newSeasonalPricePrice" type="number"
+								<td><input id="newSeasonalPricePrice" class="form-control" type="number"
 									step="0.01" oninput="validity.valid||(value='');" required></td>
 							</tr>
 							<tr>
@@ -420,7 +413,7 @@
 				<table id="createQuickReservationTable">
 					<tr>
 						<td><label for="quickDiscount">Discount (%)</label></td>
-						<td><input id="quickDiscount" type="number" min="0" max ="80"
+						<td><input id="quickDiscount" class="form-control" type="number" min="0" max ="80"
 										oninput="validity.valid||(value='');" value="0"></td>
 					</tr>
 					<tr>
@@ -442,18 +435,18 @@
 							<table id="hotelRoomsSearchTable">
 								<tr>
 									<td>Reservation date</td>
-									<td><input type="text" id="searchRoomsDateRange" /></td>
+									<td><input type="text" class="form-control" id="searchRoomsDateRange" /></td>
 									<td>For people</td>
-									<td><input id="searchRoomsForPeople" type="number" min="1"
+									<td><input id="searchRoomsForPeople" class="form-control" type="number" min="1"
 										oninput="validity.valid||(value='');" value="1"></td>
 								</tr>
 								<tr>
 									<td>Price</td>
-									<td><input id="searchRoomsPrice" type="text" class="span2"
+									<td><input id="searchRoomsPrice" class="form-control" type="text" class="span2"
 										value="" data-slider-min="0" data-slider-max="10000"
 										data-slider-step="10" data-slider-value="[0,10000]" /></td>
 									<td>Grade</td>
-									<td><input id="searchRoomsGrade" type="text" class="span2"
+									<td><input id="searchRoomsGrade" class="form-control" type="text" class="span2"
 										value="" data-slider-min="0" data-slider-max="5"
 										data-slider-step="0.1" data-slider-value="[0,5]" /></td>
 								</tr>

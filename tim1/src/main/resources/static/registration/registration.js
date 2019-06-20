@@ -8,56 +8,83 @@ $(document).ready(function(){
 	$(document).on('submit', '#registrationForm', function(e){
 		e.preventDefault();
 		var email = $('input[name="email"]').val();
+		
+		if(email == null || email === ""){
+			toastr["error"]("Email must not be empty");
+			return;
+		}
+		
 		var password = $('input[name="password"]').val();
+		
+		if(password == null || password === ""){
+			toastr["error"]("Password must not be empty");
+			return;
+		}
+		
 		var firstName = $('input[name="fname"]').val();
+		
+		if(firstName == null || firstName === ""){
+			toastr["error"]("First name must not be empty");
+			return;
+		}
+		
 		var lastName = $('input[name="lname"]').val();
+		
+		if(lastName == null || lastName === ""){
+			toastr["error"]("Last name must not be empty");
+			return;
+		}
+		
 		var phone = $('input[name="phone"]').val();
+		
+		if(phone == null || phone === ""){
+			toastr["error"]("Phone must not be empty");
+			return;
+		}
+		
 		var address = $('input[name="address"]').val();
 		
-		$.ajax({
-			type : 'POST',
-			url : rootURL1,
-			contentType : 'application/json',
-			dataType : "json",
-			data : formToJSON(email, password, firstName, lastName, phone, address),
-			success: function(data){
-				if(data.message != undefined){
-					toastr["error"](data.message, data.header);
-					$('input[name="email"]').val("");
-					$('input[name="password"]').val("");
-					$('input[name="fname"]').val("");
-					$('input[name="lname"]').val("");
-					$('input[name="phone"]').val("");
-					$('input[name="address"]').val("");
-				} else{
-					if(data){
-						toastr["info"]("Please check out your email for verification");
-						setTimeout(function(){ document.location.href = rootURL3; }, 3000);
-					}
-				}
-			},
-			error : function(XMLHttpRequest, textStatus, errorThrown) {
-				alert("AJAX ERROR: " + textStatus);
-			}
-		})
-	});
-
-	$(document).on("click", "#logButton", function(e){
-		document.location.href = rootURL3
-	});
-
-	$(document).on("click", "#eye", function(e){
-		if($("#eye-icon").hasClass("glyphicon-eye-close")){
-			$("#eye-icon").removeClass("glyphicon-eye-close");
-			$("#eye-icon").addClass("glyphicon-eye-open");
-			$('input[name="password"]').attr("type", "text");
-		} else{
-			$("#eye-icon").removeClass("glyphicon-eye-open");
-			$("#eye-icon").addClass("glyphicon-eye-close");
-			$('input[name="password"]').attr("type", "password");
+		if(address == null || address === ""){
+			toastr["error"]("Address must not be empty");
+			return;
 		}
+		
+		sendRegistrationData(email, password, firstName, lastName, phone, address);
+	});
+
+	$("#logButton").click(function(e){
+		document.location.href = rootURL3;
 	});
 });
+
+function sendRegistrationData(email, password, firstName, lastName, phone, address){
+	$.ajax({
+		type : 'POST',
+		url : rootURL1,
+		contentType : 'application/json',
+		dataType : "json",
+		data : formToJSON(email, password, firstName, lastName, phone, address),
+		success: function(data){
+			if(data.message != undefined){
+				toastr["error"](data.message, data.header);
+				$('input[name="email"]').val("");
+				$('input[name="password"]').val("");
+				$('input[name="fname"]').val("");
+				$('input[name="lname"]').val("");
+				$('input[name="phone"]').val("");
+				$('input[name="address"]').val("");
+			} else{
+				if(data){
+					toastr["info"]("Please check out your email for verification");
+					setTimeout(function(){ document.location.href = rootURL3; }, 3000);
+				}
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("AJAX ERROR: " + textStatus);
+		}
+	});
+}
 
 function formToJSON(email, password, firstName, lastName, phone, address){
 	return JSON.stringify({
