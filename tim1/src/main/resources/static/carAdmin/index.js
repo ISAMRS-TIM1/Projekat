@@ -52,7 +52,13 @@ $(document).ready(function() {
 	setUpTable("vehicleTable");
 	setUpTable("quickReservationsTable");
 	setUpDatePicker("showIncomeDateRange");
-	setUpDatePicker("quickPeriod");
+	
+	$("#quickPeriod").daterangepicker({
+		locale : {
+			format : 'DD/MM/YYYY'
+		},
+		startDate: new Date()
+	});
 	
 	$("#saveChangesBasic").click(function(e){
 		e.preventDefault();
@@ -365,8 +371,6 @@ $(document).ready(function() {
 			return;
 		}
 		
-		var today = moment();
-		
 		let startDate = $('#showIncomeDateRange').data('daterangepicker').startDate.format("DD/MM/YYYY");
 		
 		if(startDate == null){
@@ -380,17 +384,6 @@ $(document).ready(function() {
 			toastr["error"]("End date cannot be empty");
 			return;
 		}
-		
-		if(!moment(startDate).isAfter(today)){
-			toastr["error"]("Cannot make quick vehicle reservation for past period");
-			return;
-		}
-		
-		if(!moment(endDate).isAfter(startDate)){
-			toastr["error"]("End date must be after start date");
-			return;
-		}
-		
 		addQuickReservation(branch, producer, model, discount, startDate, endDate);
 	});
 });
@@ -484,12 +477,10 @@ function editProfile(firstName, lastName, phone, address, email) {
 		type : 'PUT',
 		url : editUserInfoURL,
 		contentType : 'application/json',
-		dataType : "html",
+		dataType : "json",
 		data : userFormToJSON(firstName, lastName, phone, address, email),
 		success: function(data){
-			if(data != ""){
-				toastr["error"](data);
-			}
+			toastr[data.toastType](data.message);
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
 			alert("AJAX ERROR: " + textStatus);
