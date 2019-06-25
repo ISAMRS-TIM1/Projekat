@@ -1,5 +1,6 @@
 package isamrs.tim1.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -14,8 +15,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import isamrs.tim1.model.Airline;
-import isamrs.tim1.model.Flight;
 import isamrs.tim1.model.DiscountInfo;
+import isamrs.tim1.model.Flight;
 import isamrs.tim1.model.FlightInvitation;
 import isamrs.tim1.model.FlightReservation;
 import isamrs.tim1.model.Hotel;
@@ -52,13 +53,13 @@ public class PeriodicCheckService {
 
 	@Autowired
 	private FlightInvitationRepository flightInvitationRepository;
-	
+
 	@Autowired
 	private FlightReservationRepository flightReservationRepository;
-	
+
 	@Autowired
 	private HotelReservationRepository hotelReservationRepository;
-	
+
 	@Autowired
 	private VehicleReservationRepository vehicleReservationRepository;
 
@@ -109,62 +110,76 @@ public class PeriodicCheckService {
 	@Scheduled(cron = "${checkReservations.cron}")
 	public void checkReservations() {
 		Date now = new Date();
-		int numOfDays;
-		int numOfHours;
 		DiscountInfo di = discountInfoRepository.findAll().get(0);
 
+		ArrayList<FlightReservation> flightReservationsForDelete = new ArrayList<FlightReservation>();
 		for (Airline airline : airlineRepository.findAll()) {
-			for (FlightReservation fr : airline.getReservations()) {
+			airline.getReservations().removeIf(fr -> {
 				if (!fr.getDone()) {
-					numOfHours = Math.abs((int) ((fr.getFlight().getDepartureTime().getTime() - now.getTime()) / (1000 * 60 * 60)))
+					int numOfHours = Math.abs(
+							(int) ((fr.getFlight().getDepartureTime().getTime() - now.getTime()) / (1000 * 60 * 60)))
 							+ 1;
 					if (numOfHours <= hoursBeforeFlightResIsDone) {
 						if (fr.getUser() != null) {
 							fr.setDone(true);
 							fr.getUser().setDiscountPoints((int) Math.floor((fr.getUser().getDiscountPoints()
 									+ fr.getFlight().getFlightLength() / di.getKmsNeededForPoint())));
-						}
-						else {
-							flightReservationRepository.delete(fr);
+						} else {
+							flightReservationsForDelete.add(fr);
+							return true;
 						}
 					}
 				}
-			}
+				return false;
+			});
 			airlineRepository.save(airline);
 		}
+		for (FlightReservation fr : flightReservationsForDelete) {
+			flightReservationRepository.delete(fr);
+		}
 
+		ArrayList<HotelReservation> hotelReservationsForDelete = new ArrayList<HotelReservation>();
 		for (Hotel hotel : hotelRepository.findAll()) {
-			for (HotelReservation hr : hotel.getReservations()) {
+			hotel.getReservations().removeIf(hr -> {
 				if (!hr.getDone()) {
-					numOfDays = (int) ((hr.getFromDate().getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+					int numOfDays = (int) ((hr.getFromDate().getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) + 1;
 					if (numOfDays <= daysBeforeHotelResIsDone) {
 						if (hr.getFlightReservation() != null) {
 							hr.setDone(true);
-						}
-						else {
-							hotelReservationRepository.delete(hr);
+						} else {
+							hotelReservationsForDelete.add(hr);
+							return true;
 						}
 					}
 				}
-			}
+				return false;
+			});
 			hotelRepository.save(hotel);
 		}
+		for (HotelReservation hr : hotelReservationsForDelete) {
+			hotelReservationRepository.delete(hr);
+		}
 
+		ArrayList<VehicleReservation> vehicleReservationsForDelete = new ArrayList<VehicleReservation>();
 		for (RentACar rac : racRepository.findAll()) {
-			for (VehicleReservation vr : rac.getReservations()) {
+			rac.getReservations().removeIf(vr -> {
 				if (!vr.getDone()) {
-					numOfDays = (int) ((vr.getFromDate().getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+					int numOfDays = (int) ((vr.getFromDate().getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) + 1;
 					if (numOfDays <= daysBeforeVehicleResIsDone) {
 						if (vr.getFlightReservation() != null) {
 							vr.setDone(true);
-						}
-						else {
-							vehicleReservationRepository.delete(vr);
+						} else {
+							vehicleReservationsForDelete.add(vr);
+							return true;
 						}
 					}
 				}
-			}
+				return false;
+			});
 			racRepository.save(rac);
+		}
+		for (VehicleReservation vr : vehicleReservationsForDelete) {
+			vehicleReservationRepository.delete(vr);
 		}
 	}
 
